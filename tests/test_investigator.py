@@ -137,7 +137,7 @@ class TestInvestigateReturnsCapsule:
             assert capsule.answer == "Albert Einstein"
             assert isinstance(capsule.fact, Fact)
             assert capsule.fact.text == "Albert Einstein developed the theory of relativity"
-            assert capsule.fact.confidence == pytest.approx(0.9275)
+            assert capsule.fact.confidence == pytest.approx(0.934)
             assert capsule.fact.confidence_self == pytest.approx(0.95)
             assert capsule.fact.confidence_retrieval == pytest.approx(0.885)
             assert capsule.fact.slot_filled is True

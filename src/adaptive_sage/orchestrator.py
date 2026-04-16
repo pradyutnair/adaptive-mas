@@ -457,7 +457,9 @@ class Orchestrator:
         content = self._strip_thinking(content)
 
         # Strip any JSON wrapper the LLM might add (e.g. {"answer": "X"})
-        answer = self._extract_plain_answer(content)
+        answer = self._extract_plain_answer(content).strip()
+        if self._looks_meta_answer(answer):
+            answer = self._best_fact_answer_span(facts)
         return answer.strip(), self._extract_total_tokens(response)
 
     async def generate_answer_object_with_usage(
@@ -723,7 +725,14 @@ class Orchestrator:
             return ""
         lines = []
         for i, fact in enumerate(facts, start=1):
-            lines.append(f"{i}. {fact.text}")
+            answer_span = str(getattr(fact, "answer_span", "")).strip()
+            confidence = f"{fact.confidence:.2f}"
+            if answer_span:
+                lines.append(
+                    f"{i}. answer span: {answer_span} | confidence: {confidence} | fact: {fact.text}"
+                )
+            else:
+                lines.append(f"{i}. confidence: {confidence} | fact: {fact.text}")
         return "\n".join(lines)
 
     @staticmethod
@@ -800,6 +809,45 @@ class Orchestrator:
         """Return whether a slot name is just a generic placeholder token."""
         cleaned = str(slot_name or "").strip().lower()
         return cleaned in _PLACEHOLDER_SLOT_NAMES
+
+    @staticmethod
+    def _looks_meta_answer(text: str) -> bool:
+        """Return whether the model produced commentary instead of an answer span."""
+        cleaned = str(text or "").strip().lower()
+        if not cleaned:
+            return True
+        bad_markers = (
+            "cannot be answered",
+            "cannot be determined",
+            "cannot determine",
+            "not enough information",
+            "insufficient information",
+            "provided facts",
+            "given facts",
+            "do not provide enough",
+            "do not contain enough",
+            "unknown",
+            "not specified",
+            "the question",
+            "the facts",
+        )
+        return any(marker in cleaned for marker in bad_markers)
+
+    @staticmethod
+    def _best_fact_answer_span(facts: list[Fact]) -> str:
+        """Return the strongest extracted answer span currently in memory."""
+        candidates: list[tuple[float, int, int, str]] = []
+        for fact in facts:
+            answer_span = str(getattr(fact, "answer_span", "")).strip()
+            if not answer_span or Orchestrator._looks_meta_answer(answer_span):
+                continue
+            candidates.append(
+                (fact.confidence, fact.source_step, -len(answer_span), answer_span)
+            )
+        if not candidates:
+            return ""
+        candidates.sort(reverse=True)
+        return candidates[0][3]
 
     @staticmethod
     def _extract_plain_answer(text: str) -> str:

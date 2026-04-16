@@ -21,6 +21,7 @@ class AdaptiveRecursivePipeline:
 
     def __init__(self, config: Config) -> None:
         self.config = config
+        self.variant: str = str(config.get("variant", ""))
 
         llm_cfg = config.get("llm", {})
         self.llm_client = LLMClient(
@@ -93,7 +94,10 @@ class AdaptiveRecursivePipeline:
         elif self.ablation_upfront_decomposition:
             result = await self._run_upfront_decomposition(question, question_id)
         elif self.use_routed_controller:
-            result = await self._run_adaptive_m11(question, question_id)
+            if self.variant == "m1_1_iter26":
+                result = await self._run_routed_iter26(question, question_id)
+            else:
+                result = await self._run_adaptive_m11(question, question_id)
         else:
             result = await self._run_adaptive(question, question_id)
 
@@ -105,6 +109,103 @@ class AdaptiveRecursivePipeline:
             result.num_verify_calls,
             result.total_tokens,
         )
+        return result
+
+    async def _run_routed_iter26(self, question: str, question_id: str) -> PipelineResult:
+        """Route once, then use the simpler adaptive loop without answer escalation."""
+        target_profile = self._target_profile(question)
+        route, route_tokens = await self.orchestrator.route_with_usage(
+            question=question,
+            target_profile=target_profile,
+        )
+
+        if (
+            route["action"] == "direct_answer"
+            and route["confidence"] >= self.route_direct_threshold
+            and route["draft_answer"]
+        ):
+            return PipelineResult(
+                question_id=question_id,
+                question=question,
+                answer=route["draft_answer"],
+                step_trace=[
+                    StepTrace(
+                        step=0,
+                        action="route",
+                        tokens=route_tokens,
+                        route_decision=route["action"],
+                        route_confidence=route["confidence"],
+                        route_draft_answer=route["draft_answer"],
+                        metadata={
+                            "answer_type": route["answer_type"],
+                            "target_slot": route["target_slot"],
+                        },
+                    ),
+                    StepTrace(
+                        step=1,
+                        action="direct_answer",
+                        tokens=0,
+                        route_decision=route["action"],
+                        route_confidence=route["confidence"],
+                        route_draft_answer=route["draft_answer"],
+                    ),
+                ],
+                num_subagent_calls=0,
+                num_verify_calls=0,
+                total_tokens=route_tokens,
+                orchestrator_tokens=route_tokens,
+                subagent_tokens=0,
+                facts_used=[],
+                retrieved_doc_ids=[],
+                retrieved_docs_total=0,
+                evidence_capsule_limit=self.investigator.evidence_capsule_limit,
+                fact_memory_capacity=self.fact_memory_capacity,
+                duplicate_subquestion_count=0,
+                route_decision=route["action"],
+                route_confidence=route["confidence"],
+                route_draft_answer=route["draft_answer"],
+                slot_resolution={},
+                auto_verify_calls=0,
+                answer_rejection_count=0,
+            )
+
+        lane = (
+            route["action"]
+            if route["action"] in {"single_probe", "recurse"}
+            else "single_probe"
+        )
+        bootstrap_sub_question = route["sub_question"]
+        bootstrap_goal = route["goal"]
+        if lane == "recurse":
+            refine_decision, refine_tokens = await self.orchestrator.propose_spawn(
+                question=question,
+                facts=[],
+                trace=[],
+                target_profile=target_profile,
+                pending_slots=route.get("required_hops", []),
+                missing_reason=(
+                    "For recurse, propose only the first bridge fact question. "
+                    "Do not restate the full multi-hop question. "
+                    "Make the question answerable from one retrieval step."
+                ),
+            )
+            route_tokens += refine_tokens
+            bootstrap_sub_question = refine_decision["sub_question"]
+            bootstrap_goal = refine_decision["goal"]
+
+        result = await self._run_adaptive(
+            question,
+            question_id,
+            bootstrap_sub_question=bootstrap_sub_question,
+            bootstrap_goal=bootstrap_goal,
+            min_subagent_calls_before_answer=2 if lane == "recurse" else 1,
+            max_steps_override=1 if lane == "single_probe" else self.max_steps,
+        )
+        result.total_tokens += route_tokens
+        result.orchestrator_tokens += route_tokens
+        result.route_decision = route["action"]
+        result.route_confidence = route["confidence"]
+        result.route_draft_answer = route["draft_answer"]
         return result
 
     async def _run_s0(self, question: str, question_id: str) -> PipelineResult:
@@ -276,7 +377,7 @@ class AdaptiveRecursivePipeline:
         )
 
     async def _run_adaptive_m11(self, question: str, question_id: str) -> PipelineResult:
-        """M1.1: routed adaptive controller with escalation and auto-verify."""
+        """Legacy routed controller with slot state and answer escalation."""
         memory = FactMemory.with_strategy(
             capacity=self.fact_memory_capacity,
             strategy=self.fact_memory_strategy,
@@ -901,6 +1002,7 @@ class AdaptiveRecursivePipeline:
         bootstrap_sub_question: str | None = None,
         bootstrap_goal: str | None = None,
         min_subagent_calls_before_answer: int = 1,
+        max_steps_override: int | None = None,
     ) -> PipelineResult:
         """Default adaptive loop."""
         memory = FactMemory.with_strategy(
@@ -918,6 +1020,7 @@ class AdaptiveRecursivePipeline:
         duplicate_subquestion_count = 0
         retrieved_doc_ids: list[str] = []
         retrieved_docs_total = 0
+        max_steps = max_steps_override if max_steps_override is not None else self.max_steps
 
         bootstrap_sub_question = (bootstrap_sub_question or question).strip() or question
         bootstrap_goal = (
@@ -986,8 +1089,8 @@ class AdaptiveRecursivePipeline:
                 duplicate_subquestion_count=duplicate_subquestion_count,
             )
 
-        for step in range(1, self.max_steps + 1):
-            if self.ablation_force_spawn and step < self.max_steps:
+        for step in range(1, max_steps + 1):
+            if self.ablation_force_spawn and step < max_steps:
                 decision, decide_tokens = await self.orchestrator.propose_spawn(
                     question=question,
                     facts=memory.get_all(),
@@ -1009,7 +1112,7 @@ class AdaptiveRecursivePipeline:
             orchestrator_tokens += decide_tokens
 
             if self.ablation_no_verify and action == "verify":
-                if step < self.max_steps:
+                if step < max_steps:
                     decision, extra_tokens = await self.orchestrator.propose_spawn(
                         question=question,
                         facts=memory.get_all(),
@@ -1027,7 +1130,7 @@ class AdaptiveRecursivePipeline:
             logger.debug("Step %d: action=%s, decision=%s", step, action, decision)
 
             if action == "answer":
-                if subagent_calls < min_subagent_calls_before_answer and step < self.max_steps:
+                if subagent_calls < min_subagent_calls_before_answer and step < max_steps:
                     step_trace.append(
                         StepTrace(
                             step=step,
@@ -1063,15 +1166,11 @@ class AdaptiveRecursivePipeline:
                     step_trace[-1].metadata["forced_spawn_sub_question"] = decision["sub_question"]
                     step_trace[-1].metadata["forced_spawn_goal"] = decision["goal"]
                 else:
-                    (
-                        answer,
-                        answer_probe_tokens,
-                        answer_generation_tokens,
-                    ) = await self._finalize_answer(question, memory.get_all())
-                    total_tokens += answer_probe_tokens + answer_generation_tokens
-                    subagent_tokens += answer_probe_tokens
-                    subagent_calls += 1
-                    orchestrator_tokens += answer_generation_tokens
+                    answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
+                        question, memory.get_all(), target_profile
+                    )
+                    total_tokens += answer_tokens
+                    orchestrator_tokens += answer_tokens
                     step_trace.append(
                         StepTrace(
                             step=step,
@@ -1079,7 +1178,7 @@ class AdaptiveRecursivePipeline:
                             sub_question=None,
                             claim=None,
                             fact_added=False,
-                            tokens=decide_tokens + answer_probe_tokens + answer_generation_tokens,
+                            tokens=decide_tokens + answer_tokens,
                         )
                     )
                     break
@@ -1132,15 +1231,11 @@ class AdaptiveRecursivePipeline:
                         verify_count,
                         self.max_verify_calls,
                     )
-                    (
-                        answer,
-                        answer_probe_tokens,
-                        answer_generation_tokens,
-                    ) = await self._finalize_answer(question, memory.get_all())
-                    total_tokens += answer_probe_tokens + answer_generation_tokens
-                    subagent_tokens += answer_probe_tokens
-                    subagent_calls += 1
-                    orchestrator_tokens += answer_generation_tokens
+                    answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
+                        question, memory.get_all(), target_profile
+                    )
+                    total_tokens += answer_tokens
+                    orchestrator_tokens += answer_tokens
                     step_trace.append(
                         StepTrace(
                             step=step,
@@ -1148,7 +1243,7 @@ class AdaptiveRecursivePipeline:
                             sub_question=None,
                             claim=None,
                             fact_added=False,
-                            tokens=decide_tokens + answer_probe_tokens + answer_generation_tokens,
+                            tokens=decide_tokens + answer_tokens,
                         )
                     )
                     break
@@ -1174,15 +1269,11 @@ class AdaptiveRecursivePipeline:
                 continue
 
             logger.warning("Unknown action %r at step %d — forcing answer", action, step)
-            (
-                answer,
-                answer_probe_tokens,
-                answer_generation_tokens,
-            ) = await self._finalize_answer(question, memory.get_all())
-            total_tokens += answer_probe_tokens + answer_generation_tokens
-            subagent_tokens += answer_probe_tokens
-            subagent_calls += 1
-            orchestrator_tokens += answer_generation_tokens
+            answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
+                question, memory.get_all(), target_profile
+            )
+            total_tokens += answer_tokens
+            orchestrator_tokens += answer_tokens
             step_trace.append(
                 StepTrace(
                     step=step,
@@ -1190,29 +1281,25 @@ class AdaptiveRecursivePipeline:
                     sub_question=None,
                     claim=None,
                     fact_added=False,
-                    tokens=decide_tokens + answer_probe_tokens + answer_generation_tokens,
+                    tokens=decide_tokens + answer_tokens,
                 )
             )
             break
         else:
             logger.info("Step budget exhausted — forcing answer generation")
-            (
-                answer,
-                answer_probe_tokens,
-                answer_generation_tokens,
-            ) = await self._finalize_answer(question, memory.get_all())
-            total_tokens += answer_probe_tokens + answer_generation_tokens
-            subagent_tokens += answer_probe_tokens
-            subagent_calls += 1
-            orchestrator_tokens += answer_generation_tokens
+            answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
+                question, memory.get_all(), target_profile
+            )
+            total_tokens += answer_tokens
+            orchestrator_tokens += answer_tokens
             step_trace.append(
                 StepTrace(
-                    step=self.max_steps + 1,
+                    step=max_steps + 1,
                     action="answer",
                     sub_question=None,
                     claim=None,
                     fact_added=False,
-                    tokens=answer_probe_tokens + answer_generation_tokens,
+                    tokens=answer_tokens,
                 )
             )
 
@@ -1574,30 +1661,6 @@ class AdaptiveRecursivePipeline:
             "what date was",
         )
         return any(text.startswith(prefix) for prefix in bridge_prefixes)
-
-    async def _finalize_answer(
-        self,
-        question: str,
-        facts: list,
-    ) -> tuple[str, int, int]:
-        """Prefer a grounded retrieval-backed final answer before free synthesis."""
-        target_profile = self._target_profile(question)
-        answer_capsule, answer_probe_tokens = await self.investigator.investigate_with_usage(
-            sub_question=question,
-            goal=(
-                "Resolve the final answer to the original question using the known facts. "
-                "Return an answer only if the passages directly support it. "
-                f"{target_profile}"
-            ),
-            prior_facts=facts,
-        )
-        if self._capsule_supports_answer(answer_capsule, self.final_answer_threshold):
-            return answer_capsule.answer, answer_probe_tokens, 0
-
-        answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-            question, facts, target_profile
-        )
-        return answer, answer_probe_tokens, answer_tokens
 
     @staticmethod
     def _target_profile(question: str) -> str:
