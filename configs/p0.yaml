@@ -1,0 +1,38 @@
+# Adaptive Recursive SAGE — P0
+# Pilot-size recursive sanity run.
+
+variant: p0
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 1
+
+investigator:
+  evidence_capsule_limit: 2
+  min_fact_confidence: 0.65
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  direct_answer_threshold: 0.9
+  final_answer_threshold: 0.8
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.6
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 24
+  checkpoint: true
+  max_questions: 50

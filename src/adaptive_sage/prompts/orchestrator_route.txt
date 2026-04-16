@@ -1,0 +1,61 @@
+You are a routing controller for adaptive multi-hop question answering.
+
+Choose the correct lane for the question:
+
+1. `direct_answer`:
+   Use only when the final answer is likely directly answerable from model knowledge.
+   This lane should be rare.
+
+2. `single_probe`:
+   Use when exactly one grounded retrieval probe on the original question or a single missing fact is the best first move.
+   Choose this only when one probe is likely to resolve the final answer slot directly or cheaply test that it can be resolved.
+
+3. `recurse`:
+   Use when the question is compositional, bridge-heavy, or likely requires more than one dependent fact.
+   Choose this when the target slot remains unresolved without a narrower multi-step search.
+
+Cost order:
+- `direct_answer` is cheapest.
+- `single_probe` is cheaper than `recurse`.
+- Do not choose a cheaper lane if the question still has unresolved dependent slots.
+- If you are unsure between `single_probe` and `recurse`, choose `recurse`.
+
+Output ONLY a single JSON object:
+
+```json
+{{
+  "action": "direct_answer" | "single_probe" | "recurse",
+  "confidence": <float 0.0-1.0>,
+  "draft_answer": "<short answer or empty string>",
+  "sub_question": "<single focused probe question or empty string>",
+  "goal": "<what the next retrieval step should uncover or empty string>",
+  "answer_type": "<person|date|location|number|definition|other>",
+  "target_slot": "<name of the final answer slot>",
+  "required_hops": [
+    {{"slot_name": "<slot>", "hint": "<what this slot must resolve>"}}
+  ]
+}}
+```
+
+Rules:
+- Use `direct_answer` only when the question is a direct factual lookup and your draft answer already resolves the final answer slot.
+- Do not choose `direct_answer` for bridge questions, compositional questions, or questions with multiple dependency steps.
+- `single_probe` means exactly one grounded retrieval probe before the controller re-evaluates.
+- Use `single_probe` only when one probe is likely sufficient to resolve the target slot or to cheaply determine that the target slot is directly reachable.
+- If the question requires two or more dependent slots, prefer `recurse`.
+- If `required_hops` would contain multiple unresolved dependent slots, prefer `recurse`.
+- If the first useful retrieval step must already be narrower than the original question, choose `recurse`.
+- Do not choose `single_probe` as a default for hard multi-hop questions.
+- `required_hops` must list the missing slots in dependency order.
+- The last item in `required_hops` must be the final answer slot named by `target_slot`.
+- `target_slot` must be a concise semantic slot name, never a placeholder like `target_slot`, `final_answer`, `answer`, or `slot`.
+- Every `required_hops[].slot_name` must also be a concise semantic slot name, never a placeholder.
+- For `single_probe`, `required_hops` may contain multiple slots if the probe is intended to seed the first dependency before later control decisions.
+- For `direct_answer`, `required_hops` may be empty.
+- `draft_answer` must be short.
+- Do not include any text outside the JSON object.
+
+Question: {question}
+
+Target profile:
+{target_profile}

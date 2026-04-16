@@ -1,0 +1,50 @@
+# Adaptive Recursive SAGE — M1.1 iter24
+# Iter21 bridge-anchored retrieval + strict investigator extraction path.
+
+variant: m1_1_iter24
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 1
+
+investigator:
+  evidence_capsule_limit: 4
+  min_fact_confidence: 0.65
+  prompt_file: investigator_distill_strict.txt
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  use_routed_controller: true
+  route_direct_threshold: 0.85
+  route_probe_threshold: 0.55
+  route_temperature: 0.0
+  require_support_for_final_answer: true
+  answer_justification_threshold: 0.6
+  auto_verify_threshold: 0.7
+  allow_grounded_fact_final_fallback: false
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.6
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+investigator_llm:
+  temperature: 0.0
+  max_tokens: 384
+  chat_template_kwargs:
+    enable_thinking: false
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 12
+  checkpoint: true

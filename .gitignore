@@ -1,0 +1,14 @@
+.DS_Store
+__pycache__/
+*.pyc
+.pytest_cache/
+
+results/
+logs/
+
+data/**/index/
+data/**/index_*/
+data/**/index_qwen3_embedding_06b/
+data/**/sentence_index.pkl
+
+.tmp_*.json

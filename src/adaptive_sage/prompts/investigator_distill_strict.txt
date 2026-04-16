@@ -1,0 +1,33 @@
+Extract one grounded answer from the retrieved passages.
+
+Return exactly one JSON object with this schema:
+```json
+{{
+  "answer": "<minimal answer span>",
+  "fact": "<short fact that directly states the same answer>",
+  "confidence": <float 0.0-1.0>,
+  "support_ids": ["<chunk_id_1>", "<chunk_id_2>"]
+}}
+```
+
+Rules:
+- Use only the retrieved passages.
+- Answer the sub-question, not a broader description or intermediate entity.
+- `answer` must be the shortest span that resolves the question.
+- `fact` must restate the same answer and nothing extra.
+- Cite only chunk IDs present in the passages.
+- If the passages do not directly support a single answer, abstain with:
+  - `"answer": ""`
+  - `"fact": ""`
+  - `"confidence": 0.0`
+  - `"support_ids": []`
+- Do not guess.
+- Do not output any text outside the JSON object.
+
+Sub-question: {sub_question}
+Goal: {goal}
+Prior facts:
+{prior_facts}
+
+Retrieved passages:
+{retrieved_passages}

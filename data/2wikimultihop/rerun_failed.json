@@ -1,0 +1,217 @@
+[
+  {
+    "id": "dfb1d2c8085611ebbd59ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born first, Sins Of Madeleine or Captain Apache?",
+    "answer": "Sins Of Madeleine",
+    "evidence": [
+      [
+        "Sins of Madeleine",
+        "director",
+        "Henri Lepage"
+      ],
+      [
+        "Captain Apache",
+        "director",
+        "Alexander Singer"
+      ],
+      [
+        "Henri Lepage (director)",
+        "date of birth",
+        "12 February 1898"
+      ],
+      [
+        "Alexander Singer",
+        "date of birth",
+        "18 April 1928"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Sins of Madeleine",
+        "director",
+        "Henri Lepage"
+      ],
+      [
+        "Captain Apache",
+        "director",
+        "Alexander Singer"
+      ],
+      [
+        "Henri Lepage (director)",
+        "date of birth",
+        "12 February 1898"
+      ],
+      [
+        "Alexander Singer",
+        "date of birth",
+        "18 April 1928"
+      ]
+    ],
+    "source": "2wikimultihopqa"
+  },
+  {
+    "id": "498dc8a2089111ebbd72ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died later, Dahleez or The Lights Of Buenos Aires?",
+    "answer": "Dahleez",
+    "evidence": [
+      [
+        "Dahleez",
+        "director",
+        "Ravi Chopra"
+      ],
+      [
+        "The Lights of Buenos Aires",
+        "director",
+        "Adelqui Millar"
+      ],
+      [
+        "Ravi Chopra",
+        "date of death",
+        "12 November 2014"
+      ],
+      [
+        "Adelqui Migliar",
+        "date of death",
+        "6 August 1956"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Dahleez",
+        "director",
+        "Ravi Chopra"
+      ],
+      [
+        "The Lights of Buenos Aires",
+        "director",
+        "Adelqui Millar"
+      ],
+      [
+        "Ravi Chopra",
+        "date of death",
+        "12 November 2014"
+      ],
+      [
+        "Adelqui Migliar",
+        "date of death",
+        "6 August 1956"
+      ]
+    ],
+    "source": "2wikimultihopqa"
+  },
+  {
+    "id": "ad193b1808b411ebbd88ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who died earlier, Max And Helen or Held Einer Nacht?",
+    "answer": "Held Einer Nacht",
+    "evidence": [
+      [
+        "Max and Helen",
+        "director",
+        "Philip Saville"
+      ],
+      [
+        "Held einer Nacht",
+        "director",
+        "Martin Fri\u010d"
+      ],
+      [
+        "Philip Saville",
+        "date of death",
+        "22 December 2016"
+      ],
+      [
+        "Martin Fri\u010d",
+        "date of death",
+        "26 August 1968"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Max and Helen",
+        "director",
+        "Philip Saville"
+      ],
+      [
+        "Held einer Nacht",
+        "director",
+        "Martin Fri\u010d"
+      ],
+      [
+        "Philip Saville",
+        "date of death",
+        "22 December 2016"
+      ],
+      [
+        "Martin Fri\u010d",
+        "date of death",
+        "26 August 1968"
+      ]
+    ],
+    "source": "2wikimultihopqa"
+  },
+  {
+    "id": "2152e80a0bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Who is the mother of the director of film Student Of The Year?",
+    "answer": "Hiroo Johar",
+    "evidence": [
+      [
+        "Student of the Year",
+        "director",
+        "Karan Johar"
+      ],
+      [
+        "Karan Johar",
+        "mother",
+        "Hiroo Johar"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Student of the Year",
+        "director",
+        "Karan Johar"
+      ],
+      [
+        "Karan Johar",
+        "mother",
+        "Hiroo Johar"
+      ]
+    ],
+    "source": "2wikimultihopqa"
+  },
+  {
+    "id": "285016800bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Who is the spouse of the director of film The Unholy Wife?",
+    "answer": "Maureen O'Sullivan",
+    "evidence": [
+      [
+        "The Unholy Wife",
+        "director",
+        "John Farrow"
+      ],
+      [
+        "John Farrow",
+        "spouse",
+        "Maureen O'Sullivan"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Unholy Wife",
+        "director",
+        "John Farrow"
+      ],
+      [
+        "John Farrow",
+        "spouse",
+        "Maureen O'Sullivan"
+      ]
+    ],
+    "source": "2wikimultihopqa"
+  }
+]
