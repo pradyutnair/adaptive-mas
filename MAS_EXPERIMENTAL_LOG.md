@@ -246,6 +246,45 @@ Comparison snapshot:
 - Much cheaper and far more complete than `iter16_1000`, but still behind it on raw EM/F1/contain.
 - Still well below `A1_1000` on raw quality, but at roughly one-third the token cost.
 
+## 2026-04-16 22:35 CEST
+
+Thinking-ablation and Pareto checkpoint:
+
+`S0_no_think` on seeded `1000q`:
+
+- `EM 0.130`
+- `F1 0.2412`
+- `contain 0.182`
+- `answered 1000/1000`
+- `avg_tokens 11.3k`
+
+Interpretation:
+
+- no-thinking fixes the severe completion problem in `S0`
+- but raw quality drops versus the original thinking-enabled `S0`
+
+`iter27_think` on seeded `1000q`:
+
+- `EM 0.276`
+- `F1 0.3791`
+- `contain 0.363`
+- `answered 928/1000`
+- `avg_subagents 2.81`
+- `avg_verify 0.04`
+- `avg_tokens 60.2k`
+
+Pareto comparison against frozen `iter16_1000`:
+
+- `iter16_1000`: `EM 0.284`, `F1 0.3698`, `contain 0.334`, `answered 573/1000`, `avg_tokens 63.0k`
+- `iter27_think`: `EM 0.276`, `F1 0.3791`, `contain 0.363`, `answered 928/1000`, `avg_tokens 60.2k`
+
+Outcome:
+
+- `iter27_think` is the current headline result
+- it beats `iter16_1000` on the primary metric (`contain`) at lower token cost
+- it also substantially improves answer coverage
+- this is the current EMNLP figure candidate to preserve before further experimentation
+
 - The structural fix is behaving exactly as intended on the prefix.
 - Unresolved pending slots are no longer burning budget through answer→reject loops.
 - Need a larger prefix before trusting EM, but this is the cleanest controller behavior yet.
