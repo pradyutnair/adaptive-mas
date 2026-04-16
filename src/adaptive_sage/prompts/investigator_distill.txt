@@ -26,7 +26,7 @@ You MUST output a single JSON object with exactly these keys:
 
 ```json
 {{
-  "answer": "<concise answer to the sub-question>",
+  "answer_span": "<concise answer to the sub-question>",
   "fact": "<one-sentence factual statement>",
   "confidence": <float between 0.0 and 1.0>,
   "support_ids": ["<chunk_id_1>", "<chunk_id_2>"]
@@ -35,7 +35,7 @@ You MUST output a single JSON object with exactly these keys:
 
 ## Rules
 
-- The answer should be short and direct (a name, date, place, or brief phrase).
+- The answer_span should be short and direct (a name, date, place, or brief phrase).
 - The fact should be a self-contained declarative sentence.
 - confidence reflects how clearly the evidence supports the answer:
   - 0.9-1.0: Evidence directly and unambiguously states the answer
@@ -43,7 +43,7 @@ You MUST output a single JSON object with exactly these keys:
   - 0.4-0.7: Evidence partially supports; answer is plausible but uncertain
   - Below 0.4: Evidence is weak or contradictory
 - support_ids lists the chunk IDs that provide the strongest evidence (max {capsule_limit}).
-- If the passages contain NO relevant information, set answer and fact to empty strings and confidence to 0.0.
+- If the passages contain NO relevant information, set answer_span and fact to empty strings and confidence to 0.0.
 - Do NOT guess beyond what the evidence supports.
 - Prefer the minimal canonical answer span stated in the evidence.
 - Do NOT include any text outside the JSON object.

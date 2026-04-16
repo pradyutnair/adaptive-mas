@@ -32,7 +32,7 @@ Output ONLY a single JSON object:
   "answer_type": "<person|date|location|number|definition|other>",
   "target_slot": "<name of the final answer slot>",
   "required_hops": [
-    {{"slot_name": "<slot>", "hint": "<what this slot must resolve>"}}
+    {{"slot_name": "<slot>", "hint": "<what this slot must resolve>", "dependency_group": <integer group id>}}
   ]
 }}
 ```
@@ -47,6 +47,9 @@ Rules:
 - If the first useful retrieval step must already be narrower than the original question, choose `recurse`.
 - Do not choose `single_probe` as a default for hard multi-hop questions.
 - `required_hops` must list the missing slots in dependency order.
+- `dependency_group` specifies which slots can be retrieved in parallel once earlier groups are resolved.
+- Slots in the same `dependency_group` must be independent of each other.
+- Use group `0` for the earliest ready slots, `1` for slots that depend on group `0`, and so on.
 - The last item in `required_hops` must be the final answer slot named by `target_slot`.
 - `target_slot` must be a concise semantic slot name, never a placeholder like `target_slot`, `final_answer`, `answer`, or `slot`.
 - Every `required_hops[].slot_name` must also be a concise semantic slot name, never a placeholder.

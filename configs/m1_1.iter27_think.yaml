@@ -1,7 +1,7 @@
-# Adaptive Recursive SAGE — M1.1 iter26
-# Routed controller, simpler adaptive loop, bridge-grounded prompts, no final answer probe.
+# Adaptive Recursive SAGE — M1.1 iter27 think
+# Same controller as iter27 no-think, but with thinking enabled.
 
-variant: m1_1_iter26
+variant: m1_1_iter27_think
 
 orchestrator:
   max_steps: 4
@@ -11,6 +11,7 @@ investigator:
   evidence_capsule_limit: 4
   search_top_k: 5
   min_fact_confidence: 0.50
+  use_strict_distill: true
 
 fact_memory:
   capacity: 4
@@ -20,6 +21,7 @@ adaptive:
   use_routed_controller: true
   enable_parallel_independent_hops: true
   max_parallel_hops: 2
+  refine_budget_per_slot: 1
   route_direct_threshold: 0.85
   route_probe_threshold: 0.55
   require_support_for_final_answer: true

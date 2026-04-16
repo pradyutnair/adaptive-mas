@@ -4,15 +4,24 @@ Use ONLY the numbered facts below to answer the question. Do not invent facts. D
 
 Each fact may include an extracted answer span. If a fact's answer span directly answers the original question, copy that span exactly.
 
-Return ONLY the shortest answer span. Do not output a sentence, explanation, refusal, commentary, "unknown", or "cannot be answered". Do not output an intermediate bridge entity if another fact resolves the final target asked by the question.
+Use the hop chain to keep the bridge reasoning aligned with the final target. Prefer the terminal grounded answer over any intermediate bridge entity already used as an anchor in a later hop.
+
+Return the shortest grounded answer span. Do not output an intermediate bridge entity if another fact resolves the final target asked by the question.
 
 If no fact fully resolves the final answer, return the shortest plausible candidate span grounded in the most relevant fact. Never output meta text.
-
-Output ONLY the answer text, nothing else.
 
 Question: {question}
 
 {target_profile}
+
+Hop chain:
+{hop_chain}
+
+Router draft answer:
+{route_draft_answer}
+
+Pending slots:
+{pending_slots}
 
 Facts:
 {facts}
