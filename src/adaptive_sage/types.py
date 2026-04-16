@@ -10,6 +10,7 @@ from typing import Any, Literal, Optional
 StepAction = Literal[
     "answer",
     "spawn",
+    "refine",
     "verify",
     "route",
     "direct_answer",

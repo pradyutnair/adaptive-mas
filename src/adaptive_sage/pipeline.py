@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from typing import Any
 
@@ -72,6 +73,15 @@ class AdaptiveRecursivePipeline:
         self.enable_bootstrap_short_circuit: bool = bool(
             config.get("adaptive.enable_bootstrap_short_circuit", False)
         )
+        self.enable_parallel_independent_hops: bool = bool(
+            config.get("adaptive.enable_parallel_independent_hops", True)
+        )
+        self.max_parallel_hops: int = int(
+            config.get("adaptive.max_parallel_hops", 2)
+        )
+        self.refine_budget_per_slot: int = int(
+            config.get("adaptive.refine_budget_per_slot", 1)
+        )
         self.min_fact_confidence: float = float(
             config.get("investigator.min_fact_confidence", 0.6)
         )
@@ -94,10 +104,7 @@ class AdaptiveRecursivePipeline:
         elif self.ablation_upfront_decomposition:
             result = await self._run_upfront_decomposition(question, question_id)
         elif self.use_routed_controller:
-            if self.variant == "m1_1_iter26":
-                result = await self._run_routed_iter26(question, question_id)
-            else:
-                result = await self._run_adaptive_m11(question, question_id)
+            result = await self._run_adaptive_m11(question, question_id)
         else:
             result = await self._run_adaptive(question, question_id)
 
@@ -112,101 +119,8 @@ class AdaptiveRecursivePipeline:
         return result
 
     async def _run_routed_iter26(self, question: str, question_id: str) -> PipelineResult:
-        """Route once, then use the simpler adaptive loop without answer escalation."""
-        target_profile = self._target_profile(question)
-        route, route_tokens = await self.orchestrator.route_with_usage(
-            question=question,
-            target_profile=target_profile,
-        )
-
-        if (
-            route["action"] == "direct_answer"
-            and route["confidence"] >= self.route_direct_threshold
-            and route["draft_answer"]
-        ):
-            return PipelineResult(
-                question_id=question_id,
-                question=question,
-                answer=route["draft_answer"],
-                step_trace=[
-                    StepTrace(
-                        step=0,
-                        action="route",
-                        tokens=route_tokens,
-                        route_decision=route["action"],
-                        route_confidence=route["confidence"],
-                        route_draft_answer=route["draft_answer"],
-                        metadata={
-                            "answer_type": route["answer_type"],
-                            "target_slot": route["target_slot"],
-                        },
-                    ),
-                    StepTrace(
-                        step=1,
-                        action="direct_answer",
-                        tokens=0,
-                        route_decision=route["action"],
-                        route_confidence=route["confidence"],
-                        route_draft_answer=route["draft_answer"],
-                    ),
-                ],
-                num_subagent_calls=0,
-                num_verify_calls=0,
-                total_tokens=route_tokens,
-                orchestrator_tokens=route_tokens,
-                subagent_tokens=0,
-                facts_used=[],
-                retrieved_doc_ids=[],
-                retrieved_docs_total=0,
-                evidence_capsule_limit=self.investigator.evidence_capsule_limit,
-                fact_memory_capacity=self.fact_memory_capacity,
-                duplicate_subquestion_count=0,
-                route_decision=route["action"],
-                route_confidence=route["confidence"],
-                route_draft_answer=route["draft_answer"],
-                slot_resolution={},
-                auto_verify_calls=0,
-                answer_rejection_count=0,
-            )
-
-        lane = (
-            route["action"]
-            if route["action"] in {"single_probe", "recurse"}
-            else "single_probe"
-        )
-        bootstrap_sub_question = route["sub_question"]
-        bootstrap_goal = route["goal"]
-        if lane == "recurse":
-            refine_decision, refine_tokens = await self.orchestrator.propose_spawn(
-                question=question,
-                facts=[],
-                trace=[],
-                target_profile=target_profile,
-                pending_slots=route.get("required_hops", []),
-                missing_reason=(
-                    "For recurse, propose only the first bridge fact question. "
-                    "Do not restate the full multi-hop question. "
-                    "Make the question answerable from one retrieval step."
-                ),
-            )
-            route_tokens += refine_tokens
-            bootstrap_sub_question = refine_decision["sub_question"]
-            bootstrap_goal = refine_decision["goal"]
-
-        result = await self._run_adaptive(
-            question,
-            question_id,
-            bootstrap_sub_question=bootstrap_sub_question,
-            bootstrap_goal=bootstrap_goal,
-            min_subagent_calls_before_answer=2 if lane == "recurse" else 1,
-            max_steps_override=1 if lane == "single_probe" else self.max_steps,
-        )
-        result.total_tokens += route_tokens
-        result.orchestrator_tokens += route_tokens
-        result.route_decision = route["action"]
-        result.route_confidence = route["confidence"]
-        result.route_draft_answer = route["draft_answer"]
-        return result
+        """Backward-compatible entrypoint for iter26."""
+        return await self._run_adaptive_m11(question, question_id)
 
     async def _run_s0(self, question: str, question_id: str) -> PipelineResult:
         """S0 mode: one retrieval pass, then answer."""
@@ -248,8 +162,12 @@ class AdaptiveRecursivePipeline:
         )
 
         answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-            question, memory.get_all(), target_profile
+            question,
+            memory.get_all(),
+            target_profile,
+            trace=step_trace,
         )
+        answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
         total_tokens += answer_tokens
         orchestrator_tokens += answer_tokens
         step_trace.append(
@@ -343,8 +261,12 @@ class AdaptiveRecursivePipeline:
                 verify_count += 1
 
         answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-            question, memory.get_all(), target_profile
+            question,
+            memory.get_all(),
+            target_profile,
+            trace=step_trace,
         )
+        answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
         total_tokens += answer_tokens
         orchestrator_tokens += answer_tokens
         step_trace.append(
@@ -392,6 +314,7 @@ class AdaptiveRecursivePipeline:
         auto_verify_calls = 0
         answer_rejection_count = 0
         duplicate_subquestion_count = 0
+        refine_count_by_slot: dict[str, int] = {}
         retrieved_doc_ids: list[str] = []
         retrieved_docs_total = 0
         answer = ""
@@ -541,9 +464,9 @@ class AdaptiveRecursivePipeline:
                     route_decision=route["action"],
                     route_confidence=route["confidence"],
                     route_draft_answer=route["draft_answer"],
-                    metadata={"goal": initial_goal},
+                        metadata={"goal": initial_goal},
+                    )
                 )
-            )
             (
                 verify_tokens,
                 verify_delta,
@@ -571,6 +494,13 @@ class AdaptiveRecursivePipeline:
                     facts=memory.get_all(),
                     target_profile=target_profile,
                     pending_slots=pending_slots,
+                    trace=step_trace,
+                    route_draft_answer=route["draft_answer"],
+                )
+                answer_obj = self._apply_answer_object_fallback(
+                    answer_obj,
+                    memory.get_all(),
+                    route["draft_answer"],
                 )
                 total_tokens += answer_tokens
                 orchestrator_tokens += answer_tokens
@@ -587,6 +517,7 @@ class AdaptiveRecursivePipeline:
                             metadata={
                                 "justification": answer_obj["justification"],
                                 "missing_slot": answer_obj["missing_slot"],
+                                "fallback_source": answer_obj.get("fallback_source", ""),
                             },
                         )
                     )
@@ -626,12 +557,42 @@ class AdaptiveRecursivePipeline:
                                 "justification": answer_obj["justification"],
                                 "missing_slot": answer_obj["missing_slot"],
                                 "route_lane": route["action"],
+                                "fallback_source": answer_obj.get("fallback_source", ""),
                             },
                         )
                     )
 
         for step in range(next_step, self.max_steps + 1):
             pending_slots = self._pending_slots(slot_state)
+            ready_parallel_slots = self._parallel_ready_slots(slot_state)
+            if (
+                self.enable_parallel_independent_hops
+                and len(ready_parallel_slots) > 1
+                and step < self.max_steps
+            ):
+                parallel_result = await self._run_parallel_slot_batch(
+                    question=question,
+                    step=step,
+                    route=route,
+                    target_profile=target_profile,
+                    memory=memory,
+                    slot_state=slot_state,
+                    step_trace=step_trace,
+                )
+                total_tokens += parallel_result["total_tokens"]
+                orchestrator_tokens += parallel_result["orchestrator_tokens"]
+                subagent_tokens += parallel_result["subagent_tokens"]
+                subagent_calls += parallel_result["subagent_calls"]
+                verify_count += parallel_result["verify_count"]
+                auto_verify_calls += parallel_result["auto_verify_calls"]
+                duplicate_subquestion_count += parallel_result["duplicate_subquestion_count"]
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_ids(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    parallel_result["retrieved_doc_ids"],
+                    parallel_result["retrieved_docs_total"],
+                )
+                continue
             if self.ablation_force_spawn and step < self.max_steps:
                 decision, decide_tokens = await self.orchestrator.propose_spawn(
                     question=question,
@@ -686,6 +647,13 @@ class AdaptiveRecursivePipeline:
                         facts=memory.get_all(),
                         target_profile=target_profile,
                         pending_slots=pending_slots,
+                        trace=step_trace,
+                        route_draft_answer=route["draft_answer"],
+                    )
+                    answer_obj = self._apply_answer_object_fallback(
+                        answer_obj,
+                        memory.get_all(),
+                        route["draft_answer"],
                     )
                     total_tokens += answer_tokens
                     orchestrator_tokens += answer_tokens
@@ -702,6 +670,7 @@ class AdaptiveRecursivePipeline:
                                 metadata={
                                     "justification": answer_obj["justification"],
                                     "missing_slot": answer_obj["missing_slot"],
+                                    "fallback_source": answer_obj.get("fallback_source", ""),
                                 },
                             )
                         )
@@ -734,6 +703,7 @@ class AdaptiveRecursivePipeline:
                                     "justification": answer_obj["justification"],
                                     "missing_slot": answer_obj["missing_slot"],
                                     "recovery_mode": "final_targeted_probe",
+                                    "fallback_source": answer_obj.get("fallback_source", ""),
                                 },
                             )
                         )
@@ -820,6 +790,13 @@ class AdaptiveRecursivePipeline:
                             facts=memory.get_all(),
                             target_profile=target_profile,
                             pending_slots=final_pending_slots,
+                            trace=step_trace,
+                            route_draft_answer=route["draft_answer"],
+                        )
+                        final_answer_obj = self._apply_answer_object_fallback(
+                            final_answer_obj,
+                            memory.get_all(),
+                            route["draft_answer"],
                         )
                         total_tokens += final_answer_tokens
                         orchestrator_tokens += final_answer_tokens
@@ -835,6 +812,7 @@ class AdaptiveRecursivePipeline:
                                     "justification": final_answer_obj["justification"],
                                     "missing_slot": final_answer_obj["missing_slot"],
                                     "recovery_mode": "final_targeted_probe",
+                                    "fallback_source": final_answer_obj.get("fallback_source", ""),
                                 },
                             )
                         )
@@ -851,6 +829,7 @@ class AdaptiveRecursivePipeline:
                                 metadata={
                                     "justification": answer_obj["justification"],
                                     "missing_slot": answer_obj["missing_slot"],
+                                    "fallback_source": answer_obj.get("fallback_source", ""),
                                 },
                             )
                         )
@@ -900,6 +879,15 @@ class AdaptiveRecursivePipeline:
                         metadata={
                             "goal": goal,
                             "retrieval_query": retrieval_query or sub_question,
+                            "echo_detected_llm_call": bool(
+                                decision.get("echo_detected_llm_call", False)
+                            ),
+                            "echo_still_present_after_refine": bool(
+                                decision.get("echo_still_present_after_refine", False)
+                            ),
+                            "echo_repaired_count": int(
+                                decision.get("echo_repaired_count", 0)
+                            ),
                         },
                     )
                 )
@@ -923,12 +911,78 @@ class AdaptiveRecursivePipeline:
                 auto_verify_calls += auto_verify_delta
                 continue
 
+            if action == "refine":
+                slot_name = decision.get("slot_name") or self._first_pending_slot(slot_state)
+                if refine_count_by_slot.get(slot_name, 0) >= self.refine_budget_per_slot:
+                    continue
+                refine_count_by_slot[slot_name] = refine_count_by_slot.get(slot_name, 0) + 1
+                sub_question = decision["sub_question"]
+                retrieval_query = str(decision.get("retrieval_query", "")).strip()
+                goal = decision["goal"]
+                duplicate_subquestion_count += int(
+                    self._is_duplicate_subquestion(sub_question, step_trace)
+                )
+                capsule, investigate_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=sub_question,
+                    goal=goal,
+                    prior_facts=memory.get_all(),
+                    retrieval_query=retrieval_query or None,
+                    slot_name=slot_name,
+                )
+                total_tokens += investigate_tokens
+                subagent_tokens += investigate_tokens
+                subagent_calls += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    capsule,
+                )
+                fact_added = self._replace_fact(
+                    memory,
+                    capsule,
+                    step=step,
+                    slot_name=slot_name,
+                )
+                self._update_slot_resolution(slot_state, slot_name, capsule)
+                step_trace.append(
+                    StepTrace(
+                        step=step,
+                        action="refine",
+                        sub_question=sub_question,
+                        fact_added=fact_added,
+                        tokens=decide_tokens + investigate_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "goal": goal,
+                            "retrieval_query": retrieval_query or sub_question,
+                            "refine_count": refine_count_by_slot[slot_name],
+                            "echo_detected_llm_call": bool(
+                                decision.get("echo_detected_llm_call", False)
+                            ),
+                            "echo_still_present_after_refine": bool(
+                                decision.get("echo_still_present_after_refine", False)
+                            ),
+                            "echo_repaired_count": int(
+                                decision.get("echo_repaired_count", 0)
+                            ),
+                        },
+                    )
+                )
+                continue
+
             logger.warning("Unknown action %r at step %d — forcing answer", action, step)
             answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
                 question=question,
                 facts=memory.get_all(),
                 target_profile=target_profile,
                 pending_slots=self._pending_slots(slot_state),
+                trace=step_trace,
+                route_draft_answer=route["draft_answer"],
+            )
+            answer_obj = self._apply_answer_object_fallback(
+                answer_obj,
+                memory.get_all(),
+                route["draft_answer"],
             )
             total_tokens += answer_tokens
             orchestrator_tokens += answer_tokens
@@ -943,6 +997,7 @@ class AdaptiveRecursivePipeline:
                     metadata={
                         "justification": answer_obj["justification"],
                         "missing_slot": answer_obj["missing_slot"],
+                        "fallback_source": answer_obj.get("fallback_source", ""),
                     },
                 )
             )
@@ -953,6 +1008,13 @@ class AdaptiveRecursivePipeline:
                 facts=memory.get_all(),
                 target_profile=target_profile,
                 pending_slots=self._pending_slots(slot_state),
+                trace=step_trace,
+                route_draft_answer=route["draft_answer"],
+            )
+            answer_obj = self._apply_answer_object_fallback(
+                answer_obj,
+                memory.get_all(),
+                route["draft_answer"],
             )
             total_tokens += answer_tokens
             orchestrator_tokens += answer_tokens
@@ -967,6 +1029,7 @@ class AdaptiveRecursivePipeline:
                     metadata={
                         "justification": answer_obj["justification"],
                         "missing_slot": answer_obj["missing_slot"],
+                        "fallback_source": answer_obj.get("fallback_source", ""),
                     },
                 )
             )
@@ -1167,8 +1230,12 @@ class AdaptiveRecursivePipeline:
                     step_trace[-1].metadata["forced_spawn_goal"] = decision["goal"]
                 else:
                     answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-                        question, memory.get_all(), target_profile
+                        question,
+                        memory.get_all(),
+                        target_profile,
+                        trace=step_trace,
                     )
+                    answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
                     total_tokens += answer_tokens
                     orchestrator_tokens += answer_tokens
                     step_trace.append(
@@ -1232,8 +1299,12 @@ class AdaptiveRecursivePipeline:
                         self.max_verify_calls,
                     )
                     answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-                        question, memory.get_all(), target_profile
+                        question,
+                        memory.get_all(),
+                        target_profile,
+                        trace=step_trace,
                     )
+                    answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
                     total_tokens += answer_tokens
                     orchestrator_tokens += answer_tokens
                     step_trace.append(
@@ -1270,8 +1341,12 @@ class AdaptiveRecursivePipeline:
 
             logger.warning("Unknown action %r at step %d — forcing answer", action, step)
             answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-                question, memory.get_all(), target_profile
+                question,
+                memory.get_all(),
+                target_profile,
+                trace=step_trace,
             )
+            answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
             total_tokens += answer_tokens
             orchestrator_tokens += answer_tokens
             step_trace.append(
@@ -1288,8 +1363,12 @@ class AdaptiveRecursivePipeline:
         else:
             logger.info("Step budget exhausted — forcing answer generation")
             answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
-                question, memory.get_all(), target_profile
+                question,
+                memory.get_all(),
+                target_profile,
+                trace=step_trace,
             )
+            answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
             total_tokens += answer_tokens
             orchestrator_tokens += answer_tokens
             step_trace.append(
@@ -1337,6 +1416,21 @@ class AdaptiveRecursivePipeline:
         return True
 
     @staticmethod
+    def _replace_fact(
+        memory: FactMemory,
+        capsule: EvidenceCapsule,
+        step: int,
+        slot_name: str = "",
+    ) -> bool:
+        """Replace the slot fact during refinement, else append."""
+        if not capsule.fact.text:
+            return False
+        capsule.fact.source_step = step
+        capsule.fact.slot_name = slot_name
+        memory.replace(slot_name, capsule.fact)
+        return True
+
+    @staticmethod
     def _build_evidence_from_facts(facts: list) -> str:
         """Format current facts for claim verification."""
         evidence_parts: list[str] = []
@@ -1356,13 +1450,23 @@ class AdaptiveRecursivePipeline:
         """Initialise slot state from the router output."""
         slot_state: list[dict[str, Any]] = []
         raw_slots = route.get("required_hops", []) or []
-        for item in raw_slots:
+        for idx, item in enumerate(raw_slots):
             slot_name = str(item.get("slot_name", "")).strip()
             hint = str(item.get("hint", "")).strip()
             if not slot_name:
                 continue
+            dependency_group = item.get("dependency_group", idx)
+            try:
+                dependency_group = max(0, int(dependency_group))
+            except (TypeError, ValueError):
+                dependency_group = idx
             slot_state.append(
-                {"slot_name": slot_name, "hint": hint, "resolved": False}
+                {
+                    "slot_name": slot_name,
+                    "hint": hint,
+                    "resolved": False,
+                    "dependency_group": dependency_group,
+                }
             )
         if not slot_state:
             slot_state.append(
@@ -1371,6 +1475,7 @@ class AdaptiveRecursivePipeline:
                     or "final_answer",
                     "hint": target_profile,
                     "resolved": False,
+                    "dependency_group": 0,
                 }
             )
         return slot_state
@@ -1383,6 +1488,7 @@ class AdaptiveRecursivePipeline:
                 "slot_name": str(slot.get("slot_name", "")),
                 "hint": str(slot.get("hint", "")),
                 "resolved": bool(slot.get("resolved", False)),
+                "dependency_group": int(slot.get("dependency_group", 0)),
             }
             for slot in slot_state
         ]
@@ -1395,6 +1501,7 @@ class AdaptiveRecursivePipeline:
                 "slot_name": str(slot.get("slot_name", "")),
                 "hint": str(slot.get("hint", "")),
                 "resolved": bool(slot.get("resolved", False)),
+                "dependency_group": int(slot.get("dependency_group", 0)),
             }
             for slot in slot_state
             if not slot.get("resolved", False)
@@ -1462,6 +1569,219 @@ class AdaptiveRecursivePipeline:
             return False
         pending_slot = str(pending_slots[0].get("slot_name", "")).strip()
         return bool(pending_slot and missing_slot == pending_slot)
+
+    @staticmethod
+    def _best_fact_answer_with_index(facts: list) -> tuple[int | None, str, float]:
+        """Return the strongest grounded answer span in fact memory."""
+        candidates: list[tuple[float, int, int, int, str]] = []
+        for idx, fact in enumerate(facts, start=1):
+            answer_span = str(getattr(fact, "answer_span", "")).strip()
+            if not answer_span or Orchestrator._looks_meta_answer(answer_span):
+                continue
+            candidates.append(
+                (fact.confidence, fact.source_step, -len(answer_span), idx, answer_span)
+            )
+        if not candidates:
+            return None, "", 0.0
+        candidates.sort(reverse=True)
+        best = candidates[0]
+        return best[3], best[4], best[0]
+
+    @classmethod
+    def _apply_answer_fallback(
+        cls,
+        answer: str,
+        facts: list,
+        route_draft_answer: str = "",
+    ) -> tuple[str, str, list[int], float]:
+        """Fallback from empty/meta answers to fact memory, then router draft."""
+        cleaned_answer = str(answer or "").strip()
+        if cleaned_answer and not Orchestrator._looks_meta_answer(cleaned_answer):
+            return cleaned_answer, "", [], 0.0
+
+        fact_idx, fact_answer, fact_confidence = cls._best_fact_answer_with_index(facts)
+        if fact_answer:
+            return fact_answer, "fact_memory", [fact_idx] if fact_idx else [], fact_confidence
+
+        draft_answer = str(route_draft_answer or "").strip()
+        if draft_answer and not Orchestrator._looks_meta_answer(draft_answer):
+            return draft_answer, "route_draft", [], 0.0
+
+        return cleaned_answer, "", [], 0.0
+
+    @classmethod
+    def _apply_answer_object_fallback(
+        cls,
+        answer_obj: dict[str, Any],
+        facts: list,
+        route_draft_answer: str = "",
+    ) -> dict[str, Any]:
+        """Fill empty structured answers from fact memory or router draft."""
+        updated = dict(answer_obj)
+        answer, fallback_source, cited_fact_ids, fallback_confidence = cls._apply_answer_fallback(
+            updated.get("answer", ""),
+            facts,
+            route_draft_answer,
+        )
+        updated["answer"] = answer
+        if fallback_source == "fact_memory" and not updated.get("cited_fact_ids"):
+            updated["cited_fact_ids"] = cited_fact_ids
+            updated["justification_confidence"] = max(
+                float(updated.get("justification_confidence", 0.0)),
+                fallback_confidence,
+            )
+        updated["fallback_source"] = fallback_source
+        return updated
+
+    @staticmethod
+    def _parallel_ready_slots(slot_state: list[dict[str, Any]]) -> list[dict[str, Any]]:
+        """Return unresolved slots in the earliest dependency group."""
+        unresolved = [slot for slot in slot_state if not slot.get("resolved", False)]
+        if not unresolved:
+            return []
+        min_group = min(int(slot.get("dependency_group", 0)) for slot in unresolved)
+        return [
+            slot for slot in unresolved if int(slot.get("dependency_group", 0)) == min_group
+        ]
+
+    @staticmethod
+    def _slot_hint(slot_state: list[dict[str, Any]], slot_name: str) -> str:
+        """Return the hint attached to a slot."""
+        for slot in slot_state:
+            if str(slot.get("slot_name", "")).strip() == slot_name:
+                return str(slot.get("hint", "")).strip()
+        return ""
+
+    async def _run_parallel_slot_batch(
+        self,
+        *,
+        question: str,
+        step: int,
+        route: dict[str, Any],
+        target_profile: str,
+        memory: FactMemory,
+        slot_state: list[dict[str, Any]],
+        step_trace: list[StepTrace],
+    ) -> dict[str, Any]:
+        """Resolve independent ready slots in parallel."""
+        ready_slots = self._parallel_ready_slots(slot_state)[: self.max_parallel_hops]
+        if len(ready_slots) <= 1:
+            return {
+                "total_tokens": 0,
+                "orchestrator_tokens": 0,
+                "subagent_tokens": 0,
+                "subagent_calls": 0,
+                "verify_count": 0,
+                "auto_verify_calls": 0,
+                "duplicate_subquestion_count": 0,
+                "retrieved_doc_ids": [],
+                "retrieved_docs_total": 0,
+            }
+
+        memory_snapshot = memory.get_all()
+        batch_decisions: list[tuple[dict[str, Any], int]] = []
+        orchestrator_tokens = 0
+
+        for slot in ready_slots:
+            slot_name = str(slot.get("slot_name", "")).strip()
+            slot_hint = str(slot.get("hint", "")).strip() or "Resolve the slot."
+            decision, decide_tokens = await self.orchestrator.propose_spawn(
+                question=question,
+                facts=memory_snapshot,
+                trace=step_trace,
+                target_profile=target_profile,
+                pending_slots=[slot],
+                missing_reason=(
+                    f"Resolve slot '{slot_name}' ({slot_hint}) independently. "
+                    "This slot can be executed in parallel with other slots in the same dependency group."
+                ),
+            )
+            batch_decisions.append((decision, decide_tokens))
+            orchestrator_tokens += decide_tokens
+
+        investigations = await asyncio.gather(
+            *[
+                self.investigator.investigate_with_usage(
+                    sub_question=decision["sub_question"],
+                    goal=decision["goal"],
+                    prior_facts=memory_snapshot,
+                    retrieval_query=(
+                        str(decision.get("retrieval_query", "")).strip() or None
+                    ),
+                    slot_name=str(decision.get("slot_name", "")).strip(),
+                )
+                for decision, _ in batch_decisions
+            ]
+        )
+
+        result = {
+            "total_tokens": orchestrator_tokens,
+            "orchestrator_tokens": orchestrator_tokens,
+            "subagent_tokens": 0,
+            "subagent_calls": len(batch_decisions),
+            "verify_count": 0,
+            "auto_verify_calls": 0,
+            "duplicate_subquestion_count": 0,
+            "retrieved_doc_ids": [],
+            "retrieved_docs_total": 0,
+        }
+
+        for slot, (decision, decide_tokens), (capsule, investigate_tokens) in zip(
+            ready_slots,
+            batch_decisions,
+            investigations,
+            strict=False,
+        ):
+            slot_name = str(decision.get("slot_name", "")).strip() or str(
+                slot.get("slot_name", "")
+            ).strip()
+            sub_question = decision["sub_question"]
+            goal = decision["goal"]
+            retrieval_query = str(decision.get("retrieval_query", "")).strip()
+            result["duplicate_subquestion_count"] += int(
+                self._is_duplicate_subquestion(sub_question, step_trace)
+            )
+            result["total_tokens"] += investigate_tokens
+            result["subagent_tokens"] += investigate_tokens
+            result["retrieved_doc_ids"], result["retrieved_docs_total"] = self._merge_retrieval_stats(
+                result["retrieved_doc_ids"],
+                result["retrieved_docs_total"],
+                capsule,
+            )
+            fact_added = self._add_fact(memory, capsule, step=step, slot_name=slot_name)
+            self._update_slot_resolution(slot_state, slot_name, capsule)
+            step_trace.append(
+                StepTrace(
+                    step=step,
+                    action="spawn",
+                    sub_question=sub_question,
+                    fact_added=fact_added,
+                    tokens=decide_tokens + investigate_tokens,
+                    slot_name=slot_name,
+                    metadata={
+                        "goal": goal,
+                        "retrieval_query": retrieval_query or sub_question,
+                        "parallel_group": int(slot.get("dependency_group", 0)),
+                        "parallel_batch_size": len(batch_decisions),
+                    },
+                )
+            )
+            verify_tokens, verify_delta, auto_verify_delta = await self._maybe_verify_fact(
+                question=question,
+                step=step,
+                slot_name=slot_name,
+                sub_question=sub_question,
+                capsule=capsule,
+                memory=memory,
+                slot_state=slot_state,
+                step_trace=step_trace,
+            )
+            result["total_tokens"] += verify_tokens
+            result["subagent_tokens"] += verify_tokens
+            result["verify_count"] += verify_delta
+            result["auto_verify_calls"] += auto_verify_delta
+
+        return result
 
     async def _maybe_verify_fact(
         self,
@@ -1710,3 +2030,19 @@ class AdaptiveRecursivePipeline:
                 seen.add(doc_id)
                 merged.append(doc_id)
         return merged, current_total + int(capsule.retrieved_docs_total)
+
+    @staticmethod
+    def _merge_retrieval_ids(
+        current_ids: list[str],
+        current_total: int,
+        new_ids: list[str],
+        new_total: int,
+    ) -> tuple[list[str], int]:
+        """Merge aggregated retrieval stats without an intermediate capsule object."""
+        seen = set(current_ids)
+        merged = list(current_ids)
+        for doc_id in new_ids:
+            if doc_id not in seen:
+                seen.add(doc_id)
+                merged.append(doc_id)
+        return merged, current_total + int(new_total)

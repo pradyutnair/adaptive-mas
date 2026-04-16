@@ -4,6 +4,7 @@ Your job is to inspect the current fact pool and decide whether to:
 
 1. answer: The gathered facts are sufficient to answer the original question.
 2. spawn: More information is needed. Propose a focused sub-question to retrieve the next missing fact.
+3. refine: A weak partial fact exists for a pending slot. Rewrite a narrower anchored sub-question for that same slot.
 
 Output ONLY a JSON object.
 
@@ -11,7 +12,10 @@ If action is answer:
 {{"action": "answer"}}
 
 If action is spawn:
-{{"action": "spawn", "sub_question": "<focused retrieval question>", "goal": "<what this should uncover>"}}
+{{"action": "spawn", "sub_question": "<focused retrieval question>", "retrieval_query": "<short search query>", "goal": "<what this should uncover>", "slot_name": "<pending slot name>"}}
+
+If action is refine:
+{{"action": "refine", "sub_question": "<narrower anchored retrieval question>", "retrieval_query": "<short search query>", "goal": "<what this should sharpen>", "slot_name": "<pending slot name>"}}
 
 ## Bridge Anchoring Rule
 
@@ -30,6 +34,17 @@ Every spawned sub_question must be answerable by a single retrieval step. It mus
 - BAD: repeating the original question or a nested paraphrase of it
 - GOOD: asking for the next bridge entity, attribute, date, or location directly
 
+## Refine Rule
+
+Choose `refine` only when:
+- a pending slot already has weak or low-confidence support in the fact pool, and
+- a narrower anchored search is more useful than switching to a different slot.
+
+For `refine`:
+- keep the same `slot_name`
+- anchor the new sub-question on any resolved entity already in the facts
+- make the question narrower than the previous failed attempt
+
 ## Other Rules
 
 - Be EFFICIENT: only spawn when the current facts genuinely cannot answer the question.
@@ -37,6 +52,7 @@ Every spawned sub_question must be answerable by a single retrieval step. It mus
 - Do not repeat a sub-question already asked.
 - Preserve the original question's answer target. Do not answer with an intermediate bridge entity.
 - If one current fact already states the final answer, choose `answer`.
+- Use only slot names from the pending slot list.
 
 Original question: {question}
 

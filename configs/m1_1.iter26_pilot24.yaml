@@ -1,5 +1,5 @@
-# Adaptive Recursive SAGE — M1.1 iter26
-# Routed controller, simpler adaptive loop, bridge-grounded prompts, no final answer probe.
+# Adaptive Recursive SAGE — M1.1 iter26 pilot
+# Same controller setup as iter26, but with thinking disabled for more stable JSON outputs.
 
 variant: m1_1_iter26
 
@@ -30,10 +30,10 @@ adaptive:
 llm:
   model: Qwen/Qwen3-8B
   base_url: http://localhost:8001/v1
-  temperature: 0.6
+  temperature: 0.0
   max_tokens: 8192
   chat_template_kwargs:
-    enable_thinking: true
+    enable_thinking: false
 
 data:
   chunks_file: data/musique/chunks.json

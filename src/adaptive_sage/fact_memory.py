@@ -102,6 +102,20 @@ class FactMemory:
         """Return all facts in insertion order (oldest first)."""
         return list(self._deque)
 
+    def replace(self, slot_name: str, fact: Fact) -> Optional[Fact]:
+        """Replace the first fact for *slot_name*, else add as new."""
+        cleaned_slot = str(slot_name or "").strip()
+        if not cleaned_slot:
+            return self.add(fact)
+        ranked = list(self._deque)
+        for idx, existing in enumerate(ranked):
+            if str(existing.slot_name or "").strip() == cleaned_slot:
+                evicted = existing
+                ranked[idx] = fact
+                self._deque = deque(ranked)
+                return evicted
+        return self.add(fact)
+
     def get_formatted(self) -> str:
         """Return facts as a numbered string for LLM prompt injection.
 

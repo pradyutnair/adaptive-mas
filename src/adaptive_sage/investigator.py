@@ -75,9 +75,13 @@ class Investigator:
         self.read_chunk = ReadChunkTool(chunks_file)
 
         # Load distillation prompt template
-        prompt_name = str(
-            config.get("investigator.prompt_file", "investigator_distill.txt")
-        )
+        prompt_name = str(config.get("investigator.prompt_file", "")).strip()
+        if not prompt_name:
+            prompt_name = (
+                "investigator_distill_strict.txt"
+                if bool(config.get("investigator.use_strict_distill", True))
+                else "investigator_distill.txt"
+            )
         prompt_path = Path(__file__).parent / "prompts" / prompt_name
         self._distill_template = prompt_path.read_text(encoding="utf-8")
 
@@ -250,7 +254,9 @@ class Investigator:
                 self._normalise_chunk_id(str(sid))
                 for sid in raw_ids
             ]
-            answer = parsed.get("answer", "").strip()
+            answer = str(
+                parsed.get("answer_span", parsed.get("answer", ""))
+            ).strip()
             fact_text = parsed.get("fact", "").strip()
             confidence_self = float(parsed.get("confidence", 0.0))
             slot_filled = bool(answer and fact_text and support_ids)
@@ -265,12 +271,7 @@ class Investigator:
                 + 0.2 * float(slot_filled)
             )
 
-            if (
-                confidence < self.min_fact_confidence
-                or not answer
-                or not fact_text
-                or not support_ids
-            ):
+            if not answer or not fact_text or not support_ids:
                 answer = ""
                 fact_text = ""
                 confidence = 0.0
@@ -278,6 +279,10 @@ class Investigator:
                 confidence_retrieval = 0.0
                 slot_filled = False
                 support_ids = []
+            elif confidence < self.min_fact_confidence:
+                # Preserve weak grounded hypotheses for one-step recursive
+                # refinement without marking the slot as solved.
+                slot_filled = False
 
             # Populate support_snippets from actual chunk texts
             support_snippets = []

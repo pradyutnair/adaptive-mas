@@ -13,6 +13,7 @@ Responses are parsed as JSON after stripping Qwen3-style thinking blocks.
 
 from __future__ import annotations
 
+import difflib
 import json
 import logging
 import re
@@ -32,7 +33,7 @@ _PLACEHOLDER_SLOT_NAMES = {"target_slot", "final_answer", "answer", "slot"}
 _MAX_JSON_RETRIES = 2
 
 # Valid actions the orchestrator may return
-_VALID_ACTIONS: set[str] = {"answer", "spawn", "verify"}
+_VALID_ACTIONS: set[str] = {"answer", "spawn", "refine", "verify"}
 _VALID_ROUTE_ACTIONS: set[str] = {"direct_answer", "single_probe", "recurse"}
 
 # Repair prompt sent when initial JSON parse fails
@@ -96,6 +97,42 @@ Original question: {question}
 
 Target profile:
 {target_profile}
+"""
+
+_INNERMOST_TEMPLATE = """
+Rewrite the question into exactly one innermost retrieval sub-question for the next search step.
+
+Output ONLY a JSON object:
+{{"sub_question": "<focused question>", "retrieval_query": "<concise search query>", "goal": "<what this should uncover>", "slot_name": "<which pending slot this resolves>"}}
+
+Rules:
+- The new sub-question must be strictly narrower than the original question.
+- It must target the earliest unresolved bridge entity or attribute needed for the answer.
+- It must be answerable in a single retrieval step.
+- Do not repeat the original question or a near-paraphrase of it.
+- Prefer grounding on the first unresolved slot in dependency order.
+- `retrieval_query` must be short and bridge-anchored.
+- If no better rewrite is available, make the narrowest possible first bridge-fact question.
+
+Original question: {question}
+
+Candidate sub-question:
+{candidate_sub_question}
+
+Target profile:
+{target_profile}
+
+Facts gathered so far:
+{facts}
+
+Step history:
+{trace_summary}
+
+Pending slots:
+{pending_slots}
+
+Missing reason:
+{missing_reason}
 """
 
 
@@ -239,7 +276,7 @@ class Orchestrator:
             return {"action": "answer"}, tokens
 
         # Validate spawn fields
-        if action == "spawn":
+        if action in {"spawn", "refine"}:
             sub_q = parsed.get("sub_question", "").strip()
             retrieval_query = str(parsed.get("retrieval_query", "")).strip()
             goal = parsed.get("goal", "").strip()
@@ -260,17 +297,22 @@ class Orchestrator:
                         )
                         return {"action": "answer"}, tokens
 
-            slot_name = self._normalise_pending_slot_name(slot_name, pending_slots)
-            if not retrieval_query:
-                retrieval_query = sub_q
-
+            normalised_spawn, extra_tokens = await self._normalise_spawn_decision(
+                question=question,
+                sub_question=sub_q,
+                retrieval_query=retrieval_query,
+                goal=goal,
+                slot_name=slot_name,
+                facts=facts,
+                trace=trace,
+                target_profile=target_profile,
+                pending_slots=pending_slots,
+                missing_reason="Retrieve the next missing fact.",
+            )
             return {
-                "action": "spawn",
-                "sub_question": sub_q,
-                "retrieval_query": retrieval_query,
-                "goal": goal,
-                "slot_name": slot_name,
-            }, tokens
+                "action": action,
+                **normalised_spawn,
+            }, tokens + extra_tokens
 
         # Validate verify fields
         if action == "verify":
@@ -430,15 +472,20 @@ class Orchestrator:
         question: str,
         facts: list[Fact],
         target_profile: str = "",
+        trace: list[StepTrace] | None = None,
+        route_draft_answer: str = "",
     ) -> tuple[str, int]:
         """Like :meth:`generate_answer`, but also returns token usage."""
         facts_text = self._format_facts(facts)
+        hop_chain = self._format_hop_chain(trace or [], facts)
 
         user_content = self._answer_template.format(
             question=question,
             target_profile=target_profile or "No explicit target hint available.",
             facts=facts_text or "No facts available.",
             pending_slots="No explicit pending slots.",
+            hop_chain=hop_chain or "No grounded hop chain available.",
+            route_draft_answer=route_draft_answer or "None",
         )
 
         messages = [
@@ -468,16 +515,32 @@ class Orchestrator:
         facts: list[Fact],
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
+        trace: list[StepTrace] | None = None,
+        route_draft_answer: str = "",
     ) -> tuple[dict[str, Any], int]:
         """Generate a structured final answer with citations and confidence."""
         facts_text = self._format_facts(facts)
+        hop_chain = self._format_hop_chain(trace or [], facts)
         user_content = self._answer_template.format(
             question=question,
             target_profile=target_profile or "No explicit target hint available.",
             facts=facts_text or "No facts available.",
             pending_slots=self._format_pending_slots(pending_slots or [])
             or "No explicit pending slots.",
+            hop_chain=hop_chain or "No grounded hop chain available.",
+            route_draft_answer=route_draft_answer or "None",
         )
+        user_content += """
+
+Return ONLY a single JSON object:
+{
+  "answer": "<short grounded answer or empty string>",
+  "cited_fact_ids": [<1-based fact ids>],
+  "justification_confidence": <float 0.0-1.0>,
+  "justification": "<brief grounding explanation>",
+  "missing_slot": "<pending slot name or empty string>"
+}
+"""
         messages = [
             {
                 "role": "system",
@@ -550,16 +613,22 @@ class Orchestrator:
             sub_question = question
         if not goal:
             goal = "Retrieve a missing fact needed to answer the original question."
-        if not retrieval_query:
-            retrieval_query = sub_question
-        slot_name = self._normalise_pending_slot_name(slot_name, pending_slots)
+        normalised_spawn, extra_tokens = await self._normalise_spawn_decision(
+            question=question,
+            sub_question=sub_question,
+            retrieval_query=retrieval_query,
+            goal=goal,
+            slot_name=slot_name,
+            facts=facts,
+            trace=trace,
+            target_profile=target_profile,
+            pending_slots=pending_slots,
+            missing_reason=missing_reason or "Retrieve the most critical missing fact.",
+        )
         return {
             "action": "spawn",
-            "sub_question": sub_question,
-            "retrieval_query": retrieval_query,
-            "goal": goal,
-            "slot_name": slot_name,
-        }, tokens
+            **normalised_spawn,
+        }, tokens + extra_tokens
 
     async def decompose_upfront(
         self,
@@ -760,17 +829,20 @@ class Orchestrator:
             slot_name = str(slot.get("slot_name", "")).strip() or f"slot_{idx}"
             hint = str(slot.get("hint", "")).strip() or "No hint provided."
             status = "resolved" if slot.get("resolved") else "pending"
-            lines.append(f"{idx}. {slot_name} [{status}] - {hint}")
+            dependency_group = int(slot.get("dependency_group", idx - 1))
+            lines.append(
+                f"{idx}. {slot_name} [{status}] [group {dependency_group}] - {hint}"
+            )
         return "\n".join(lines)
 
     @staticmethod
-    def _normalise_required_hops(raw_items: Any) -> list[dict[str, str]]:
+    def _normalise_required_hops(raw_items: Any) -> list[dict[str, Any]]:
         """Normalise required-hop slot specs returned by the router."""
-        normalised: list[dict[str, str]] = []
+        normalised: list[dict[str, Any]] = []
         seen: set[str] = set()
         if not isinstance(raw_items, list):
             return normalised
-        for item in raw_items:
+        for idx, item in enumerate(raw_items):
             if not isinstance(item, dict):
                 continue
             slot_name = str(item.get("slot_name", "")).strip()
@@ -781,8 +853,151 @@ class Orchestrator:
             if key in seen:
                 continue
             seen.add(key)
-            normalised.append({"slot_name": slot_name, "hint": hint})
+            dependency_group = item.get("dependency_group", idx)
+            try:
+                dependency_group = max(0, int(dependency_group))
+            except (TypeError, ValueError):
+                dependency_group = idx
+            normalised.append(
+                {
+                    "slot_name": slot_name,
+                    "hint": hint,
+                    "dependency_group": dependency_group,
+                }
+            )
         return normalised
+
+    async def _normalise_spawn_decision(
+        self,
+        *,
+        question: str,
+        sub_question: str,
+        retrieval_query: str,
+        goal: str,
+        slot_name: str,
+        facts: list[Fact],
+        trace: list[StepTrace],
+        target_profile: str,
+        pending_slots: list[dict[str, str]] | None,
+        missing_reason: str,
+    ) -> tuple[dict[str, Any], int]:
+        """Repair echoed or under-specified spawn decisions."""
+        extra_tokens = 0
+        cleaned_sub_question = str(sub_question or "").strip() or question
+        cleaned_retrieval_query = str(retrieval_query or "").strip()
+        cleaned_goal = str(goal or "").strip() or (
+            "Retrieve a missing fact needed to answer the original question."
+        )
+        cleaned_slot_name = self._normalise_pending_slot_name(slot_name, pending_slots)
+        echo_detected_llm_call = False
+        echo_still_present_after_refine = False
+        echo_repaired_count = 0
+
+        if self._looks_like_question_echo(cleaned_sub_question, question):
+            echo_detected_llm_call = True
+            refined, refine_tokens = await self.refine_innermost_sub_question_with_usage(
+                question=question,
+                candidate_sub_question=cleaned_sub_question,
+                facts=facts,
+                trace=trace,
+                target_profile=target_profile,
+                pending_slots=pending_slots,
+                missing_reason=missing_reason,
+            )
+            extra_tokens += refine_tokens
+            cleaned_sub_question = refined["sub_question"]
+            cleaned_retrieval_query = refined["retrieval_query"]
+            cleaned_goal = refined["goal"]
+            cleaned_slot_name = (
+                self._normalise_pending_slot_name(
+                    refined.get("slot_name", ""),
+                    pending_slots,
+                )
+                or cleaned_slot_name
+            )
+            if self._looks_like_question_echo(cleaned_sub_question, question):
+                echo_still_present_after_refine = True
+                cleaned_sub_question = self._deterministic_innermost_sub_question(
+                    question=question,
+                    facts=facts,
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                )
+                cleaned_retrieval_query = cleaned_sub_question
+                cleaned_goal = (
+                    f"Resolve slot '{cleaned_slot_name or 'final_answer'}' with a narrower "
+                    "single-hop bridge question."
+                )
+                echo_repaired_count = 2
+            else:
+                echo_repaired_count = 1
+
+        if not cleaned_retrieval_query:
+            cleaned_retrieval_query = cleaned_sub_question
+
+        return {
+            "sub_question": cleaned_sub_question,
+            "retrieval_query": cleaned_retrieval_query,
+            "goal": cleaned_goal,
+            "slot_name": cleaned_slot_name,
+            "echo_detected_llm_call": echo_detected_llm_call,
+            "echo_still_present_after_refine": echo_still_present_after_refine,
+            "echo_repaired_count": echo_repaired_count,
+        }, extra_tokens
+
+    async def refine_innermost_sub_question_with_usage(
+        self,
+        *,
+        question: str,
+        candidate_sub_question: str,
+        facts: list[Fact],
+        trace: list[StepTrace],
+        target_profile: str = "",
+        pending_slots: list[dict[str, str]] | None = None,
+        missing_reason: str = "",
+    ) -> tuple[dict[str, str], int]:
+        """Rewrite an echoed sub-question into the innermost useful clause."""
+        facts_text = self._format_facts(facts)
+        trace_summary = self._format_trace(trace)
+        user_content = _INNERMOST_TEMPLATE.format(
+            question=question,
+            candidate_sub_question=candidate_sub_question or question,
+            target_profile=target_profile or "No explicit target hint available.",
+            facts=facts_text or "None yet.",
+            trace_summary=trace_summary or "No steps taken yet.",
+            pending_slots=self._format_pending_slots(pending_slots or [])
+            or "No explicit pending slots.",
+            missing_reason=missing_reason or "The candidate sub-question still echoes the original question.",
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You rewrite multi-hop questions into the next single-hop retrieval question. "
+                    "Always respond with a single JSON object."
+                ),
+            },
+            {"role": "user", "content": user_content},
+        ]
+        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        sub_question = str(parsed.get("sub_question", "")).strip()
+        retrieval_query = str(parsed.get("retrieval_query", "")).strip()
+        goal = str(parsed.get("goal", "")).strip()
+        slot_name = str(parsed.get("slot_name", "")).strip()
+
+        if not sub_question:
+            sub_question = candidate_sub_question or question
+        if not retrieval_query:
+            retrieval_query = sub_question
+        if not goal:
+            goal = "Retrieve the next missing bridge fact."
+
+        return {
+            "sub_question": sub_question,
+            "retrieval_query": retrieval_query,
+            "goal": goal,
+            "slot_name": self._normalise_pending_slot_name(slot_name, pending_slots),
+        }, tokens
 
     @staticmethod
     def _normalise_pending_slot_name(
@@ -811,6 +1026,55 @@ class Orchestrator:
         return cleaned in _PLACEHOLDER_SLOT_NAMES
 
     @staticmethod
+    def _looks_like_question_echo(candidate: str, original: str) -> bool:
+        """Return whether the candidate sub-question largely repeats the original."""
+        candidate_norm = Orchestrator._normalise_question_text(candidate)
+        original_norm = Orchestrator._normalise_question_text(original)
+        if not candidate_norm or not original_norm:
+            return False
+        if candidate_norm == original_norm:
+            return True
+        if (
+            candidate_norm in original_norm or original_norm in candidate_norm
+        ) and min(len(candidate_norm), len(original_norm)) / max(
+            len(candidate_norm), len(original_norm)
+        ) >= 0.8:
+            return True
+
+        candidate_tokens = set(Orchestrator._content_tokens(candidate_norm))
+        original_tokens = set(Orchestrator._content_tokens(original_norm))
+        if not candidate_tokens or not original_tokens:
+            return False
+
+        overlap = len(candidate_tokens & original_tokens) / min(
+            len(candidate_tokens), len(original_tokens)
+        )
+        ratio = difflib.SequenceMatcher(None, candidate_norm, original_norm).ratio()
+        return overlap >= 0.85 or (ratio >= 0.8 and overlap >= 0.7)
+
+    @staticmethod
+    def _normalise_question_text(text: str) -> str:
+        """Lowercase and remove punctuation for fuzzy echo detection."""
+        cleaned = re.sub(r"\s+", " ", re.sub(r"[^a-z0-9\s]", " ", str(text).lower()))
+        return cleaned.strip()
+
+    @staticmethod
+    def _content_tokens(text: str) -> list[str]:
+        """Return non-trivial content tokens from a normalised question."""
+        stop_words = {
+            "a", "an", "the", "is", "are", "was", "were", "be", "been", "being",
+            "do", "does", "did", "to", "of", "in", "for", "on", "with", "at", "by",
+            "from", "as", "and", "or", "but", "if", "then", "than", "that", "this",
+            "these", "those", "what", "which", "who", "when", "where", "why", "how",
+            "whom", "whose", "into", "about", "after", "before", "during", "through",
+        }
+        return [
+            token
+            for token in str(text).split()
+            if token and token not in stop_words
+        ]
+
+    @staticmethod
     def _looks_meta_answer(text: str) -> bool:
         """Return whether the model produced commentary instead of an answer span."""
         cleaned = str(text or "").strip().lower()
@@ -834,6 +1098,138 @@ class Orchestrator:
         return any(marker in cleaned for marker in bad_markers)
 
     @staticmethod
+    def _deterministic_innermost_sub_question(
+        *,
+        question: str,
+        facts: list[Fact],
+        target_profile: str,
+        pending_slots: list[dict[str, str]] | None,
+    ) -> str:
+        """Deterministically narrow an echoed question to an innermost clause."""
+        resolved_entities = {
+            entity.lower()
+            for entity in Orchestrator._resolved_entities(facts)
+            if entity
+        }
+        connectors = [
+            " of the ",
+            " in the ",
+            " where ",
+            " which ",
+            " that ",
+            " by the ",
+            " whose ",
+            " by ",
+            " of ",
+            " in ",
+        ]
+        clauses = [question.strip(" ?")]
+        for connector in connectors:
+            next_clauses: list[str] = []
+            for clause in clauses:
+                parts = [
+                    part.strip(" ?")
+                    for part in clause.split(connector)
+                    if part.strip(" ?")
+                ]
+                next_clauses.extend(parts or [clause])
+            clauses = next_clauses
+
+        contentful = [
+            clause
+            for clause in clauses
+            if len(
+                Orchestrator._content_tokens(
+                    Orchestrator._normalise_question_text(clause)
+                )
+            )
+            >= 2
+        ] or clauses
+        ranked = sorted(contentful, key=len)
+        chosen_clause = ranked[0] if ranked else question.strip(" ?")
+        for clause in ranked:
+            clause_lower = clause.lower()
+            if not any(entity in clause_lower for entity in resolved_entities):
+                chosen_clause = clause
+                break
+
+        slot_hint = ""
+        if pending_slots:
+            slot_hint = str(pending_slots[0].get("hint", "")).strip() or str(
+                pending_slots[0].get("slot_name", "")
+            ).strip()
+        hint_lower = f"{slot_hint} {target_profile}".strip().lower()
+        anchor_phrase = Orchestrator._extract_anchor_phrase(question, facts)
+        if anchor_phrase:
+            if any(token in hint_lower for token in {"author", "writer"}):
+                return f"Who wrote {anchor_phrase}?"
+            if "director" in hint_lower:
+                return f"Who directed {anchor_phrase}?"
+            if any(token in hint_lower for token in {"birth", "born", "location", "country", "city", "place"}):
+                return f"Where was {anchor_phrase} born?"
+            if any(token in hint_lower for token in {"date", "year", "when"}):
+                return f"When was {anchor_phrase}?"
+
+        prefix = "What is"
+        if any(
+            token in hint_lower
+            for token in {"author", "writer", "director", "person", "actor", "who"}
+        ):
+            prefix = "Who is"
+        elif any(token in hint_lower for token in {"date", "year", "when"}):
+            prefix = "When was"
+        elif any(
+            token in hint_lower
+            for token in {"place", "location", "country", "city", "where"}
+        ):
+            prefix = "Where is"
+
+        clause = chosen_clause.strip(" ?")
+        if re.match(r"^(who|what|where|when)\b", clause, flags=re.IGNORECASE):
+            return f"{clause}?"
+        return f"{prefix} {clause}?"
+
+    @staticmethod
+    def _resolved_entities(facts: list[Fact]) -> list[str]:
+        """Extract already-resolved entity anchors from fact memory."""
+        entities: list[str] = []
+        for fact in facts:
+            answer_span = str(getattr(fact, "answer_span", "")).strip()
+            if answer_span:
+                entities.append(answer_span)
+                continue
+            match = re.search(
+                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3}\b",
+                str(getattr(fact, "text", "")),
+            )
+            if match:
+                entities.append(match.group(0))
+        return entities
+
+    @staticmethod
+    def _extract_anchor_phrase(question: str, facts: list[Fact]) -> str:
+        """Extract a concrete non-resolved anchor phrase from the question."""
+        resolved_entities = {
+            entity.lower()
+            for entity in Orchestrator._resolved_entities(facts)
+            if entity
+        }
+        spans = re.findall(
+            r"\b(?:The\s+)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,4}\b",
+            question,
+        )
+        filtered: list[str] = []
+        for span in spans:
+            lowered = span.lower()
+            if lowered in {"where", "what", "who", "when", "which"}:
+                continue
+            if any(entity == lowered for entity in resolved_entities):
+                continue
+            filtered.append(span.strip())
+        filtered.sort(key=len, reverse=True)
+        return filtered[0] if filtered else ""
+
+    @staticmethod
     def _best_fact_answer_span(facts: list[Fact]) -> str:
         """Return the strongest extracted answer span currently in memory."""
         candidates: list[tuple[float, int, int, str]] = []
@@ -848,6 +1244,56 @@ class Orchestrator:
             return ""
         candidates.sort(reverse=True)
         return candidates[0][3]
+
+    @staticmethod
+    def _format_hop_chain(trace: list[StepTrace], facts: list[Fact]) -> str:
+        """Format grounded hop traces for answer synthesis."""
+        if not trace:
+            return ""
+
+        facts_by_step: dict[int, list[Fact]] = {}
+        for fact in facts:
+            facts_by_step.setdefault(int(fact.source_step), []).append(fact)
+
+        lines: list[str] = []
+        hop_idx = 1
+        for entry in trace:
+            if entry.action not in {"spawn", "refine"} or not entry.sub_question:
+                continue
+            step_facts = facts_by_step.get(entry.step, [])
+            best_fact = ""
+            if step_facts:
+                if entry.slot_name:
+                    matching_slot_facts = [
+                        fact
+                        for fact in step_facts
+                        if str(getattr(fact, "slot_name", "")).strip()
+                        == str(entry.slot_name or "").strip()
+                    ]
+                    if matching_slot_facts:
+                        step_facts = matching_slot_facts
+                ranked = sorted(
+                    step_facts,
+                    key=lambda fact: (
+                        fact.confidence,
+                        bool(fact.answer_span.strip()),
+                        len(fact.support_ids),
+                    ),
+                    reverse=True,
+                )
+                chosen = ranked[0]
+                best_fact = chosen.answer_span.strip() or chosen.text.strip()
+            slot_label = f" [slot={entry.slot_name}]" if entry.slot_name else ""
+            if best_fact:
+                lines.append(
+                    f"Hop {hop_idx}{slot_label}: {entry.sub_question} -> found {best_fact}"
+                )
+            else:
+                lines.append(
+                    f"Hop {hop_idx}{slot_label}: {entry.sub_question} -> no grounded fact"
+                )
+            hop_idx += 1
+        return "\n".join(lines)
 
     @staticmethod
     def _extract_plain_answer(text: str) -> str:

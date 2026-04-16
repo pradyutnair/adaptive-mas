@@ -218,6 +218,34 @@ Iteration-4 early prefix (`n=25`):
 
 Interpretation:
 
+## 2026-04-16 19:20 CEST
+
+Iter27 no-think controller patch set:
+
+- strict distillation by default
+- deterministic second-pass echo repair
+- one-step recursive slot refinement
+- tighter hop-chain answer synthesis
+
+Pilot200 gate on `questions_pilot200_seed42.json`:
+
+- `iter26_no_think`: `EM 0.230`, `F1 0.3461`, `contain 0.265`, `answered 200/200`, `avg_tokens 34.2k`
+- `iter27_no_think`: `EM 0.210`, `F1 0.3259`, `contain 0.280`, `answered 200/200`, `avg_tokens 32.2k`
+
+Decision:
+
+- Scale to 1000 because the primary metric improved (`contain +1.5pp`) at lower token cost.
+
+Full1000 seeded run on `questions_1000_seedfull_shard{0,1,2}.json`:
+
+- `iter27_no_think`: `EM 0.182`, `F1 0.3019`, `contain 0.267`, `answered 998/1000`, `avg_subagents 2.50`, `avg_verify 0.12`, `avg_tokens 32.0k`
+
+Comparison snapshot:
+
+- Better than `S0_1000` on all quality metrics while staying in the same order of token cost.
+- Much cheaper and far more complete than `iter16_1000`, but still behind it on raw EM/F1/contain.
+- Still well below `A1_1000` on raw quality, but at roughly one-third the token cost.
+
 - The structural fix is behaving exactly as intended on the prefix.
 - Unresolved pending slots are no longer burning budget through answer→reject loops.
 - Need a larger prefix before trusting EM, but this is the cleanest controller behavior yet.
