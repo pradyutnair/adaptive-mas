@@ -260,8 +260,8 @@ class Investigator:
                 semantic_result=sem_result,
             )
             confidence = (
-                0.5 * confidence_retrieval
-                + 0.3 * max(min(confidence_self, 1.0), 0.0)
+                0.4 * confidence_retrieval
+                + 0.4 * max(min(confidence_self, 1.0), 0.0)
                 + 0.2 * float(slot_filled)
             )
 
@@ -291,6 +291,7 @@ class Investigator:
                 confidence_self=confidence_self,
                 confidence_retrieval=confidence_retrieval,
                 slot_filled=slot_filled,
+                answer_span=answer,
                 support_ids=support_ids,
                 source_step=0,  # set by the pipeline
             )
@@ -315,6 +316,7 @@ class Investigator:
                     confidence_self=0.0,
                     confidence_retrieval=0.0,
                     slot_filled=False,
+                    answer_span="",
                     support_ids=[],
                     source_step=0,
                 ),

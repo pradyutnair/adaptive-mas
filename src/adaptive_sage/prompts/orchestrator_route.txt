@@ -50,8 +50,15 @@ Rules:
 - The last item in `required_hops` must be the final answer slot named by `target_slot`.
 - `target_slot` must be a concise semantic slot name, never a placeholder like `target_slot`, `final_answer`, `answer`, or `slot`.
 - Every `required_hops[].slot_name` must also be a concise semantic slot name, never a placeholder.
-- For `single_probe`, `required_hops` may contain multiple slots if the probe is intended to seed the first dependency before later control decisions.
-- For `direct_answer`, `required_hops` may be empty.
+- For `single_probe`, `sub_question` may directly target the final answer.
+- For `recurse`, `sub_question` MUST be the FIRST bridge fact question only.
+- For `recurse`, `sub_question` must be answerable from a single retrieval step and must be strictly simpler than the original question.
+- For `recurse`, do NOT restate the original multi-hop question or any nested version of it.
+- BAD recurse sub-question: "Where was Popper's academic appointment in the country near the country of citizenship of the person who wrote The Book Thief?"
+- GOOD recurse sub-question: "Who wrote The Book Thief?"
+- BAD recurse sub-question: "When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?"
+- GOOD recurse sub-question: "Which group's record label released Study in Brown?"
+- If unsure between two bridge starts, ask for the earliest missing entity that grounds later hops.
 - `draft_answer` must be short.
 - Do not include any text outside the JSON object.
 

@@ -30,6 +30,7 @@ class Fact:
     confidence_retrieval: float = 0.0
     slot_filled: bool = False
     slot_name: str = ""
+    answer_span: str = ""
     support_ids: list[str] = field(default_factory=list)
     source_step: int = 0
 
