@@ -1607,3 +1607,60 @@ Outcome on pilot200:
   - bridge-anchored retrieval helps hard cases
   - route preservation matters
   - but retrieval gains are still being lost in retrieval-to-answer translation
+
+## 2026-04-16 22:35 CEST
+
+Seeded-1000 freeze point:
+
+`iter27_think`:
+
+- `EM 0.276`
+- `F1 0.3791`
+- `contain 0.363`
+- `answered 928/1000`
+- `avg_subagents 2.81`
+- `avg_verify 0.04`
+- `avg_tokens 60,236.9`
+
+`S0_no_think`:
+
+- `EM 0.130`
+- `F1 0.2412`
+- `contain 0.182`
+- `answered 1000/1000`
+- `avg_tokens 11,299.9`
+
+Comparison against frozen `iter16_1000`:
+
+- `iter16_1000`: `EM 0.284`, `F1 0.3698`, `contain 0.334`, `answered 573/1000`, `avg_tokens 62,984.7`
+- `iter27_think`: `EM 0.276`, `F1 0.3791`, `contain 0.363`, `answered 928/1000`, `avg_tokens 60,236.9`
+
+Outcome:
+
+- `iter27_think` became the current headline result
+- it beat `iter16_1000` on the primary metric (`contain`) at lower token cost
+- it also materially improved completion rate
+- this is the frozen EMNLP figure candidate before any further architectural changes
+
+## 2026-04-16 22:50 CEST
+
+Git freeze / backup state:
+
+- frozen branch: `codex/iter27-no-think-results`
+- frozen branch tip: `0e57b9e` (`Freeze iter27 think and ablation configs`)
+- merge commit on `main`: `9a3f3c6` (`Merge branch 'codex/iter27-no-think-results'`)
+
+Rollback / restore:
+
+- to inspect the frozen branch directly:
+  - `git checkout codex/iter27-no-think-results`
+- to restore `main` back to the frozen state without losing later history:
+  - `git checkout main`
+  - `git revert -m 1 <later-merge-commit>` as needed
+- to hard-reset a scratch branch to the frozen point:
+  - `git checkout -b scratch-iter27-restore 0e57b9e`
+
+Safety note:
+
+- keep `codex/iter27-no-think-results` on both local and remote as the canonical recovery point
+- do not force-push over that branch
