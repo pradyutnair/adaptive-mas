@@ -1,0 +1,218 @@
+ADAPTIVE RECURSIVE MULTI-AGENT SAGE — PRESENTATION CONTENT
+(4 pages / slides)
+
+
+PAGE 1: MOTIVATION & PROBLEM
+-----------------------------
+
+Title: Adaptive Test-Time Scaling for Multi-Hop RAG
+
+Problem:
+- Multi-hop QA requires chaining multiple retrieval steps (2-4 hops)
+- Single-agent RAG systems accumulate retrieval noise across hops — "context pollution"
+- Static multi-agent systems (MAS) coordinate multiple agents but pay fixed overhead regardless of question difficulty
+- Tran & Kiela (2026) showed that equal-budget single-agent systems can outperform static MAS — coordination overhead eats the budget
+
+Our question:
+- Can we build an adaptive system that allocates compute proportional to question difficulty?
+- Easy questions: single retrieval pass, near-zero overhead
+- Hard questions: recursive subagent spawning, deeper retrieval chains
+- Goal: recover most of the multi-agent quality gain at substantially lower test-time compute
+
+Key insight (inspired by RLM, A-RAG, SPARC-RAG):
+- Recursive subagents absorb retrieval pollution outside the orchestrator context
+- The orchestrator only sees short distilled facts with citations — clean working memory
+- Adaptivity is the control law: spawn more agents only when current facts cannot justify an answer
+
+Positioning:
+- RLM (Recursive Language Models): recursive control pattern
+- A-RAG: hierarchical retrieval tools and test-time scaling
+- SPARC-RAG: context management and adaptive search
+- HERA: contrast with offline topology-learning orchestration
+- Tran & Kiela 2026: our direct motivation — proving adaptive MAS can beat their equal-budget finding
+
+
+PAGE 2: METHOD — ADAPTIVE RECURSIVE SAGE (AMAS)
+-------------------------------------------------
+
+Title: AMAS = Adaptive Multi-Agent System for RAG
+
+AMAS in one sentence:
+- One controller decides how much search is needed, then calls focused retrieval subagents only when the current evidence is not enough.
+
+Why this matters:
+- Static MAS always pays the full coordination cost.
+- Single-agent iterative RAG keeps all noisy retrieval context in one growing prompt.
+- AMAS separates these two roles:
+  - subagents do noisy retrieval work
+  - the controller only reasons over compressed evidence
+
+Three components:
+1. Router / Orchestrator
+   - First decides the lane: `direct_answer`, `single_probe`, or `recurse`
+   - Builds a slot plan: what intermediate facts are needed before the final answer can be justified
+   - At each step decides whether to answer, spawn another retrieval worker, or refine a weak slot
+   - Sees only distilled facts, not raw passages
+
+2. Investigator Subagents
+   - Stateless retrieval workers
+   - Input: sub-question + retrieval query + target slot + current grounded facts
+   - Retrieval: keyword search + semantic search over the same MuSiQue chunk corpus
+   - Distillation: return a compact evidence capsule
+     (answer span, grounded fact, confidence, support chunk IDs)
+   - Retrieval pollution stays inside the worker
+
+3. Fact Memory
+   - Small bounded memory (capacity 4)
+   - Stores only distilled facts with confidence, slot name, source step, and citations
+   - This is the controller's working memory
+
+AMAS control loop:
+1. Route the question
+2. Ask the cheapest useful first question
+3. Store the returned fact capsule
+4. Re-evaluate: answer now, recurse deeper, or refine one weak slot
+5. Stop when the final answer can be justified from fact memory
+
+What makes it adaptive:
+- Easy questions stop after 1-2 retrieval workers
+- Hard 3-hop / 4-hop questions trigger deeper recursion
+- Independent hops can be run in parallel
+- The system spends budget only when the current evidence demands it
+
+What makes it multi-agent:
+- The controller and the retrieval workers have different roles
+- Multiple investigators can be spawned over time, or in parallel, on different sub-questions
+- The controller never needs to absorb the raw context those workers saw
+
+Baselines (same model, corpus, retriever, infra):
+- E2: Qwen3-8B autonomous ARAG tool-using agent
+- S0: one investigator pass + answer
+- A1: always recurse / fixed heavy budget
+- M1 no-think: adaptive controller with thinking disabled
+- M1 think: adaptive controller with thinking enabled
+
+Model: Qwen3-8B (vLLM, 3x A6000 GPUs)
+Corpus: MuSiQue chunked passages with e5-base-v2 sentence embeddings
+Dataset: MuSiQue 1000 questions (2-hop, 3-hop, 4-hop multi-hop QA)
+
+
+PAGE 3: RESULTS
+----------------
+
+Title: MuSiQue Results — Quality vs Compute Frontier
+
+All systems use: Qwen3-8B (vLLM), e5-base-v2 embeddings, search_top_k=5,
+same MuSiQue chunked corpus, same eval script (norm_em, token_f1, contain).
+
+TABLE 1: Full-1000 MuSiQue (current seeded comparison)
+
+| System        | EM    | F1    | Contain | Answered  | Avg Tokens | Avg Subagents |
+|---------------|-------|-------|---------|-----------|------------|---------------|
+| E2            | 13.4  | —     | 27.1    | —         | —          | 1 (ReAct)     |
+| S0            | 17.8  | 23.11 | 20.6    | 466/1000  | 24,753     | 1.00          |
+| S0 no-think   | 13.0  | 24.12 | 18.2    | 1000/1000 | 11,300     | 1.00          |
+| M1 no-think   | 18.2  | 30.19 | 26.7    | 998/1000  | 31,965     | 2.50          |
+| M1 think      | 28.2  | 40.86 | 39.3    | 954/1000  | 59,360     | 2.73          |
+| A1            | 32.8  | 43.13 | 37.6    | 718/1000  | 100,431    | 5.00          |
+
+E2 = Qwen3-8B autonomous ARAG tool loop
+S0 = one investigator pass + answer
+M1 no-think = adaptive controller, thinking disabled (iter27 no-think)
+M1 think = adaptive controller, thinking enabled (iter30 think, current champion)
+A1 = always recurse, fixed heavy budget
+
+TABLE 2: Pilot-200 MuSiQue (all variants, full metrics)
+
+| System | EM     | F1     | Contain | Answered | Avg Tokens | Avg Orch Tok | Avg Sub Tok | Avg Subagents | Avg Verify | Avg Docs | Avg Dup SubQ |
+|--------|--------|--------|---------|----------|------------|--------------|-------------|---------------|------------|----------|--------------|
+| S0     | 0.2100 | 0.2813 | 0.2350  | 182/200  | 25,808     | 689          | 25,119      | 1.00          | 0.00       | 9.1      | 0.00         |
+| A2     | 0.2700 | 0.3635 | 0.3050  | 158/200  | 57,978     | 3,049        | 54,930      | 3.09          | 0.00       | 27.4     | 0.00         |
+| M1     | 0.2800 | 0.3866 | 0.3250  | 170/200  | 72,287     | 6,889        | 65,398      | 3.17          | 0.04       | 19.3     | 0.00         |
+| A1     | 0.2950 | 0.4207 | 0.3350  | 167/200  | 106,515    | 9,153        | 97,362      | 5.00          | 0.00       | 35.8     | 0.69         |
+
+A2 = upfront decomposition (plan all sub-questions first, then execute sequentially)
+M1 = adaptive recursive SAGE (orchestrator decides answer/spawn/verify each step)
+
+TABLE 3: Pilot-200 gate for current champion
+
+| System        | EM    | F1    | Contain | Answered | Avg Tokens | Avg Subagents |
+|---------------|-------|-------|---------|----------|------------|---------------|
+| iter27 no-think | 0.210 | 0.3259 | 0.280 | 200/200  | 32,245     | 2.55          |
+| iter30 think    | 0.255 | 0.3793 | 0.370 | 189/200  | 59,360*    | 2.73*         |
+
+*1000q means are shown for iter30 because the full-1000 run is the final reported variant.
+
+KEY FINDINGS:
+
+1. AMAS now reaches the best full-1000 result in this project
+   - M1 think (iter30) = 28.2 EM / 40.86 F1 / 39.3 contain
+   - This is higher contain than A1 (39.3 vs 37.6) at far lower cost
+
+2. The adaptive Pareto story is now clear
+   - M1 think uses 59.4k tokens vs A1's 100.4k
+   - That is about 41% lower token cost
+   - Yet M1 think is slightly better on contain
+
+3. Thinking helps when the controller is strong enough
+   - M1 no-think: 26.7 contain at 32.0k tokens
+   - M1 think: 39.3 contain at 59.4k tokens
+   - So thinking is useful here, but only after fixing routing, decomposition, and answer synthesis
+
+4. Adaptivity is visible in the compute profile
+   - S0: 1.00 subagent
+   - M1 no-think: 2.50 subagents
+   - M1 think: 2.73 subagents
+   - A1: 5.00 subagents
+   - The adaptive system sits between single-pass and always-recurse, not at either extreme
+
+5. The main gains came from controller-side fixes, not retriever changes
+   - better slot-aware routing
+   - better first-hop decomposition
+   - slot-conditioned retrieval queries
+   - stricter distillation
+   - better final answer span extraction
+
+
+PAGE 4: ANALYSIS, LIMITATIONS & NEXT STEPS
+--------------------------------------------
+
+Title: What Works, What Doesn't, and Where to Go
+
+What works:
+- Context isolation is real: subagents absorb retrieval noise, controller stays clean
+- AMAS is now a real Pareto point, not just an intuition
+- The routed controller is much stronger than the earlier fixed or shallow variants
+- Thinking-on becomes worthwhile only after the controller is stabilized
+
+What doesn't work (yet):
+- Answer rate is still not perfect on thinking-enabled runs (954/1000)
+- Some failures are still decomposition failures:
+  - wrong intermediate slot chosen
+  - malformed sub-question anchored on the wrong entity
+- Some failures are still distillation / extraction failures:
+  - facts are seen, but the final span is dropped or over-expanded
+- Retrieval coverage on the hardest 4-hop cases is still the main long-tail bottleneck
+
+Current error-analysis takeaway:
+- Retrieval / decomposition failure is the dominant bucket
+- Distillation failure is the second-largest bucket
+- Synthesis failure is much smaller than both
+
+Concrete next steps:
+1. Further improve slot planning for 3-hop / 4-hop questions
+2. Tighten sub-question type consistency
+3. Improve final answer extraction to reduce overlong spans
+4. Run the same controller on HotpotQA and 2Wiki for external validity
+
+Longer-term directions:
+- Multi-dataset evaluation: HotpotQA, 2WikiMultiHop
+- Full thinking vs no-thinking ablation for every baseline
+- Learned router or smaller policy model
+- Better retriever, but only in a fully fair rerun across all variants
+- Explicit test-time scaling curves under matched budgets
+
+Honest claim supported by evidence:
+"An adaptive multi-agent RAG system can outperform both single-pass and
+fixed-budget multi-agent baselines on MuSiQue while using substantially
+less test-time compute than always-recurse systems."

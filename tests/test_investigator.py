@@ -87,6 +87,11 @@ def _make_mock_tools():
     return {"keyword_search": kw, "semantic_search": sem, "read_chunk": read}
 
 
+def _run(coro):
+    """Run a coroutine in a fresh event loop."""
+    return asyncio.run(coro)
+
+
 # Patch targets — must patch where names are *used*, not where defined.
 # The investigator module does ``from arag.tools.X import Y``, so we patch
 # the name in the ``adaptive_sage.investigator`` namespace.
@@ -125,7 +130,7 @@ class TestInvestigateReturnsCapsule:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Who developed the theory of relativity?",
                     goal="Find the scientist responsible for the theory of relativity",
@@ -165,7 +170,7 @@ class TestInvestigateReturnsCapsule:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Who developed relativity?",
                     goal="Identify the physicist",
@@ -204,7 +209,7 @@ class TestCapsuleRespectsLimit:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Test question?",
                     goal="Test goal",
@@ -236,7 +241,7 @@ class TestCapsuleRespectsLimit:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Q?",
                     goal="G",
@@ -268,7 +273,7 @@ class TestCapsuleRespectsLimit:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Test question?",
                     goal="Test goal",
@@ -310,7 +315,7 @@ class TestBothSearchTypesUsed:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            asyncio.get_event_loop().run_until_complete(
+            _run(
                 inv.investigate(
                     sub_question="What is X?",
                     goal="Find X",
@@ -353,7 +358,7 @@ class TestPriorFactsInPrompt:
 
             prior = [Fact(text="The sky is blue", confidence=0.9, support_ids=[], source_step=1)]
 
-            asyncio.get_event_loop().run_until_complete(
+            _run(
                 inv.investigate(
                     sub_question="What color is the ocean?",
                     goal="Determine ocean color",
@@ -397,7 +402,7 @@ class TestPriorFactsInPrompt:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="What is X?",
                     goal="Find X",
@@ -454,7 +459,7 @@ class TestMalformedJsonFallback:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="What is X?",
                     goal="Find X",
@@ -492,7 +497,7 @@ class TestMalformedJsonFallback:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="What is X?",
                     goal="Find X",
@@ -546,7 +551,7 @@ class TestThinkingTagsStripped:
             from adaptive_sage.investigator import Investigator
             inv = Investigator(config, llm)
 
-            capsule = asyncio.get_event_loop().run_until_complete(
+            capsule = _run(
                 inv.investigate(
                     sub_question="Who developed relativity?",
                     goal="Identify physicist",
@@ -556,3 +561,28 @@ class TestThinkingTagsStripped:
 
             assert isinstance(capsule, EvidenceCapsule)
             assert capsule.answer == "Einstein"
+
+
+def test_build_semantic_query_includes_slot_context_and_grounded_spans() -> None:
+    from adaptive_sage.investigator import Investigator
+
+    query = Investigator._build_semantic_query(
+        "Where was Christopher Nolan born?",
+        "Resolve the director birthplace.",
+        [
+            Fact(
+                text="Inception was directed by Christopher Nolan.",
+                confidence=0.9,
+                answer_span="Christopher Nolan",
+                support_ids=["1"],
+                source_step=1,
+            )
+        ],
+        slot_name="director_birthplace",
+        slot_hint="birthplace of the director",
+    )
+
+    assert "Where was Christopher Nolan born?" in query
+    assert "Target slot: director_birthplace" in query
+    assert "Slot hint: birthplace of the director" in query
+    assert "Known facts: Christopher Nolan" in query

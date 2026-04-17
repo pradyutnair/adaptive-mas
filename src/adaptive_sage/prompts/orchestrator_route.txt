@@ -28,6 +28,7 @@ Output ONLY a single JSON object:
   "confidence": <float 0.0-1.0>,
   "draft_answer": "<short answer or empty string>",
   "sub_question": "<single focused probe question or empty string>",
+  "retrieval_query": "<short bridge-anchored search query or empty string>",
   "goal": "<what the next retrieval step should uncover or empty string>",
   "answer_type": "<person|date|location|number|definition|other>",
   "target_slot": "<name of the final answer slot>",
@@ -46,21 +47,36 @@ Rules:
 - If `required_hops` would contain multiple unresolved dependent slots, prefer `recurse`.
 - If the first useful retrieval step must already be narrower than the original question, choose `recurse`.
 - Do not choose `single_probe` as a default for hard multi-hop questions.
+- `retrieval_query` must be short and optimized for retrieval, not a sentence-length explanation.
 - `required_hops` must list the missing slots in dependency order.
 - `dependency_group` specifies which slots can be retrieved in parallel once earlier groups are resolved.
 - Slots in the same `dependency_group` must be independent of each other.
 - Use group `0` for the earliest ready slots, `1` for slots that depend on group `0`, and so on.
 - The last item in `required_hops` must be the final answer slot named by `target_slot`.
+- The last item in `required_hops` must match the thing explicitly asked by the interrogative target in the original question.
+- If the question asks `where`, the final slot must be the location being asked for, not an intermediate country/person/work.
+- If the question asks `who`, the final slot must be the person or name being asked for.
+- If the question asks `when`, the final slot must be the date/time being asked for.
+- If the question asks `how many` or `how much`, the final slot must be the quantity being asked for.
 - `target_slot` must be a concise semantic slot name, never a placeholder like `target_slot`, `final_answer`, `answer`, or `slot`.
 - Every `required_hops[].slot_name` must also be a concise semantic slot name, never a placeholder.
+- If a later slot asks for an attribute of an entity that is not yet known, the earlier slot must resolve that entity first.
+- Decompose entity discovery before attribute lookup, and attribute lookup before final value extraction.
+- Bridge entities like `author`, `creator`, `band`, `country`, `city`, or `director` are intermediate unless the question directly asks for them.
 - For `single_probe`, `sub_question` may directly target the final answer.
+- For `single_probe`, `retrieval_query` should name the main anchor entity/relation pair.
 - For `recurse`, `sub_question` MUST be the FIRST bridge fact question only.
+- For `recurse`, `retrieval_query` must target that same first bridge fact, using the most concrete anchor phrase available.
 - For `recurse`, `sub_question` must be answerable from a single retrieval step and must be strictly simpler than the original question.
 - For `recurse`, do NOT restate the original multi-hop question or any nested version of it.
 - BAD recurse sub-question: "Where was Popper's academic appointment in the country near the country of citizenship of the person who wrote The Book Thief?"
 - GOOD recurse sub-question: "Who wrote The Book Thief?"
 - BAD recurse sub-question: "When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?"
 - GOOD recurse sub-question: "Which group's record label released Study in Brown?"
+- BAD required_hops for "Country B was the only communist country to have an embassy where?": [{{"slot_name":"country_B"}}]
+- GOOD required_hops for that question: [{{"slot_name":"country_B","hint":"the only communist country with the embassy"}},{{"slot_name":"embassy_location","hint":"where that country had the embassy"}}]
+- BAD required_hops for "The Move Ya Body song's band is named after who?": [{{"slot_name":"band"}}]
+- GOOD required_hops for that question: [{{"slot_name":"band","hint":"the band behind Move Ya Body"}},{{"slot_name":"namesake_person","hint":"who that band is named after"}}]
 - If unsure between two bridge starts, ask for the earliest missing entity that grounds later hops.
 - `draft_answer` must be short.
 - Do not include any text outside the JSON object.

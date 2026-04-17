@@ -28,6 +28,11 @@ logger = logging.getLogger(__name__)
 
 # Maximum retries when LLM returns malformed JSON
 _MAX_JSON_RETRIES = 2
+_REPAIR_PROMPT = (
+    "Your previous response was not valid JSON. "
+    "Return ONLY one JSON object matching the requested schema. "
+    "No markdown, no commentary, no extra text."
+)
 
 
 class Investigator:
@@ -96,6 +101,7 @@ class Investigator:
         prior_facts: list[Fact],
         retrieval_query: str | None = None,
         slot_name: str = "",
+        slot_hint: str = "",
     ) -> EvidenceCapsule:
         """Retrieve evidence for *sub_question* and distil into a capsule.
 
@@ -121,6 +127,7 @@ class Investigator:
             prior_facts,
             retrieval_query=retrieval_query,
             slot_name=slot_name,
+            slot_hint=slot_hint,
         )
         return capsule
 
@@ -131,6 +138,7 @@ class Investigator:
         prior_facts: list[Fact],
         retrieval_query: str | None = None,
         slot_name: str = "",
+        slot_hint: str = "",
     ) -> tuple[EvidenceCapsule, int]:
         """Like :meth:`investigate`, but also returns token usage."""
         total_tokens = 0
@@ -141,7 +149,13 @@ class Investigator:
         # 1. Generate search queries
         effective_query = retrieval_query.strip() if retrieval_query and retrieval_query.strip() else sub_question
         keywords = self._extract_keywords(effective_query)
-        semantic_query = self._build_semantic_query(effective_query, goal, prior_facts)
+        semantic_query = self._build_semantic_query(
+            effective_query,
+            goal,
+            prior_facts,
+            slot_name=slot_name,
+            slot_hint=slot_hint,
+        )
 
         # 2–3. Run both searches and collect chunk IDs
         ctx = AgentContext()
@@ -210,6 +224,7 @@ class Investigator:
             sub_question=sub_question,
             goal=goal,
             target_slot=slot_name or "final_answer",
+            target_slot_hint=slot_hint or "No extra slot hint available.",
             prior_facts=prior_facts_text,
             retrieved_passages=chunk_result,
             capsule_limit=self.evidence_capsule_limit,
@@ -237,6 +252,13 @@ class Investigator:
                 parsed = self._parse_json_response(content)
                 if parsed is not None:
                     break
+                if attempt < _MAX_JSON_RETRIES:
+                    messages = [
+                        messages[0],
+                        messages[1],
+                        {"role": "assistant", "content": content},
+                        {"role": "user", "content": _REPAIR_PROMPT},
+                    ]
             except Exception as exc:
                 logger.warning(
                     "LLM call failed (attempt %d/%d): %s",
@@ -403,14 +425,20 @@ class Investigator:
         sub_question: str,
         goal: str,
         prior_facts: list[Fact],
+        slot_name: str = "",
+        slot_hint: str = "",
     ) -> str:
         """Augment semantic retrieval with the immediate goal and grounded facts."""
         parts = [sub_question.strip()]
+        if slot_name.strip():
+            parts.append(f"Target slot: {slot_name.strip()}")
+        if slot_hint.strip():
+            parts.append(f"Slot hint: {slot_hint.strip()}")
         if goal.strip():
             parts.append(f"Goal: {goal.strip()}")
 
         grounded_facts = [
-            fact.text.strip()
+            (fact.answer_span.strip() or fact.text.strip())
             for fact in sorted(prior_facts, key=lambda fact: fact.confidence, reverse=True)
             if fact.text.strip() and fact.confidence >= 0.6
         ][:2]

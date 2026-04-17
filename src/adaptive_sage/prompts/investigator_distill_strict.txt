@@ -12,9 +12,11 @@ Return exactly one JSON object with this schema:
 
 Rules:
 - Use only the retrieved passages.
-- Answer the sub-question, not a broader description or intermediate entity.
-- `answer_span` must be the shortest span that resolves the question.
-- `fact` must restate the same answer and nothing extra.
+- Answer the sub-question exactly, not a broader description or an upstream bridge entity.
+- `answer_span` must be the shortest copied span that resolves the target slot with the correct type and boundary.
+- Preserve units, titles, administrative qualifiers, and official names when they are needed for correctness.
+- If the passage contains both a bridge entity and the slot value asked for, return the slot value.
+- `fact` must restate the same answer and directly support it with no extra claims.
 - Cite only chunk IDs present in the passages.
 - If the passages do not directly support a single answer, abstain with:
   - `"answer_span": ""`
@@ -27,6 +29,7 @@ Rules:
 Sub-question: {sub_question}
 Goal: {goal}
 Target slot: {target_slot}
+Target slot hint: {target_slot_hint}
 Prior facts:
 {prior_facts}
 

@@ -34,6 +34,15 @@ Every spawned sub_question must be answerable by a single retrieval step. It mus
 - BAD: repeating the original question or a nested paraphrase of it
 - GOOD: asking for the next bridge entity, attribute, date, or location directly
 
+## Slot-Type Rule
+
+The relation in the next sub-question must match the pending slot hint.
+
+- Do not ask birth/birthplace questions unless the pending slot is about birth, origin, or location of a person/entity.
+- Do not ask creator/author/director questions unless the pending slot is about creator/author/director identity.
+- Do not ask location questions when the pending slot is a person, title, date, or quantity.
+- If the pending slot is intermediate, retrieve that bridge entity first; if it is final, retrieve the final target directly.
+
 ## Refine Rule
 
 Choose `refine` only when:

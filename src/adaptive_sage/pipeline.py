@@ -338,6 +338,7 @@ class AdaptiveRecursivePipeline:
                 metadata={
                     "answer_type": route["answer_type"],
                     "target_slot": route["target_slot"],
+                    "retrieval_query": route.get("retrieval_query", ""),
                     "pending_slots": self._slot_snapshot(slot_state),
                 },
             )
@@ -388,6 +389,7 @@ class AdaptiveRecursivePipeline:
         min_subagent_calls_before_answer = 1
 
         initial_sub_question = (route["sub_question"] or question).strip() or question
+        initial_retrieval_query = str(route.get("retrieval_query", "")).strip()
         initial_goal = route["goal"]
         pending_slots = self._pending_slots(slot_state)
 
@@ -410,8 +412,14 @@ class AdaptiveRecursivePipeline:
                 total_tokens += refine_tokens
                 orchestrator_tokens += refine_tokens
                 initial_sub_question = refine_decision["sub_question"]
+                initial_retrieval_query = str(
+                    refine_decision.get("retrieval_query", "")
+                ).strip()
                 initial_goal = refine_decision["goal"]
                 step_trace[0].metadata["refined_bootstrap_sub_question"] = initial_sub_question
+                step_trace[0].metadata["refined_bootstrap_retrieval_query"] = (
+                    initial_retrieval_query or initial_sub_question
+                )
                 step_trace[0].metadata["refined_bootstrap_goal"] = initial_goal
                 step_trace[0].tokens += refine_tokens
                 if initial_sub_question.lower() == question.strip().lower() and pending_slots:
@@ -430,8 +438,14 @@ class AdaptiveRecursivePipeline:
                     total_tokens += refine_tokens
                     orchestrator_tokens += refine_tokens
                     initial_sub_question = refine_decision["sub_question"]
+                    initial_retrieval_query = str(
+                        refine_decision.get("retrieval_query", "")
+                    ).strip()
                     initial_goal = refine_decision["goal"]
                     step_trace[0].metadata["slot_focused_bootstrap_sub_question"] = initial_sub_question
+                    step_trace[0].metadata["slot_focused_bootstrap_retrieval_query"] = (
+                        initial_retrieval_query or initial_sub_question
+                    )
                     step_trace[0].metadata["slot_focused_bootstrap_goal"] = initial_goal
                     step_trace[0].tokens += refine_tokens
 
@@ -442,6 +456,9 @@ class AdaptiveRecursivePipeline:
                 sub_question=initial_sub_question,
                 goal=initial_goal,
                 prior_facts=[],
+                retrieval_query=initial_retrieval_query or None,
+                slot_name=probe_slot,
+                slot_hint=self._slot_hint(slot_state, probe_slot),
             )
             total_tokens += investigate_tokens
             subagent_tokens += investigate_tokens
@@ -464,7 +481,10 @@ class AdaptiveRecursivePipeline:
                     route_decision=route["action"],
                     route_confidence=route["confidence"],
                     route_draft_answer=route["draft_answer"],
-                        metadata={"goal": initial_goal},
+                    metadata={
+                        "goal": initial_goal,
+                        "retrieval_query": initial_retrieval_query or initial_sub_question,
+                    },
                     )
                 )
             (
@@ -721,11 +741,7 @@ class AdaptiveRecursivePipeline:
                         if recovery_decision.get("action") == "spawn":
                             slot_name = recovery_decision.get("slot_name") or self._first_pending_slot(slot_state)
                             sub_question = recovery_decision["sub_question"]
-                            retrieval_query = (
-                                str(recovery_decision.get("retrieval_query", "")).strip()
-                                if route["action"] == "recurse"
-                                else ""
-                            )
+                            retrieval_query = str(recovery_decision.get("retrieval_query", "")).strip()
                             goal = recovery_decision["goal"]
                             duplicate_subquestion_count += int(
                                 self._is_duplicate_subquestion(sub_question, step_trace)
@@ -735,6 +751,8 @@ class AdaptiveRecursivePipeline:
                                 goal=goal,
                                 prior_facts=memory.get_all(),
                                 retrieval_query=retrieval_query or None,
+                                slot_name=slot_name,
+                                slot_hint=self._slot_hint(slot_state, slot_name),
                             )
                             total_tokens += investigate_tokens
                             subagent_tokens += investigate_tokens
@@ -838,11 +856,7 @@ class AdaptiveRecursivePipeline:
             if action == "spawn":
                 slot_name = decision.get("slot_name") or self._first_pending_slot(slot_state)
                 sub_question = decision["sub_question"]
-                retrieval_query = (
-                    str(decision.get("retrieval_query", "")).strip()
-                    if route["action"] == "recurse"
-                    else ""
-                )
+                retrieval_query = str(decision.get("retrieval_query", "")).strip()
                 goal = decision["goal"]
                 duplicate_subquestion_count += int(
                     self._is_duplicate_subquestion(sub_question, step_trace)
@@ -852,6 +866,8 @@ class AdaptiveRecursivePipeline:
                     goal=goal,
                     prior_facts=memory.get_all(),
                     retrieval_query=retrieval_query or None,
+                    slot_name=slot_name,
+                    slot_hint=self._slot_hint(slot_state, slot_name),
                 )
                 total_tokens += investigate_tokens
                 subagent_tokens += investigate_tokens
@@ -928,6 +944,7 @@ class AdaptiveRecursivePipeline:
                     prior_facts=memory.get_all(),
                     retrieval_query=retrieval_query or None,
                     slot_name=slot_name,
+                    slot_hint=self._slot_hint(slot_state, slot_name),
                 )
                 total_tokens += investigate_tokens
                 subagent_tokens += investigate_tokens
@@ -1709,6 +1726,10 @@ class AdaptiveRecursivePipeline:
                         str(decision.get("retrieval_query", "")).strip() or None
                     ),
                     slot_name=str(decision.get("slot_name", "")).strip(),
+                    slot_hint=self._slot_hint(
+                        slot_state,
+                        str(decision.get("slot_name", "")).strip(),
+                    ),
                 )
                 for decision, _ in batch_decisions
             ]
@@ -1819,6 +1840,8 @@ class AdaptiveRecursivePipeline:
             sub_question=sub_question or question,
             goal=verify_goal,
             prior_facts=memory.get_all(),
+            slot_name=slot_name,
+            slot_hint=self._slot_hint(slot_state, slot_name),
         )
         evidence = "\n".join(verify_capsule.support_snippets) or verify_capsule.fact.text
         verify_result, verify_tokens = await self.orchestrator.verify_claim_with_usage(

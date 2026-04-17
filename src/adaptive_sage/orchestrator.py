@@ -56,6 +56,7 @@ Rules:
 - The sub-question must be self-contained and specific.
 - `retrieval_query` must be a concise search query, not an explanation.
 - When prior facts already reveal a bridge entity, anchor `retrieval_query` on that entity plus the missing target relation/attribute.
+- If the target slot depends on an entity that is still unknown, ask for that entity before asking for its attribute.
 - If no better rewrite is available, set `retrieval_query` equal to `sub_question`.
 - Target one pending slot only.
 - `slot_name` must copy exactly one slot name from the pending slot list.
@@ -108,6 +109,7 @@ Output ONLY a JSON object:
 Rules:
 - The new sub-question must be strictly narrower than the original question.
 - It must target the earliest unresolved bridge entity or attribute needed for the answer.
+- If an attribute depends on an unknown entity, ask for the entity first.
 - It must be answerable in a single retrieval step.
 - Do not repeat the original question or a near-paraphrase of it.
 - Prefer grounding on the first unresolved slot in dependency order.
@@ -289,10 +291,15 @@ class Orchestrator:
 
             # Duplicate sub-question detection
             for entry in trace:
-                if entry.action == "spawn" and entry.sub_question:
-                    if entry.sub_question.strip().lower() == sub_q.lower():
+                if entry.action in {"spawn", "refine"} and entry.sub_question:
+                    same_sub_question = entry.sub_question.strip().lower() == sub_q.lower()
+                    same_slot = (
+                        not slot_name
+                        or str(entry.slot_name or "").strip() == slot_name
+                    )
+                    if same_sub_question and same_slot and entry.fact_added:
                         logger.warning(
-                            "Duplicate sub-question detected: %r — forcing answer",
+                            "Duplicate grounded sub-question detected: %r — forcing answer",
                             sub_q,
                         )
                         return {"action": "answer"}, tokens
@@ -434,6 +441,9 @@ class Orchestrator:
             "confidence": max(0.0, min(float(parsed.get("confidence", 0.0)), 1.0)),
             "draft_answer": str(parsed.get("draft_answer", "")).strip(),
             "sub_question": str(parsed.get("sub_question", "")).strip() or question,
+            "retrieval_query": str(parsed.get("retrieval_query", "")).strip()
+            or str(parsed.get("sub_question", "")).strip()
+            or question,
             "goal": str(parsed.get("goal", "")).strip()
             or "Resolve the final answer with one grounded retrieval step.",
             "answer_type": str(parsed.get("answer_type", "")).strip() or "short factual span",
@@ -540,6 +550,11 @@ Return ONLY a single JSON object:
   "justification": "<brief grounding explanation>",
   "missing_slot": "<pending slot name or empty string>"
 }
+
+Rules for `answer`:
+- return the shortest final answer span only
+- do not return a sentence or explanation
+- if a cited fact's `answer span` resolves the final target, copy that span exactly
 """
         messages = [
             {
@@ -796,12 +811,14 @@ Return ONLY a single JSON object:
         for i, fact in enumerate(facts, start=1):
             answer_span = str(getattr(fact, "answer_span", "")).strip()
             confidence = f"{fact.confidence:.2f}"
+            slot_name = str(getattr(fact, "slot_name", "")).strip()
+            slot_prefix = f"slot: {slot_name} | " if slot_name else ""
             if answer_span:
                 lines.append(
-                    f"{i}. answer span: {answer_span} | confidence: {confidence} | fact: {fact.text}"
+                    f"{i}. {slot_prefix}answer span: {answer_span} | confidence: {confidence} | fact: {fact.text}"
                 )
             else:
-                lines.append(f"{i}. confidence: {confidence} | fact: {fact.text}")
+                lines.append(f"{i}. {slot_prefix}confidence: {confidence} | fact: {fact.text}")
         return "\n".join(lines)
 
     @staticmethod
