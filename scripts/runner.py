@@ -19,6 +19,7 @@ import argparse
 import asyncio
 import json
 import logging
+import math
 import sys
 import time
 from pathlib import Path
@@ -77,7 +78,17 @@ def _write_prediction(output_dir: Path, result_dict: dict) -> None:
         f.write(line)
 
 
-def _result_to_output_dict(result: PipelineResult, gold_answer: str) -> dict:
+def _write_run_summary(output_dir: Path, summary: dict) -> None:
+    """Write aggregate run metadata for downstream analysis."""
+    with open(output_dir / "run_summary.json", "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=2, ensure_ascii=False)
+
+
+def _result_to_output_dict(
+    result: PipelineResult,
+    gold_answer: str,
+    wallclock_seconds: float,
+) -> dict:
     """Convert a PipelineResult to the output JSON-line format."""
     return {
         "id": result.question_id,
@@ -103,6 +114,7 @@ def _result_to_output_dict(result: PipelineResult, gold_answer: str) -> dict:
             "slot_resolution": result.slot_resolution,
             "auto_verify_calls": result.auto_verify_calls,
             "answer_rejection_count": result.answer_rejection_count,
+            "wallclock_seconds": round(wallclock_seconds, 3),
         },
     }
 
@@ -118,20 +130,23 @@ async def _process_question(
     semaphore: asyncio.Semaphore,
     output_dir: Path,
     pbar: tqdm,
-) -> bool:
-    """Process a single question and write the result.  Returns True on success."""
+) -> dict:
+    """Process a single question and write the result metadata."""
     qid = str(question.get("id", ""))
     q_text = question.get("question", "")
     gold = question.get("answer", "")
 
     async with semaphore:
+        started = time.time()
         try:
             result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
-            output_dict = _result_to_output_dict(result, gold)
+            elapsed = time.time() - started
+            output_dict = _result_to_output_dict(result, gold, elapsed)
             _write_prediction(output_dir, output_dict)
             pbar.update(1)
-            return True
+            return {"ok": True, "wallclock_seconds": elapsed}
         except Exception as exc:
+            elapsed = time.time() - started
             logger.error("Failed on question %s: %s", qid, exc, exc_info=True)
             # Write a placeholder so we don't retry this question
             placeholder = {
@@ -158,12 +173,13 @@ async def _process_question(
                     "slot_resolution": {},
                     "auto_verify_calls": 0,
                     "answer_rejection_count": 0,
+                    "wallclock_seconds": round(elapsed, 3),
                     "error": str(exc),
                 },
             }
             _write_prediction(output_dir, placeholder)
             pbar.update(1)
-            return False
+            return {"ok": False, "wallclock_seconds": elapsed}
 
 
 async def _run(
@@ -172,6 +188,9 @@ async def _run(
     output_dir: str,
     server_url: str,
     concurrency: int,
+    chunks_file: str | None = None,
+    index_dir: str | None = None,
+    embedding_model: str | None = None,
 ) -> None:
     """Main async runner."""
     # --- Load config ---
@@ -179,6 +198,12 @@ async def _run(
 
     # Override LLM base_url with the CLI-specified server URL
     config.set("llm.base_url", server_url)
+    if chunks_file:
+        config.set("data.chunks_file", chunks_file)
+    if index_dir:
+        config.set("data.index_dir", index_dir)
+    if embedding_model:
+        config.set("data.embedding_model", embedding_model)
 
     # --- Load questions ---
     with open(questions_path, "r", encoding="utf-8") as f:
@@ -213,6 +238,7 @@ async def _run(
     total = len(remaining)
     succeeded = 0
     failed = 0
+    wallclock_seconds: list[float] = []
 
     start_time = time.time()
     pbar = tqdm(total=total, desc="Processing questions", unit="q")
@@ -227,12 +253,23 @@ async def _run(
     for r in results:
         if isinstance(r, Exception):
             failed += 1
-        elif r is True:
-            succeeded += 1
         else:
-            failed += 1
+            if isinstance(r, dict):
+                wallclock_seconds.append(float(r.get("wallclock_seconds", 0.0)))
+                if r.get("ok"):
+                    succeeded += 1
+                else:
+                    failed += 1
+            else:
+                failed += 1
 
     elapsed = time.time() - start_time
+    sorted_wallclock = sorted(wallclock_seconds)
+    p50 = 0.0
+    p95 = 0.0
+    if sorted_wallclock:
+        p50 = sorted_wallclock[len(sorted_wallclock) // 2]
+        p95 = sorted_wallclock[min(len(sorted_wallclock) - 1, math.ceil(0.95 * len(sorted_wallclock)) - 1)]
 
     # --- Summary ---
     print(f"\n{'='*60}")
@@ -241,6 +278,30 @@ async def _run(
     print(f"Total in output: {len(completed_ids) + succeeded + failed}")
     print(f"Elapsed: {elapsed:.1f}s ({elapsed/60:.1f}min)")
     print(f"{'='*60}")
+    _write_run_summary(
+        out_dir,
+        {
+            "config_path": config_path,
+            "questions_path": questions_path,
+            "server_url": server_url,
+            "concurrency": concurrency,
+            "chunks_file": config.get("data.chunks_file", ""),
+            "index_dir": config.get("data.index_dir", ""),
+            "embedding_model": config.get("data.embedding_model", ""),
+            "completed_ids": len(completed_ids),
+            "attempted": total,
+            "succeeded": succeeded,
+            "failed": failed,
+            "total_output_rows": len(completed_ids) + succeeded + failed,
+            "elapsed_seconds": round(elapsed, 3),
+            "mean_wallclock_seconds": round(elapsed / total, 3) if total else 0.0,
+            "mean_question_wallclock_seconds": round(sum(sorted_wallclock) / len(sorted_wallclock), 3)
+            if sorted_wallclock
+            else 0.0,
+            "p50_question_wallclock_seconds": round(p50, 3),
+            "p95_question_wallclock_seconds": round(p95, 3),
+        },
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -278,6 +339,12 @@ def main() -> None:
         default=24,
         help="Max concurrent question processing (default: 24)",
     )
+    parser.add_argument("--chunks-file", help="Override data.chunks_file from config")
+    parser.add_argument("--index-dir", help="Override data.index_dir from config")
+    parser.add_argument(
+        "--embedding-model",
+        help="Override data.embedding_model from config",
+    )
     args = parser.parse_args()
 
     # Configure logging
@@ -294,6 +361,9 @@ def main() -> None:
             output_dir=args.output_dir,
             server_url=args.server_url,
             concurrency=args.concurrency,
+            chunks_file=args.chunks_file,
+            index_dir=args.index_dir,
+            embedding_model=args.embedding_model,
         )
     )
 

@@ -1664,3 +1664,68 @@ Safety note:
 
 - keep `codex/iter27-no-think-results` on both local and remote as the canonical recovery point
 - do not force-push over that branch
+
+## 2026-04-17 23:50 CEST
+
+Fair-scaffold reruns on the current frozen controller stack (`fair_v4`):
+
+MuSiQue 1000:
+
+- `s0_matched`:
+  - `EM 0.256`
+  - `F1 0.3591`
+  - `contain 0.337`
+  - `answered 898/1000`
+  - `mean_tokens 24.8k` (earlier seeded S0 reference was lower quality due to poorer completion)
+- `a1_matched`:
+  - `EM 0.302`
+  - `F1 0.4313`
+  - `contain 0.403`
+  - `answered 990/1000`
+  - `mean_tokens 77.2k`
+  - note: this MuSiQue rerun used `max_steps=4`; later matched-A1 runs were corrected to `max_steps=5`
+- frozen `iter30_think` reference:
+  - `EM 0.282`
+  - `F1 0.4086`
+  - `contain 0.393`
+  - `answered 954/1000`
+  - `mean_tokens 59.4k`
+
+Interpretation:
+
+- the fairer `A1` baseline is stronger than the earlier stale `A1_1000` result
+- `iter30_think` remains materially cheaper than fixed-heavy `A1`
+- on MuSiQue, `A1` now edges `iter30_think` on raw contain, but at much higher token cost
+
+HotpotQA 1000 (`fair_v4`):
+
+- `s0_matched`:
+  - `EM 0.471`
+  - `F1 0.6389`
+  - `contain 0.647`
+  - `answered 974/1000`
+  - `mean_tokens 13.6k`
+- `a1_matched`:
+  - `EM 0.472`
+  - `F1 0.6486`
+  - `contain 0.663`
+  - `answered 999/1000`
+  - `mean_tokens 78.8k`
+  - this run used corrected `max_steps=5`
+- `iter30_think`:
+  - `EM 0.493`
+  - `F1 0.6544`
+  - `contain 0.653`
+  - `answered 990/1000`
+  - `mean_tokens 34.6k`
+
+Interpretation:
+
+- HotpotQA gives much less headroom over a strong single-agent baseline
+- `iter30_think` beats `s0_matched` on EM/F1/contain, but only slightly
+- `a1_matched` is best on contain, but the margin over `iter30_think` is small relative to its token cost
+
+Operational state:
+
+- 2Wiki 1000 `fair_v4` launched after HotpotQA
+- HotpotQA and 2Wiki runs use corrected `a1_matched max_steps=5`

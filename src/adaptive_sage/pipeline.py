@@ -46,6 +46,7 @@ class AdaptiveRecursivePipeline:
         self.direct_answer_threshold: float = float(
             config.get("adaptive.direct_answer_threshold", 0.9)
         )
+        self.max_total_tokens: int = int(config.get("budget.max_total_tokens", 0) or 0)
         self.final_answer_threshold: float = float(
             config.get("adaptive.final_answer_threshold", 0.75)
         )
@@ -344,47 +345,6 @@ class AdaptiveRecursivePipeline:
             )
         )
 
-        if (
-            route["action"] == "direct_answer"
-            and not self.require_support_for_final_answer
-            and route["confidence"] >= self.route_direct_threshold
-            and route["draft_answer"]
-        ):
-            answer = route["draft_answer"]
-            step_trace.append(
-                StepTrace(
-                    step=1,
-                    action="direct_answer",
-                    tokens=0,
-                    route_decision=route["action"],
-                    route_confidence=route["confidence"],
-                    route_draft_answer=route["draft_answer"],
-                )
-            )
-            return PipelineResult(
-                question_id=question_id,
-                question=question,
-                answer=answer,
-                step_trace=step_trace,
-                num_subagent_calls=0,
-                num_verify_calls=0,
-                total_tokens=total_tokens,
-                orchestrator_tokens=orchestrator_tokens,
-                subagent_tokens=subagent_tokens,
-                facts_used=memory.get_all(),
-                retrieved_doc_ids=retrieved_doc_ids,
-                retrieved_docs_total=retrieved_docs_total,
-                evidence_capsule_limit=self.investigator.evidence_capsule_limit,
-                fact_memory_capacity=self.fact_memory_capacity,
-                duplicate_subquestion_count=duplicate_subquestion_count,
-                route_decision=route["action"],
-                route_confidence=route["confidence"],
-                route_draft_answer=route["draft_answer"],
-                slot_resolution=self._slot_resolution_map(slot_state),
-                auto_verify_calls=auto_verify_calls,
-                answer_rejection_count=answer_rejection_count,
-            )
-
         next_step = 1
         min_subagent_calls_before_answer = 1
 
@@ -450,7 +410,7 @@ class AdaptiveRecursivePipeline:
                     step_trace[0].tokens += refine_tokens
 
         next_step = 1
-        if route["action"] in {"direct_answer", "single_probe", "recurse"}:
+        if route["action"] in {"single_probe", "recurse"}:
             probe_slot = self._first_pending_slot(slot_state)
             capsule, investigate_tokens = await self.investigator.investigate_with_usage(
                 sub_question=initial_sub_question,
@@ -507,7 +467,7 @@ class AdaptiveRecursivePipeline:
             auto_verify_calls += auto_verify_delta
             next_step = 2
 
-            if route["action"] in {"direct_answer", "single_probe"}:
+            if route["action"] == "single_probe":
                 pending_slots = self._pending_slots(slot_state)
                 answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
                     question=question,
@@ -583,6 +543,39 @@ class AdaptiveRecursivePipeline:
                     )
 
         for step in range(next_step, self.max_steps + 1):
+            if self._should_force_budget_answer(total_tokens):
+                answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=self._pending_slots(slot_state),
+                    trace=step_trace,
+                    route_draft_answer=route["draft_answer"],
+                )
+                answer_obj = self._apply_answer_object_fallback(
+                    answer_obj,
+                    memory.get_all(),
+                    route["draft_answer"],
+                )
+                total_tokens += answer_tokens
+                orchestrator_tokens += answer_tokens
+                answer = answer_obj["answer"]
+                step_trace.append(
+                    StepTrace(
+                        step=step,
+                        action="answer",
+                        tokens=answer_tokens,
+                        cited_fact_ids=answer_obj["cited_fact_ids"],
+                        justification_confidence=answer_obj["justification_confidence"],
+                        metadata={
+                            "justification": answer_obj["justification"],
+                            "missing_slot": answer_obj["missing_slot"],
+                            "fallback_source": answer_obj.get("fallback_source", ""),
+                            "budget_exhausted": True,
+                        },
+                    )
+                )
+                break
             pending_slots = self._pending_slots(slot_state)
             ready_parallel_slots = self._parallel_ready_slots(slot_state)
             if (
@@ -1170,6 +1163,28 @@ class AdaptiveRecursivePipeline:
             )
 
         for step in range(1, max_steps + 1):
+            if self._should_force_budget_answer(total_tokens):
+                answer, answer_tokens = await self.orchestrator.generate_answer_with_usage(
+                    question,
+                    memory.get_all(),
+                    target_profile,
+                    trace=step_trace,
+                )
+                answer, _, _, _ = self._apply_answer_fallback(answer, memory.get_all())
+                total_tokens += answer_tokens
+                orchestrator_tokens += answer_tokens
+                step_trace.append(
+                    StepTrace(
+                        step=step,
+                        action="answer",
+                        sub_question=None,
+                        claim=None,
+                        fact_added=False,
+                        tokens=answer_tokens,
+                        metadata={"budget_exhausted": True},
+                    )
+                )
+                break
             if self.ablation_force_spawn and step < max_steps:
                 decision, decide_tokens = await self.orchestrator.propose_spawn(
                     question=question,
@@ -1611,7 +1626,7 @@ class AdaptiveRecursivePipeline:
         facts: list,
         route_draft_answer: str = "",
     ) -> tuple[str, str, list[int], float]:
-        """Fallback from empty/meta answers to fact memory, then router draft."""
+        """Fallback from empty/meta answers to grounded fact memory only."""
         cleaned_answer = str(answer or "").strip()
         if cleaned_answer and not Orchestrator._looks_meta_answer(cleaned_answer):
             return cleaned_answer, "", [], 0.0
@@ -1619,10 +1634,6 @@ class AdaptiveRecursivePipeline:
         fact_idx, fact_answer, fact_confidence = cls._best_fact_answer_with_index(facts)
         if fact_answer:
             return fact_answer, "fact_memory", [fact_idx] if fact_idx else [], fact_confidence
-
-        draft_answer = str(route_draft_answer or "").strip()
-        if draft_answer and not Orchestrator._looks_meta_answer(draft_answer):
-            return draft_answer, "route_draft", [], 0.0
 
         return cleaned_answer, "", [], 0.0
 
@@ -2053,6 +2064,10 @@ class AdaptiveRecursivePipeline:
                 seen.add(doc_id)
                 merged.append(doc_id)
         return merged, current_total + int(capsule.retrieved_docs_total)
+
+    def _should_force_budget_answer(self, total_tokens: int) -> bool:
+        """Return whether the per-question token budget is exhausted."""
+        return self.max_total_tokens > 0 and total_tokens >= self.max_total_tokens
 
     @staticmethod
     def _merge_retrieval_ids(

@@ -114,6 +114,14 @@ def _load_eval_summary(results_dir: Path, variant: str) -> dict[str, Any]:
         return json.load(f)
 
 
+def _load_run_summary(results_dir: Path, variant: str) -> dict[str, Any]:
+    summary_file = results_dir / variant / "run_summary.json"
+    if not summary_file.exists():
+        return {}
+    with open(summary_file, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
 def _meta(pred: dict) -> dict[str, Any]:
     return pred.get("metadata", {}) or {}
 
@@ -135,6 +143,7 @@ def _aggregate_rows(
     variant: str,
     predictions: list[dict],
     gold_lookup: dict[str, str],
+    run_summary: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if not predictions:
         return {
@@ -146,6 +155,9 @@ def _aggregate_rows(
             "mean_subagent_calls": 0.0,
             "mean_verify_calls": 0.0,
             "mean_tokens": 0.0,
+            "mean_wallclock_seconds": 0.0,
+            "p50_question_wallclock_seconds": 0.0,
+            "p95_question_wallclock_seconds": 0.0,
         }
 
     em_scores = []
@@ -177,6 +189,18 @@ def _aggregate_rows(
         "mean_subagent_calls": round(sum(subagent_calls) / n, 2),
         "mean_verify_calls": round(sum(verify_calls) / n, 2),
         "mean_tokens": round(sum(total_tokens) / n, 1),
+        "mean_wallclock_seconds": round(
+            float((run_summary or {}).get("mean_wallclock_seconds", 0.0)),
+            3,
+        ),
+        "p50_question_wallclock_seconds": round(
+            float((run_summary or {}).get("p50_question_wallclock_seconds", 0.0)),
+            3,
+        ),
+        "p95_question_wallclock_seconds": round(
+            float((run_summary or {}).get("p95_question_wallclock_seconds", 0.0)),
+            3,
+        ),
     }
 
 
@@ -215,7 +239,14 @@ def _compute_main_results(
 ) -> list[dict[str, Any]]:
     rows = []
     for variant in variants:
-        rows.append(_aggregate_rows(variant, _load_predictions(results_dir, variant), gold_lookup))
+        rows.append(
+            _aggregate_rows(
+                variant,
+                _load_predictions(results_dir, variant),
+                gold_lookup,
+                _load_run_summary(results_dir, variant),
+            )
+        )
     return rows
 
 
@@ -228,6 +259,7 @@ def _compute_per_hop_breakdown(
     rows: list[dict[str, Any]] = []
     for variant in variants:
         preds = _load_predictions(results_dir, variant)
+        run_summary = _load_run_summary(results_dir, variant)
         by_hop: dict[str, list[dict]] = defaultdict(list)
         for pred in preds:
             by_hop[hop_lookup.get(str(pred.get("id", "")), "unknown")].append(pred)
@@ -236,7 +268,12 @@ def _compute_per_hop_breakdown(
                 {
                     "variant": variant,
                     "hop": hop,
-                    **_aggregate_rows(f"{variant}:{hop}", by_hop.get(hop, []), gold_lookup),
+                    **_aggregate_rows(
+                        f"{variant}:{hop}",
+                        by_hop.get(hop, []),
+                        gold_lookup,
+                        run_summary,
+                    ),
                 }
             )
             rows[-1].pop("variant_ignored", None)
@@ -252,7 +289,8 @@ def _baseline_subsets(
 ) -> tuple[set[str], set[str]]:
     easy_ids: set[str] = set()
     hard_ids: set[str] = set()
-    for pred in _load_predictions(results_dir, "S0"):
+    baseline_variant = "s0_matched" if (results_dir / "s0_matched").exists() else "S0"
+    for pred in _load_predictions(results_dir, baseline_variant):
         qid = str(pred.get("id", ""))
         gold_answer = gold_lookup.get(qid, str(pred.get("gold_answer", "")))
         if _is_correct(pred, gold_answer):
@@ -271,10 +309,11 @@ def _subset_rows(
     rows: list[dict[str, Any]] = []
     for variant in variants:
         preds = _load_predictions(results_dir, variant)
+        run_summary = _load_run_summary(results_dir, variant)
         by_id = {str(pred.get("id", "")): pred for pred in preds}
         for subset_name, subset_ids in subsets.items():
             selected = [by_id[qid] for qid in subset_ids if qid in by_id]
-            row = _aggregate_rows(variant, selected, gold_lookup)
+            row = _aggregate_rows(variant, selected, gold_lookup, run_summary)
             row["subset"] = subset_name
             rows.append(row)
     return rows
@@ -528,6 +567,9 @@ def analyze(results_dir: str, questions_path: str) -> None:
             ("mean_subagent_calls", "Mean Subagent Calls"),
             ("mean_verify_calls", "Mean Verify Calls"),
             ("mean_tokens", "Mean Tokens"),
+            ("mean_wallclock_seconds", "Mean Wallclock Seconds"),
+            ("p50_question_wallclock_seconds", "P50 Question Seconds"),
+            ("p95_question_wallclock_seconds", "P95 Question Seconds"),
         ],
     )
 
@@ -546,6 +588,7 @@ def analyze(results_dir: str, questions_path: str) -> None:
             ("contain", "Contain"),
             ("mean_subagent_calls", "Mean Subagent Calls"),
             ("mean_tokens", "Mean Tokens"),
+            ("mean_wallclock_seconds", "Mean Wallclock Seconds"),
         ],
     )
 
@@ -570,6 +613,7 @@ def analyze(results_dir: str, questions_path: str) -> None:
             ("contain", "Contain"),
             ("mean_subagent_calls", "Mean Subagent Calls"),
             ("mean_tokens", "Mean Tokens"),
+            ("mean_wallclock_seconds", "Mean Wallclock Seconds"),
         ],
     )
 

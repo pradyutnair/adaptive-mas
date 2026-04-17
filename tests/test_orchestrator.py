@@ -160,6 +160,49 @@ def test_route_preserves_retrieval_query() -> None:
     assert route["retrieval_query"] == "The Book Thief author"
 
 
+def test_route_coerces_direct_answer_to_single_probe() -> None:
+    llm = MagicMock(spec=LLMClient)
+    llm.async_chat = AsyncMock(
+        return_value={
+            "message": {
+                "content": json.dumps(
+                    {
+                        "action": "direct_answer",
+                        "confidence": 0.95,
+                        "draft_answer": "Sydney",
+                        "sub_question": "Where was Markus Zusak born?",
+                        "retrieval_query": "Markus Zusak birthplace",
+                        "goal": "Resolve the birthplace.",
+                        "answer_type": "location",
+                        "target_slot": "birthplace",
+                        "required_hops": [
+                            {
+                                "slot_name": "birthplace",
+                                "hint": "birthplace of Markus Zusak",
+                                "dependency_group": 0,
+                            }
+                        ],
+                    }
+                )
+            },
+            "input_tokens": 100,
+            "output_tokens": 50,
+            "cost": 0.0,
+            "raw_response": {},
+        }
+    )
+    orchestrator = Orchestrator(Config({}), llm)
+
+    route, _ = asyncio.run(
+        orchestrator.route_with_usage(
+            "Where was Markus Zusak born?",
+            "location",
+        )
+    )
+
+    assert route["action"] == "single_probe"
+
+
 def test_duplicate_subquestion_only_blocks_grounded_repeats() -> None:
     llm = MagicMock(spec=LLMClient)
     llm.async_chat = AsyncMock(

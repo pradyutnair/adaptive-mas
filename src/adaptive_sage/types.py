@@ -13,7 +13,6 @@ StepAction = Literal[
     "refine",
     "verify",
     "route",
-    "direct_answer",
     "answer_rejected_escalate",
     "answer_blocked_pending_slots",
     "answer_blocked_min_depth",

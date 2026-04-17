@@ -34,7 +34,7 @@ _MAX_JSON_RETRIES = 2
 
 # Valid actions the orchestrator may return
 _VALID_ACTIONS: set[str] = {"answer", "spawn", "refine", "verify"}
-_VALID_ROUTE_ACTIONS: set[str] = {"direct_answer", "single_probe", "recurse"}
+_VALID_ROUTE_ACTIONS: set[str] = {"single_probe", "recurse"}
 
 # Repair prompt sent when initial JSON parse fails
 _REPAIR_PROMPT = (
@@ -389,7 +389,7 @@ class Orchestrator:
         question: str,
         target_profile: str = "",
     ) -> dict[str, Any]:
-        """Route a question into direct-answer, single-probe, or recurse."""
+        """Route a question into single-probe or recurse."""
         route, _ = await self.route_with_usage(question, target_profile)
         return route
 
@@ -418,6 +418,8 @@ class Orchestrator:
             temperature=self.route_temperature,
         )
         action = str(parsed.get("action", "")).strip().lower()
+        if action == "direct_answer":
+            action = "single_probe"
         if action not in _VALID_ROUTE_ACTIONS:
             action = "single_probe"
 
@@ -432,9 +434,6 @@ class Orchestrator:
         else:
             target_slot = parsed_target_slot or "final_answer"
             required_hops = [{"slot_name": target_slot, "hint": target_profile.strip()}]
-
-        if action == "direct_answer" and len(required_hops) > 1:
-            action = "single_probe"
 
         route = {
             "action": action,
@@ -495,7 +494,6 @@ class Orchestrator:
             facts=facts_text or "No facts available.",
             pending_slots="No explicit pending slots.",
             hop_chain=hop_chain or "No grounded hop chain available.",
-            route_draft_answer=route_draft_answer or "None",
         )
 
         messages = [
@@ -538,7 +536,6 @@ class Orchestrator:
             pending_slots=self._format_pending_slots(pending_slots or [])
             or "No explicit pending slots.",
             hop_chain=hop_chain or "No grounded hop chain available.",
-            route_draft_answer=route_draft_answer or "None",
         )
         user_content += """
 

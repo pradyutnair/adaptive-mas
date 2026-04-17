@@ -21,9 +21,6 @@ Question: {question}
 Hop chain:
 {hop_chain}
 
-Router draft answer:
-{route_draft_answer}
-
 Pending slots:
 {pending_slots}
 

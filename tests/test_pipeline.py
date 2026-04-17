@@ -35,7 +35,7 @@ def test_answer_fallback_prefers_fact_memory() -> None:
     assert confidence == 0.91
 
 
-def test_answer_fallback_uses_route_draft_when_memory_empty() -> None:
+def test_answer_fallback_does_not_use_route_draft_when_memory_empty() -> None:
     answer, source, cited_fact_ids, confidence = (
         AdaptiveRecursivePipeline._apply_answer_fallback(
             "",
@@ -44,8 +44,8 @@ def test_answer_fallback_uses_route_draft_when_memory_empty() -> None:
         )
     )
 
-    assert answer == "Sydney"
-    assert source == "route_draft"
+    assert answer == ""
+    assert source == ""
     assert cited_fact_ids == []
     assert confidence == 0.0
 
