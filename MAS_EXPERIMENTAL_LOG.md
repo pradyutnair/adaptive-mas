@@ -1729,3 +1729,31 @@ Operational state:
 
 - 2Wiki 1000 `fair_v4` launched after HotpotQA
 - HotpotQA and 2Wiki runs use corrected `a1_matched max_steps=5`
+
+2Wiki 1000 (`fair_v4`):
+
+- `s0_matched`:
+  - `EM 0.366`
+  - `F1 0.4683`
+  - `contain 0.522`
+  - `answered 917/1000`
+  - `mean_wallclock 6.8s`
+- `a1_matched`:
+  - `EM 0.458`
+  - `F1 0.5724`
+  - `contain 0.617`
+  - `answered 998/1000`
+  - `mean_wallclock 32.6s`
+  - this run used corrected `max_steps=5`
+- `iter30_think`:
+  - `EM 0.480`
+  - `F1 0.5985`
+  - `contain 0.635`
+  - `answered 969/1000`
+  - `mean_wallclock 20.6s`
+
+Interpretation:
+
+- `iter30_think` is the best 2Wiki result in the fair internal matrix
+- it beats both fixed baselines on raw quality
+- it remains substantially cheaper in latency than fixed-heavy `a1_matched`
