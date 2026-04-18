@@ -1,0 +1,14 @@
+{
+  "attempted": 1000,
+  "succeeded": 1000,
+  "failed": 0,
+  "total_output_rows": 1000,
+  "elapsed_seconds": 3287.079,
+  "mean_wallclock_seconds": 3.287,
+  "questions_path": "data/musique/questions_1000_seedfull_combined.json",
+  "inputs": [
+    "results/s0_matched_musique_seeded1000_fair_v4_shard0/predictions.jsonl",
+    "results/s0_matched_musique_seeded1000_fair_v4_shard1/predictions.jsonl",
+    "results/s0_matched_musique_seeded1000_fair_v4_shard2/predictions.jsonl"
+  ]
+}

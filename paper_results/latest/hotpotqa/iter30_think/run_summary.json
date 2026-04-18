@@ -1,0 +1,17 @@
+{
+  "attempted": 1000,
+  "succeeded": 1000,
+  "failed": 0,
+  "total_output_rows": 1000,
+  "elapsed_seconds": 4663.527,
+  "mean_wallclock_seconds": 4.664,
+  "mean_question_wallclock_seconds": 314.409,
+  "p50_question_wallclock_seconds": 252.79,
+  "p95_question_wallclock_seconds": 758.589,
+  "questions_path": "data/hotpotqa/questions_1000_seed42.json",
+  "inputs": [
+    "results/iter30_think_hotpotqa_seed42_fair_v4_shard0/predictions.jsonl",
+    "results/iter30_think_hotpotqa_seed42_fair_v4_shard1/predictions.jsonl",
+    "results/iter30_think_hotpotqa_seed42_fair_v4_shard2/predictions.jsonl"
+  ]
+}
