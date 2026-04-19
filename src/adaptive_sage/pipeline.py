@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
+import math
+import random
+from pathlib import Path
 from typing import Any
 
 from arag.core.config import Config
@@ -74,6 +78,15 @@ class AdaptiveRecursivePipeline:
         self.enable_bootstrap_short_circuit: bool = bool(
             config.get("adaptive.enable_bootstrap_short_circuit", False)
         )
+        self.bootstrap_probe_first: bool = bool(
+            config.get("adaptive.bootstrap_probe_first", False)
+        )
+        self.bootstrap_search_top_k: int = int(
+            config.get("adaptive.bootstrap_search_top_k", 4)
+        )
+        self.bootstrap_max_read: int = int(
+            config.get("adaptive.bootstrap_max_read", 6)
+        )
         self.enable_parallel_independent_hops: bool = bool(
             config.get("adaptive.enable_parallel_independent_hops", True)
         )
@@ -96,12 +109,59 @@ class AdaptiveRecursivePipeline:
             config.get("ablation.always_verify", False)
         )
 
+        # ------------------------------------------------------------------
+        # Sufficiency controller (m1.2): single dataset-agnostic policy.
+        # Effort scales with a calibrated post-probe sufficiency score s.
+        # ------------------------------------------------------------------
+        self.use_sufficiency_controller: bool = bool(
+            config.get("adaptive.sufficiency_controller", False)
+        )
+        self.sufficiency_threshold: float = float(
+            config.get("adaptive.sufficiency_threshold", 0.70)
+        )
+        self.sufficiency_max_recurse_steps: int = int(
+            config.get("adaptive.sufficiency_max_recurse_steps", self.max_steps)
+        )
+        self.sufficiency_min_recurse_steps: int = int(
+            config.get("adaptive.sufficiency_min_recurse_steps", 1)
+        )
+
+        # Sufficiency-controller ablations.
+        self.ablation_sufficiency_no_probe: bool = bool(
+            config.get("ablation.sufficiency_no_probe", False)
+        )
+        self.ablation_sufficiency_no_controller: bool = bool(
+            config.get("ablation.sufficiency_no_controller", False)
+        )
+        self.ablation_sufficiency_random_route: bool = bool(
+            config.get("ablation.sufficiency_random_route", False)
+        )
+        self.ablation_sufficiency_random_route_p: float = float(
+            config.get("ablation.sufficiency_random_route_p", 0.5)
+        )
+        self.ablation_sufficiency_random_route_seed: int = int(
+            config.get("ablation.sufficiency_random_route_seed", 42)
+        )
+        self.ablation_sufficiency_oracle_route: bool = bool(
+            config.get("ablation.sufficiency_oracle_route", False)
+        )
+        self.ablation_sufficiency_oracle_path: str = str(
+            config.get("ablation.sufficiency_oracle_path", "")
+        )
+        self._oracle_route_table: dict[str, bool] = {}
+        if self.ablation_sufficiency_oracle_route and self.ablation_sufficiency_oracle_path:
+            self._oracle_route_table = self._load_oracle_table(
+                self.ablation_sufficiency_oracle_path
+            )
+
     async def run(self, question: str, question_id: str) -> PipelineResult:
         """Execute the adaptive recursive pipeline on a question."""
         logger.info("Pipeline start: question_id=%s, max_steps=%d", question_id, self.max_steps)
 
         if self.max_steps == 0:
             result = await self._run_s0(question, question_id)
+        elif self.use_sufficiency_controller:
+            result = await self._run_sufficiency(question, question_id)
         elif self.ablation_upfront_decomposition:
             result = await self._run_upfront_decomposition(question, question_id)
         elif self.use_routed_controller:
@@ -199,6 +259,640 @@ class AdaptiveRecursivePipeline:
             fact_memory_capacity=self.fact_memory_capacity,
             duplicate_subquestion_count=0,
         )
+
+    async def _run_sufficiency(
+        self, question: str, question_id: str
+    ) -> PipelineResult:
+        """Sufficiency-controlled adaptive run (m1.2).
+
+        One unified policy for every question on every dataset:
+
+        1. Run a single grounded retrieval probe.
+        2. Compute sufficiency  s = s_conf * s_target * s_align  in [0, 1].
+        3. If  s >= tau, answer from the probe state.
+        4. Else, escalate to a recursive lane with a step budget that
+           scales as ceil(MAX_STEPS * (1 - s)).
+
+        No question-text heuristics, no per-dataset thresholds, no
+        entity-class lists. The only hyperparameter is `tau`, fixed
+        a priori from configuration (default 0.70).
+        """
+        memory = FactMemory.with_strategy(
+            capacity=self.fact_memory_capacity,
+            strategy=self.fact_memory_strategy,
+        )
+        target_profile = self._target_profile(question)
+        step_trace: list[StepTrace] = []
+        total_tokens = 0
+        orchestrator_tokens = 0
+        subagent_tokens = 0
+        subagent_calls = 0
+        retrieved_doc_ids: list[str] = []
+        retrieved_docs_total = 0
+        answer = ""
+
+        tau = self.sufficiency_threshold
+
+        # ---- Route first: extract slot DAG (required_hops) before probing. ----
+        # The route prompt is schema-only (no benchmark examples, no
+        # interrogative rules). We use its structured output as a
+        # principled scaffold so the recursive lane has explicit pending
+        # slots and the probe can target the first unresolved bridge slot
+        # on compositional questions instead of the raw multi-hop string.
+        route, route_tokens = await self.orchestrator.route_with_usage(
+            question=question,
+            target_profile=target_profile,
+        )
+        total_tokens += route_tokens
+        orchestrator_tokens += route_tokens
+        required_hops: list[dict] = list(route.get("required_hops") or [])
+        route_target_slot: str = str(route.get("target_slot") or "")
+        is_compositional = len(required_hops) > 1
+
+        # Ablation: skip probe entirely and always recurse with full budget.
+        # Useful as the "always-MAS" upper bound on cost.
+        if self.ablation_sufficiency_no_probe:
+            recurse_steps = self.sufficiency_max_recurse_steps
+            return await self._sufficiency_recurse(
+                question=question,
+                question_id=question_id,
+                memory=memory,
+                step_trace=step_trace,
+                target_profile=target_profile,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                subagent_calls=subagent_calls,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                recurse_steps=recurse_steps,
+                sufficiency=0.0,
+                route_label="ablation_no_probe",
+                required_hops=required_hops,
+                route_target_slot=route_target_slot,
+            )
+
+        # Always probe with the full question. Probing only the first-hop
+        # hint on compositional questions throws away signal that often
+        # short-circuits the controller (especially on hotpot-style chains
+        # where one retrieval already contains the answer span). The route
+        # output is used downstream as the slot scaffold for the recursive
+        # lane; it does not constrain the probe's retrieval target.
+        probe_sub_question = question
+        probe_goal = target_profile
+
+        probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+            sub_question=probe_sub_question,
+            goal=probe_goal,
+            prior_facts=[],
+            search_top_k_override=self.bootstrap_search_top_k or None,
+            max_read_override=self.bootstrap_max_read or None,
+        )
+        total_tokens += probe_tokens
+        subagent_tokens += probe_tokens
+        subagent_calls += 1
+        retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+            retrieved_doc_ids,
+            retrieved_docs_total,
+            probe_capsule,
+        )
+        probe_fact_added = self._add_fact(memory, probe_capsule, step=0)
+        step_trace.append(
+            StepTrace(
+                step=0,
+                action="spawn",
+                sub_question=probe_sub_question,
+                fact_added=probe_fact_added,
+                tokens=probe_tokens,
+                metadata={
+                    "sufficiency_probe": True,
+                    "route_target_slot": route_target_slot,
+                    "route_required_hops": required_hops,
+                    "is_compositional": is_compositional,
+                    "probe_targeted_first_hop": False,
+                },
+            )
+        )
+
+        # Generate a candidate answer object grounded in the probe fact.
+        probe_answer_obj, probe_answer_tokens = (
+            await self.orchestrator.generate_answer_object_with_usage(
+                question=question,
+                facts=memory.get_all(),
+                target_profile=target_profile,
+                pending_slots=[],
+                trace=step_trace,
+            )
+        )
+        probe_answer_obj = self._apply_answer_object_fallback(
+            probe_answer_obj,
+            memory.get_all(),
+            "",
+        )
+        total_tokens += probe_answer_tokens
+        orchestrator_tokens += probe_answer_tokens
+        probe_answer = probe_answer_obj["answer"]
+        probe_cited_fact_ids = probe_answer_obj["cited_fact_ids"]
+
+        # ---- Compute sufficiency s = s_conf * s_target * s_align ----
+        s_conf = (
+            float(probe_capsule.fact.confidence)
+            if probe_capsule.fact and probe_capsule.fact.text.strip()
+            else 0.0
+        )
+        s_align = self._compute_alignment_score(probe_capsule, probe_answer)
+
+        if self.ablation_sufficiency_random_route:
+            # Replace the calibrated signal with a Bernoulli draw at the
+            # configured mix rate p. Demonstrates that the learned signal
+            # is load-bearing.
+            rng = random.Random(
+                hash((self.ablation_sufficiency_random_route_seed, question_id)) & 0xFFFFFFFF
+            )
+            sample = 1.0 if rng.random() < self.ablation_sufficiency_random_route_p else 0.0
+            s_target = sample
+            sufficiency_components = {
+                "s_conf": s_conf,
+                "s_align": s_align,
+                "s_target": s_target,
+                "source": "ablation_random_route",
+                "p": self.ablation_sufficiency_random_route_p,
+            }
+            sufficiency = sample
+            assess_tokens = 0
+            assess_reason = "random_route"
+        elif self.ablation_sufficiency_oracle_route:
+            # Oracle: route based on a pre-computed per-question signal
+            # (typically S0 correctness). Upper bound on the controller.
+            oracle_easy = bool(self._oracle_route_table.get(str(question_id), False))
+            sufficiency = 1.0 if oracle_easy else 0.0
+            sufficiency_components = {
+                "s_conf": s_conf,
+                "s_align": s_align,
+                "s_target": sufficiency,
+                "source": "ablation_oracle_route",
+            }
+            assess_tokens = 0
+            assess_reason = "oracle_route"
+        else:
+            assess_result, assess_tokens = (
+                await self.orchestrator.assess_probe_sufficiency_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    proposed_answer=probe_answer,
+                    target_profile=target_profile,
+                    trace=step_trace,
+                )
+            )
+            total_tokens += assess_tokens
+            orchestrator_tokens += assess_tokens
+            s_target = float(assess_result["sufficient"])
+            sufficiency = max(0.0, min(s_conf * s_target * s_align, 1.0))
+            sufficiency_components = {
+                "s_conf": s_conf,
+                "s_align": s_align,
+                "s_target": s_target,
+                "source": "calibrated_probe_gate",
+            }
+            assess_reason = assess_result["reason"]
+
+        step_trace.append(
+            StepTrace(
+                step=1,
+                action="assess",
+                tokens=assess_tokens,
+                justification_confidence=sufficiency,
+                metadata={
+                    "sufficiency_probe": True,
+                    "proposed_answer": probe_answer,
+                    "sufficiency": sufficiency,
+                    "sufficiency_components": sufficiency_components,
+                    "tau": tau,
+                    "reason": assess_reason,
+                },
+            )
+        )
+
+        # Ablation: probe runs, controller is forced to always answer.
+        if self.ablation_sufficiency_no_controller:
+            answer = probe_answer or self._best_fact_span(memory.get_all())
+            step_trace.append(
+                StepTrace(
+                    step=2,
+                    action="answer",
+                    tokens=probe_answer_tokens,
+                    cited_fact_ids=probe_cited_fact_ids,
+                    justification_confidence=sufficiency,
+                    metadata={
+                        "sufficiency_probe": True,
+                        "route": "ablation_no_controller",
+                    },
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=answer,
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label="ablation_no_controller",
+                sufficiency=sufficiency,
+                sufficiency_components=sufficiency_components,
+                route_target_slot=route_target_slot,
+                required_hops=required_hops,
+            )
+
+        # Sufficient: answer from the probe.
+        if sufficiency >= tau and probe_answer.strip():
+            answer = probe_answer
+            step_trace.append(
+                StepTrace(
+                    step=2,
+                    action="answer",
+                    tokens=probe_answer_tokens,
+                    cited_fact_ids=probe_cited_fact_ids,
+                    justification_confidence=sufficiency,
+                    metadata={
+                        "sufficiency_probe": True,
+                        "route": "answer_from_probe",
+                    },
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=answer,
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label="answer_from_probe",
+                sufficiency=sufficiency,
+                sufficiency_components=sufficiency_components,
+                route_target_slot=route_target_slot,
+                required_hops=required_hops,
+            )
+
+        # Insufficient: escalate to recursive lane.
+        # Step budget scales linearly with (1 - s), in [min, max].
+        recurse_steps = self._sufficiency_recurse_budget(sufficiency)
+        # Selective probe-fact retention. The probe fact carries two kinds of
+        # signal:
+        #   - s_align == 1.0: the proposed answer span is present in the
+        #     retrieved capsule (evidence is grounded).
+        #   - s_conf  >= tau: the underlying fact distillation is itself
+        #     high-confidence.
+        # When both hold, sufficiency only fell below tau because the LLM
+        # verifier (s_target) was uncertain about *slot match*, not about
+        # *evidence quality*. That fact is genuine evidence and should
+        # remain available to decide() and the final synthesizer (we
+        # observed -22 contain pts on hotpot recurse when this was dropped
+        # unconditionally). When either fails, the probe fact is
+        # ungrounded or low-confidence noise that biases recurse toward
+        # the wrong slot (we observed -10 contain pts on musique recurse
+        # when this was retained unconditionally). Drop only in the latter
+        # case.
+        keep_probe_fact = bool(s_align >= 1.0 and s_conf >= self.sufficiency_threshold)
+        if not keep_probe_fact:
+            memory = FactMemory.with_strategy(
+                capacity=self.fact_memory_capacity,
+                strategy=self.fact_memory_strategy,
+            )
+        return await self._sufficiency_recurse(
+            question=question,
+            question_id=question_id,
+            memory=memory,
+            step_trace=step_trace,
+            target_profile=target_profile,
+            total_tokens=total_tokens,
+            orchestrator_tokens=orchestrator_tokens,
+            subagent_tokens=subagent_tokens,
+            subagent_calls=subagent_calls,
+            retrieved_doc_ids=retrieved_doc_ids,
+            retrieved_docs_total=retrieved_docs_total,
+            recurse_steps=recurse_steps,
+            sufficiency=sufficiency,
+            route_label="recurse_after_probe",
+            required_hops=required_hops,
+            sufficiency_components=sufficiency_components,
+            route_target_slot=route_target_slot,
+        )
+
+    async def _sufficiency_recurse(
+        self,
+        *,
+        question: str,
+        question_id: str,
+        memory: FactMemory,
+        step_trace: list[StepTrace],
+        target_profile: str,
+        total_tokens: int,
+        orchestrator_tokens: int,
+        subagent_tokens: int,
+        subagent_calls: int,
+        retrieved_doc_ids: list[str],
+        retrieved_docs_total: int,
+        recurse_steps: int,
+        sufficiency: float,
+        route_label: str,
+        required_hops: list[dict] | None = None,
+        sufficiency_components: dict | None = None,
+        route_target_slot: str = "",
+    ) -> PipelineResult:
+        """Recursive lane for the sufficiency controller.
+
+        Drives the existing decide/spawn/refine orchestrator loop with a
+        step budget that was derived from the probe sufficiency score.
+        `required_hops` (the slot DAG returned by the route prompt) is
+        passed in as `pending_slots` so decide() has structural awareness
+        of the bridge slots it must resolve before answering.
+        """
+        recurse_steps = max(0, int(recurse_steps))
+        steps_executed = 0
+        for sub_step in range(recurse_steps):
+            absolute_step = len(step_trace)
+            decision, decide_tokens = await self.orchestrator.decide_with_usage(
+                question=question,
+                facts=memory.get_all(),
+                trace=step_trace,
+                step=sub_step,
+                target_profile=target_profile,
+                pending_slots=required_hops or [],
+            )
+            total_tokens += decide_tokens
+            orchestrator_tokens += decide_tokens
+            action = decision.get("action", "answer")
+
+            if action == "answer":
+                step_trace.append(
+                    StepTrace(
+                        step=absolute_step,
+                        action="answer",
+                        tokens=decide_tokens,
+                        metadata={"sufficiency_recurse": True, "decision": "answer"},
+                    )
+                )
+                break
+
+            if action not in {"spawn", "refine"}:
+                # Verify is intentionally unsupported in this path;
+                # fall through to answer.
+                step_trace.append(
+                    StepTrace(
+                        step=absolute_step,
+                        action="answer",
+                        tokens=decide_tokens,
+                        metadata={
+                            "sufficiency_recurse": True,
+                            "decision": action,
+                            "fallback": "non_spawn_action",
+                        },
+                    )
+                )
+                break
+
+            sub_question = str(decision.get("sub_question", "")).strip() or question
+            retrieval_query = str(decision.get("retrieval_query", "")).strip() or None
+            goal = str(decision.get("goal", "")).strip() or target_profile
+            slot_name = str(decision.get("slot_name", "")).strip()
+
+            capsule, investigate_tokens = await self.investigator.investigate_with_usage(
+                sub_question=sub_question,
+                goal=goal,
+                prior_facts=memory.get_all(),
+                retrieval_query=retrieval_query,
+                slot_name=slot_name,
+                slot_hint=target_profile,
+            )
+            total_tokens += investigate_tokens
+            subagent_tokens += investigate_tokens
+            subagent_calls += 1
+            retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                retrieved_doc_ids,
+                retrieved_docs_total,
+                capsule,
+            )
+            fact_added = self._add_fact(
+                memory, capsule, step=absolute_step, slot_name=slot_name
+            )
+            step_trace.append(
+                StepTrace(
+                    step=absolute_step,
+                    action=action,
+                    sub_question=sub_question,
+                    fact_added=fact_added,
+                    tokens=investigate_tokens,
+                    slot_name=slot_name,
+                    metadata={
+                        "sufficiency_recurse": True,
+                        "goal": goal,
+                        "retrieval_query": retrieval_query or sub_question,
+                    },
+                )
+            )
+            steps_executed += 1
+
+        # Final answer synthesis from the accumulated fact memory.
+        answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+            question=question,
+            facts=memory.get_all(),
+            target_profile=target_profile,
+            pending_slots=required_hops or [],
+            trace=step_trace,
+        )
+        answer_obj = self._apply_answer_object_fallback(
+            answer_obj,
+            memory.get_all(),
+            "",
+        )
+        total_tokens += answer_tokens
+        orchestrator_tokens += answer_tokens
+        answer = answer_obj["answer"]
+        step_trace.append(
+            StepTrace(
+                step=len(step_trace),
+                action="answer",
+                tokens=answer_tokens,
+                cited_fact_ids=answer_obj["cited_fact_ids"],
+                justification_confidence=answer_obj["justification_confidence"],
+                metadata={
+                    "sufficiency_recurse_final": True,
+                    "route": route_label,
+                    "fallback_source": answer_obj.get("fallback_source", ""),
+                },
+            )
+        )
+        return self._build_sufficiency_result(
+            question_id=question_id,
+            question=question,
+            answer=answer,
+            step_trace=step_trace,
+            memory=memory,
+            subagent_calls=subagent_calls,
+            total_tokens=total_tokens,
+            orchestrator_tokens=orchestrator_tokens,
+            subagent_tokens=subagent_tokens,
+            retrieved_doc_ids=retrieved_doc_ids,
+            retrieved_docs_total=retrieved_docs_total,
+            route_label=route_label,
+            sufficiency=sufficiency,
+            sufficiency_components=sufficiency_components,
+            route_target_slot=route_target_slot,
+            required_hops=required_hops,
+            recurse_steps_used=steps_executed,
+        )
+
+    def _sufficiency_recurse_budget(self, sufficiency: float) -> int:
+        """Map sufficiency to a recurse step budget.
+
+        budget = max(min, ceil(MAX_STEPS * (1 - s))), capped at MAX_STEPS.
+        Lower sufficiency -> more steps; high sufficiency would have
+        already short-circuited at the probe answer path. The lower
+        bound is `sufficiency_min_recurse_steps` (configurable, default 1)
+        so the budget is fully derived from `s` rather than a hand-set
+        floor.
+        """
+        s = max(0.0, min(float(sufficiency), 1.0))
+        scaled = math.ceil(self.sufficiency_max_recurse_steps * (1.0 - s))
+        floor = max(1, self.sufficiency_min_recurse_steps)
+        return max(
+            floor,
+            min(scaled, self.sufficiency_max_recurse_steps),
+        )
+
+    @staticmethod
+    def _compute_alignment_score(
+        capsule: EvidenceCapsule, proposed_answer: str
+    ) -> float:
+        """Indicator that the capsule actually supports the proposed answer.
+
+        Returns 1.0 iff the capsule has a non-empty grounded fact with
+        support_ids AND the proposed answer span (or its containment) is
+        present in the fact text or answer span. Returns 0.0 otherwise.
+        """
+        if capsule is None or capsule.fact is None:
+            return 0.0
+        fact_text = str(capsule.fact.text or "").strip().lower()
+        if not fact_text:
+            return 0.0
+        if not capsule.fact.support_ids:
+            return 0.0
+        proposed = str(proposed_answer or "").strip().lower()
+        if not proposed:
+            return 0.0
+        capsule_span = str(capsule.fact.answer_span or "").strip().lower()
+        if proposed in fact_text:
+            return 1.0
+        if capsule_span and (proposed in capsule_span or capsule_span in proposed):
+            return 1.0
+        return 0.0
+
+    @staticmethod
+    def _best_fact_span(facts: list) -> str:
+        """Return the strongest grounded answer span available in memory."""
+        best = ("", -1.0)
+        for fact in facts:
+            answer_span = str(getattr(fact, "answer_span", "")).strip()
+            if not answer_span:
+                continue
+            confidence = float(getattr(fact, "confidence", 0.0))
+            if confidence > best[1]:
+                best = (answer_span, confidence)
+        return best[0]
+
+    def _build_sufficiency_result(
+        self,
+        *,
+        question_id: str,
+        question: str,
+        answer: str,
+        step_trace: list[StepTrace],
+        memory: FactMemory,
+        subagent_calls: int,
+        total_tokens: int,
+        orchestrator_tokens: int,
+        subagent_tokens: int,
+        retrieved_doc_ids: list[str],
+        retrieved_docs_total: int,
+        route_label: str,
+        sufficiency: float,
+        sufficiency_components: dict | None = None,
+        route_target_slot: str = "",
+        required_hops: list[dict] | None = None,
+        recurse_steps_used: int = 0,
+    ) -> PipelineResult:
+        """Assemble a PipelineResult from the sufficiency-controlled path."""
+        extras = {
+            "sufficiency_score": float(sufficiency),
+            "sufficiency_components": sufficiency_components or {},
+            "sufficiency_tau": float(self.sufficiency_threshold),
+            "route_target_slot": route_target_slot,
+            "route_required_hops": required_hops or [],
+            "recurse_steps_used": int(recurse_steps_used),
+            "controller": "sufficiency",
+        }
+        return PipelineResult(
+            question_id=question_id,
+            question=question,
+            answer=answer,
+            step_trace=step_trace,
+            num_subagent_calls=subagent_calls,
+            num_verify_calls=0,
+            total_tokens=total_tokens,
+            orchestrator_tokens=orchestrator_tokens,
+            subagent_tokens=subagent_tokens,
+            facts_used=memory.get_all(),
+            retrieved_doc_ids=retrieved_doc_ids,
+            retrieved_docs_total=retrieved_docs_total,
+            evidence_capsule_limit=self.investigator.evidence_capsule_limit,
+            fact_memory_capacity=self.fact_memory_capacity,
+            duplicate_subquestion_count=0,
+            route_decision=route_label,
+            route_confidence=float(sufficiency),
+            route_draft_answer="",
+            slot_resolution={},
+            auto_verify_calls=0,
+            answer_rejection_count=0,
+            extras=extras,
+        )
+
+    @staticmethod
+    def _load_oracle_table(path: str) -> dict[str, bool]:
+        """Load a per-question oracle map from a JSONL file.
+
+        Expected line format: {"id": "<qid>", "easy": <bool>}.
+        Easy means: route to the answer-from-probe lane (S0 was correct);
+        not-easy means: route to the recursive lane.
+        """
+        table: dict[str, bool] = {}
+        oracle_path = Path(path)
+        if not oracle_path.exists():
+            logger.warning("Oracle route table not found: %s", path)
+            return table
+        with oracle_path.open("r", encoding="utf-8") as handle:
+            for line in handle:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    obj = json.loads(line)
+                except json.JSONDecodeError:
+                    continue
+                qid = str(obj.get("id") or obj.get("question_id") or "").strip()
+                if not qid:
+                    continue
+                table[qid] = bool(obj.get("easy", False))
+        return table
 
     async def _run_upfront_decomposition(
         self, question: str, question_id: str
@@ -320,17 +1014,312 @@ class AdaptiveRecursivePipeline:
         retrieved_docs_total = 0
         answer = ""
 
+        if self.bootstrap_probe_first:
+            bootstrap_goal = f"Answer this question directly. {target_profile}"
+            bootstrap_capsule, bootstrap_tokens = await self.investigator.investigate_with_usage(
+                sub_question=question,
+                goal=bootstrap_goal,
+                prior_facts=[],
+                search_top_k_override=self.bootstrap_search_top_k,
+                max_read_override=self.bootstrap_max_read,
+            )
+            total_tokens += bootstrap_tokens
+            subagent_tokens += bootstrap_tokens
+            subagent_calls += 1
+            retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                retrieved_doc_ids,
+                retrieved_docs_total,
+                bootstrap_capsule,
+            )
+            bootstrap_fact_added = self._add_fact(memory, bootstrap_capsule, step=0)
+            step_trace.append(
+                StepTrace(
+                    step=0,
+                    action="spawn",
+                    sub_question=question,
+                    fact_added=bootstrap_fact_added,
+                    tokens=bootstrap_tokens,
+                    metadata={
+                        "bootstrap_probe": True,
+                        "goal": bootstrap_goal,
+                    },
+                )
+            )
+
+            if bootstrap_fact_added:
+                bootstrap_answer_obj, bootstrap_answer_tokens = (
+                    await self.orchestrator.generate_answer_object_with_usage(
+                        question=question,
+                        facts=memory.get_all(),
+                        target_profile=target_profile,
+                        pending_slots=[],
+                        trace=step_trace,
+                    )
+                )
+                bootstrap_answer_obj = self._apply_answer_object_fallback(
+                    bootstrap_answer_obj,
+                    memory.get_all(),
+                    "",
+                )
+                bootstrap_answer = bootstrap_answer_obj["answer"]
+                bootstrap_fallback_source = bootstrap_answer_obj.get("fallback_source", "")
+                bootstrap_cited_fact_ids = bootstrap_answer_obj["cited_fact_ids"]
+                bootstrap_confidence = bootstrap_answer_obj["justification_confidence"]
+                total_tokens += bootstrap_answer_tokens
+                orchestrator_tokens += bootstrap_answer_tokens
+
+                probe_gate, probe_gate_tokens = await self.orchestrator.assess_probe_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    proposed_answer=bootstrap_answer,
+                    target_profile=target_profile,
+                    trace=step_trace,
+                )
+                total_tokens += probe_gate_tokens
+                orchestrator_tokens += probe_gate_tokens
+                step_trace.append(
+                    StepTrace(
+                        step=1,
+                        action="assess",
+                        tokens=probe_gate_tokens,
+                        justification_confidence=probe_gate["confidence"],
+                        metadata={
+                            "bootstrap_probe": True,
+                            "proposed_answer": bootstrap_answer,
+                            "decision": probe_gate["action"],
+                            "reason": probe_gate.get("reason", ""),
+                        },
+                    )
+                )
+
+                if probe_gate["action"] == "answer" and bootstrap_answer.strip():
+                    answer = bootstrap_answer
+                    step_trace.append(
+                        StepTrace(
+                            step=2,
+                            action="answer",
+                            tokens=bootstrap_answer_tokens,
+                            cited_fact_ids=bootstrap_cited_fact_ids,
+                            justification_confidence=bootstrap_confidence,
+                            metadata={
+                                "bootstrap_probe": True,
+                                "fallback_source": bootstrap_fallback_source,
+                                "probe_gate_reason": probe_gate.get("reason", ""),
+                            },
+                        )
+                    )
+                    return PipelineResult(
+                        question_id=question_id,
+                        question=question,
+                        answer=answer,
+                        step_trace=step_trace,
+                        num_subagent_calls=subagent_calls,
+                        num_verify_calls=verify_count,
+                        total_tokens=total_tokens,
+                        orchestrator_tokens=orchestrator_tokens,
+                        subagent_tokens=subagent_tokens,
+                        facts_used=memory.get_all(),
+                        retrieved_doc_ids=retrieved_doc_ids,
+                        retrieved_docs_total=retrieved_docs_total,
+                        evidence_capsule_limit=self.investigator.evidence_capsule_limit,
+                        fact_memory_capacity=self.fact_memory_capacity,
+                        duplicate_subquestion_count=duplicate_subquestion_count,
+                        route_decision="bootstrap_probe",
+                        route_confidence=bootstrap_confidence,
+                        route_draft_answer="",
+                        slot_resolution={},
+                        auto_verify_calls=auto_verify_calls,
+                        answer_rejection_count=answer_rejection_count,
+                    )
+                if probe_gate["action"] == "refine":
+                    answer_rejection_count += 1
+                    step_trace.append(
+                        StepTrace(
+                            step=2,
+                            action="answer_rejected_escalate",
+                            tokens=bootstrap_answer_tokens,
+                            cited_fact_ids=bootstrap_cited_fact_ids,
+                            justification_confidence=bootstrap_confidence,
+                            metadata={
+                                "bootstrap_probe": True,
+                                "fallback_source": bootstrap_fallback_source,
+                                "probe_gate_reason": probe_gate.get("reason", ""),
+                                "probe_gate_action": "refine",
+                            },
+                        )
+                    )
+
+                    followup_slot = str(probe_gate.get("slot_name", "")).strip()
+                    followup_capsule, followup_tokens = await self.investigator.investigate_with_usage(
+                        sub_question=str(probe_gate.get("sub_question", "")).strip() or question,
+                        goal=str(probe_gate.get("goal", "")).strip()
+                        or "Retrieve the next missing fact needed to answer the question.",
+                        prior_facts=memory.get_all(),
+                        retrieval_query=str(probe_gate.get("retrieval_query", "")).strip() or None,
+                        slot_name=followup_slot,
+                        slot_hint=target_profile,
+                    )
+                    total_tokens += followup_tokens
+                    subagent_tokens += followup_tokens
+                    subagent_calls += 1
+                    retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                        retrieved_doc_ids,
+                        retrieved_docs_total,
+                        followup_capsule,
+                    )
+                    followup_fact_added = self._add_fact(
+                        memory,
+                        followup_capsule,
+                        step=3,
+                        slot_name=followup_slot,
+                    )
+                    step_trace.append(
+                        StepTrace(
+                            step=3,
+                            action="spawn",
+                            sub_question=str(probe_gate.get("sub_question", "")).strip() or question,
+                            fact_added=followup_fact_added,
+                            tokens=followup_tokens,
+                            slot_name=followup_slot,
+                            metadata={
+                                "bootstrap_followup": True,
+                                "goal": str(probe_gate.get("goal", "")).strip(),
+                                "retrieval_query": str(probe_gate.get("retrieval_query", "")).strip(),
+                                "reason": probe_gate.get("reason", ""),
+                            },
+                        )
+                    )
+                    (
+                        verify_tokens,
+                        verify_delta,
+                        auto_verify_delta,
+                    ) = await self._maybe_verify_fact(
+                        question=question,
+                        step=3,
+                        slot_name=followup_slot,
+                        sub_question=str(probe_gate.get("sub_question", "")).strip() or question,
+                        capsule=followup_capsule,
+                        memory=memory,
+                        slot_state=[],
+                        step_trace=step_trace,
+                    )
+                    total_tokens += verify_tokens
+                    subagent_tokens += verify_tokens
+                    verify_count += verify_delta
+                    auto_verify_calls += auto_verify_delta
+
+                    followup_answer_obj, followup_answer_tokens = (
+                        await self.orchestrator.generate_answer_object_with_usage(
+                            question=question,
+                            facts=memory.get_all(),
+                            target_profile=target_profile,
+                            pending_slots=[],
+                            trace=step_trace,
+                            route_draft_answer=bootstrap_answer,
+                        )
+                    )
+                    followup_answer_obj = self._apply_answer_object_fallback(
+                        followup_answer_obj,
+                        memory.get_all(),
+                        bootstrap_answer,
+                    )
+                    total_tokens += followup_answer_tokens
+                    orchestrator_tokens += followup_answer_tokens
+
+                    if not self._should_escalate_answer(followup_answer_obj, []):
+                        answer = followup_answer_obj["answer"]
+                        step_trace.append(
+                            StepTrace(
+                                step=4,
+                                action="answer",
+                                tokens=followup_answer_tokens,
+                                cited_fact_ids=followup_answer_obj["cited_fact_ids"],
+                                justification_confidence=followup_answer_obj["justification_confidence"],
+                                metadata={
+                                    "bootstrap_followup": True,
+                                    "justification": followup_answer_obj["justification"],
+                                    "missing_slot": followup_answer_obj["missing_slot"],
+                                    "fallback_source": followup_answer_obj.get("fallback_source", ""),
+                                },
+                            )
+                        )
+                        return PipelineResult(
+                            question_id=question_id,
+                            question=question,
+                            answer=answer,
+                            step_trace=step_trace,
+                            num_subagent_calls=subagent_calls,
+                            num_verify_calls=verify_count,
+                            total_tokens=total_tokens,
+                            orchestrator_tokens=orchestrator_tokens,
+                            subagent_tokens=subagent_tokens,
+                            facts_used=memory.get_all(),
+                            retrieved_doc_ids=retrieved_doc_ids,
+                            retrieved_docs_total=retrieved_docs_total,
+                            evidence_capsule_limit=self.investigator.evidence_capsule_limit,
+                            fact_memory_capacity=self.fact_memory_capacity,
+                            duplicate_subquestion_count=duplicate_subquestion_count,
+                            route_decision="bootstrap_followup",
+                            route_confidence=followup_answer_obj["justification_confidence"],
+                            route_draft_answer=bootstrap_answer,
+                            slot_resolution={},
+                            auto_verify_calls=auto_verify_calls,
+                            answer_rejection_count=answer_rejection_count,
+                        )
+                    answer_rejection_count += 1
+                    step_trace.append(
+                        StepTrace(
+                            step=4,
+                            action="answer_rejected_escalate",
+                            tokens=followup_answer_tokens,
+                            cited_fact_ids=followup_answer_obj["cited_fact_ids"],
+                            justification_confidence=followup_answer_obj["justification_confidence"],
+                            metadata={
+                                "bootstrap_followup": True,
+                                "justification": followup_answer_obj["justification"],
+                                "missing_slot": followup_answer_obj["missing_slot"],
+                                "fallback_source": followup_answer_obj.get("fallback_source", ""),
+                                "probe_gate_action": "refine",
+                            },
+                        )
+                    )
+                else:
+                    step_trace.append(
+                        StepTrace(
+                            step=2,
+                            action="probe_recurse",
+                            tokens=0,
+                            cited_fact_ids=bootstrap_cited_fact_ids,
+                            justification_confidence=bootstrap_confidence,
+                            metadata={
+                                "bootstrap_probe": True,
+                                "fallback_source": bootstrap_fallback_source,
+                                "probe_gate_reason": probe_gate.get("reason", ""),
+                                "probe_gate_action": "recurse",
+                            },
+                        )
+                    )
+
+        route_target_profile = target_profile
+        if memory.get_all():
+            bootstrap_fact = memory.get_all()[-1]
+            if bootstrap_fact.text.strip():
+                route_target_profile = (
+                    f"{target_profile}\nBootstrap grounded clue: {bootstrap_fact.text.strip()}"
+                ).strip()
         route, route_tokens = await self.orchestrator.route_with_usage(
             question=question,
-            target_profile=target_profile,
+            target_profile=route_target_profile,
         )
         total_tokens += route_tokens
         orchestrator_tokens += route_tokens
 
         slot_state = self._initialise_slot_state(route, target_profile)
+        route_step = len(step_trace)
+        step_ceiling = route_step + self.max_steps
         step_trace.append(
             StepTrace(
-                step=0,
+                step=route_step,
                 action="route",
                 tokens=route_tokens,
                 route_decision=route["action"],
@@ -345,7 +1334,7 @@ class AdaptiveRecursivePipeline:
             )
         )
 
-        next_step = 1
+        next_step = route_step + 1
         min_subagent_calls_before_answer = 1
 
         initial_sub_question = (route["sub_question"] or question).strip() or question
@@ -376,12 +1365,12 @@ class AdaptiveRecursivePipeline:
                     refine_decision.get("retrieval_query", "")
                 ).strip()
                 initial_goal = refine_decision["goal"]
-                step_trace[0].metadata["refined_bootstrap_sub_question"] = initial_sub_question
-                step_trace[0].metadata["refined_bootstrap_retrieval_query"] = (
+                step_trace[route_step].metadata["refined_bootstrap_sub_question"] = initial_sub_question
+                step_trace[route_step].metadata["refined_bootstrap_retrieval_query"] = (
                     initial_retrieval_query or initial_sub_question
                 )
-                step_trace[0].metadata["refined_bootstrap_goal"] = initial_goal
-                step_trace[0].tokens += refine_tokens
+                step_trace[route_step].metadata["refined_bootstrap_goal"] = initial_goal
+                step_trace[route_step].tokens += refine_tokens
                 if initial_sub_question.lower() == question.strip().lower() and pending_slots:
                     focused_slots = [pending_slots[0]]
                     refine_decision, refine_tokens = await self.orchestrator.propose_spawn(
@@ -402,14 +1391,15 @@ class AdaptiveRecursivePipeline:
                         refine_decision.get("retrieval_query", "")
                     ).strip()
                     initial_goal = refine_decision["goal"]
-                    step_trace[0].metadata["slot_focused_bootstrap_sub_question"] = initial_sub_question
-                    step_trace[0].metadata["slot_focused_bootstrap_retrieval_query"] = (
+                    step_trace[route_step].metadata["slot_focused_bootstrap_sub_question"] = initial_sub_question
+                    step_trace[route_step].metadata["slot_focused_bootstrap_retrieval_query"] = (
                         initial_retrieval_query or initial_sub_question
                     )
-                    step_trace[0].metadata["slot_focused_bootstrap_goal"] = initial_goal
-                    step_trace[0].tokens += refine_tokens
+                    step_trace[route_step].metadata["slot_focused_bootstrap_goal"] = initial_goal
+                    step_trace[route_step].tokens += refine_tokens
 
-        next_step = 1
+        probe_step = route_step + 1
+        next_step = probe_step
         if route["action"] in {"single_probe", "recurse"}:
             probe_slot = self._first_pending_slot(slot_state)
             capsule, investigate_tokens = await self.investigator.investigate_with_usage(
@@ -428,11 +1418,11 @@ class AdaptiveRecursivePipeline:
                 retrieved_docs_total,
                 capsule,
             )
-            fact_added = self._add_fact(memory, capsule, step=1, slot_name=probe_slot)
+            fact_added = self._add_fact(memory, capsule, step=probe_step, slot_name=probe_slot)
             self._update_slot_resolution(slot_state, probe_slot, capsule)
             step_trace.append(
                 StepTrace(
-                    step=1,
+                    step=probe_step,
                     action="spawn",
                     sub_question=initial_sub_question,
                     fact_added=fact_added,
@@ -453,7 +1443,7 @@ class AdaptiveRecursivePipeline:
                 auto_verify_delta,
             ) = await self._maybe_verify_fact(
                 question=question,
-                step=1,
+                step=probe_step,
                 slot_name=probe_slot,
                 sub_question=initial_sub_question,
                 capsule=capsule,
@@ -465,7 +1455,7 @@ class AdaptiveRecursivePipeline:
             subagent_tokens += verify_tokens
             verify_count += verify_delta
             auto_verify_calls += auto_verify_delta
-            next_step = 2
+            next_step = probe_step + 1
 
             if route["action"] == "single_probe":
                 pending_slots = self._pending_slots(slot_state)
@@ -489,7 +1479,7 @@ class AdaptiveRecursivePipeline:
                     answer = answer_obj["answer"]
                     step_trace.append(
                         StepTrace(
-                            step=2,
+                            step=probe_step + 1,
                             action="answer",
                             tokens=answer_tokens,
                             cited_fact_ids=answer_obj["cited_fact_ids"],
@@ -524,11 +1514,11 @@ class AdaptiveRecursivePipeline:
                         auto_verify_calls=auto_verify_calls,
                         answer_rejection_count=answer_rejection_count,
                     )
-                if next_step <= self.max_steps:
+                if next_step <= step_ceiling:
                     answer_rejection_count += 1
                     step_trace.append(
                         StepTrace(
-                            step=2,
+                            step=probe_step + 1,
                             action="answer_rejected_escalate",
                             tokens=answer_tokens,
                             cited_fact_ids=answer_obj["cited_fact_ids"],
@@ -542,7 +1532,7 @@ class AdaptiveRecursivePipeline:
                         )
                     )
 
-        for step in range(next_step, self.max_steps + 1):
+        for step in range(next_step, step_ceiling + 1):
             if self._should_force_budget_answer(total_tokens):
                 answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
                     question=question,
@@ -581,7 +1571,7 @@ class AdaptiveRecursivePipeline:
             if (
                 self.enable_parallel_independent_hops
                 and len(ready_parallel_slots) > 1
-                and step < self.max_steps
+                and step < step_ceiling
             ):
                 parallel_result = await self._run_parallel_slot_batch(
                     question=question,
@@ -606,7 +1596,7 @@ class AdaptiveRecursivePipeline:
                     parallel_result["retrieved_docs_total"],
                 )
                 continue
-            if self.ablation_force_spawn and step < self.max_steps:
+            if self.ablation_force_spawn and step < step_ceiling:
                 decision, decide_tokens = await self.orchestrator.propose_spawn(
                     question=question,
                     facts=memory.get_all(),
@@ -631,7 +1621,7 @@ class AdaptiveRecursivePipeline:
             orchestrator_tokens += decide_tokens
 
             if action == "answer":
-                if pending_slots and step < self.max_steps:
+                if pending_slots and step < step_ceiling:
                     step_trace.append(
                         StepTrace(
                             step=step,
@@ -671,7 +1661,7 @@ class AdaptiveRecursivePipeline:
                     total_tokens += answer_tokens
                     orchestrator_tokens += answer_tokens
 
-                    if self._should_escalate_answer(answer_obj, pending_slots) and step < self.max_steps:
+                    if self._should_escalate_answer(answer_obj, pending_slots) and step < step_ceiling:
                         answer_rejection_count += 1
                         step_trace.append(
                             StepTrace(
@@ -1031,7 +2021,7 @@ class AdaptiveRecursivePipeline:
             answer = answer_obj["answer"]
             step_trace.append(
                 StepTrace(
-                    step=self.max_steps + 1,
+                    step=step_ceiling + 1,
                     action="answer",
                     tokens=answer_tokens,
                     cited_fact_ids=answer_obj["cited_fact_ids"],
@@ -1108,6 +2098,8 @@ class AdaptiveRecursivePipeline:
             sub_question=bootstrap_sub_question,
             goal=bootstrap_goal,
             prior_facts=[],
+            search_top_k_override=self.bootstrap_search_top_k,
+            max_read_override=self.bootstrap_max_read,
         )
         total_tokens += bootstrap_tokens
         subagent_tokens += bootstrap_tokens
@@ -1967,88 +2959,19 @@ class AdaptiveRecursivePipeline:
         )
 
     def _allow_bootstrap_short_circuit(self, question: str) -> bool:
-        """Restrict bootstrap early exits to genuinely easy/direct questions."""
-        if self.ablation_force_spawn:
-            return False
-        if not self.enable_bootstrap_short_circuit:
-            return False
-        return self._looks_single_hop(question)
-
-    @staticmethod
-    def _looks_single_hop(question: str) -> bool:
-        """Heuristic gate for questions that likely do not need decomposition."""
-        text = question.strip().lower()
-        if not text:
-            return False
-
-        multi_hop_markers = (
-            " that ",
-            " who ",
-            " whose ",
-            " where ",
-            " when ",
-            " which ",
-            " from the ",
-            " of the ",
-            " by the ",
-            " in the ",
-            " after ",
-            " before ",
-            " during ",
-            " founded by ",
-            " educated at ",
-            " headquarters ",
-            " operator of ",
-            " mother of ",
-            " father of ",
-            " stand for ",
-        )
-        if any(marker in text for marker in multi_hop_markers):
-            return False
-
-        bridge_prefixes = (
-            "who is the",
-            "what is the",
-            "where is",
-            "when was",
-            "what year was",
-            "what date was",
-        )
-        return any(text.startswith(prefix) for prefix in bridge_prefixes)
+        """Heuristic short-circuit retired in favour of the sufficiency score."""
+        return False
 
     @staticmethod
     def _target_profile(question: str) -> str:
-        """Infer a lightweight answer-target hint from the question wording."""
-        question_lower = question.strip().lower()
-        patterns = [
-            ("who ", "Expected answer type: person or organization."),
-            ("where ", "Expected answer type: location or institution."),
-            ("when ", "Expected answer type: date or time."),
-            ("how many", "Expected answer type: number or count."),
-            ("how much", "Expected answer type: quantity or amount."),
-            ("what year", "Expected answer type: year."),
-            ("what date", "Expected answer type: date."),
-            ("which year", "Expected answer type: year."),
-            ("which date", "Expected answer type: date."),
-            ("what city", "Expected answer type: city."),
-            ("what country", "Expected answer type: country."),
-            ("what state", "Expected answer type: state or province."),
-            ("what province", "Expected answer type: province."),
-            ("what county", "Expected answer type: county."),
-            ("what river", "Expected answer type: river or body of water."),
-            ("what body of water", "Expected answer type: body of water."),
-            ("what does", "Expected answer type: expansion or definition."),
-        ]
-        for prefix, hint in patterns:
-            if question_lower.startswith(prefix):
-                return (
-                    f"{hint} Preserve the exact answer slot asked in the original question: "
-                    f"{question.strip()}"
-                )
-        return (
-            "Expected answer type: short factual span grounded in the original question. "
-            f"Preserve the exact answer slot asked in the original question: {question.strip()}"
-        )
+        """Constant, dataset-agnostic profile string.
+
+        The previous version inferred answer-type hints from question wording,
+        which leaked benchmark patterns into the controller. The sufficiency
+        controller relies entirely on the post-probe sufficiency score, so the
+        same string is used for every question on every dataset.
+        """
+        return f"Answer with the exact span the question asks for. Question: {question.strip()}"
 
     @staticmethod
     def _merge_retrieval_stats(

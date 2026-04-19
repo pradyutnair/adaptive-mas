@@ -1,11 +1,13 @@
-# Adaptive Recursive SAGE — M1.1 iter30 think
-# Iter29 routing with stronger JSON repair and final span extraction.
+# Ablation: tau sweep at 0.60.
+# The shipped tau is fixed a priori at 0.70 in m1_2.sufficiency.yaml.
+# This sweep is reported as a robustness check; it MUST NOT be used to
+# select the shipped tau.
 
-variant: m1_1_iter30_think
+variant: m1_2_sufficiency_tau_060
 
 orchestrator:
   max_steps: 4
-  max_verify_calls: 1
+  max_verify_calls: 0
 
 investigator:
   evidence_capsule_limit: 4
@@ -18,19 +20,12 @@ fact_memory:
   strategy: salience
 
 adaptive:
-  use_routed_controller: true
-  bootstrap_probe_first: true
-  bootstrap_search_top_k: 4
+  sufficiency_controller: true
+  sufficiency_threshold: 0.60
+  sufficiency_max_recurse_steps: 4
+  sufficiency_min_recurse_steps: 1
+  bootstrap_search_top_k: 5
   bootstrap_max_read: 6
-  enable_parallel_independent_hops: true
-  max_parallel_hops: 2
-  refine_budget_per_slot: 1
-  route_direct_threshold: 0.85
-  route_probe_threshold: 0.55
-  require_support_for_final_answer: true
-  enable_bootstrap_short_circuit: false
-  direct_answer_threshold: 0.9
-  final_answer_threshold: 0.80
 
 llm:
   model: Qwen/Qwen3-8B

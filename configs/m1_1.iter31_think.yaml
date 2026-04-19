@@ -1,7 +1,7 @@
-# Adaptive Recursive SAGE — M1.1 iter30 think
-# Iter29 routing with stronger JSON repair and final span extraction.
+# Adaptive Recursive SAGE — M1.1 iter31 think
+# Universal probe-assess-refine-recurse controller.
 
-variant: m1_1_iter30_think
+variant: m1_1_iter31_think
 
 orchestrator:
   max_steps: 4

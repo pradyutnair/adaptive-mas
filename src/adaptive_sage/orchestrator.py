@@ -175,6 +175,9 @@ class Orchestrator:
         self._answer_template = (
             prompts_dir / "orchestrator_answer.txt"
         ).read_text(encoding="utf-8")
+        self._probe_gate_template = (
+            prompts_dir / "orchestrator_probe_gate.txt"
+        ).read_text(encoding="utf-8")
 
     # ------------------------------------------------------------------
     # Public API
@@ -451,6 +454,84 @@ class Orchestrator:
         }
         return route, tokens
 
+    async def assess_probe_sufficiency_with_usage(
+        self,
+        question: str,
+        facts: list[Fact],
+        proposed_answer: str,
+        target_profile: str = "",
+        trace: list[StepTrace] | None = None,
+    ) -> tuple[dict[str, Any], int]:
+        """Return a sufficiency probability for the current evidence state.
+
+        The prompt schema is `{sufficient: float, reason: str}` only. The
+        controller (pipeline) compares the score to a global threshold; the
+        LLM never selects an action label here.
+        """
+        facts_text = self._format_facts(facts)
+        hop_chain = self._format_hop_chain(trace or [], facts)
+        user_content = self._probe_gate_template.format(
+            question=question,
+            target_profile=target_profile or "No explicit target hint available.",
+            proposed_answer=proposed_answer.strip() or "EMPTY",
+            facts=facts_text or "No facts available.",
+            hop_chain=hop_chain or "No grounded hop chain available.",
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You are an adaptive QA controller. "
+                    "Always respond with a single JSON object."
+                ),
+            },
+            {"role": "user", "content": user_content},
+        ]
+        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        sufficient = parsed.get("sufficient", parsed.get("confidence", 0.0))
+        try:
+            sufficient = float(sufficient)
+        except (TypeError, ValueError):
+            sufficient = 0.0
+        sufficient = max(0.0, min(sufficient, 1.0))
+        return {
+            "sufficient": sufficient,
+            "reason": str(parsed.get("reason", "")).strip(),
+        }, tokens
+
+    async def assess_probe_with_usage(
+        self,
+        question: str,
+        facts: list[Fact],
+        proposed_answer: str,
+        target_profile: str = "",
+        trace: list[StepTrace] | None = None,
+    ) -> tuple[dict[str, Any], int]:
+        """Backward-compatible probe-gate wrapper used by legacy paths.
+
+        Returns an `action` derived from the new `sufficient` score so the
+        legacy routed controller still has a discrete decision to consume.
+        """
+        result, tokens = await self.assess_probe_sufficiency_with_usage(
+            question=question,
+            facts=facts,
+            proposed_answer=proposed_answer,
+            target_profile=target_profile,
+            trace=trace,
+        )
+        sufficient = float(result["sufficient"])
+        if sufficient >= 0.7 and proposed_answer.strip():
+            action = "answer"
+        elif sufficient >= 0.4:
+            action = "refine"
+        else:
+            action = "recurse"
+        return {
+            "action": action,
+            "confidence": sufficient,
+            "reason": result["reason"],
+        }, tokens
+
     async def generate_answer(
         self,
         question: str,
@@ -507,7 +588,10 @@ class Orchestrator:
             {"role": "user", "content": user_content},
         ]
 
-        response = await self.llm_client.async_chat(messages)
+        response = await self.llm_client.async_chat(
+            messages,
+            max_tokens=96,
+        )
         content: str = response["message"].get("content", "")
         content = self._strip_thinking(content)
 
@@ -931,18 +1015,7 @@ Rules for `answer`:
             )
             if self._looks_like_question_echo(cleaned_sub_question, question):
                 echo_still_present_after_refine = True
-                cleaned_sub_question = self._deterministic_innermost_sub_question(
-                    question=question,
-                    facts=facts,
-                    target_profile=target_profile,
-                    pending_slots=pending_slots,
-                )
-                cleaned_retrieval_query = cleaned_sub_question
-                cleaned_goal = (
-                    f"Resolve slot '{cleaned_slot_name or 'final_answer'}' with a narrower "
-                    "single-hop bridge question."
-                )
-                echo_repaired_count = 2
+                echo_repaired_count = 1
             else:
                 echo_repaired_count = 1
 
@@ -1110,138 +1183,6 @@ Rules for `answer`:
             "the facts",
         )
         return any(marker in cleaned for marker in bad_markers)
-
-    @staticmethod
-    def _deterministic_innermost_sub_question(
-        *,
-        question: str,
-        facts: list[Fact],
-        target_profile: str,
-        pending_slots: list[dict[str, str]] | None,
-    ) -> str:
-        """Deterministically narrow an echoed question to an innermost clause."""
-        resolved_entities = {
-            entity.lower()
-            for entity in Orchestrator._resolved_entities(facts)
-            if entity
-        }
-        connectors = [
-            " of the ",
-            " in the ",
-            " where ",
-            " which ",
-            " that ",
-            " by the ",
-            " whose ",
-            " by ",
-            " of ",
-            " in ",
-        ]
-        clauses = [question.strip(" ?")]
-        for connector in connectors:
-            next_clauses: list[str] = []
-            for clause in clauses:
-                parts = [
-                    part.strip(" ?")
-                    for part in clause.split(connector)
-                    if part.strip(" ?")
-                ]
-                next_clauses.extend(parts or [clause])
-            clauses = next_clauses
-
-        contentful = [
-            clause
-            for clause in clauses
-            if len(
-                Orchestrator._content_tokens(
-                    Orchestrator._normalise_question_text(clause)
-                )
-            )
-            >= 2
-        ] or clauses
-        ranked = sorted(contentful, key=len)
-        chosen_clause = ranked[0] if ranked else question.strip(" ?")
-        for clause in ranked:
-            clause_lower = clause.lower()
-            if not any(entity in clause_lower for entity in resolved_entities):
-                chosen_clause = clause
-                break
-
-        slot_hint = ""
-        if pending_slots:
-            slot_hint = str(pending_slots[0].get("hint", "")).strip() or str(
-                pending_slots[0].get("slot_name", "")
-            ).strip()
-        hint_lower = f"{slot_hint} {target_profile}".strip().lower()
-        anchor_phrase = Orchestrator._extract_anchor_phrase(question, facts)
-        if anchor_phrase:
-            if any(token in hint_lower for token in {"author", "writer"}):
-                return f"Who wrote {anchor_phrase}?"
-            if "director" in hint_lower:
-                return f"Who directed {anchor_phrase}?"
-            if any(token in hint_lower for token in {"birth", "born", "location", "country", "city", "place"}):
-                return f"Where was {anchor_phrase} born?"
-            if any(token in hint_lower for token in {"date", "year", "when"}):
-                return f"When was {anchor_phrase}?"
-
-        prefix = "What is"
-        if any(
-            token in hint_lower
-            for token in {"author", "writer", "director", "person", "actor", "who"}
-        ):
-            prefix = "Who is"
-        elif any(token in hint_lower for token in {"date", "year", "when"}):
-            prefix = "When was"
-        elif any(
-            token in hint_lower
-            for token in {"place", "location", "country", "city", "where"}
-        ):
-            prefix = "Where is"
-
-        clause = chosen_clause.strip(" ?")
-        if re.match(r"^(who|what|where|when)\b", clause, flags=re.IGNORECASE):
-            return f"{clause}?"
-        return f"{prefix} {clause}?"
-
-    @staticmethod
-    def _resolved_entities(facts: list[Fact]) -> list[str]:
-        """Extract already-resolved entity anchors from fact memory."""
-        entities: list[str] = []
-        for fact in facts:
-            answer_span = str(getattr(fact, "answer_span", "")).strip()
-            if answer_span:
-                entities.append(answer_span)
-                continue
-            match = re.search(
-                r"\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,3}\b",
-                str(getattr(fact, "text", "")),
-            )
-            if match:
-                entities.append(match.group(0))
-        return entities
-
-    @staticmethod
-    def _extract_anchor_phrase(question: str, facts: list[Fact]) -> str:
-        """Extract a concrete non-resolved anchor phrase from the question."""
-        resolved_entities = {
-            entity.lower()
-            for entity in Orchestrator._resolved_entities(facts)
-            if entity
-        }
-        spans = re.findall(
-            r"\b(?:The\s+)?[A-Z][a-z]+(?:\s+[A-Z][a-z]+){0,4}\b",
-            question,
-        )
-        filtered: list[str] = []
-        for span in spans:
-            lowered = span.lower()
-            if lowered in {"where", "what", "who", "when", "which"}:
-                continue
-            if any(entity == lowered for entity in resolved_entities):
-                continue
-            filtered.append(span.strip())
-        filtered.sort(key=len, reverse=True)
-        return filtered[0] if filtered else ""
 
     @staticmethod
     def _best_fact_answer_span(facts: list[Fact]) -> str:

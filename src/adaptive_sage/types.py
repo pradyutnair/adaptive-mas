@@ -135,6 +135,7 @@ class PipelineResult:
     slot_resolution: dict[str, bool] = field(default_factory=dict)
     auto_verify_calls: int = 0
     answer_rejection_count: int = 0
+    extras: dict = field(default_factory=dict)
 
     def to_dict(self) -> dict:
         """Serialize to a JSON-compatible dictionary with all metadata."""
@@ -160,6 +161,7 @@ class PipelineResult:
             "slot_resolution": self.slot_resolution,
             "auto_verify_calls": self.auto_verify_calls,
             "answer_rejection_count": self.answer_rejection_count,
+            "extras": self.extras,
         }
 
     def to_json(self) -> str:
@@ -199,4 +201,5 @@ class PipelineResult:
             slot_resolution=data.get("slot_resolution", {}),
             auto_verify_calls=data.get("auto_verify_calls", 0),
             answer_rejection_count=data.get("answer_rejection_count", 0),
+            extras=data.get("extras", {}),
         )

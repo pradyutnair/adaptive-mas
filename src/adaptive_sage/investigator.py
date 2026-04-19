@@ -102,6 +102,8 @@ class Investigator:
         retrieval_query: str | None = None,
         slot_name: str = "",
         slot_hint: str = "",
+        search_top_k_override: int | None = None,
+        max_read_override: int | None = None,
     ) -> EvidenceCapsule:
         """Retrieve evidence for *sub_question* and distil into a capsule.
 
@@ -128,6 +130,8 @@ class Investigator:
             retrieval_query=retrieval_query,
             slot_name=slot_name,
             slot_hint=slot_hint,
+            search_top_k_override=search_top_k_override,
+            max_read_override=max_read_override,
         )
         return capsule
 
@@ -139,12 +143,24 @@ class Investigator:
         retrieval_query: str | None = None,
         slot_name: str = "",
         slot_hint: str = "",
+        search_top_k_override: int | None = None,
+        max_read_override: int | None = None,
     ) -> tuple[EvidenceCapsule, int]:
         """Like :meth:`investigate`, but also returns token usage."""
         total_tokens = 0
         if self.blind_subagent:
             goal = ""
             prior_facts = []
+        effective_top_k = (
+            int(search_top_k_override)
+            if search_top_k_override is not None
+            else self.search_top_k
+        )
+        max_read = (
+            int(max_read_override)
+            if max_read_override is not None
+            else effective_top_k * 2
+        )
 
         # 1. Generate search queries
         effective_query = retrieval_query.strip() if retrieval_query and retrieval_query.strip() else sub_question
@@ -161,10 +177,10 @@ class Investigator:
         ctx = AgentContext()
 
         kw_result, kw_log = self.keyword_search.execute(
-            ctx, keywords=keywords, top_k=self.search_top_k
+            ctx, keywords=keywords, top_k=effective_top_k
         )
         sem_result, sem_log = self.semantic_search.execute(
-            ctx, query=semantic_query, top_k=self.search_top_k
+            ctx, query=semantic_query, top_k=effective_top_k
         )
 
         kw_chunk_ids = self._extract_chunk_ids(kw_result)
@@ -179,7 +195,6 @@ class Investigator:
                 all_chunk_ids.append(cid)
 
         # 4. Read top chunks
-        max_read = self.search_top_k * 2
         ids_to_read = all_chunk_ids[:max_read]
         if ids_to_read:
             chunk_result, chunk_log = self.read_chunk.execute(
