@@ -1757,3 +1757,39 @@ Interpretation:
 - `iter30_think` is the best 2Wiki result in the fair internal matrix
 - it beats both fixed baselines on raw quality
 - it remains substantially cheaper in latency than fixed-heavy `a1_matched`
+
+## 2026-04-19 9:56 CEST
+### Post-hoc Analysis (existing 1000q data, no compute)
+
+#### Calibration (ECE, 10 bins)
+
+| Dataset           | ECE   |
+|-------------------|-------|
+| musique           | 0.331 |
+| hotpotqa          | 0.235 |
+| 2wikimultihop     | 0.300 |
+
+> Honest read: **ECE > 0.20** means the absolute s values are not well-calibrated. Do **not** refer to these as "calibrated" in the writeup; rather, use "sufficiency-controlled". The score still discriminates well (see slice below), but the absolute probability interpretation is weak.
+
+#### Slice Decomposition (τ = 0.70)
+
+| Dataset   | Slice              | n   | Contain | Mean Tokens |
+|-----------|--------------------|-----|---------|-------------|
+| musique   | sufficient (s≥τ)   | 387 | 0.447   | 18.0K       |
+| musique   | insufficient (s<τ) | 613 | 0.315   | 70.2K       |
+| hotpot    | sufficient         | 803 | 0.705   | 13.3K       |
+| hotpot    | insufficient       | 197 | 0.543   | 42.8K       |
+| 2wiki     | sufficient         | 574 | 0.767   | 14.0K       |
+| 2wiki     | insufficient       | 426 | 0.599   | 57.7K       |
+
+This is the EMNLP "money plot":  
+On every dataset, the controller's "sufficient" slice is **+13 to +17 contain points higher** and uses **3–4× fewer tokens** than the "insufficient" slice. The discrimination claim is empirically substantiated—even though absolute calibration is poor.
+
+---
+
+**Ablation runner status:**  
+PID 405789 launched at 07:35.  
+9 variants × ~30 min ≈ 4.5h ETA.  
+Output: `results/abl_musique200_20260419_073534/`
+
+I'll poll and report when ablations finish, then run the comparison + paired CIs vs the canonical sufficiency.
