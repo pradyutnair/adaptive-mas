@@ -1,0 +1,160 @@
+{
+  "questions_file": "/workspace/adaptive-mas/data/musique/questions_200_seedfull_first.json",
+  "results_dir": "/workspace/adaptive-mas/results/abl_musique200_20260419_073534",
+  "n_boot": 10000,
+  "seed": 0,
+  "variants": {
+    "sufficiency": {
+      "n": 200,
+      "mean_contain": 0.44,
+      "mean_tokens": 48671.88,
+      "mean_calls": 2.415
+    },
+    "abl_tau_050": {
+      "n": 200,
+      "mean_contain": 0.48,
+      "mean_tokens": 44650.675,
+      "mean_calls": 2.235
+    },
+    "abl_tau_060": {
+      "n": 200,
+      "mean_contain": 0.44,
+      "mean_tokens": 50179.105,
+      "mean_calls": 2.51
+    },
+    "abl_tau_080": {
+      "n": 200,
+      "mean_contain": 0.365,
+      "mean_tokens": 49540.21,
+      "mean_calls": 2.53
+    },
+    "abl_tau_090": {
+      "n": 200,
+      "mean_contain": 0.345,
+      "mean_tokens": 49616.17,
+      "mean_calls": 2.485
+    },
+    "abl_no_probe": {
+      "n": 200,
+      "mean_contain": 0.405,
+      "mean_tokens": 53571.645,
+      "mean_calls": 2.52
+    },
+    "abl_no_controller": {
+      "n": 200,
+      "mean_contain": 0.28,
+      "mean_tokens": 19094.92,
+      "mean_calls": 1.0
+    },
+    "abl_random_route": {
+      "n": 200,
+      "mean_contain": 0.335,
+      "mean_tokens": 36807.47,
+      "mean_calls": 1.92
+    },
+    "abl_oracle_route": {
+      "n": 200,
+      "mean_contain": 0.37,
+      "mean_tokens": 44589.895,
+      "mean_calls": 2.265
+    }
+  },
+  "comparisons_vs_sufficiency": [
+    {
+      "n": 200,
+      "mean_contain": 0.48,
+      "mean_tokens": 44650.675,
+      "mean_calls": 2.235,
+      "paired_n": 200,
+      "delta": -0.03999999999999998,
+      "ci_lo": -0.10000000000000003,
+      "ci_hi": 0.015000000000000013,
+      "sig": false,
+      "variant": "abl_tau_050"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.44,
+      "mean_tokens": 50179.105,
+      "mean_calls": 2.51,
+      "paired_n": 200,
+      "delta": 0.0,
+      "ci_lo": -0.06,
+      "ci_hi": 0.06,
+      "sig": false,
+      "variant": "abl_tau_060"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.365,
+      "mean_tokens": 49540.21,
+      "mean_calls": 2.53,
+      "paired_n": 200,
+      "delta": 0.07500000000000001,
+      "ci_lo": 0.019999999999999962,
+      "ci_hi": 0.13499999999999995,
+      "sig": true,
+      "variant": "abl_tau_080"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.345,
+      "mean_tokens": 49616.17,
+      "mean_calls": 2.485,
+      "paired_n": 200,
+      "delta": 0.09500000000000003,
+      "ci_lo": 0.03500000000000003,
+      "ci_hi": 0.15499999999999997,
+      "sig": true,
+      "variant": "abl_tau_090"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.405,
+      "mean_tokens": 53571.645,
+      "mean_calls": 2.52,
+      "paired_n": 200,
+      "delta": 0.034999999999999976,
+      "ci_lo": -0.034999999999999976,
+      "ci_hi": 0.10499999999999998,
+      "sig": false,
+      "variant": "abl_no_probe"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.28,
+      "mean_tokens": 19094.92,
+      "mean_calls": 1.0,
+      "paired_n": 200,
+      "delta": 0.15999999999999998,
+      "ci_lo": 0.09000000000000002,
+      "ci_hi": 0.235,
+      "sig": true,
+      "variant": "abl_no_controller"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.335,
+      "mean_tokens": 36807.47,
+      "mean_calls": 1.92,
+      "paired_n": 200,
+      "delta": 0.10499999999999998,
+      "ci_lo": 0.04999999999999999,
+      "ci_hi": 0.16500000000000004,
+      "sig": true,
+      "variant": "abl_random_route"
+    },
+    {
+      "n": 200,
+      "mean_contain": 0.37,
+      "mean_tokens": 44589.895,
+      "mean_calls": 2.265,
+      "paired_n": 200,
+      "delta": 0.07,
+      "ci_lo": 0.010000000000000009,
+      "ci_hi": 0.13,
+      "sig": true,
+      "variant": "abl_oracle_route"
+    }
+  ]
+}
