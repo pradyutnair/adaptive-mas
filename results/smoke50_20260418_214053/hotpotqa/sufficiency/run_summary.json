@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.sufficiency.yaml",
+  "questions_path": "data/hotpotqa/questions_smoke50_seed42.json",
+  "server_url": "http://localhost:8001/v1",
+  "concurrency": 16,
+  "chunks_file": "data/hotpotqa/chunks.json",
+  "index_dir": "data/hotpotqa/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 50,
+  "succeeded": 50,
+  "failed": 0,
+  "total_output_rows": 50,
+  "elapsed_seconds": 252.156,
+  "mean_wallclock_seconds": 5.043,
+  "mean_question_wallclock_seconds": 56.064,
+  "p50_question_wallclock_seconds": 44.669,
+  "p95_question_wallclock_seconds": 135.704
+}

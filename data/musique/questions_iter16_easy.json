@@ -1,0 +1,112 @@
+[
+  {
+    "id": "musique_3hop1__139773_88110_21193",
+    "source": "musique",
+    "question": "What compression method is part of the CAB format used by one of the original partners in the TV channel that hosts Rachel Maddow's show?",
+    "answer": "LZX",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__142881_127399",
+    "source": "musique",
+    "question": "When was the performer of the album From Them, Through Us, to You formed?",
+    "answer": "2005",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__518354_67465",
+    "source": "musique",
+    "question": "When did the performer of Blue Slide Park release Best Day Ever?",
+    "answer": "March 11, 2011",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_3hop1__754160_831637_91775",
+    "source": "musique",
+    "question": "What does seal stand for in the U.S. military branch that operates a list of destroyer classes, as well as the USS Dextrous?",
+    "answer": "Sea, Air, and Land",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_3hop1__837871_831637_91775",
+    "source": "musique",
+    "question": "What does seal stand for in the operator of the list of destroyer classes of the operator of the USS Tringa seals?",
+    "answer": "Sea, Air, and Land",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_3hop1__765847_831637_91775",
+    "source": "musique",
+    "question": "What does SEAL stand for in the branch of military that operates USS Mahan?",
+    "answer": "Sea, Air, and Land",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_3hop2__25177_19506_23299",
+    "source": "musique",
+    "question": "After the period which limited the supply of shellac; Białystok, Przemyśl were returned to what country along with the region they had been given in the Treaty of Schönbrunn?",
+    "answer": "Polish state",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__64323_55840",
+    "source": "musique",
+    "question": "Who played the king that was king of england in 1951 in the king's speech?",
+    "answer": "Colin Firth",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__169443_83769",
+    "source": "musique",
+    "question": "Who did the screenwriter for Good Will Hunting play in Dazed and Confused?",
+    "answer": "Fred O'Bannion",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 2
+  },
+  {
+    "id": "musique_2hop__826864_17335",
+    "source": "musique",
+    "question": "When did the owner of Bucephalus die?",
+    "answer": "323 BC",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__31585_61048",
+    "source": "musique",
+    "question": "Who was the US physicist who directed the project that developed the first atomic bomb at the same place where Feynman worked on Water Boiler?",
+    "answer": "Robert Oppenheimer",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  }
+]

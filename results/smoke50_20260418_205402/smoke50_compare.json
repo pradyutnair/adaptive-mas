@@ -1,0 +1,60 @@
+{
+  "musique": {
+    "s0_matched": {
+      "n": 50,
+      "contain": 0.36,
+      "token_f1": 0.3727,
+      "norm_em": 0.28,
+      "mean_total_tokens": 24209.8,
+      "sum_total_tokens": 1210492,
+      "mean_subagent_calls": 1
+    },
+    "iter30_think": {
+      "n": 50,
+      "contain": 0.38,
+      "token_f1": 0.4303,
+      "norm_em": 0.3,
+      "mean_total_tokens": 60208.1,
+      "sum_total_tokens": 3010406,
+      "mean_subagent_calls": 2.84
+    },
+    "sufficiency": {
+      "n": 50,
+      "contain": 0.34,
+      "token_f1": 0.4166,
+      "norm_em": 0.24,
+      "mean_total_tokens": 53435.1,
+      "sum_total_tokens": 2671755,
+      "mean_subagent_calls": 2.7
+    }
+  },
+  "hotpotqa": {
+    "s0_matched": {
+      "n": 50,
+      "contain": 0.68,
+      "token_f1": 0.6905,
+      "norm_em": 0.52,
+      "mean_total_tokens": 12023.2,
+      "sum_total_tokens": 601160,
+      "mean_subagent_calls": 1
+    },
+    "iter30_think": {
+      "n": 50,
+      "contain": 0.6,
+      "token_f1": 0.657,
+      "norm_em": 0.48,
+      "mean_total_tokens": 33806.3,
+      "sum_total_tokens": 1690317,
+      "mean_subagent_calls": 2.02
+    },
+    "sufficiency": {
+      "n": 50,
+      "contain": 0.72,
+      "token_f1": 0.7056,
+      "norm_em": 0.56,
+      "mean_total_tokens": 20580.3,
+      "sum_total_tokens": 1029014,
+      "mean_subagent_calls": 1.32
+    }
+  }
+}

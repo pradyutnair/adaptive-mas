@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_1.iter30_think.yaml",
+  "questions_path": "data/hotpotqa/questions_1000_seed42.json",
+  "server_url": "http://127.0.0.1:8001/v1",
+  "concurrency": 8,
+  "chunks_file": "data/hotpotqa/chunks.json",
+  "index_dir": "data/hotpotqa/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 1000,
+  "succeeded": 1000,
+  "failed": 0,
+  "total_output_rows": 1000,
+  "elapsed_seconds": 4190.548,
+  "mean_wallclock_seconds": 4.191,
+  "mean_question_wallclock_seconds": 33.023,
+  "p50_question_wallclock_seconds": 18.881,
+  "p95_question_wallclock_seconds": 88.853
+}

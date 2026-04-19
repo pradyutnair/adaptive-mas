@@ -1,0 +1,92 @@
+[
+  {
+    "id": "musique_4hop2__161602_426860_88460_20988",
+    "source": "musique",
+    "question": "What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?",
+    "answer": "one of the world's longest-running ongoing civil wars.",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop2__9988_261673_70784_79935",
+    "source": "musique",
+    "question": "When was the region immediately north of the region that prevailed with the disgrace of Near East and the terrain feature on which shamal is located created?",
+    "answer": "1930",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__567737_141375_458768_33633",
+    "source": "musique",
+    "question": "When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?",
+    "answer": "August 3, 1769",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_3hop1__38738_78276_68042",
+    "source": "musique",
+    "question": "When did the political party that holds the majority in the political body that passed a bill giving regulators discretion to prohibit proprietary trades, gain control of the House?",
+    "answer": "the 2010 election",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__622497_160088_85460",
+    "source": "musique",
+    "question": "What is the average salary of a working person with the same nationality as the producer of The Wild Women of Chastity Gulch?",
+    "answer": "$59,039",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_4hop2__567956_39078_8987_8974",
+    "source": "musique",
+    "question": "Normalization occurred in Country A that invaded Country B because the military branch was unprepared. Country B was the only communist country to have an embassy where?",
+    "answer": "Alfredo Stroessner's Paraguay",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_2hop__731956_126089",
+    "source": "musique",
+    "question": "Who was in charge of the place where Castricum is located?",
+    "answer": "Johan Remkes",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_2hop__709357_136043",
+    "source": "musique",
+    "question": "The Move Ya Body song's band is named after who?",
+    "answer": "Natalie Albino",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_2hop__37656_160040",
+    "source": "musique",
+    "question": "Who is the guy defending this stuff from the highest authority in Protestantism for morals?",
+    "answer": "Josh McDowell",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  }
+]

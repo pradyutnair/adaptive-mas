@@ -1,0 +1,252 @@
+[
+  {
+    "id": "musique_4hop2__161602_426860_88460_20988",
+    "source": "musique",
+    "question": "What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?",
+    "answer": "one of the world's longest-running ongoing civil wars.",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop2__9988_261673_70784_79935",
+    "source": "musique",
+    "question": "When was the region immediately north of the region that prevailed with the disgrace of Near East and the terrain feature on which shamal is located created?",
+    "answer": "1930",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__567737_141375_458768_33633",
+    "source": "musique",
+    "question": "When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?",
+    "answer": "August 3, 1769",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_3hop1__38738_78276_68042",
+    "source": "musique",
+    "question": "When did the political party that holds the majority in the political body that passed a bill giving regulators discretion to prohibit proprietary trades, gain control of the House?",
+    "answer": "the 2010 election",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__622497_160088_85460",
+    "source": "musique",
+    "question": "What is the average salary of a working person with the same nationality as the producer of The Wild Women of Chastity Gulch?",
+    "answer": "$59,039",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_4hop2__567956_39078_8987_8974",
+    "source": "musique",
+    "question": "Normalization occurred in Country A that invaded Country B because the military branch was unprepared. Country B was the only communist country to have an embassy where?",
+    "answer": "Alfredo Stroessner's Paraguay",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_2hop__731956_126089",
+    "source": "musique",
+    "question": "Who was in charge of the place where Castricum is located?",
+    "answer": "Johan Remkes",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_2hop__709357_136043",
+    "source": "musique",
+    "question": "The Move Ya Body song's band is named after who?",
+    "answer": "Natalie Albino",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_2hop__37656_160040",
+    "source": "musique",
+    "question": "Who is the guy defending this stuff from the highest authority in Protestantism for morals?",
+    "answer": "Josh McDowell",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop3__160230_470287_345497_72134",
+    "source": "musique",
+    "question": "When did the death city of Taito Kantonen become the capital of the US state having the statue being the title of the various Latin Mother goddess?",
+    "answer": "1839",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__94201_642284_131926_13165",
+    "source": "musique",
+    "question": "What treaty ceded territory to the US extending west to the body of water by the city where the designer of Southeast Library died?",
+    "answer": "Treaty of Paris",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__694534_160088_49779",
+    "source": "musique",
+    "question": "Who is the host of Who Wants to be a Millionaire in the country that MacGruder and Loud's creator is from?",
+    "answer": "Chris Harrison",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_3hop2__79978_90098_10557",
+    "source": "musique",
+    "question": "What was the language from which the last name Sylvester originates during the era of the person crowned new Roman emperor in 800 A.D. later known as?",
+    "answer": "Medieval Latin",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__557411_652060",
+    "source": "musique",
+    "question": "Who is the spouse of the creator of The Nanny Reunion: A Nosh to Remember?",
+    "answer": "Peter Marc Jacobson",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_2hop__70338_160040",
+    "source": "musique",
+    "question": "Who is the guy defending this stuff from the book from which by the skin of your teeth originated?",
+    "answer": "Josh McDowell",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_4hop1__726391_153080_159767_81096",
+    "source": "musique",
+    "question": "Who won the Indy car race in the largest city and capitol of the state where the Oh Yeah performer is from?",
+    "answer": "Mario Andretti",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__641921_42197_18397",
+    "source": "musique",
+    "question": "Where did the arguer that Nadezhda Tkachenko's country of citizenship had become an imperialist power declare he would intervene in the Korean conflict?",
+    "answer": "the Politburo",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__159803_89752_75165",
+    "source": "musique",
+    "question": "What's the population of the largest state in the region of the U.S. where trading practices were once threatened by the Navigation Acts?",
+    "answer": "1,335,907",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__58323_375563_161848_28750",
+    "source": "musique",
+    "question": "Where was Popper's academic appointment in the country near the country of citizenship of the person who wrote The Book Thief?",
+    "answer": "Canterbury University College of the University of New Zealand",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__58323_375563_161848_83118",
+    "source": "musique",
+    "question": "When does daylight savings end in the country near the country where the author of The Book Thief is from?",
+    "answer": "the first Sunday in April",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop2__304722_230978_63959",
+    "source": "musique",
+    "question": "When was the last time the team Matthew Webb was a member of beat the winner of the 1894-95 FA Cup?",
+    "answer": "1 December 2010",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_2hop__274110_413723",
+    "source": "musique",
+    "question": "In which district was Ernie Watts born?",
+    "answer": "West Berkshire",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "single_probe",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_3hop2__655849_467331_162182",
+    "source": "musique",
+    "question": "In what region of the country containing the district of A Lưới is the city that has the Zone 5 Military Museum located?",
+    "answer": "South Central Coast",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop2__89854_92991_76291",
+    "source": "musique",
+    "question": "When did the majority party in the House of Representatives gain control of the body which determines rules of the US House and US Senate?",
+    "answer": "January 2015",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__458916_665330_47686",
+    "source": "musique",
+    "question": "Where do greyhound buses leave from in the city where the performer of Spirit If... was formed?",
+    "answer": "Toronto Coach Terminal",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  }
+]
