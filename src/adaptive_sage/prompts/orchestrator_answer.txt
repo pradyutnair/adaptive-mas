@@ -6,13 +6,18 @@ Each fact may include an extracted answer span. If a fact's answer span directly
 
 Use the hop chain to keep the bridge reasoning aligned with the final target. Prefer the terminal grounded answer over any intermediate bridge entity already used as an anchor in a later hop.
 
-Return the shortest grounded answer span.
+Return a grounded final answer that best contains the requested target content.
 - Do not output an intermediate bridge entity if another fact resolves the final target asked by the question.
 - Do not output a full sentence, explanation, relation phrase, or quotation unless the answer itself is naturally that full span.
 - If one fact has an `answer span` that directly resolves the final target slot, copy that span exactly.
 - Prefer the fact whose slot matches the final target over facts from earlier bridge slots.
+- Prefer semantically complete supported content over aggressive shortening.
+- If a short span would drop essential target content, return the slightly longer supported span.
+- Do not compress, normalize, or rewrite the answer just to match an exact string.
+- Return the answer content that best matches the final target requested by the question, not merely a nearby bridge entity or supporting detail.
+- Prefer the most direct supported mention of the final target over a longer variant when both refer to the same grounded content.
 
-If no fact fully resolves the final answer, return the shortest plausible candidate span grounded in the most relevant fact. Never output meta text.
+If no fact fully resolves the final answer, return the most supported plausible candidate content grounded in the most relevant fact. Never output meta text.
 
 Question: {question}
 

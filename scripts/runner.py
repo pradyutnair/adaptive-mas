@@ -115,6 +115,7 @@ def _result_to_output_dict(
             "auto_verify_calls": result.auto_verify_calls,
             "answer_rejection_count": result.answer_rejection_count,
             "wallclock_seconds": round(wallclock_seconds, 3),
+            "extras": result.extras,
         },
     }
 

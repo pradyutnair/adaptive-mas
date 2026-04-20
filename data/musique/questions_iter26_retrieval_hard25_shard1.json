@@ -1,0 +1,82 @@
+[
+  {
+    "id": "musique_4hop3__160230_470287_345497_72134",
+    "source": "musique",
+    "question": "When did the death city of Taito Kantonen become the capital of the US state having the statue being the title of the various Latin Mother goddess?",
+    "answer": "1839",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_4hop1__94201_642284_131926_13165",
+    "source": "musique",
+    "question": "What treaty ceded territory to the US extending west to the body of water by the city where the designer of Southeast Library died?",
+    "answer": "Treaty of Paris",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__694534_160088_49779",
+    "source": "musique",
+    "question": "Who is the host of Who Wants to be a Millionaire in the country that MacGruder and Loud's creator is from?",
+    "answer": "Chris Harrison",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_3hop2__79978_90098_10557",
+    "source": "musique",
+    "question": "What was the language from which the last name Sylvester originates during the era of the person crowned new Roman emperor in 800 A.D. later known as?",
+    "answer": "Medieval Latin",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "direct_answer",
+    "num_subagent_calls": 1
+  },
+  {
+    "id": "musique_2hop__557411_652060",
+    "source": "musique",
+    "question": "Who is the spouse of the creator of The Nanny Reunion: A Nosh to Remember?",
+    "answer": "Peter Marc Jacobson",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_2hop__70338_160040",
+    "source": "musique",
+    "question": "Who is the guy defending this stuff from the book from which by the skin of your teeth originated?",
+    "answer": "Josh McDowell",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 4
+  },
+  {
+    "id": "musique_4hop1__726391_153080_159767_81096",
+    "source": "musique",
+    "question": "Who won the Indy car race in the largest city and capitol of the state where the Oh Yeah performer is from?",
+    "answer": "Mario Andretti",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  },
+  {
+    "id": "musique_3hop1__641921_42197_18397",
+    "source": "musique",
+    "question": "Where did the arguer that Nadezhda Tkachenko's country of citizenship had become an imperialist power declare he would intervene in the Korean conflict?",
+    "answer": "the Politburo",
+    "question_type": "",
+    "evidence": "",
+    "route_decision": "recurse",
+    "num_subagent_calls": 3
+  }
+]

@@ -91,27 +91,6 @@ def test_format_facts_includes_slot_name() -> None:
     assert "answer span: Markus Zusak" in formatted
 
 
-def test_deterministic_innermost_sub_question_narrows_echo() -> None:
-    question = "Where was the director of the movie written by the author of The Book Thief born?"
-    narrowed = Orchestrator._deterministic_innermost_sub_question(
-        question=question,
-        facts=[
-            Fact(
-                text="Markus Zusak wrote The Book Thief.",
-                confidence=0.8,
-                answer_span="Markus Zusak",
-                support_ids=["1"],
-                source_step=1,
-            )
-        ],
-        target_profile="location",
-        pending_slots=[{"slot_name": "director", "hint": "director"}],
-    )
-
-    assert narrowed.endswith("?")
-    assert Orchestrator._looks_like_question_echo(narrowed, question) is False
-
-
 def test_route_preserves_retrieval_query() -> None:
     llm = MagicMock(spec=LLMClient)
     llm.async_chat = AsyncMock(

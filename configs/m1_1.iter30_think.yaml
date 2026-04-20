@@ -19,6 +19,9 @@ fact_memory:
 
 adaptive:
   use_routed_controller: true
+  bootstrap_probe_first: true
+  bootstrap_search_top_k: 4
+  bootstrap_max_read: 6
   enable_parallel_independent_hops: true
   max_parallel_hops: 2
   refine_budget_per_slot: 1

@@ -1,0 +1,50 @@
+{
+  "musique": {
+    "n": 1000,
+    "oracle_answerable_from_probe": 240,
+    "current_answered_from_probe": 387,
+    "current_probe_precision": 0.447,
+    "controller_recall_of_oracle_probe": 0.7208,
+    "current_missed_correct_probe": 67,
+    "current_wrong_probe_answers": 214,
+    "current_mean_contain": 0.366,
+    "oracle_mean_contain": 0.376,
+    "current_mean_tokens": 50004.3,
+    "oracle_mean_tokens_approx": 47961.3,
+    "approx_avoidable_tokens_total": 2043058.0,
+    "approx_avoidable_tokens_per_question": 2043.1,
+    "median_probe_answer_tail_tokens": 3816.0
+  },
+  "hotpotqa": {
+    "n": 1000,
+    "oracle_answerable_from_probe": 637,
+    "current_answered_from_probe": 803,
+    "current_probe_precision": 0.7049,
+    "controller_recall_of_oracle_probe": 0.8885,
+    "current_missed_correct_probe": 71,
+    "current_wrong_probe_answers": 237,
+    "current_mean_contain": 0.673,
+    "oracle_mean_contain": 0.677,
+    "current_mean_tokens": 19113.2,
+    "oracle_mean_tokens_approx": 17954.5,
+    "approx_avoidable_tokens_total": 1158642.0,
+    "approx_avoidable_tokens_per_question": 1158.6,
+    "median_probe_answer_tail_tokens": 2373.0
+  },
+  "2wikimultihop": {
+    "n": 1000,
+    "oracle_answerable_from_probe": 509,
+    "current_answered_from_probe": 574,
+    "current_probe_precision": 0.7666,
+    "controller_recall_of_oracle_probe": 0.8644,
+    "current_missed_correct_probe": 69,
+    "current_wrong_probe_answers": 134,
+    "current_mean_contain": 0.695,
+    "oracle_mean_contain": 0.698,
+    "current_mean_tokens": 32578.1,
+    "oracle_mean_tokens_approx": 31187.9,
+    "approx_avoidable_tokens_total": 1390223.5,
+    "approx_avoidable_tokens_per_question": 1390.2,
+    "median_probe_answer_tail_tokens": 3620.5
+  }
+}

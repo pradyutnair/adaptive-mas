@@ -1,0 +1,52 @@
+# Ablation: oracle routing.
+# Reads a per-question oracle map (id -> easy bool, typically derived from
+# S0 correctness) and routes "easy" to answer-from-probe and "hard" to
+# the recursive lane. Provides an upper bound on the controller.
+#
+# Build the oracle map by running scripts/build_oracle_routes.py against
+# an S0 predictions file. Set sufficiency_oracle_path per dataset before launch.
+
+variant: m1_2_sufficiency_abl_oracle_route
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 4
+  search_top_k: 5
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  sufficiency_controller: true
+  sufficiency_threshold: 0.70
+  sufficiency_max_recurse_steps: 4
+  sufficiency_min_recurse_steps: 1
+  bootstrap_search_top_k: 5
+  bootstrap_max_read: 6
+
+ablation:
+  sufficiency_oracle_route: true
+  sufficiency_oracle_path: results/oracle/oracle_routes_TBD.jsonl
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 24
+  checkpoint: true
