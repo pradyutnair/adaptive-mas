@@ -1,0 +1,15 @@
+{
+  "run_name": "iter55_musique1000_adaptive_bridgefirst_placefix_20260422",
+  "frozen_code_files": [
+    "code/configs/iter55_opera_adaptive_bridgefirst_placefix.yaml",
+    "code/scripts/run_adaptive_opera_hybrid.py",
+    "code/scripts/eval_offline.py"
+  ],
+  "result_files": [
+    "predictions.jsonl",
+    "predictions_eval_summary.json",
+    "shard0/predictions.jsonl",
+    "shard1/predictions.jsonl",
+    "shard2/predictions.jsonl"
+  ]
+}
