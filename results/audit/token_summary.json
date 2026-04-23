@@ -1,0 +1,42 @@
+{
+  "sufficiency_v6_musique": {
+    "label": "sufficiency_v6_musique",
+    "n": 1000,
+    "mean_total_tokens": 50004.33,
+    "median_total_tokens": 40887.0,
+    "p90_total_tokens": 101219.0,
+    "mean_orchestrator_tokens": 9434.45,
+    "mean_subagent_tokens": 40569.88,
+    "mean_wallclock_seconds": 231.58
+  },
+  "sufficiency_v6_hotpotqa": {
+    "label": "sufficiency_v6_hotpotqa",
+    "n": 1000,
+    "mean_total_tokens": 19113.18,
+    "median_total_tokens": 12719.5,
+    "p90_total_tokens": 37143.3,
+    "mean_orchestrator_tokens": 5178.54,
+    "mean_subagent_tokens": 13934.64,
+    "mean_wallclock_seconds": 92.5
+  },
+  "sufficiency_v6_2wikimultihop": {
+    "label": "sufficiency_v6_2wikimultihop",
+    "n": 1000,
+    "mean_total_tokens": 32578.1,
+    "median_total_tokens": 16332.0,
+    "p90_total_tokens": 75043.9,
+    "mean_orchestrator_tokens": 7073.19,
+    "mean_subagent_tokens": 25504.9,
+    "mean_wallclock_seconds": 152.05
+  },
+  "iter55_musique": {
+    "label": "iter55_musique",
+    "n": 1000,
+    "mean_total_tokens": 23862.47,
+    "median_total_tokens": 22556.0,
+    "p90_total_tokens": 43608.3,
+    "mean_orchestrator_tokens": 7.97,
+    "mean_subagent_tokens": 29.01,
+    "mean_wallclock_seconds": 140.46
+  }
+}
