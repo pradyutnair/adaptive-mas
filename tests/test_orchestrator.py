@@ -35,14 +35,71 @@ def test_allows_narrow_bridge_question() -> None:
 def test_normalise_required_hops_keeps_dependency_groups() -> None:
     hops = Orchestrator._normalise_required_hops(
         [
-            {"slot_name": "author", "hint": "writer of the book", "dependency_group": 0},
-            {"slot_name": "director", "hint": "director of the film", "dependency_group": 1},
+            {
+                "slot_name": "author",
+                "hint": "writer of the book",
+                "expected_info_type": "person",
+                "dependency_group": 0,
+            },
+            {
+                "slot_name": "director",
+                "hint": "director of the film",
+                "expected_info_type": "person",
+                "dependency_group": 1,
+            },
         ]
     )
     assert hops == [
-        {"slot_name": "author", "hint": "writer of the book", "dependency_group": 0},
-        {"slot_name": "director", "hint": "director of the film", "dependency_group": 1},
+        {
+            "slot_name": "author",
+            "hint": "writer of the book",
+            "expected_info_type": "person",
+            "dependency_group": 0,
+            "sub_question": "",
+            "retrieval_query": "",
+            "goal": "",
+        },
+        {
+            "slot_name": "director",
+            "hint": "director of the film",
+            "expected_info_type": "person",
+            "dependency_group": 1,
+            "sub_question": "",
+            "retrieval_query": "",
+            "goal": "",
+        },
     ]
+
+
+def test_normalise_required_hops_refines_generic_expected_info_type() -> None:
+    hops = Orchestrator._normalise_required_hops(
+        [
+            {
+                "slot_name": "county",
+                "hint": "resolve the county",
+                "expected_info_type": "location",
+                "dependency_group": 0,
+            }
+        ]
+    )
+
+    assert hops[0]["expected_info_type"] == "county"
+
+
+def test_format_pending_slots_includes_expected_info_type() -> None:
+    rendered = Orchestrator._format_pending_slots(
+        [
+            {
+                "slot_name": "author",
+                "hint": "writer of the book",
+                "expected_info_type": "person",
+                "resolved": False,
+                "dependency_group": 0,
+            }
+        ]
+    )
+
+    assert "[type person]" in rendered
 
 
 def test_format_hop_chain_uses_grounded_answers() -> None:
@@ -110,11 +167,13 @@ def test_route_preserves_retrieval_query() -> None:
                             {
                                 "slot_name": "author",
                                 "hint": "writer of The Book Thief",
+                                "expected_info_type": "person",
                                 "dependency_group": 0,
                             },
                             {
                                 "slot_name": "birthplace",
                                 "hint": "birthplace of the author",
+                                "expected_info_type": "location",
                                 "dependency_group": 1,
                             },
                         ],
@@ -158,6 +217,7 @@ def test_route_coerces_direct_answer_to_single_probe() -> None:
                             {
                                 "slot_name": "birthplace",
                                 "hint": "birthplace of Markus Zusak",
+                                "expected_info_type": "location",
                                 "dependency_group": 0,
                             }
                         ],
@@ -242,3 +302,72 @@ def test_duplicate_subquestion_only_blocks_grounded_repeats() -> None:
         )
     )
     assert blocked["action"] == "answer"
+
+
+def test_assess_typed_probe_state_parses_scores() -> None:
+    llm = MagicMock(spec=LLMClient)
+    llm.async_chat = AsyncMock(
+        return_value={
+            "message": {
+                "content": json.dumps(
+                    {
+                        "slot_sufficient": 0.92,
+                        "answer_sufficient": 0.18,
+                        "slot_reason": "The author slot is grounded.",
+                        "answer_reason": "The birthplace slot is still unresolved.",
+                    }
+                )
+            },
+            "input_tokens": 100,
+            "output_tokens": 50,
+            "cost": 0.0,
+            "raw_response": {},
+        }
+    )
+    orchestrator = Orchestrator(Config({}), llm)
+
+    result, _ = asyncio.run(
+        orchestrator.assess_typed_probe_state_with_usage(
+            question="Where was the author of The Book Thief born?",
+            facts=[
+                Fact(
+                    text="Markus Zusak wrote The Book Thief.",
+                    confidence=0.91,
+                    slot_name="author",
+                    answer_span="Markus Zusak",
+                    support_ids=["1"],
+                    source_step=0,
+                )
+            ],
+            proposed_answer="Markus Zusak",
+            probe_question="Who wrote The Book Thief?",
+            probe_strategy="bridge_first_typed",
+            probe_slot_name="author",
+            probe_slot_hint="writer of The Book Thief",
+            probe_expected_info_type="person",
+            probe_slot_value="Markus Zusak",
+            target_profile="location",
+            pending_slots=[
+                {
+                    "slot_name": "author",
+                    "hint": "writer of The Book Thief",
+                    "expected_info_type": "person",
+                    "resolved": True,
+                    "dependency_group": 0,
+                },
+                {
+                    "slot_name": "birthplace",
+                    "hint": "birthplace of the author",
+                    "expected_info_type": "location",
+                    "resolved": False,
+                    "dependency_group": 1,
+                },
+            ],
+            resolved_slots=["author"],
+            trace=[],
+        )
+    )
+
+    assert result["slot_sufficient"] == 0.92
+    assert result["answer_sufficient"] == 0.18
+    assert "grounded" in result["slot_reason"]

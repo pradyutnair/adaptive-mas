@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m2_3.structure_aware_adaptive_single_recovery.yaml",
+  "questions_path": "data/musique/questions_smoke21_seed42_matched_shard2.json",
+  "server_url": "http://localhost:8003/v1",
+  "concurrency": 24,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 7,
+  "succeeded": 7,
+  "failed": 0,
+  "total_output_rows": 7,
+  "elapsed_seconds": 321.939,
+  "mean_wallclock_seconds": 45.991,
+  "mean_question_wallclock_seconds": 193.668,
+  "p50_question_wallclock_seconds": 178.481,
+  "p95_question_wallclock_seconds": 321.928
+}

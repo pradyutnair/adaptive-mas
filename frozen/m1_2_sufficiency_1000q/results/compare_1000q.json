@@ -1,0 +1,140 @@
+{
+  "musique": {
+    "n_common": 1000,
+    "agg": {
+      "s0_matched": {
+        "n": 1000,
+        "contain": 0.337,
+        "token_f1": 0.3591,
+        "norm_em": 0.256,
+        "mean_total_tokens": 22286.3,
+        "sum_total_tokens": 22286328,
+        "mean_subagent_calls": 1
+      },
+      "iter30_think": {
+        "n": 1000,
+        "contain": 0.393,
+        "token_f1": 0.4086,
+        "norm_em": 0.282,
+        "mean_total_tokens": 59359.9,
+        "sum_total_tokens": 59359918,
+        "mean_subagent_calls": 2.735
+      },
+      "sufficiency": {
+        "n": 1000,
+        "contain": 0.366,
+        "token_f1": 0.4097,
+        "norm_em": 0.287,
+        "mean_total_tokens": 50004.3,
+        "sum_total_tokens": 50004327,
+        "mean_subagent_calls": 2.529
+      }
+    },
+    "ci": {
+      "sufficiency_vs_s0_matched": {
+        "delta": 0.029,
+        "ci95_lo": 0.001,
+        "ci95_hi": 0.057,
+        "p_two_sided": 0.05
+      },
+      "sufficiency_vs_iter30_think": {
+        "delta": -0.027,
+        "ci95_lo": -0.055,
+        "ci95_hi": 0.001,
+        "p_two_sided": 0.0624
+      }
+    }
+  },
+  "hotpotqa": {
+    "n_common": 1000,
+    "agg": {
+      "s0_matched": {
+        "n": 1000,
+        "contain": 0.647,
+        "token_f1": 0.6389,
+        "norm_em": 0.471,
+        "mean_total_tokens": 13647.7,
+        "sum_total_tokens": 13647661,
+        "mean_subagent_calls": 1
+      },
+      "iter30_think": {
+        "n": 1000,
+        "contain": 0.653,
+        "token_f1": 0.6544,
+        "norm_em": 0.493,
+        "mean_total_tokens": 34581.6,
+        "sum_total_tokens": 34581648,
+        "mean_subagent_calls": 1.918
+      },
+      "sufficiency": {
+        "n": 1000,
+        "contain": 0.673,
+        "token_f1": 0.6877,
+        "norm_em": 0.529,
+        "mean_total_tokens": 19113.2,
+        "sum_total_tokens": 19113183,
+        "mean_subagent_calls": 1.272
+      }
+    },
+    "ci": {
+      "sufficiency_vs_s0_matched": {
+        "delta": 0.026,
+        "ci95_lo": 0.001,
+        "ci95_hi": 0.052,
+        "p_two_sided": 0.047
+      },
+      "sufficiency_vs_iter30_think": {
+        "delta": 0.02,
+        "ci95_lo": -0.009,
+        "ci95_hi": 0.049,
+        "p_two_sided": 0.1932
+      }
+    }
+  },
+  "2wikimultihop": {
+    "n_common": 1000,
+    "agg": {
+      "s0_matched": {
+        "n": 1000,
+        "contain": 0.522,
+        "token_f1": 0.4683,
+        "norm_em": 0.366,
+        "mean_total_tokens": 17357.3,
+        "sum_total_tokens": 17357262,
+        "mean_subagent_calls": 1
+      },
+      "iter30_think": {
+        "n": 1000,
+        "contain": 0.635,
+        "token_f1": 0.5985,
+        "norm_em": 0.48,
+        "mean_total_tokens": 53701.9,
+        "sum_total_tokens": 53701872,
+        "mean_subagent_calls": 2.838
+      },
+      "sufficiency": {
+        "n": 1000,
+        "contain": 0.695,
+        "token_f1": 0.6544,
+        "norm_em": 0.542,
+        "mean_total_tokens": 32578.1,
+        "sum_total_tokens": 32578099,
+        "mean_subagent_calls": 1.982
+      }
+    },
+    "ci": {
+      "sufficiency_vs_s0_matched": {
+        "delta": 0.173,
+        "ci95_lo": 0.143,
+        "ci95_hi": 0.204,
+        "p_two_sided": 0.0
+      },
+      "sufficiency_vs_iter30_think": {
+        "delta": 0.06,
+        "ci95_lo": 0.031,
+        "ci95_hi": 0.09,
+        "p_two_sided": 0.0002
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+You are evaluating a typed retrieval probe for adaptive multi-hop question answering.
+
+Output ONLY a single JSON object:
+
+```json
+{{
+  "slot_sufficient": <float 0.0-1.0>,
+  "answer_sufficient": <float 0.0-1.0>,
+  "slot_reason": "<short reason>",
+  "answer_reason": "<short reason>"
+}}
+```
+
+Definitions:
+- `slot_sufficient`: whether the targeted probe slot is now cleanly resolved from grounded evidence.
+- `answer_sufficient`: whether the currently resolved slots and grounded facts are already enough to answer the original question now.
+
+Rules:
+- Use ONLY the grounded facts and probe details below. Do not use outside knowledge.
+- Score `slot_sufficient` high only when the probe resolved the targeted slot with the expected answer type and grounded support.
+- Score `answer_sufficient` low when the probe only resolved an intermediate bridge entity and later slots are still needed.
+- Score both values low when the evidence is ambiguous, unsupported, or the proposed content is empty/meta.
+- If pending slots remain unresolved, `answer_sufficient` should usually stay below `0.5`.
+- Treat semantic type mismatches as insufficient even when the answer is nearby.
+- Examples: `county != city`, `city != state`, `state != country`, `record_label != artist`, `year != date range`.
+- Do not output any text outside the JSON object.
+
+Original question: {question}
+
+Target profile:
+{target_profile}
+
+Probe question:
+{probe_question}
+
+Probe strategy:
+{probe_strategy}
+
+Targeted probe slot:
+{probe_slot_name}
+
+Targeted slot hint:
+{probe_slot_hint}
+
+Expected info type:
+{probe_expected_info_type}
+
+Probe slot value:
+{probe_slot_value}
+
+Proposed final answer:
+{proposed_answer}
+
+Pending slots:
+{pending_slots}
+
+Resolved slots after probe:
+{resolved_slots}
+
+Grounded hop chain:
+{hop_chain}
+
+Grounded facts:
+{facts}

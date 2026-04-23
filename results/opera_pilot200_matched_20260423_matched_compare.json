@@ -1,0 +1,42 @@
+{
+  "sufficiency": {
+    "n": 200,
+    "contain": 0.35,
+    "token_f1": 0.4083,
+    "norm_em": 0.295,
+    "mean_total_tokens": 50454.2,
+    "mean_wallclock_seconds": 236.8,
+    "mean_subagent_calls": 2.595,
+    "coverage": 1.0,
+    "route_counts": {
+      "answer_from_probe": 72,
+      "recurse_after_probe": 128
+    }
+  },
+  "iter55": {
+    "n": 200,
+    "contain": 0.375,
+    "token_f1": 0.3523,
+    "norm_em": 0.245,
+    "mean_total_tokens": 25020.5,
+    "mean_wallclock_seconds": 144.8,
+    "mean_subagent_calls": 0.0,
+    "coverage": 1.0,
+    "route_counts": {
+      "missing": 200
+    }
+  },
+  "opera_pilot200_matched": {
+    "n": 6,
+    "contain": 0.5,
+    "token_f1": 0.5189,
+    "norm_em": 0.5,
+    "mean_total_tokens": 0.0,
+    "mean_wallclock_seconds": 0.0,
+    "mean_subagent_calls": 0.0,
+    "coverage": 0.03,
+    "route_counts": {
+      "missing": 6
+    }
+  }
+}

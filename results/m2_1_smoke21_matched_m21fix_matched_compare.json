@@ -1,0 +1,57 @@
+{
+  "sufficiency": {
+    "n": 21,
+    "contain": 0.3333,
+    "token_f1": 0.345,
+    "norm_em": 0.2857,
+    "mean_total_tokens": 54991.8,
+    "mean_wallclock_seconds": 267.0,
+    "mean_subagent_calls": 2.667,
+    "coverage": 1.0,
+    "route_counts": {
+      "answer_from_probe": 8,
+      "recurse_after_probe": 13
+    }
+  },
+  "iter55": {
+    "n": 21,
+    "contain": 0.2381,
+    "token_f1": 0.2403,
+    "norm_em": 0.1905,
+    "mean_total_tokens": 26580.9,
+    "mean_wallclock_seconds": 160.1,
+    "mean_subagent_calls": 6.0,
+    "coverage": 1.0,
+    "route_counts": {
+      "missing": 21
+    }
+  },
+  "m2_1_smoke21_matched": {
+    "n": 17,
+    "contain": 0.3529,
+    "token_f1": 0.3394,
+    "norm_em": 0.2353,
+    "mean_total_tokens": 46569.9,
+    "mean_wallclock_seconds": 210.0,
+    "mean_subagent_calls": 2.588,
+    "coverage": 0.8095,
+    "route_counts": {
+      "answer_after_direct_probe": 5,
+      "answer_after_typed_plan_exec": 7,
+      "targeted_recursive_recovery": 5
+    }
+  },
+  "opera": {
+    "n": 21,
+    "contain": 0.2381,
+    "token_f1": 0.2338,
+    "norm_em": 0.1905,
+    "mean_total_tokens": 21491.4,
+    "mean_wallclock_seconds": 120.1,
+    "mean_subagent_calls": 5.0,
+    "coverage": 1.0,
+    "route_counts": {
+      "missing": 21
+    }
+  }
+}

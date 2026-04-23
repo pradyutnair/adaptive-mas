@@ -344,3 +344,17 @@ class TestConfigLoading:
     def test_s0_no_verify(self):
         c = Config.from_yaml(_config_path("s0"))
         assert c.get("orchestrator.max_verify_calls") == 0
+
+    def test_m1_3_typed_bridge_sufficiency_loads(self):
+        c = Config.from_yaml(_config_path("m1_3.typed_bridge_sufficiency"))
+        assert c.get("variant") == "m1_3_typed_bridge_sufficiency"
+        assert c.get("adaptive.sufficiency_bridge_first_probe") is True
+        assert c.get("adaptive.sufficiency_split_assessment") is True
+        assert c.get("adaptive.sufficiency_typed_one_shot_followup") is True
+
+    def test_m1_4_typed_followup_sufficiency_loads(self):
+        c = Config.from_yaml(_config_path("m1_4.typed_followup_sufficiency"))
+        assert c.get("variant") == "m1_4_typed_followup_sufficiency"
+        assert c.get("adaptive.sufficiency_bridge_first_probe") is False
+        assert c.get("adaptive.sufficiency_split_assessment") is True
+        assert c.get("adaptive.sufficiency_typed_one_shot_followup") is True

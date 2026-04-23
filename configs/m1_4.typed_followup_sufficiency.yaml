@@ -1,0 +1,50 @@
+# Typed follow-up sufficiency controller (m1.4)
+# Main policy:
+#   1. Probe the final answer slot directly with the raw question.
+#   2. Score slot sufficiency and answer sufficiency separately.
+#   3. If still insufficient, do one typed slot follow-up from the routed slot graph.
+#   4. Recurse only if the one-shot follow-up still leaves unresolved slots.
+
+variant: m1_4_typed_followup_sufficiency
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 4
+  search_top_k: 5
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  sufficiency_controller: true
+  sufficiency_threshold: 0.70
+  sufficiency_max_recurse_steps: 4
+  sufficiency_min_recurse_steps: 1
+  sufficiency_bridge_first_probe: false
+  sufficiency_split_assessment: true
+  sufficiency_typed_one_shot_followup: true
+  bootstrap_search_top_k: 5
+  bootstrap_max_read: 6
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 24
+  checkpoint: true

@@ -17,6 +17,25 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from eval_offline import contain, norm_em, token_f1  # noqa: E402
 
 
+def _first_numeric(row: dict, *paths: tuple[str, ...]) -> float | None:
+    """Return the first numeric field found across alternate schemas."""
+    for path in paths:
+        cur = row
+        ok = True
+        for key in path:
+            if not isinstance(cur, dict) or key not in cur:
+                ok = False
+                break
+            cur = cur[key]
+        if not ok or cur is None:
+            continue
+        try:
+            return float(cur)
+        except (TypeError, ValueError):
+            continue
+    return None
+
+
 def load_jsonl(p: Path) -> list[dict]:
     out = []
     with open(p, "r", encoding="utf-8") as f:
@@ -44,11 +63,21 @@ def score(preds: list[dict], gold_by_id: dict[str, str]) -> dict:
         cs.append(contain(ans, gold))
         fs.append(token_f1(ans, gold))
         es.append(norm_em(ans, gold))
-        md = p.get("metadata") or {}
-        if md.get("total_tokens") is not None:
-            toks.append(md["total_tokens"])
-        if md.get("num_subagent_calls") is not None:
-            n_sub.append(md["num_subagent_calls"])
+        token_value = _first_numeric(
+            p,
+            ("metadata", "total_tokens"),
+            ("total_tokens",),
+        )
+        subagent_value = _first_numeric(
+            p,
+            ("metadata", "num_subagent_calls"),
+            ("metadata", "llm_call_count"),
+            ("llm_call_count",),
+        )
+        if token_value is not None:
+            toks.append(token_value)
+        if subagent_value is not None:
+            n_sub.append(subagent_value)
     n = len(preds)
     out = {
         "n": n,

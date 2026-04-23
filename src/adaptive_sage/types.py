@@ -12,6 +12,7 @@ StepAction = Literal[
     "spawn",
     "refine",
     "verify",
+    "assess",
     "route",
     "answer_rejected_escalate",
     "answer_blocked_pending_slots",
