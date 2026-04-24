@@ -1,0 +1,157 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-23 19:09:40 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_3gpu_shard0.json
+2026-04-23 19:09:40 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-23 19:09:40 [INFO] sentence_transformers.base.model: No device provided, using cuda:0
+2026-04-23 19:09:40 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879, max_steps=4
+2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=4
+2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988, max_steps=4
+2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-23 19:09:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  3.22it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  3.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 40.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 38.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.26it/s]
+2026-04-23 19:10:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__547045_131879, answer='the river great ouse', subagents=1, verify=0, tokens=9952
+Processing questions:   6%|▌         | 1/17 [00:42<11:23, 42.69s/q]2026-04-23 19:10:26 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.03it/s]
+2026-04-23 19:10:27 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:10:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:10:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:10:28 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What platform is Robodemons played on?
+2026-04-23 19:10:29 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__161602_426860_88460_20988, answer='8888 uprising', subagents=1, verify=0, tokens=11504
+Processing questions:  12%|█▏        | 2/17 [00:46<04:53, 19.58s/q]2026-04-23 19:10:29 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 46.14it/s]
+2026-04-23 19:10:33 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='fleur-de-lis', subagents=1, verify=0, tokens=10297
+Processing questions:  18%|█▊        | 3/17 [00:49<02:53, 12.40s/q]2026-04-23 19:10:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=4
+2026-04-23 19:10:33 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='the lakers', subagents=1, verify=0, tokens=12557
+Processing questions:  24%|██▎       | 4/17 [00:50<01:39,  7.66s/q]2026-04-23 19:10:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__632623_160713_77246, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.86it/s]
+2026-04-23 19:10:46 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: 'What platform is Robodemons played on?' — forcing answer
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 45.26it/s]
+2026-04-23 19:10:52 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer='nintendo entertainment system', subagents=3, verify=0, tokens=23810
+Processing questions:  29%|██▉       | 5/17 [01:09<02:21, 11.77s/q]2026-04-23 19:10:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-23 19:10:55 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__304852_758385, answer='park rapids, minnesota', subagents=1, verify=0, tokens=10119
+Processing questions:  35%|███▌      | 6/17 [01:11<01:34,  8.60s/q]2026-04-23 19:10:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=4
+2026-04-23 19:10:58 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: 'What region prevailed with the disgrace of the Near East?' — forcing answer
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 49.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 46.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.96it/s]
+2026-04-23 19:11:05 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='middle east', subagents=2, verify=0, tokens=23087
+Processing questions:  41%|████      | 7/17 [01:22<01:31,  9.15s/q]2026-04-23 19:11:05 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__222497_309482_41132, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.40it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.23it/s]
+2026-04-23 19:11:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='jane fonda', subagents=1, verify=0, tokens=10605
+Processing questions:  47%|████▋     | 8/17 [01:42<01:54, 12.75s/q]2026-04-23 19:11:26 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.55it/s]
+2026-04-23 19:11:32 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: "What TV channel hosts Rachel Maddow's show?" — forcing answer
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.25it/s]
+2026-04-23 19:11:39 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='msnbc', subagents=2, verify=0, tokens=23208
+Processing questions:  53%|█████▎    | 9/17 [01:55<01:42, 12.87s/q]2026-04-23 19:11:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.13it/s]
+2026-04-23 19:11:42 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:42 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:42 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:42 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which company produced the AAM-N-4 Oriole?
+2026-04-23 19:11:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='Venice, northern Italy', subagents=1, verify=0, tokens=10483
+Processing questions:  59%|█████▉    | 10/17 [02:00<01:12, 10.30s/q]2026-04-23 19:11:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__847760_80026, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.14it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 51.58it/s]
+2026-04-23 19:11:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:47 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which company produced the AAM-N-4 Oriole?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 49.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 46.97it/s]
+2026-04-23 19:11:51 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:51 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:51 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:51 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which company produced the AAM-N-4 Oriole?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.31it/s]
+2026-04-23 19:11:55 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:55 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:55 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:11:55 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which company produced the AAM-N-4 Oriole?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 44.64it/s]
+2026-04-23 19:12:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='AAM-N-5 Meteor', subagents=5, verify=0, tokens=14144
+Processing questions:  65%|██████▍   | 11/17 [02:19<01:17, 12.97s/q]2026-04-23 19:12:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.38it/s]
+2026-04-23 19:12:13 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='talca province', subagents=1, verify=0, tokens=10228
+Processing questions:  71%|███████   | 12/17 [02:29<01:00, 12.16s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 46.61it/s]
+2026-04-23 19:12:16 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: "Who is the composer of Al gran sole carico d'amore?" — forcing answer
+2026-04-23 19:12:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__847760_80026, answer='Julie Dawn Cole', subagents=1, verify=0, tokens=9167
+Processing questions:  76%|███████▋  | 13/17 [02:35<00:41, 10.25s/q]2026-04-23 19:12:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__222497_309482_41132, answer='luigi nono', subagents=2, verify=0, tokens=24262
+Processing questions:  82%|████████▏ | 14/17 [02:36<00:22,  7.61s/q]2026-04-23 19:12:21 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__632623_160713_77246, answer='a large body of water', subagents=5, verify=0, tokens=60726
+Processing questions:  88%|████████▊ | 15/17 [02:37<00:11,  5.59s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 47.79it/s]
+2026-04-23 19:12:24 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:24 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:24 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:24 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What record label is Study in Brown part of?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 45.47it/s]
+2026-04-23 19:12:29 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:30 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:30 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:30 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What record label is Study in Brown part of?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 46.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 49.49it/s]
+2026-04-23 19:12:37 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:38 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:38 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:38 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What record label is Study in Brown part of?
+2026-04-23 19:12:42 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='1995', subagents=1, verify=0, tokens=10435
+Processing questions:  94%|█████████▍| 16/17 [02:59<00:10, 10.36s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 80.19it/s]
+2026-04-23 19:12:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:12:43 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What record label is Study in Brown part of?
+2026-04-23 19:12:46 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='', subagents=5, verify=0, tokens=16048
+Processing questions: 100%|██████████| 17/17 [03:03<00:00,  8.38s/q]Processing questions: 100%|██████████| 17/17 [03:03<00:00, 10.77s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 183.1s (3.1min)
+============================================================

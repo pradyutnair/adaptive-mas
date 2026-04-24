@@ -1,0 +1,17 @@
+{
+  "attempted": 50,
+  "succeeded": 50,
+  "failed": 0,
+  "total_output_rows": 50,
+  "elapsed_seconds": 571.726,
+  "mean_wallclock_seconds": 11.435,
+  "mean_question_wallclock_seconds": 310.264,
+  "p50_question_wallclock_seconds": 289.27,
+  "p95_question_wallclock_seconds": 505.138,
+  "questions_path": "data/musique/questions_smoke50_seed42_exact3gpu.json",
+  "inputs": [
+    "results/m1_6_v5_det_smoke50_det_shard0/predictions.jsonl",
+    "results/m1_6_v5_det_smoke50_det_shard1/predictions.jsonl",
+    "results/m1_6_v5_det_smoke50_det_shard2/predictions.jsonl"
+  ]
+}

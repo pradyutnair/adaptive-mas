@@ -1,0 +1,97 @@
+2026-04-23 19:02:57 [INFO] __main__: Loaded 16 questions from data/musique/questions_smoke50_seed42_3gpu_shard2.json
+2026-04-23 19:02:57 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-23 19:02:58 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-23 19:02:58 [INFO] sentence_transformers.base.model: No modules.json found for intfloat/e5-base-v2, initializing a new SentenceTransformer model.
+Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 122] Disk quota exceeded: '/home/yzheng/.cache/huggingface/hub/models--intfloat--e5-base-v2'
+2026-04-23 19:02:58 [ERROR] huggingface_hub.file_download: Could not cache non-existence of file. Will ignore error and continue. Error: [Errno 122] Disk quota exceeded: '/home/yzheng/.cache/huggingface/hub/models--intfloat--e5-base-v2'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 403, in hf_raise_for_status
+    response.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/requests/models.py", line 1028, in raise_for_status
+    raise HTTPError(http_error_msg, response=self)
+requests.exceptions.HTTPError: 404 Client Error: Not Found for url: https://huggingface.co/intfloat/e5-base-v2/resolve/main/adapter_config.json
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1550, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1467, in get_hf_file_metadata
+    r = _request_wrapper(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 283, in _request_wrapper
+    response = _request_wrapper(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 307, in _request_wrapper
+    hf_raise_for_status(response)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_http.py", line 414, in hf_raise_for_status
+    raise _format(EntryNotFoundError, message, response) from e
+huggingface_hub.errors.EntryNotFoundError: 404 Client Error. (Request ID: Root=1-69ea50c2-51d03d562b4457d8061e21a1;e6c43659-b82a-4248-b6d9-8a93a3d82e08)
+
+Entry Not Found for url: https://huggingface.co/intfloat/e5-base-v2/resolve/main/adapter_config.json.
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+FileNotFoundError: [Errno 2] No such file or directory: '/home/yzheng/.cache/huggingface/hub/models--intfloat--e5-base-v2/refs'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 377, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 362, in main
+    asyncio.run(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 239, in _run
+    pipeline = AdaptiveRecursivePipeline(config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 43, in __init__
+    self.investigator = Investigator(config, self.llm_client)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 79, in __init__
+    self.semantic_search = SemanticSearchTool(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 50, in __init__
+    self.embedding_model = SentenceTransformer(model_name, device=device)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 183, in __init__
+    super().__init__(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 198, in __init__
+    modules, self.module_kwargs = self._load_modules(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 958, in _load_modules
+    return self._load_default_modules(model_name_or_path, **load_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 1056, in _load_default_modules
+    transformer_model = Transformer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 87, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 628, in __init__
+    config, is_peft_model = self._load_config(model_name_or_path, backend, config_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1354, in _load_config
+    adapter_config_file = find_adapter_config_file(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/peft_utils.py", line 88, in find_adapter_config_file
+    adapter_cached_filename = cached_file(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 322, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 567, in cached_files
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py", line 479, in cached_files
+    hf_hub_download(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/utils/_validators.py", line 114, in _inner_fn
+    return fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1014, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1077, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 1566, in _get_metadata_or_catch_error
+    _cache_commit_hash_for_specific_revision(storage_folder, revision, commit_hash)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/huggingface_hub/file_download.py", line 770, in _cache_commit_hash_for_specific_revision
+    ref_path.parent.mkdir(parents=True, exist_ok=True)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1179, in mkdir
+    self.parent.mkdir(parents=True, exist_ok=True)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/pathlib.py", line 1175, in mkdir
+    self._accessor.mkdir(self, mode)
+OSError: [Errno 122] Disk quota exceeded: '/home/yzheng/.cache/huggingface/hub/models--intfloat--e5-base-v2'

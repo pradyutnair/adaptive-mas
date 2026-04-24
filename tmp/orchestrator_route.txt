@@ -38,23 +38,34 @@ Output ONLY a single JSON object:
 Rules:
 - `execution_mode` selects the main controller path:
   - `direct_probe`: one cheap grounded probe should likely suffice.
-  - `typed_plan_exec`: explicit typed slot execution is warranted, but broad recursive recovery is not yet necessary.
-  - `recursive_recovery`: bridge uncertainty is high enough that targeted recursive recovery will likely be needed.
+  - `typed_plan_exec`: explicit typed slot execution is warranted, but targeted recovery should only happen if slot execution later fails.
+  - `recursive_recovery`: bridge uncertainty is high enough that targeted recursive recovery will likely be needed even after slot planning.
 - `single_probe` means exactly one grounded retrieval probe before the controller re-evaluates.
 - Choose `recurse` whenever the question requires resolving more than one dependent slot.
 - `compositionality_score` estimates whether multi-slot composition is required.
 - `bridge_uncertainty_score` estimates whether bridge entities/attributes are likely brittle or ambiguous.
 - `expected_hop_count` should match the number of typed bridge slots you expect to resolve.
-- For `recurse`, list the missing slots in dependency order; the last item must be the final answer slot.
+- For `recurse`, list a typed slot DAG in dependency order; the last item must be the final answer slot.
+- If the final answer depends on first identifying another entity, location, date, organization, work, or event, you must create an intermediate bridge slot first.
+- Questions that ask for `who/what/when/where/how many` about a derived entity are not single-slot questions; decompose them into the bridge entity and the requested final attribute.
+- Questions involving relation-of-relation patterns such as successor/follower, headquarters/location, birthplace/mother, majority party/body, or north-of/located-in must use multiple slots rather than a single final-answer lookup.
+- Superlatives and comparisons usually require at least one bridge slot before the final answer slot.
 - Every `required_hops` item must include `expected_info_type`.
 - For `recurse`, `sub_question` and `retrieval_query` must target only the first unresolved slot, not the full multi-hop question.
 - For `single_probe`, `sub_question` and `retrieval_query` may target the final answer directly.
-- Every `required_hops` item should include its own `sub_question`, `retrieval_query`, and `goal` whenever the slot is independently retrievable.
+- Every `required_hops` item should include its own `sub_question`, `retrieval_query`, and `goal` whenever the slot is independently retrievable by one focused search.
 - `retrieval_query` must be a short search-style query, not a sentence-length explanation.
 - All slot names must be concise semantic labels; never use placeholders like `target_slot`, `final_answer`, `answer`, or `slot`.
+- A route that uses only one slot named `final_answer`, `answer`, or another placeholder is invalid.
 - `expected_info_type` must be as specific as the slot semantics, not a broad superclass when a narrower tag is available.
 - Prefer `county` over `location`, `city` over `location`, `record_label` over `organization`, `language` over `other`.
 - `dependency_group` is an integer; slots in the same group can be retrieved in parallel.
+- Prefer slot plans that can be executed with one grounded analysis-answer pass per slot; avoid broad exploratory sub-questions unless uncertainty is truly high.
+- Do not choose `recursive_recovery` just because the question is multi-hop; use it only when bridge ambiguity is high enough that typed slot execution alone is likely brittle.
+- Before outputting, self-check:
+  - Did I decompose every latent bridge entity needed to answer the question?
+  - Is the final slot only the final attribute, not the whole question collapsed into one lookup?
+  - Are all slot names semantic and non-placeholder?
 - Do not include any text outside the JSON object.
 
 Question: {question}

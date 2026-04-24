@@ -1,0 +1,197 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-23 19:41:29 [INFO] __main__: Loaded 17 questions from data/musique/shards_budget20k/questions_shard1.json
+2026-04-23 19:41:29 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-23 19:41:29 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-23 19:41:29 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__51465_53706_795904_580996, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__284789_52835, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__406043_831637_91775, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__131829_39743_24526, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__749065_698949_157828_162309, max_steps=4
+2026-04-23 19:41:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__810884_22402, max_steps=4
+2026-04-23 19:41:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__90327_73181_68042, max_steps=4
+2026-04-23 19:41:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__802394_153080_159767_81096, max_steps=4
+2026-04-23 19:41:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__518381_709625_84283, max_steps=4
+2026-04-23 19:41:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__423001_503371_21711, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.39it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  7.48it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  7.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.51it/s]
+2026-04-23 19:42:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='msnbc', subagents=0, verify=0, tokens=2042
+Processing questions:   6%|▌         | 1/17 [00:46<12:24, 46.50s/q]2026-04-23 19:42:18 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop2__222979_133154_40768, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.57it/s]
+2026-04-23 19:42:34 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:34 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:34 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:34 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: what state is WXBX located in?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.88it/s]
+2026-04-23 19:42:38 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:38 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:38 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:38 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which state was most associated with the gold rush in America?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.65it/s]
+2026-04-23 19:42:40 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:40 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:40 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:40 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Who is the performer of 'Lovin' All Night'?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.68it/s]
+2026-04-23 19:42:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:43 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:42:43 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+2026-04-23 19:42:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__810884_22402, answer='', subagents=0, verify=0, tokens=2102
+Processing questions:  12%|█▏        | 2/17 [01:12<08:38, 34.60s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  6.58it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  6.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 10.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.81it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.69it/s]
+2026-04-23 19:43:01 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__802394_153080_159767_81096, answer='charles mingus', subagents=0, verify=0, tokens=5118
+Processing questions:  18%|█▊        | 3/17 [01:29<06:10, 26.50s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.01it/s]
+2026-04-23 19:43:03 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__90327_73181_68042, answer='parliament', subagents=0, verify=0, tokens=5294
+Processing questions:  24%|██▎       | 4/17 [01:31<03:38, 16.81s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.29it/s]
+2026-04-23 19:43:05 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:05 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:05 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:05 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.67it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.67it/s]
+2026-04-23 19:43:06 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:06 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:06 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:06 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.38it/s]
+2026-04-23 19:43:10 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='middle east', subagents=0, verify=0, tokens=4596
+Processing questions:  29%|██▉       | 5/17 [01:38<02:38, 13.24s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.61it/s]
+2026-04-23 19:43:16 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='', subagents=0, verify=0, tokens=8772
+Processing questions:  35%|███▌      | 6/17 [01:44<01:57, 10.70s/q]2026-04-23 19:43:17 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.26it/s]
+2026-04-23 19:43:21 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:21 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:21 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:21 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What is the date when Honda opened its first US assembly plant?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.82it/s]
+2026-04-23 19:43:22 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:22 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:23 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:23 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What state is WXBX located in?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.84it/s]
+2026-04-23 19:43:23 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:23 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:23 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:23 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: what state is WXBX located in?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.26it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.82it/s]
+2026-04-23 19:43:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:28 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.43it/s]
+2026-04-23 19:43:28 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:29 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:29 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:29 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.05it/s]
+2026-04-23 19:43:33 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:33 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:33 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:33 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Who is the artist of 'Lovin' All Night'?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.64it/s]
+2026-04-23 19:43:33 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:34 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:34 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:34 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Who is the performer of 'Lovin' All Night'?
+2026-04-23 19:43:36 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 11.60it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.72it/s]
+2026-04-23 19:43:41 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='the sazerac company', subagents=0, verify=0, tokens=8942
+Processing questions:  41%|████      | 7/17 [02:09<02:36, 15.60s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.69it/s]
+2026-04-23 19:43:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__51465_53706_795904_580996, answer='california', subagents=0, verify=0, tokens=5329
+Processing questions:  47%|████▋     | 8/17 [02:11<01:38, 10.99s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.48it/s]
+2026-04-23 19:43:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__423001_503371_21711, answer='', subagents=0, verify=0, tokens=5490
+Processing questions:  53%|█████▎    | 9/17 [02:12<01:03,  7.94s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.15it/s]
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What is the date when Honda opened its first US assembly plant?
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.71it/s]
+2026-04-23 19:43:47 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:47 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which military service operates USS Peril?
+2026-04-23 19:43:48 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:48 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:48 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-23 19:43:48 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What is the date when Honda opened its first US assembly plant?
+2026-04-23 19:43:59 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__284789_52835, answer='', subagents=0, verify=0, tokens=7300
+Processing questions:  59%|█████▉    | 10/17 [02:27<01:10, 10.06s/q]2026-04-23 19:44:01 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__406043_831637_91775, answer='', subagents=6, verify=0, tokens=8612
+Processing questions:  65%|██████▍   | 11/17 [02:29<00:45,  7.62s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.80it/s]
+2026-04-23 19:44:04 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__518381_709625_84283, answer='', subagents=0, verify=0, tokens=5286
+Processing questions:  71%|███████   | 12/17 [02:32<00:31,  6.21s/q]2026-04-23 19:44:07 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='', subagents=0, verify=0, tokens=4776
+Processing questions:  76%|███████▋  | 13/17 [02:35<00:21,  5.35s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.29it/s]
+2026-04-23 19:44:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__131829_39743_24526, answer='', subagents=0, verify=0, tokens=5200
+Processing questions:  82%|████████▏ | 14/17 [02:36<00:11,  3.97s/q]2026-04-23 19:44:09 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__749065_698949_157828_162309, answer='', subagents=0, verify=0, tokens=7699
+Processing questions:  88%|████████▊ | 15/17 [02:37<00:06,  3.26s/q]2026-04-23 19:44:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='', subagents=0, verify=0, tokens=5479
+Processing questions:  94%|█████████▍| 16/17 [02:42<00:03,  3.64s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.35it/s]
+2026-04-23 19:44:25 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop2__222979_133154_40768, answer='', subagents=0, verify=0, tokens=4951
+Processing questions: 100%|██████████| 17/17 [02:53<00:00,  5.99s/q]Processing questions: 100%|██████████| 17/17 [02:53<00:00, 10.23s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 174.0s (2.9min)
+============================================================

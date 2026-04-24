@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.sufficiency.yaml",
+  "questions_path": "data/musique/questions_smoke50_seed42_exact3gpu_shard2.json",
+  "server_url": "http://localhost:8003/v1",
+  "concurrency": 16,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 16,
+  "succeeded": 16,
+  "failed": 0,
+  "total_output_rows": 16,
+  "elapsed_seconds": 401.686,
+  "mean_wallclock_seconds": 25.105,
+  "mean_question_wallclock_seconds": 234.838,
+  "p50_question_wallclock_seconds": 252.962,
+  "p95_question_wallclock_seconds": 401.67
+}

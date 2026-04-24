@@ -122,6 +122,8 @@ class PipelineResult:
     num_subagent_calls: int = 0
     num_verify_calls: int = 0
     total_tokens: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
     orchestrator_tokens: int = 0
     subagent_tokens: int = 0
     facts_used: list[Fact] = field(default_factory=list)
@@ -148,6 +150,8 @@ class PipelineResult:
             "num_subagent_calls": self.num_subagent_calls,
             "num_verify_calls": self.num_verify_calls,
             "total_tokens": self.total_tokens,
+            "prompt_tokens": self.prompt_tokens,
+            "completion_tokens": self.completion_tokens,
             "orchestrator_tokens": self.orchestrator_tokens,
             "subagent_tokens": self.subagent_tokens,
             "facts_used": [f.to_dict() for f in self.facts_used],
@@ -188,6 +192,8 @@ class PipelineResult:
             num_subagent_calls=data.get("num_subagent_calls", 0),
             num_verify_calls=data.get("num_verify_calls", 0),
             total_tokens=data.get("total_tokens", 0),
+            prompt_tokens=data.get("prompt_tokens", 0),
+            completion_tokens=data.get("completion_tokens", 0),
             orchestrator_tokens=data.get("orchestrator_tokens", 0),
             subagent_tokens=data.get("subagent_tokens", 0),
             facts_used=facts_used,

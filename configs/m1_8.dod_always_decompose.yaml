@@ -1,0 +1,49 @@
+# m1.8 A1 ablation: skip direct SAS gate and always decompose.
+
+variant: m1_8_dod_always_decompose
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 2
+  search_top_k: 4
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  dod_controller: true
+  dod_always_decompose: true
+  dod_gate_threshold: 0.85
+  dod_hop_threshold: 0.80
+  slot_dag_max_steps: 4
+  slot_dag_max_parallel: 2
+  slot_dag_max_retries_per_slot: 1
+  slot_dag_search_top_k: 4
+  slot_dag_max_read: 4
+  slot_dag_recovery_steps: 0
+
+budget:
+  max_total_tokens: 30000
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 1536
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 16
+  checkpoint: true

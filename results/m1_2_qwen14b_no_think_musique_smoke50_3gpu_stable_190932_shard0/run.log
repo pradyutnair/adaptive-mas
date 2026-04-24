@@ -1,0 +1,27 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-23 19:09:39 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_3gpu_shard0.json
+2026-04-23 19:09:39 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-23 19:09:39 [INFO] sentence_transformers.base.model: No device provided, using cuda:0
+2026-04-23 19:09:40 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385, max_steps=4
+2026-04-23 19:09:42 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.48it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.64it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 48.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 56.27it/s]
+2026-04-23 19:10:17 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__304852_758385, answer='park rapids, minnesota', subagents=1, verify=0, tokens=10119
+Processing questions:   6%|▌         | 1/17 [00:35<09:24, 35.30s/q]2026-04-23 19:10:17 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=4

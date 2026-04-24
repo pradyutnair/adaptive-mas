@@ -3,13 +3,18 @@ set -euo pipefail
 # Usage: ./start_vllm.sh <gpu_id> <port>
 GPU_ID=${1:?"Usage: $0 <gpu_id> <port>"}
 PORT=${2:?"Usage: $0 <gpu_id> <port>"}
-ROOT=/local/yzheng/pnair/workspace/05-mas
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 LOG_DIR="$ROOT/logs"
 PID_FILE="$LOG_DIR/vllm-${PORT}.pid"
 LOG_FILE="$LOG_DIR/vllm-${PORT}.log"
 
 mkdir -p "$LOG_DIR"
 source "$ROOT/.venv/bin/activate" 2>/dev/null || source /var/scratch/yzheng/pnair/venvs/msc-thesis/bin/activate
+PYTHON_BIN="${VLLM_PYTHON_BIN:-$ROOT/.venv/bin/python3}"
+if [ ! -x "$PYTHON_BIN" ]; then
+  PYTHON_BIN="$(command -v python3)"
+fi
 export HF_HOME=/local/yzheng/.cache/huggingface
 export TRANSFORMERS_CACHE=/local/yzheng/.cache/huggingface
 export SENTENCE_TRANSFORMERS_HOME=/local/yzheng/.cache/huggingface
@@ -28,16 +33,20 @@ if curl -sf "http://localhost:${PORT}/v1/models" >/dev/null 2>&1; then
   exit 0
 fi
 
-nohup env CUDA_VISIBLE_DEVICES="$GPU_ID" python3 -m vllm.entrypoints.openai.api_server \
-  --model Qwen/Qwen3-8B \
+MODEL_NAME="${VLLM_MODEL:-Qwen/Qwen3-8B}"
+MAX_MODEL_LEN="${VLLM_MAX_MODEL_LEN:-12288}"
+GPU_MEM_UTIL="${VLLM_GPU_MEMORY_UTILIZATION:-0.95}"
+MAX_NUM_SEQS="${VLLM_MAX_NUM_SEQS:-128}"
+MAX_BATCHED_TOKENS="${VLLM_MAX_BATCHED_TOKENS:-16384}"
+
+nohup env CUDA_VISIBLE_DEVICES="$GPU_ID" "$PYTHON_BIN" -m vllm.entrypoints.openai.api_server \
+  --model "$MODEL_NAME" \
   --port "$PORT" \
-  --max-model-len 32768 \
-  --gpu-memory-utilization 0.90 \
-  --max-num-seqs 96 \
-  --max-num-batched-tokens 24576 \
+  --max-model-len "$MAX_MODEL_LEN" \
+  --gpu-memory-utilization "$GPU_MEM_UTIL" \
+  --max-num-seqs "$MAX_NUM_SEQS" \
+  --max-num-batched-tokens "$MAX_BATCHED_TOKENS" \
   --enable-prefix-caching \
-  --enable-auto-tool-choice \
-  --tool-call-parser hermes \
   >"$LOG_FILE" 2>&1 &
 SERVER_PID=$!
 echo "$SERVER_PID" >"$PID_FILE"

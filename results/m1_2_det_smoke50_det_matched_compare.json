@@ -1,0 +1,96 @@
+{
+  "sufficiency": {
+    "n": 50,
+    "contain": 0.38,
+    "token_f1": 0.4172,
+    "norm_em": 0.3,
+    "mean_total_tokens": 55346.4,
+    "mean_prompt_tokens": 0.0,
+    "mean_completion_tokens": 0.0,
+    "mean_wallclock_seconds": 260.9,
+    "mean_subagent_calls": 2.76,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "answer_from_probe": 15,
+      "recurse_after_probe": 35
+    },
+    "step_totals": {
+      "spawn": 137,
+      "refine": 1,
+      "answer": 72,
+      "assess": 50
+    }
+  },
+  "iter55": {
+    "n": 50,
+    "contain": 0.28,
+    "token_f1": 0.3029,
+    "norm_em": 0.22,
+    "mean_total_tokens": 25713.0,
+    "mean_prompt_tokens": 22259.1,
+    "mean_completion_tokens": 3453.9,
+    "mean_wallclock_seconds": 153.0,
+    "mean_subagent_calls": 5.8,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 50
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  },
+  "m1_2_det_smoke50": {
+    "n": 50,
+    "contain": 0.34,
+    "token_f1": 0.3672,
+    "norm_em": 0.24,
+    "mean_total_tokens": 49767.8,
+    "mean_prompt_tokens": 421929.8,
+    "mean_completion_tokens": 69705.0,
+    "mean_wallclock_seconds": 296.0,
+    "mean_subagent_calls": 3.0,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "recurse_after_probe": 38,
+      "answer_from_probe": 12
+    },
+    "step_totals": {
+      "spawn": 146,
+      "refine": 4,
+      "answer": 70,
+      "assess": 50
+    }
+  },
+  "opera": {
+    "n": 50,
+    "contain": 0.26,
+    "token_f1": 0.2212,
+    "norm_em": 0.16,
+    "mean_total_tokens": 22614.1,
+    "mean_prompt_tokens": 18074.7,
+    "mean_completion_tokens": 4539.5,
+    "mean_wallclock_seconds": 119.0,
+    "mean_subagent_calls": 5.26,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 50
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  }
+}

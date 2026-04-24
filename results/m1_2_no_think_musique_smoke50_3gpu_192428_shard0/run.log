@@ -1,0 +1,435 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-23 19:24:35 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_3gpu_shard0.json
+2026-04-23 19:24:35 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-23 19:24:35 [INFO] sentence_transformers.base.model: No device provided, using cuda:0
+2026-04-23 19:24:36 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__632623_160713_77246, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__222497_309482_41132, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__847760_80026, max_steps=4
+2026-04-23 19:24:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.11it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 64.83it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 51.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 50.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 44.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 49.95it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 53.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.01it/s]
+2026-04-23 19:24:55 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__847760_80026, answer='peter ostrum', subagents=1, verify=0, tokens=9008
+Processing questions:   6%|▌         | 1/17 [00:17<04:32, 17.01s/q]2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:56 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 86.96it/s]
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Where is the Bridge of Sighs located in the place of death of Sonata pian'e forte's composer?
+2026-04-23 19:24:57 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What administrative territorial entity contains the place where KPRM is licensed to broadcast to?
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 74.09it/s]
+2026-04-23 19:24:57 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:57 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 75.35it/s]
+2026-04-23 19:24:58 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 74.08it/s]
+2026-04-23 19:24:58 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Which company followed the company that made AAM-N-4 Oriole?
+2026-04-23 19:24:58 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:24:58 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What body of water is by the headquarters location of Wipac?
+2026-04-23 19:24:58 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What team is the person with the highest point average in NBA history on?
+2026-04-23 19:24:58 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 82.43it/s]
+2026-04-23 19:24:58 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:58 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 98.37it/s]
+2026-04-23 19:24:59 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:59 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 116.88it/s]
+2026-04-23 19:24:59 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:59 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: In which province is San Clemente, from the country where Fuser and Alberto meet the indigenous couple who were traveling to look for work?
+2026-04-23 19:24:59 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:59 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 123.54it/s]
+2026-04-23 19:24:59 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:24:59 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 124.47it/s]
+2026-04-23 19:24:59 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: How many times did plague occur in Al gran sole carico d'amore's composer's work location?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What compression method is part of the CAB format used by one of the original partners in the TV channel that hosts Rachel Maddow's show?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: In the arabic dictionary what is the meaning of the word that also refers to the majority religion in India during the creation of the country where Rabwah is located?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: When was the region immediately north of the region that prevailed with the disgrace of Near East and the terrain feature on which shamal is located created?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: When did the political party that holds the majority in the political body that passed a bill giving regulators discretion to prohibit proprietary trades, gain control of the House?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.investigator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Who is the wife of the actor of Grace's boyfriend in Frankie and Grace?
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer="the genesis's head start, much larger library of games, and lower price point", subagents=1, verify=0, tokens=8910
+Processing questions:  12%|█▏        | 2/17 [00:21<02:28,  9.91s/q]2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='', subagents=1, verify=0, tokens=1587
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='', subagents=1, verify=0, tokens=1554
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__547045_131879, answer='', subagents=1, verify=0, tokens=1557
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='', subagents=1, verify=0, tokens=1570
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__304852_758385, answer='', subagents=1, verify=0, tokens=1578
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='', subagents=1, verify=0, tokens=1561
+Processing questions:  47%|████▋     | 8/17 [00:22<00:14,  1.66s/q]2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 1/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__161602_426860_88460_20988, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__222497_309482_41132, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 2/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__632623_160713_77246, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='', subagents=1, verify=0, tokens=0
+2026-04-23 19:25:00 [WARNING] adaptive_sage.orchestrator: LLM call failed (attempt 3/3): 500, message='Internal Server Error', url='http://localhost:8001/v1/chat/completions'
+2026-04-23 19:25:00 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-23 19:25:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='', subagents=1, verify=0, tokens=0
+Processing questions: 100%|██████████| 17/17 [00:22<00:00,  1.30s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 22.1s (0.4min)
+============================================================

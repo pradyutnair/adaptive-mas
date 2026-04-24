@@ -8,6 +8,10 @@ import requests
 import tiktoken
 
 
+class TokenBudgetExceededError(RuntimeError):
+    """Raised when a per-question token budget cannot accommodate a call."""
+
+
 class LLMClient:
     """Unified LLM client for OpenAI-compatible APIs."""
     
@@ -106,11 +110,22 @@ class LLMClient:
         self,
         messages: List[Dict[str, Any]],
         requested_max_tokens: Optional[int] = None,
+        remaining_total_tokens: Optional[int] = None,
     ) -> int:
         requested = requested_max_tokens or self.max_tokens
         prompt_tokens = self.count_message_tokens(messages)
         # Keep a small safety margin because chat token counting is approximate.
-        available = max(self.context_window - prompt_tokens - 128, 1)
+        safety_margin = 128
+        available = max(self.context_window - prompt_tokens - safety_margin, 1)
+        if remaining_total_tokens is not None:
+            remaining_total_tokens = int(remaining_total_tokens)
+            remaining_for_completion = remaining_total_tokens - prompt_tokens - safety_margin
+            if remaining_for_completion < 1:
+                raise TokenBudgetExceededError(
+                    "Token budget exhausted before LLM call "
+                    f"(remaining={remaining_total_tokens}, prompt≈{prompt_tokens})"
+                )
+            available = min(available, remaining_for_completion)
         return max(1, min(requested, self.max_completion_cap, available))
     
     def calculate_cost(self, usage: dict) -> float:
@@ -146,6 +161,7 @@ class LLMClient:
         temperature: float = None,
         max_tokens: int = None,
         chat_template_kwargs: Dict[str, Any] = None,
+        remaining_total_tokens: int | None = None,
     ) -> Dict[str, Any]:
         url = f"{self.base_url}/chat/completions"
         headers = {
@@ -156,7 +172,11 @@ class LLMClient:
             "model": self.model,
             "messages": messages,
             "temperature": temperature if temperature is not None else self.temperature,
-            "max_tokens": self._resolve_max_tokens(messages, max_tokens),
+            "max_tokens": self._resolve_max_tokens(
+                messages,
+                max_tokens,
+                remaining_total_tokens=remaining_total_tokens,
+            ),
         }
         if tools:
             payload["tools"] = tools
@@ -208,6 +228,7 @@ class LLMClient:
         max_tokens: int = None,
         chat_template_kwargs: Dict[str, Any] = None,
         _session: "aiohttp.ClientSession | None" = None,
+        remaining_total_tokens: int | None = None,
     ) -> Dict[str, Any]:
         """Async version of chat() using aiohttp for non-blocking HTTP."""
         url = f"{self.base_url}/chat/completions"
@@ -219,7 +240,11 @@ class LLMClient:
             "model": self.model,
             "messages": messages,
             "temperature": temperature if temperature is not None else self.temperature,
-            "max_tokens": self._resolve_max_tokens(messages, max_tokens),
+            "max_tokens": self._resolve_max_tokens(
+                messages,
+                max_tokens,
+                remaining_total_tokens=remaining_total_tokens,
+            ),
         }
         if tools:
             payload["tools"] = tools

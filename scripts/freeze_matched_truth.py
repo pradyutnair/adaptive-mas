@@ -137,9 +137,11 @@ def _aggregate(rows: dict[str, dict], ids: list[str], gold_by_id: dict[str, str]
             step_totals[key] += value
 
     n = len(contains)
+    coverage = round(n / len(ids), 4) if ids else 0.0
     return {
         "n": n,
-        "coverage": round(n / len(ids), 4) if ids else 0.0,
+        "coverage": coverage,
+        "status": "complete" if coverage >= 1.0 else "partial",
         "contain": round(sum(contains) / n, 4) if n else 0.0,
         "token_f1": round(sum(f1s) / n, 4) if n else 0.0,
         "norm_em": round(sum(ems) / n, 4) if n else 0.0,
@@ -165,19 +167,38 @@ def main() -> None:
         default=[],
         help="Run spec label=predictions.jsonl",
     )
+    parser.add_argument(
+        "--historical-run",
+        action="append",
+        default=[],
+        help="Historical partial run spec label=predictions.jsonl",
+    )
     parser.add_argument("--output", required=True, help="Output JSON path.")
     args = parser.parse_args()
 
-    if not args.run:
-        raise SystemExit("At least one --run label=path is required.")
+    if not args.run and not args.historical_run:
+        raise SystemExit("At least one --run or --historical-run label=path is required.")
 
     ids, gold_by_id = _load_questions(Path(args.questions))
-    summary: dict[str, dict] = {}
+    summary: dict[str, object] = {
+        "_meta": {
+            "question_ids": ids,
+            "question_count": len(ids),
+        }
+    }
     for spec in args.run:
         if "=" not in spec:
             raise SystemExit(f"Invalid --run spec: {spec}")
         label, raw_path = spec.split("=", 1)
         summary[label] = _aggregate(_load_jsonl(Path(raw_path)), ids, gold_by_id)
+    historical: dict[str, dict] = {}
+    for spec in args.historical_run:
+        if "=" not in spec:
+            raise SystemExit(f"Invalid --historical-run spec: {spec}")
+        label, raw_path = spec.split("=", 1)
+        historical[label] = _aggregate(_load_jsonl(Path(raw_path)), ids, gold_by_id)
+    if historical:
+        summary["_historical"] = historical
 
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)

@@ -1,0 +1,49 @@
+# m1.7 adaptive slot-DAG sufficiency controller.
+# Easy questions collapse to one direct probe; hard questions execute a typed slot DAG.
+
+variant: m1_7_slot_dag_sufficiency
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 4
+  search_top_k: 4
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  slot_dag_controller: true
+  direct_probe_threshold: 0.45
+  direct_answer_threshold: 0.65
+  slot_dag_max_steps: 4
+  slot_dag_max_parallel: 2
+  slot_dag_max_retries_per_slot: 1
+  slot_dag_search_top_k: 4
+  slot_dag_max_read: 4
+  slot_dag_recovery_steps: 1
+
+budget:
+  max_total_tokens: 30000
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 768
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 16
+  checkpoint: true

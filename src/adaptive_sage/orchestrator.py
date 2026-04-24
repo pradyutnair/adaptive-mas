@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from arag.core.config import Config
-from arag.core.llm import LLMClient
+from arag.core.llm import LLMClient, TokenBudgetExceededError
 
 from .types import Fact, StepTrace
 
@@ -98,6 +98,41 @@ Rules:
 - Order the list so it can be executed sequentially.
 - Avoid duplicates and avoid asking for the final answer directly.
 - Return no more than {max_subquestions} items.
+
+Original question: {question}
+
+Target profile:
+{target_profile}
+"""
+
+_SLOT_DAG_DECOMPOSE_TEMPLATE = """
+Decompose the question into a typed slot DAG for adaptive multi-hop retrieval.
+
+Output ONLY a JSON object:
+{{
+  "required_hops": [
+    {{
+      "slot_name": "<concise semantic slot name>",
+      "hint": "<what this slot must resolve>",
+      "expected_info_type": "<specific type tag>",
+      "dependency_group": <integer>,
+      "sub_question": "<focused one-hop question>",
+      "retrieval_query": "<short search query>",
+      "goal": "<what evidence this slot should uncover>"
+    }}
+  ]
+}}
+
+Rules:
+- Return at most {max_subquestions} slots.
+- The last slot must be the final answer slot.
+- Use the same dependency_group only for slots that can be retrieved independently.
+- If a slot needs the answer from an earlier slot, put it in a later dependency_group.
+- Each sub_question must be answerable with one retrieval step.
+- Do not collapse a relation-of-relation question into one final lookup.
+- Use semantic slot names; never use placeholders such as target_slot, final_answer, answer, or slot.
+- Keep retrieval_query short and search-style.
+- Do not include text outside the JSON object.
 
 Original question: {question}
 
@@ -186,6 +221,8 @@ class Orchestrator:
     def __init__(self, config: Config, llm_client: LLMClient) -> None:
         self.config = config
         self.llm_client = llm_client
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
 
         self.max_steps: int = config.get("orchestrator.max_steps", 4)
         self.max_verify_calls: int = config.get("orchestrator.max_verify_calls", 1)
@@ -214,6 +251,18 @@ class Orchestrator:
         self._probe_state_template = (
             prompts_dir / "orchestrator_probe_state.txt"
         ).read_text(encoding="utf-8")
+
+    def reset_usage_totals(self) -> None:
+        """Reset per-run prompt/completion token counters."""
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
+
+    def get_usage_totals(self) -> dict[str, int]:
+        """Return per-run prompt/completion token totals."""
+        return {
+            "prompt_tokens": self._prompt_tokens_total,
+            "completion_tokens": self._completion_tokens_total,
+        }
 
     # ------------------------------------------------------------------
     # Public API
@@ -265,6 +314,7 @@ class Orchestrator:
         step: int,
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Like :meth:`decide`, but also returns token usage."""
         # Build prompt context
@@ -299,7 +349,10 @@ class Orchestrator:
         ]
 
         # Call LLM and parse JSON (with retry on parse failure)
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         # --- Post-validation ---
         action: Optional[str] = parsed.get("action")
@@ -354,6 +407,11 @@ class Orchestrator:
                 target_profile=target_profile,
                 pending_slots=pending_slots,
                 missing_reason="Retrieve the next missing fact.",
+                remaining_total_tokens=(
+                    None
+                    if remaining_total_tokens is None
+                    else max(int(remaining_total_tokens) - tokens, 0)
+                ),
             )
             return {
                 "action": action,
@@ -389,7 +447,12 @@ class Orchestrator:
         result, _ = await self.verify_claim_with_usage(claim, evidence)
         return result
 
-    async def verify_claim_with_usage(self, claim: str, evidence: str) -> tuple[dict[str, Any], int]:
+    async def verify_claim_with_usage(
+        self,
+        claim: str,
+        evidence: str,
+        remaining_total_tokens: int | None = None,
+    ) -> tuple[dict[str, Any], int]:
         """Like :meth:`verify_claim`, but also returns token usage."""
         user_content = self._verify_template.format(
             claim=claim,
@@ -407,7 +470,10 @@ class Orchestrator:
             {"role": "user", "content": user_content},
         ]
 
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         decision = parsed.get("decision", "").strip().lower()
         reason = parsed.get("reason", "").strip()
@@ -436,6 +502,9 @@ class Orchestrator:
         self,
         question: str,
         target_profile: str = "",
+        remaining_total_tokens: int | None = None,
+        chat_template_kwargs: dict[str, Any] | None = None,
+        max_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Like :meth:`route`, but also returns token usage."""
         user_content = self._route_template.format(
@@ -455,6 +524,9 @@ class Orchestrator:
         parsed, tokens = await self._call_and_parse_with_usage(
             messages,
             temperature=self.route_temperature,
+            remaining_total_tokens=remaining_total_tokens,
+            chat_template_kwargs=chat_template_kwargs,
+            max_tokens=max_tokens,
         )
         action = str(parsed.get("action", "")).strip().lower()
         if action == "direct_answer":
@@ -553,6 +625,7 @@ class Orchestrator:
         pending_slots: list[dict[str, Any]] | None = None,
         resolved_slots: list[str] | None = None,
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Score both slot resolution and final-answer sufficiency after a probe."""
         facts_text = self._format_facts(facts)
@@ -583,7 +656,10 @@ class Orchestrator:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         def _score(key: str, fallback: float = 0.0) -> float:
             value = parsed.get(key, fallback)
@@ -612,6 +688,7 @@ class Orchestrator:
         proposed_answer: str,
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Return a sufficiency probability for the current evidence state.
 
@@ -638,7 +715,10 @@ class Orchestrator:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sufficient = parsed.get("sufficient", parsed.get("confidence", 0.0))
         try:
             sufficient = float(sufficient)
@@ -657,6 +737,7 @@ class Orchestrator:
         proposed_answer: str,
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Backward-compatible probe-gate wrapper used by legacy paths.
 
@@ -669,6 +750,7 @@ class Orchestrator:
             proposed_answer=proposed_answer,
             target_profile=target_profile,
             trace=trace,
+            remaining_total_tokens=remaining_total_tokens,
         )
         sufficient = float(result["sufficient"])
         if sufficient >= 0.7 and proposed_answer.strip():
@@ -715,6 +797,7 @@ class Orchestrator:
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
         route_draft_answer: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[str, int]:
         """Like :meth:`generate_answer`, but also returns token usage."""
         facts_text = self._format_facts(facts)
@@ -742,7 +825,9 @@ class Orchestrator:
         response = await self.llm_client.async_chat(
             messages,
             max_tokens=96,
+            remaining_total_tokens=remaining_total_tokens,
         )
+        self._record_usage(response)
         content: str = response["message"].get("content", "")
         content = self._strip_thinking(content)
 
@@ -760,6 +845,9 @@ class Orchestrator:
         pending_slots: list[dict[str, str]] | None = None,
         trace: list[StepTrace] | None = None,
         route_draft_answer: str = "",
+        remaining_total_tokens: int | None = None,
+        chat_template_kwargs: dict[str, Any] | None = None,
+        max_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Generate a structured final answer with citations and confidence."""
         facts_text = self._format_facts(facts)
@@ -798,7 +886,12 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+            chat_template_kwargs=chat_template_kwargs,
+            max_tokens=max_tokens,
+        )
         cited_fact_ids = parsed.get("cited_fact_ids", [])
         if not isinstance(cited_fact_ids, list):
             cited_fact_ids = []
@@ -820,6 +913,87 @@ Rules for `answer`:
             "missing_slot": normalised_missing_slot,
         }, tokens
 
+    async def check_hop_sufficiency_with_usage(
+        self,
+        question: str,
+        facts: list[Fact],
+        target_profile: str = "",
+        pending_slots: list[dict[str, str]] | None = None,
+        trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
+        chat_template_kwargs: dict[str, Any] | None = None,
+        max_tokens: int | None = 192,
+    ) -> tuple[dict[str, Any], int]:
+        """Lightweight answerability check for DoD early exit."""
+        facts_text = self._format_facts(facts)
+        hop_chain = self._format_hop_chain(trace or [], facts)
+        user_content = f"""
+Decide whether the grounded facts are sufficient to answer the original question now.
+
+Output ONLY a single JSON object:
+{{
+  "answerable": <true|false>,
+  "answer": "<short answer if answerable, else empty string>",
+  "cited_fact_ids": [<1-based fact ids>],
+  "confidence": <float 0.0-1.0>,
+  "missing_slot": "<slot still needed or empty string>"
+}}
+
+Rules:
+- Use only the grounded facts.
+- Return answerable=false if any required bridge or final slot is missing.
+- If answerable=true, answer must be a short final answer span copied from the facts when possible.
+- Do not explain.
+
+Question: {question}
+
+Target profile:
+{target_profile or 'No explicit target hint available.'}
+
+Pending slots:
+{self._format_pending_slots(pending_slots or []) or 'No explicit pending slots.'}
+
+Hop chain:
+{hop_chain or 'No grounded hop chain available.'}
+
+Grounded facts:
+{facts_text or 'No facts available.'}
+"""
+        messages = [
+            {
+                "role": "system",
+                "content": "You are a strict grounded answerability checker. Respond with JSON only.",
+            },
+            {"role": "user", "content": user_content},
+        ]
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            temperature=0.0,
+            remaining_total_tokens=remaining_total_tokens,
+            chat_template_kwargs=chat_template_kwargs,
+            max_tokens=max_tokens,
+        )
+        cited_fact_ids = parsed.get("cited_fact_ids", [])
+        if not isinstance(cited_fact_ids, list):
+            cited_fact_ids = []
+        try:
+            confidence = float(parsed.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            confidence = 0.0
+        return {
+            "answerable": bool(parsed.get("answerable", False)),
+            "answer": str(parsed.get("answer", "")).strip(),
+            "cited_fact_ids": [
+                int(item) for item in cited_fact_ids if str(item).strip().isdigit()
+            ],
+            "justification_confidence": max(0.0, min(confidence, 1.0)),
+            "justification": "hop_sufficiency_check",
+            "missing_slot": self._normalise_pending_slot_name(
+                str(parsed.get("missing_slot", "")).strip(),
+                pending_slots,
+            ),
+        }, tokens
+
     async def propose_spawn(
         self,
         question: str,
@@ -828,6 +1002,7 @@ Rules for `answer`:
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
         missing_reason: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Force a spawn proposal even when normal decide would answer/verify."""
         facts_text = self._format_facts(facts)
@@ -851,7 +1026,10 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sub_question = str(parsed.get("sub_question", "")).strip()
         retrieval_query = str(parsed.get("retrieval_query", "")).strip()
         goal = str(parsed.get("goal", "")).strip()
@@ -871,6 +1049,11 @@ Rules for `answer`:
             target_profile=target_profile,
             pending_slots=pending_slots,
             missing_reason=missing_reason or "Retrieve the most critical missing fact.",
+            remaining_total_tokens=(
+                None
+                if remaining_total_tokens is None
+                else max(int(remaining_total_tokens) - tokens, 0)
+            ),
         )
         return {
             "action": "spawn",
@@ -930,6 +1113,64 @@ Rules for `answer`:
 
         return plan, tokens
 
+    async def decompose_slot_dag_with_usage(
+        self,
+        question: str,
+        max_subquestions: int,
+        target_profile: str = "",
+        remaining_total_tokens: int | None = None,
+        chat_template_kwargs: dict[str, Any] | None = None,
+        max_tokens: int | None = None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        """Produce a typed slot DAG fallback plan."""
+        user_content = _SLOT_DAG_DECOMPOSE_TEMPLATE.format(
+            question=question,
+            max_subquestions=max_subquestions,
+            target_profile=target_profile or "No explicit target hint available.",
+        )
+        messages = [
+            {
+                "role": "system",
+                "content": (
+                    "You decompose multi-hop questions into typed retrieval slots. "
+                    "Always respond with a single JSON object."
+                ),
+            },
+            {"role": "user", "content": user_content},
+        ]
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+            chat_template_kwargs=chat_template_kwargs,
+            max_tokens=max_tokens,
+        )
+        hops = self._normalise_required_hops(parsed.get("required_hops", []))
+        if not hops:
+            raw_items = parsed.get("sub_questions", [])
+            converted: list[dict[str, Any]] = []
+            if isinstance(raw_items, list):
+                for idx, item in enumerate(raw_items):
+                    if not isinstance(item, dict):
+                        continue
+                    sub_question = str(item.get("sub_question", "")).strip()
+                    if not sub_question:
+                        continue
+                    converted.append(
+                        {
+                            "slot_name": str(item.get("slot_name", f"slot_{idx + 1}")).strip(),
+                            "hint": str(item.get("goal", sub_question)).strip(),
+                            "expected_info_type": str(item.get("expected_info_type", "other")).strip(),
+                            "dependency_group": idx,
+                            "sub_question": sub_question,
+                            "retrieval_query": str(item.get("retrieval_query", sub_question)).strip(),
+                            "goal": str(item.get("goal", "")).strip(),
+                        }
+                    )
+                    if len(converted) >= max_subquestions:
+                        break
+            hops = self._normalise_required_hops(converted)
+        return hops[:max_subquestions], tokens
+
     # ------------------------------------------------------------------
     # Private helpers
     # ------------------------------------------------------------------
@@ -947,8 +1188,15 @@ Rules for `answer`:
         self,
         messages: list[dict],
         temperature: float | None = None,
+        remaining_total_tokens: int | None = None,
+        chat_template_kwargs: dict[str, Any] | None = None,
+        max_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Call the LLM, strip thinking, parse JSON, and accumulate token usage."""
+        if chat_template_kwargs is None:
+            # Controller calls are schema-only. Let investigator subagents use
+            # thinking, but keep routing/decision/synthesis JSON short and parseable.
+            chat_template_kwargs = {"enable_thinking": False}
         total_tokens = 0
         last_content = ""
         for attempt in range(_MAX_JSON_RETRIES + 1):
@@ -956,13 +1204,23 @@ Rules for `answer`:
                 response = await self.llm_client.async_chat(
                     messages,
                     temperature=temperature,
+                    max_tokens=max_tokens,
+                    chat_template_kwargs=chat_template_kwargs,
+                    remaining_total_tokens=(
+                        None
+                        if remaining_total_tokens is None
+                        else max(int(remaining_total_tokens) - total_tokens, 0)
+                    ),
                 )
+                self._record_usage(response)
                 total_tokens += self._extract_total_tokens(response)
                 last_content = response["message"].get("content", "")
                 content = self._strip_thinking(last_content)
                 parsed = self._parse_json(content)
                 if parsed is not None:
                     return parsed, total_tokens
+            except TokenBudgetExceededError:
+                raise
             except Exception as exc:
                 logger.warning(
                     "LLM call failed (attempt %d/%d): %s",
@@ -1102,7 +1360,9 @@ Rules for `answer`:
         for idx, item in enumerate(raw_items):
             if not isinstance(item, dict):
                 continue
-            slot_name = str(item.get("slot_name", "")).strip()
+            slot_name = str(
+                item.get("slot_name", item.get("target_slot", ""))
+            ).strip()
             hint = str(item.get("hint", "")).strip()
             if not slot_name or Orchestrator._is_placeholder_slot_name(slot_name):
                 continue
@@ -1144,6 +1404,7 @@ Rules for `answer`:
         target_profile: str,
         pending_slots: list[dict[str, str]] | None,
         missing_reason: str,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Repair echoed or under-specified spawn decisions."""
         extra_tokens = 0
@@ -1167,6 +1428,11 @@ Rules for `answer`:
                 target_profile=target_profile,
                 pending_slots=pending_slots,
                 missing_reason=missing_reason,
+                remaining_total_tokens=(
+                    None
+                    if remaining_total_tokens is None
+                    else max(int(remaining_total_tokens) - extra_tokens, 0)
+                ),
             )
             extra_tokens += refine_tokens
             cleaned_sub_question = refined["sub_question"]
@@ -1208,6 +1474,7 @@ Rules for `answer`:
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
         missing_reason: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, str], int]:
         """Rewrite an echoed sub-question into the innermost useful clause."""
         facts_text = self._format_facts(facts)
@@ -1232,7 +1499,10 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sub_question = str(parsed.get("sub_question", "")).strip()
         retrieval_query = str(parsed.get("retrieval_query", "")).strip()
         goal = str(parsed.get("goal", "")).strip()
@@ -1459,3 +1729,8 @@ Rules for `answer`:
         if total_tokens is not None:
             return int(total_tokens)
         return int(response.get("input_tokens", 0)) + int(response.get("output_tokens", 0))
+
+    def _record_usage(self, response: dict[str, Any]) -> None:
+        """Accumulate prompt/completion usage from one LLM response."""
+        self._prompt_tokens_total += int(response.get("input_tokens", 0) or 0)
+        self._completion_tokens_total += int(response.get("output_tokens", 0) or 0)

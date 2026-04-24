@@ -371,3 +371,109 @@ def test_assess_typed_probe_state_parses_scores() -> None:
     assert result["slot_sufficient"] == 0.92
     assert result["answer_sufficient"] == 0.18
     assert "grounded" in result["slot_reason"]
+
+
+
+def test_decompose_slot_dag_with_usage_normalises_required_hops() -> None:
+    llm = MagicMock(spec=LLMClient)
+    llm.async_chat = AsyncMock(
+        return_value={
+            "message": {
+                "content": json.dumps(
+                    {
+                        "required_hops": [
+                            {
+                                "slot_name": "author",
+                                "hint": "writer of The Book Thief",
+                                "expected_info_type": "person",
+                                "dependency_group": 0,
+                                "sub_question": "Who wrote The Book Thief?",
+                                "retrieval_query": "The Book Thief author",
+                                "goal": "Find the author.",
+                            },
+                            {
+                                "slot_name": "birthplace",
+                                "hint": "birthplace of the author",
+                                "expected_info_type": "location",
+                                "dependency_group": 1,
+                                "sub_question": "Where was [author] born?",
+                                "retrieval_query": "[author] birthplace",
+                                "goal": "Find the birthplace.",
+                            },
+                        ]
+                    }
+                )
+            },
+            "input_tokens": 10,
+            "output_tokens": 5,
+            "cost": 0.0,
+            "raw_response": {},
+        }
+    )
+    orchestrator = Orchestrator(Config({}), llm)
+
+    hops, tokens = asyncio.run(
+        orchestrator.decompose_slot_dag_with_usage(
+            "Where was the author of The Book Thief born?",
+            4,
+            "city",
+        )
+    )
+
+    assert tokens == 15
+    assert [hop["slot_name"] for hop in hops] == ["author", "birthplace"]
+    assert hops[1]["expected_info_type"] == "birthplace"
+
+
+
+def test_check_hop_sufficiency_with_usage_parses_answer_object() -> None:
+    llm = MagicMock(spec=LLMClient)
+    llm.async_chat = AsyncMock(
+        return_value={
+            "message": {
+                "content": json.dumps(
+                    {
+                        "answerable": True,
+                        "answer": "Sydney",
+                        "cited_fact_ids": [1],
+                        "confidence": 0.86,
+                        "missing_slot": "",
+                    }
+                )
+            },
+            "input_tokens": 12,
+            "output_tokens": 8,
+            "cost": 0.0,
+            "raw_response": {},
+        }
+    )
+    orchestrator = Orchestrator(Config({}), llm)
+
+    result, tokens = asyncio.run(
+        orchestrator.check_hop_sufficiency_with_usage(
+            question="Where was Markus Zusak born?",
+            facts=[
+                Fact(
+                    text="Markus Zusak was born in Sydney.",
+                    confidence=0.9,
+                    answer_span="Sydney",
+                    support_ids=["1"],
+                    source_step=1,
+                )
+            ],
+            target_profile="location",
+            pending_slots=[],
+            trace=[],
+            chat_template_kwargs={"enable_thinking": False},
+            max_tokens=192,
+        )
+    )
+
+    assert tokens == 20
+    assert result["answerable"] is True
+    assert result["answer"] == "Sydney"
+    assert result["cited_fact_ids"] == [1]
+    assert result["justification_confidence"] == 0.86
+    llm.async_chat.assert_awaited_once()
+    assert llm.async_chat.await_args.kwargs["chat_template_kwargs"] == {"enable_thinking": False}
+    assert llm.async_chat.await_args.kwargs["max_tokens"] == 192

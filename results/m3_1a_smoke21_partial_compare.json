@@ -1,0 +1,97 @@
+{
+  "sufficiency": {
+    "n": 15,
+    "contain": 0.4,
+    "token_f1": 0.4163,
+    "norm_em": 0.3333,
+    "mean_total_tokens": 46662.4,
+    "mean_prompt_tokens": 0.0,
+    "mean_completion_tokens": 0.0,
+    "mean_wallclock_seconds": 231.6,
+    "mean_subagent_calls": 2.533,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "answer_from_probe": 6,
+      "recurse_after_probe": 9
+    },
+    "step_totals": {
+      "spawn": 37,
+      "refine": 1,
+      "answer": 21,
+      "assess": 15
+    }
+  },
+  "iter55": {
+    "n": 15,
+    "contain": 0.2,
+    "token_f1": 0.1996,
+    "norm_em": 0.1333,
+    "mean_total_tokens": 25531.3,
+    "mean_prompt_tokens": 21905.1,
+    "mean_completion_tokens": 3626.2,
+    "mean_wallclock_seconds": 160.0,
+    "mean_subagent_calls": 5.8,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 15
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  },
+  "m3_1a": {
+    "n": 15,
+    "contain": 0.2,
+    "token_f1": 0.2651,
+    "norm_em": 0.2,
+    "mean_total_tokens": 27691.5,
+    "mean_prompt_tokens": 150035.4,
+    "mean_completion_tokens": 25692.6,
+    "mean_wallclock_seconds": 138.8,
+    "mean_subagent_calls": 1.467,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "direct_probe_no_recovery": 6,
+      "answer_after_typed_plan_exec": 6,
+      "answer_after_direct_probe": 3
+    },
+    "step_totals": {
+      "spawn": 22,
+      "refine": 0,
+      "answer": 9,
+      "assess": 22
+    }
+  },
+  "opera": {
+    "n": 15,
+    "contain": 0.2667,
+    "token_f1": 0.2607,
+    "norm_em": 0.2,
+    "mean_total_tokens": 21473.9,
+    "mean_prompt_tokens": 16715.8,
+    "mean_completion_tokens": 4758.1,
+    "mean_wallclock_seconds": 124.4,
+    "mean_subagent_calls": 5.0,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 15
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  }
+}

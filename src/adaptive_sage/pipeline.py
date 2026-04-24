@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import difflib
 import json
 import logging
 import math
@@ -12,7 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from arag.core.config import Config
-from arag.core.llm import LLMClient
+from arag.core.llm import LLMClient, TokenBudgetExceededError
 
 from .fact_memory import FactMemory
 from .investigator import Investigator
@@ -117,6 +118,36 @@ class AdaptiveRecursivePipeline:
         self.use_sufficiency_controller: bool = bool(
             config.get("adaptive.sufficiency_controller", False)
         )
+        self.use_slot_dag_controller: bool = bool(
+            config.get("adaptive.slot_dag_controller", False)
+        )
+        self.use_dod_controller: bool = bool(
+            config.get("adaptive.dod_controller", False)
+        )
+        self.dod_gate_threshold: float = float(
+            config.get("adaptive.dod_gate_threshold", 0.85)
+        )
+        self.dod_hop_threshold: float = float(
+            config.get("adaptive.dod_hop_threshold", 0.80)
+        )
+        self.dod_stage1_only: bool = bool(
+            config.get("adaptive.dod_stage1_only", False)
+        )
+        self.dod_disable_early_exit: bool = bool(
+            config.get("adaptive.dod_disable_early_exit", False)
+        )
+        self.dod_always_decompose: bool = bool(
+            config.get("adaptive.dod_always_decompose", False)
+        )
+        self.dod_require_route_for_direct: bool = bool(
+            config.get("adaptive.dod_require_route_for_direct", True)
+        )
+        self.dod_route_first: bool = bool(
+            config.get("adaptive.dod_route_first", False)
+        )
+        self.dod_recurse_steps: int = int(
+            config.get("adaptive.dod_recurse_steps", 2)
+        )
         self.sufficiency_threshold: float = float(
             config.get("adaptive.sufficiency_threshold", 0.70)
         )
@@ -135,6 +166,33 @@ class AdaptiveRecursivePipeline:
         self.sufficiency_typed_one_shot_followup: bool = bool(
             config.get("adaptive.sufficiency_typed_one_shot_followup", False)
         )
+        self.sufficiency_typed_plan_exec_on_hard: bool = bool(
+            config.get("adaptive.sufficiency_typed_plan_exec_on_hard", False)
+        )
+        self.sufficiency_cached_full_question_probe: bool = bool(
+            config.get(
+                "adaptive.sufficiency_cached_full_question_probe",
+                self.sufficiency_typed_plan_exec_on_hard,
+            )
+        )
+        self.sufficiency_recurse_only_after_plan_exec_failure: bool = bool(
+            config.get(
+                "adaptive.sufficiency_recurse_only_after_plan_exec_failure", False
+            )
+        )
+        self.sufficiency_max_plan_exec_steps: int = int(
+            config.get("adaptive.sufficiency_max_plan_exec_steps", self.max_steps)
+        )
+        self.sufficiency_max_recovery_steps: int = int(
+            config.get("adaptive.sufficiency_max_recovery_steps", 1)
+        )
+        self.sufficiency_enable_slot_rewrite: bool = bool(
+            config.get("adaptive.sufficiency_enable_slot_rewrite", True)
+        )
+        self.sufficiency_max_slot_attempts: int = max(
+            1,
+            int(config.get("adaptive.sufficiency_max_slot_attempts", 2)),
+        )
         self.sufficiency_slot_guided_recurse: bool = bool(
             config.get("adaptive.sufficiency_slot_guided_recurse", False)
         )
@@ -150,11 +208,35 @@ class AdaptiveRecursivePipeline:
         self.sufficiency_followup_max_read: int = int(
             config.get("adaptive.sufficiency_followup_max_read", 0) or 0
         )
+        self.sufficiency_plan_exec_search_top_k: int = int(
+            config.get("adaptive.sufficiency_plan_exec_search_top_k", 0) or 0
+        )
+        self.sufficiency_plan_exec_max_read: int = int(
+            config.get("adaptive.sufficiency_plan_exec_max_read", 0) or 0
+        )
         self.sufficiency_recurse_search_top_k: int = int(
             config.get("adaptive.sufficiency_recurse_search_top_k", 0) or 0
         )
         self.sufficiency_recurse_max_read: int = int(
             config.get("adaptive.sufficiency_recurse_max_read", 0) or 0
+        )
+        self.slot_dag_max_steps: int = int(
+            config.get("adaptive.slot_dag_max_steps", self.max_steps)
+        )
+        self.slot_dag_max_parallel: int = int(
+            config.get("adaptive.slot_dag_max_parallel", self.max_parallel_hops)
+        )
+        self.slot_dag_max_retries_per_slot: int = max(
+            0, int(config.get("adaptive.slot_dag_max_retries_per_slot", 1))
+        )
+        self.slot_dag_search_top_k: int = int(
+            config.get("adaptive.slot_dag_search_top_k", 0) or 0
+        )
+        self.slot_dag_max_read: int = int(
+            config.get("adaptive.slot_dag_max_read", 0) or 0
+        )
+        self.slot_dag_recovery_steps: int = int(
+            config.get("adaptive.slot_dag_recovery_steps", 1)
         )
 
         # ------------------------------------------------------------------
@@ -185,6 +267,20 @@ class AdaptiveRecursivePipeline:
         )
         self.enable_recursive_recovery: bool = bool(
             config.get("adaptive.enable_recursive_recovery", True)
+        )
+        self.assess_after_plan_step: bool = bool(
+            config.get("adaptive.assess_after_plan_step", False)
+        )
+        self.structure_slot_guided_recovery: bool = bool(
+            config.get("adaptive.structure_slot_guided_recovery", False)
+        )
+        self.recover_conflicting_slots: bool = bool(
+            config.get("adaptive.recover_conflicting_slots", True)
+        )
+        self.structure_controller_label: str = (
+            "structure_adaptive_slot_exec"
+            if self.variant.startswith("m3_1")
+            else "structure_aware"
         )
 
         # Sufficiency-controller ablations.
@@ -218,11 +314,17 @@ class AdaptiveRecursivePipeline:
     async def run(self, question: str, question_id: str) -> PipelineResult:
         """Execute the adaptive recursive pipeline on a question."""
         logger.info("Pipeline start: question_id=%s, max_steps=%d", question_id, self.max_steps)
+        self.orchestrator.reset_usage_totals()
+        self.investigator.reset_usage_totals()
 
         if self.max_steps == 0:
             result = await self._run_s0(question, question_id)
         elif self.use_execution_mode_controller:
             result = await self._run_structure_aware(question, question_id)
+        elif self.use_dod_controller:
+            result = await self._run_dod(question, question_id)
+        elif self.use_slot_dag_controller:
+            result = await self._run_slot_dag_sufficiency(question, question_id)
         elif self.use_sufficiency_controller:
             result = await self._run_sufficiency(question, question_id)
         elif self.ablation_upfront_decomposition:
@@ -240,6 +342,11 @@ class AdaptiveRecursivePipeline:
             result.num_verify_calls,
             result.total_tokens,
         )
+        usage_totals = self._current_usage_totals()
+        result.prompt_tokens = usage_totals["prompt_tokens"]
+        result.completion_tokens = usage_totals["completion_tokens"]
+        result.extras.setdefault("prompt_tokens", result.prompt_tokens)
+        result.extras.setdefault("completion_tokens", result.completion_tokens)
         return result
 
     async def _run_routed_iter26(self, question: str, question_id: str) -> PipelineResult:
@@ -323,6 +430,1448 @@ class AdaptiveRecursivePipeline:
             duplicate_subquestion_count=0,
         )
 
+
+    async def _run_dod(self, question: str, question_id: str) -> PipelineResult:
+        """Direct-or-decompose controller: SAS first, Slot-DAG only when gated out."""
+        memory = FactMemory.with_strategy(
+            capacity=self.fact_memory_capacity,
+            strategy=self.fact_memory_strategy,
+        )
+        target_profile = self._target_profile(question)
+        expected_answer_type = self._infer_expected_answer_type(question)
+        step_trace: list[StepTrace] = []
+        total_tokens = 0
+        orchestrator_tokens = 0
+        subagent_tokens = 0
+        subagent_calls = 0
+        retrieved_doc_ids: list[str] = []
+        retrieved_docs_total = 0
+        route: dict[str, Any] = {}
+        slot_state: list[dict[str, Any]] = []
+        required_hops: list[dict[str, Any]] = []
+        planned_hop_count = 1
+        decomposition_source = "not_planned"
+        parallel_batches = 0
+        slot_exec_steps = 0
+        slot_retries = 0
+        early_exit_after_batch: int | None = None
+        final_answer_obj: dict[str, Any] | None = None
+        final_label = "answer_after_direct_sas"
+        gate_checks: dict[str, bool] = {}
+        direct_answer = ""
+        route_tokens = 0
+        adaptive_recurse_steps = 0
+        route_allows_direct = False
+
+        try:
+            if self.dod_route_first:
+                route, route_tokens = await self.orchestrator.route_with_usage(
+                    question=question,
+                    target_profile=target_profile,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                    chat_template_kwargs={"enable_thinking": False},
+                    max_tokens=512,
+                )
+                total_tokens += route_tokens
+                orchestrator_tokens += route_tokens
+                decomposition_source = "route"
+                slot_state = self._initialise_slot_state(route, target_profile)
+                required_hops = self._slot_snapshot(slot_state)
+                planned_hop_count = max(
+                    int(route.get("expected_hop_count") or 0),
+                    len(slot_state),
+                    1,
+                )
+                route_action = str(route.get("action", "")).strip().lower()
+                compositionality = float(route.get("compositionality_score", 1.0) or 0.0)
+                route_allows_direct = bool(
+                    route_action == "single_probe"
+                    and compositionality <= self.direct_probe_threshold
+                    and len(slot_state) <= 1
+                    and not self._looks_compositional_question(question)
+                )
+                expected_answer_type = self._normalise_expected_info_type(
+                    str(route.get("target_slot", "final_answer")).strip() or "final_answer",
+                    str(route.get("answer_type", expected_answer_type)).strip(),
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="route",
+                        tokens=route_tokens,
+                        route_decision=route_action,
+                        route_confidence=float(route.get("confidence", 0.0) or 0.0),
+                        route_draft_answer=str(route.get("draft_answer", "")).strip(),
+                        metadata={
+                            "controller": "dod_slot_dag",
+                            "decomposition_source": decomposition_source,
+                            "execution_mode": "route_first",
+                            "route_allows_direct": route_allows_direct,
+                            "compositionality_score": compositionality,
+                            "route_required_hops": required_hops,
+                            "planned_hop_count": planned_hop_count,
+                        },
+                    )
+                )
+
+            if not self.dod_always_decompose and (not self.dod_route_first or route_allows_direct):
+                direct_capsule, direct_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=question,
+                    goal=f"Answer the original question directly with grounded evidence. {target_profile}",
+                    prior_facts=[],
+                    retrieval_query=question,
+                    slot_name="final_answer",
+                    slot_hint=target_profile,
+                    search_top_k_override=self.slot_dag_search_top_k or None,
+                    max_read_override=self.bootstrap_max_read or self.slot_dag_max_read or None,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += direct_tokens
+                subagent_tokens += direct_tokens
+                subagent_calls += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    direct_capsule,
+                )
+                fact_added = self._add_fact(
+                    memory,
+                    direct_capsule,
+                    step=len(step_trace),
+                    slot_name="final_answer",
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="spawn",
+                        sub_question=question,
+                        fact_added=fact_added,
+                        tokens=direct_tokens,
+                        slot_name="final_answer",
+                        metadata={
+                            "controller": "dod_slot_dag",
+                            "execution_mode": "direct_sas",
+                            "retrieval_query": question,
+                        },
+                    )
+                )
+
+                direct_answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=[],
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                    chat_template_kwargs={"enable_thinking": False},
+                    max_tokens=256,
+                )
+                total_tokens += answer_tokens
+                orchestrator_tokens += answer_tokens
+                direct_answer = str(direct_answer_obj.get("answer", "")).strip()
+
+                if not self.dod_require_route_for_direct:
+                    route_allows_direct = True
+                elif not route:
+                    route, route_tokens = await self.orchestrator.route_with_usage(
+                        question=question,
+                        target_profile=target_profile,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                        chat_template_kwargs={"enable_thinking": False},
+                        max_tokens=512,
+                    )
+                    total_tokens += route_tokens
+                    orchestrator_tokens += route_tokens
+                    decomposition_source = "route"
+                    slot_state = self._initialise_slot_state(route, target_profile)
+                    required_hops = self._slot_snapshot(slot_state)
+                    planned_hop_count = max(
+                        int(route.get("expected_hop_count") or 0),
+                        len(slot_state),
+                        1,
+                    )
+                    route_action = str(route.get("action", "")).strip().lower()
+                    compositionality = float(route.get("compositionality_score", 1.0) or 0.0)
+                    route_allows_direct = bool(
+                        route_action == "single_probe"
+                        and compositionality <= self.direct_probe_threshold
+                        and len(slot_state) <= 1
+                        and not self._looks_compositional_question(question)
+                    )
+                    expected_answer_type = self._normalise_expected_info_type(
+                        str(route.get("target_slot", "final_answer")).strip() or "final_answer",
+                        str(route.get("answer_type", expected_answer_type)).strip(),
+                    )
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="route",
+                            tokens=route_tokens,
+                            route_decision=route_action,
+                            route_confidence=float(route.get("confidence", 0.0) or 0.0),
+                            route_draft_answer=str(route.get("draft_answer", "")).strip(),
+                            metadata={
+                                "controller": "dod_slot_dag",
+                                "decomposition_source": decomposition_source,
+                                "execution_mode": "direct_return_gate",
+                                "route_allows_direct": route_allows_direct,
+                                "compositionality_score": compositionality,
+                                "route_required_hops": required_hops,
+                                "planned_hop_count": planned_hop_count,
+                            },
+                        )
+                    )
+
+                direct_safe = route_allows_direct and self._is_gate_safe(
+                    direct_answer_obj,
+                    memory.get_all(),
+                    expected_info_type=expected_answer_type,
+                    threshold=self.dod_gate_threshold,
+                )
+                gate_checks = self._gate_checks(
+                    direct_answer_obj,
+                    memory.get_all(),
+                    expected_info_type=expected_answer_type,
+                    threshold=self.dod_gate_threshold,
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="assess",
+                        tokens=0,
+                        cited_fact_ids=direct_answer_obj.get("cited_fact_ids", []),
+                        justification_confidence=direct_answer_obj.get("justification_confidence", 0.0),
+                        metadata={
+                            "controller": "dod_slot_dag",
+                            "execution_mode": "direct_sas_gate",
+                            "gate_passed": direct_safe,
+                            "route_allows_direct": route_allows_direct,
+                            "gate_checks": gate_checks,
+                        },
+                    )
+                )
+                if direct_safe or self.dod_stage1_only:
+                    final_label = "answer_after_direct_sas" if direct_safe else "direct_sas_rejected"
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="answer",
+                            tokens=answer_tokens,
+                            cited_fact_ids=direct_answer_obj.get("cited_fact_ids", []),
+                            justification_confidence=direct_answer_obj.get("justification_confidence", 0.0),
+                            metadata={"route": final_label, "gate_checks": gate_checks},
+                        )
+                    )
+                    return self._build_sufficiency_result(
+                        question_id=question_id,
+                        question=question,
+                        answer=direct_answer,
+                        step_trace=step_trace,
+                        memory=memory,
+                        subagent_calls=subagent_calls,
+                        total_tokens=total_tokens,
+                        orchestrator_tokens=orchestrator_tokens,
+                        subagent_tokens=subagent_tokens,
+                        retrieved_doc_ids=retrieved_doc_ids,
+                        retrieved_docs_total=retrieved_docs_total,
+                        route_label=final_label,
+                        sufficiency=float(direct_answer_obj.get("justification_confidence", 0.0) or 0.0),
+                        sufficiency_components={"source": "dod_direct_gate", "gate_checks": gate_checks},
+                        planned_hop_count=1,
+                        answer_sufficiency_score=float(direct_answer_obj.get("justification_confidence", 0.0) or 0.0),
+                        controller="dod_slot_dag",
+                        extra_extras={
+                            "execution_mode": "direct_sas",
+                            "collapsed_to_single_agent": bool(direct_safe),
+                            "parallel_batches": 0,
+                            "slot_exec_steps": 0,
+                            "slot_retries": 0,
+                            "recovery_steps": 0,
+                            "decomposition_source": decomposition_source,
+                            "gate_checks": gate_checks,
+                            "planned_hop_count": 1,
+                        },
+                    )
+
+            if not self.dod_always_decompose and direct_answer:
+                memory = FactMemory.with_strategy(
+                    capacity=self.fact_memory_capacity,
+                    strategy=self.fact_memory_strategy,
+                )
+
+            if not route:
+                route, route_tokens = await self.orchestrator.route_with_usage(
+                    question=question,
+                    target_profile=target_profile,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                    chat_template_kwargs={"enable_thinking": False},
+                    max_tokens=512,
+                )
+                total_tokens += route_tokens
+                orchestrator_tokens += route_tokens
+                decomposition_source = "route"
+            if self._slot_dag_route_invalid(question, route) or self._dod_needs_fallback_decomposition(question, slot_state):
+                fallback_hops, fallback_tokens = await self.orchestrator.decompose_slot_dag_with_usage(
+                    question=question,
+                    max_subquestions=self.slot_dag_max_steps,
+                    target_profile=target_profile,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                    chat_template_kwargs={"enable_thinking": False},
+                    max_tokens=512,
+                )
+                total_tokens += fallback_tokens
+                orchestrator_tokens += fallback_tokens
+                if fallback_hops:
+                    route = dict(route)
+                    route["action"] = "recurse"
+                    route["required_hops"] = fallback_hops
+                    route["target_slot"] = str(fallback_hops[-1].get("slot_name", "")).strip()
+                    route["expected_hop_count"] = len(fallback_hops)
+                    route["execution_mode"] = "typed_plan_exec"
+                decomposition_source = "fallback_decompose"
+
+            expected_answer_type = self._normalise_expected_info_type(
+                str(route.get("target_slot", "final_answer")).strip() or "final_answer",
+                str(route.get("answer_type", expected_answer_type)).strip(),
+            )
+            slot_state = self._initialise_slot_state(route, target_profile)
+            required_hops = self._slot_snapshot(slot_state)
+            planned_hop_count = max(
+                int(route.get("expected_hop_count") or 0),
+                len(slot_state),
+                1,
+            )
+            if not any(entry.action == "route" for entry in step_trace):
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="route",
+                        tokens=route_tokens,
+                        route_decision=str(route.get("action", "")).strip(),
+                        route_confidence=float(route.get("confidence", 0.0) or 0.0),
+                        route_draft_answer=str(route.get("draft_answer", "")).strip(),
+                        metadata={
+                            "controller": "dod_slot_dag",
+                            "decomposition_source": decomposition_source,
+                            "route_required_hops": required_hops,
+                            "planned_hop_count": planned_hop_count,
+                        },
+                    )
+                )
+
+            max_steps = max(0, int(self.slot_dag_max_steps))
+            max_parallel = max(1, int(self.slot_dag_max_parallel))
+            while slot_exec_steps < max_steps:
+                if self._should_force_budget_answer(total_tokens):
+                    break
+                executable = [
+                    slot for slot in self._parallel_ready_slots(slot_state)
+                    if int(slot.get("attempt_count", 0)) == 0
+                ]
+                if not executable:
+                    break
+                ready_slots = executable[: min(max_parallel, max_steps - slot_exec_steps)]
+                if len(ready_slots) > 1:
+                    parallel_batches += 1
+                memory_snapshot = memory.get_all()
+                plans = [
+                    (
+                        slot,
+                        self._slot_guided_plan(
+                            question=question,
+                            slot_state=slot_state,
+                            slot_name=str(slot.get("slot_name", "")).strip(),
+                            target_profile=target_profile,
+                            facts=memory_snapshot,
+                        ),
+                    )
+                    for slot in ready_slots
+                ]
+                investigations = await asyncio.gather(
+                    *[
+                        self.investigator.investigate_with_usage(
+                            sub_question=slot_plan["sub_question"],
+                            goal=slot_plan["goal"],
+                            prior_facts=memory_snapshot,
+                            retrieval_query=slot_plan["retrieval_query"],
+                            slot_name=str(slot.get("slot_name", "")).strip(),
+                            slot_hint=slot_plan["slot_hint"],
+                            search_top_k_override=self.slot_dag_search_top_k or None,
+                            max_read_override=self.slot_dag_max_read or None,
+                            remaining_total_tokens=self._remaining_budget(total_tokens),
+                        )
+                        for slot, slot_plan in plans
+                    ]
+                )
+
+                failed_slots: list[dict[str, Any]] = []
+                for (slot, slot_plan), (capsule, investigate_tokens) in zip(plans, investigations, strict=False):
+                    slot_name = str(slot.get("slot_name", "")).strip()
+                    total_tokens += investigate_tokens
+                    subagent_tokens += investigate_tokens
+                    subagent_calls += 1
+                    slot_exec_steps += 1
+                    retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                        retrieved_doc_ids,
+                        retrieved_docs_total,
+                        capsule,
+                    )
+                    fact_added = self._add_fact(memory, capsule, step=len(step_trace), slot_name=slot_name)
+                    if fact_added:
+                        self._update_slot_resolution(slot_state, slot_name, capsule)
+                    self._update_slot_execution_state(
+                        slot_state,
+                        slot_name,
+                        attempt_count=int(slot.get("attempt_count", 0)) + 1,
+                        sub_question=slot_plan["sub_question"],
+                        retrieval_query=slot_plan["retrieval_query"],
+                        goal=slot_plan["goal"],
+                        last_retrieved_doc_ids=list(capsule.retrieved_doc_ids),
+                    )
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="spawn",
+                            sub_question=slot_plan["sub_question"],
+                            fact_added=fact_added,
+                            tokens=investigate_tokens,
+                            slot_name=slot_name,
+                            metadata={
+                                "controller": "dod_slot_dag",
+                                "execution_mode": "slot_dag_exec",
+                                "retrieval_query": slot_plan["retrieval_query"],
+                                "dependency_group": int(slot.get("dependency_group", 0)),
+                                "parallel_batch_size": len(ready_slots),
+                            },
+                        )
+                    )
+                    if slot_name not in self._resolved_slot_names(slot_state):
+                        failed_slots.append(slot)
+
+                if not self.dod_disable_early_exit:
+                    hop_obj, hop_tokens = await self.orchestrator.check_hop_sufficiency_with_usage(
+                        question=question,
+                        facts=memory.get_all(),
+                        target_profile=target_profile,
+                        pending_slots=self._pending_slots(slot_state),
+                        trace=step_trace,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                        chat_template_kwargs={"enable_thinking": False},
+                        max_tokens=192,
+                    )
+                    total_tokens += hop_tokens
+                    orchestrator_tokens += hop_tokens
+                    hop_safe = bool(hop_obj.get("answerable", False)) and self._is_gate_safe(
+                        hop_obj,
+                        memory.get_all(),
+                        expected_info_type=expected_answer_type,
+                        threshold=self.dod_hop_threshold,
+                        relaxed_grounding=True,
+                    )
+                    hop_checks = self._gate_checks(
+                        hop_obj,
+                        memory.get_all(),
+                        expected_info_type=expected_answer_type,
+                        threshold=self.dod_hop_threshold,
+                        relaxed_grounding=True,
+                    )
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="assess",
+                            tokens=hop_tokens,
+                            cited_fact_ids=hop_obj.get("cited_fact_ids", []),
+                            justification_confidence=hop_obj.get("justification_confidence", 0.0),
+                            metadata={
+                                "controller": "dod_slot_dag",
+                                "execution_mode": "per_hop_gate",
+                                "gate_passed": hop_safe,
+                                "gate_checks": hop_checks,
+                                "answerable": bool(hop_obj.get("answerable", False)),
+                            },
+                        )
+                    )
+                    if hop_safe:
+                        early_exit_after_batch = slot_exec_steps
+                        break
+
+                for slot in failed_slots:
+                    if slot_exec_steps >= max_steps or self._should_force_budget_answer(total_tokens):
+                        break
+                    slot_name = str(slot.get("slot_name", "")).strip()
+                    attempts_used = int(slot.get("attempt_count", 0))
+                    if attempts_used > self.slot_dag_max_retries_per_slot:
+                        continue
+                    retry_plan = self._slot_guided_plan(
+                        question=question,
+                        slot_state=slot_state,
+                        slot_name=slot_name,
+                        target_profile=target_profile,
+                        facts=memory.get_all(),
+                    )
+                    retry_goal = (
+                        f"Retry unresolved slot '{slot_name}' with a targeted, bridge-anchored retrieval. "
+                        f"{retry_plan['goal']}"
+                    )
+                    retry_capsule, retry_tokens = await self.investigator.investigate_with_usage(
+                        sub_question=retry_plan["sub_question"],
+                        goal=retry_goal,
+                        prior_facts=memory.get_all(),
+                        retrieval_query=retry_plan["retrieval_query"],
+                        slot_name=slot_name,
+                        slot_hint=retry_plan["slot_hint"],
+                        search_top_k_override=self.slot_dag_search_top_k or None,
+                        max_read_override=self.slot_dag_max_read or None,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                    total_tokens += retry_tokens
+                    subagent_tokens += retry_tokens
+                    subagent_calls += 1
+                    slot_exec_steps += 1
+                    slot_retries += 1
+                    retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                        retrieved_doc_ids,
+                        retrieved_docs_total,
+                        retry_capsule,
+                    )
+                    retry_fact_added = self._replace_fact(memory, retry_capsule, step=len(step_trace), slot_name=slot_name)
+                    if retry_fact_added:
+                        self._update_slot_resolution(slot_state, slot_name, retry_capsule)
+                    self._update_slot_execution_state(
+                        slot_state,
+                        slot_name,
+                        attempt_count=attempts_used + 1,
+                        sub_question=retry_plan["sub_question"],
+                        retrieval_query=retry_plan["retrieval_query"],
+                        goal=retry_goal,
+                        last_retrieved_doc_ids=list(retry_capsule.retrieved_doc_ids),
+                    )
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="refine",
+                            sub_question=retry_plan["sub_question"],
+                            fact_added=retry_fact_added,
+                            tokens=retry_tokens,
+                            slot_name=slot_name,
+                            metadata={
+                                "controller": "dod_slot_dag",
+                                "execution_mode": "slot_retry",
+                                "retrieval_query": retry_plan["retrieval_query"],
+                                "retry": True,
+                            },
+                        )
+                    )
+
+            final_pending_slots = self._pending_slots(slot_state)
+            final_answer_obj, final_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                question=question,
+                facts=memory.get_all(),
+                target_profile=target_profile,
+                pending_slots=final_pending_slots,
+                trace=step_trace,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
+                chat_template_kwargs={"enable_thinking": False},
+                max_tokens=256,
+            )
+            total_tokens += final_tokens
+            orchestrator_tokens += final_tokens
+
+            final_safe = bool(
+                not final_pending_slots
+                and self._is_gate_safe(
+                    final_answer_obj,
+                    memory.get_all(),
+                    expected_info_type=expected_answer_type,
+                    threshold=self.dod_hop_threshold,
+                    relaxed_grounding=True,
+                )
+            )
+            while (
+                not final_safe
+                and adaptive_recurse_steps < max(0, int(self.dod_recurse_steps))
+                and not self._should_force_budget_answer(total_tokens)
+            ):
+                missing_slot = str(final_answer_obj.get("missing_slot", "")).strip()
+                if not missing_slot and final_pending_slots:
+                    missing_slot = str(final_pending_slots[0].get("slot_name", "")).strip()
+                missing_slot = missing_slot or str(route.get("target_slot", "final_answer")).strip() or "final_answer"
+                pending_for_prompt = final_pending_slots or [
+                    {
+                        "slot_name": missing_slot,
+                        "hint": f"Resolve the missing final evidence for {missing_slot}.",
+                        "expected_info_type": expected_answer_type,
+                        "resolved": False,
+                    }
+                ]
+                recurse_decision, decide_tokens = await self.orchestrator.propose_spawn(
+                    question=question,
+                    facts=memory.get_all(),
+                    trace=step_trace,
+                    target_profile=target_profile,
+                    pending_slots=pending_for_prompt,
+                    missing_reason=(
+                        "The planned slot DAG did not produce a gated final answer. "
+                        f"Spawn one targeted subagent for missing slot '{missing_slot}'."
+                    ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += decide_tokens
+                orchestrator_tokens += decide_tokens
+                if str(recurse_decision.get("action", "")).strip() != "spawn":
+                    break
+                sub_question = str(recurse_decision.get("sub_question", "")).strip() or question
+                retrieval_query = str(recurse_decision.get("retrieval_query", "")).strip() or sub_question
+                goal = str(recurse_decision.get("goal", "")).strip() or f"Resolve {missing_slot}."
+                slot_name = str(recurse_decision.get("slot_name", "")).strip() or missing_slot
+                recurse_capsule, recurse_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=sub_question,
+                    goal=goal,
+                    prior_facts=memory.get_all(),
+                    retrieval_query=retrieval_query,
+                    slot_name=slot_name,
+                    slot_hint=self._slot_hint(slot_state, slot_name) or goal,
+                    search_top_k_override=self.slot_dag_search_top_k or None,
+                    max_read_override=self.slot_dag_max_read or None,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += recurse_tokens
+                subagent_tokens += recurse_tokens
+                subagent_calls += 1
+                adaptive_recurse_steps += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    recurse_capsule,
+                )
+                fact_added = self._replace_fact(memory, recurse_capsule, step=len(step_trace), slot_name=slot_name)
+                if fact_added:
+                    self._update_slot_resolution(slot_state, slot_name, recurse_capsule)
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="spawn",
+                        sub_question=sub_question,
+                        fact_added=fact_added,
+                        tokens=decide_tokens + recurse_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "controller": "dod_slot_dag",
+                            "execution_mode": "adaptive_recurse",
+                            "retrieval_query": retrieval_query,
+                            "adaptive_recurse_step": adaptive_recurse_steps,
+                        },
+                    )
+                )
+                final_pending_slots = self._pending_slots(slot_state)
+                final_answer_obj, synth_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=final_pending_slots,
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                    chat_template_kwargs={"enable_thinking": False},
+                    max_tokens=256,
+                )
+                total_tokens += synth_tokens
+                orchestrator_tokens += synth_tokens
+                final_safe = bool(
+                    not final_pending_slots
+                    and self._is_gate_safe(
+                        final_answer_obj,
+                        memory.get_all(),
+                        expected_info_type=expected_answer_type,
+                        threshold=self.dod_hop_threshold,
+                        relaxed_grounding=True,
+                    )
+                )
+
+            if not str(final_answer_obj.get("answer", "")).strip():
+                final_answer_obj = self._apply_answer_object_fallback(final_answer_obj, memory.get_all(), "")
+            final_label = (
+                "answer_after_dod_recurse"
+                if adaptive_recurse_steps
+                else ("answer_after_dod_early_exit" if early_exit_after_batch else "answer_after_dod_slot_dag")
+            )
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="answer",
+                    tokens=final_tokens,
+                    cited_fact_ids=final_answer_obj.get("cited_fact_ids", []),
+                    justification_confidence=final_answer_obj.get("justification_confidence", 0.0),
+                    metadata={"route": final_label},
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=str(final_answer_obj.get("answer", "")).strip(),
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label=final_label,
+                sufficiency=float(final_answer_obj.get("justification_confidence", 0.0) or 0.0),
+                sufficiency_components={"source": "dod_slot_dag"},
+                route_target_slot=str(route.get("target_slot", "")),
+                slot_state=self._slot_snapshot(slot_state),
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
+                answer_sufficiency_score=float(final_answer_obj.get("justification_confidence", 0.0) or 0.0),
+                controller="dod_slot_dag",
+                extra_extras={
+                    "execution_mode": "dod_slot_dag",
+                    "collapsed_to_single_agent": False,
+                    "parallel_batches": parallel_batches,
+                    "slot_exec_steps": slot_exec_steps,
+                    "slot_retries": slot_retries,
+                    "recovery_steps": 0,
+                    "adaptive_recurse_steps": adaptive_recurse_steps,
+                    "decomposition_source": decomposition_source,
+                    "early_exit_after_batch": early_exit_after_batch,
+                    "direct_answer": direct_answer,
+                    "resolved_slots": self._resolved_slot_names(slot_state),
+                    "unresolved_slots": [str(slot.get("slot_name", "")) for slot in final_pending_slots],
+                },
+            )
+        except TokenBudgetExceededError:
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="answer",
+                    tokens=0,
+                    metadata={"controller": "dod_slot_dag", "budget_exhausted": True},
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=self._budget_fallback_answer(memory=memory, route=route),
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label="dod_budget_fallback",
+                sufficiency=0.0,
+                sufficiency_components={"source": "hard_token_cap"},
+                route_target_slot=str(route.get("target_slot", "")),
+                slot_state=self._slot_snapshot(slot_state),
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
+                controller="dod_slot_dag",
+                extra_extras={
+                    "execution_mode": "budget_fallback",
+                    "collapsed_to_single_agent": False,
+                    "parallel_batches": parallel_batches,
+                    "slot_exec_steps": slot_exec_steps,
+                    "slot_retries": slot_retries,
+                    "recovery_steps": 0,
+                    "adaptive_recurse_steps": adaptive_recurse_steps,
+                    "decomposition_source": decomposition_source,
+                },
+            )
+
+    async def _run_slot_dag_sufficiency(
+        self, question: str, question_id: str
+    ) -> PipelineResult:
+        """Adaptive Slot-DAG controller (m1.7)."""
+        memory = FactMemory.with_strategy(
+            capacity=self.fact_memory_capacity,
+            strategy=self.fact_memory_strategy,
+        )
+        target_profile = self._target_profile(question)
+        step_trace: list[StepTrace] = []
+        total_tokens = 0
+        orchestrator_tokens = 0
+        subagent_tokens = 0
+        subagent_calls = 0
+        retrieved_doc_ids: list[str] = []
+        retrieved_docs_total = 0
+        route: dict[str, Any] = {}
+        slot_state: list[dict[str, Any]] = []
+        required_hops: list[dict[str, Any]] = []
+        planned_hop_count = 1
+        decomposition_source = "route"
+
+        try:
+            route, route_tokens = await self.orchestrator.route_with_usage(
+                question=question,
+                target_profile=target_profile,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
+            )
+            total_tokens += route_tokens
+            orchestrator_tokens += route_tokens
+
+            if self._slot_dag_route_invalid(question, route):
+                fallback_hops, fallback_tokens = (
+                    await self.orchestrator.decompose_slot_dag_with_usage(
+                        question=question,
+                        max_subquestions=self.slot_dag_max_steps,
+                        target_profile=target_profile,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                )
+                total_tokens += fallback_tokens
+                orchestrator_tokens += fallback_tokens
+                if fallback_hops:
+                    route = dict(route)
+                    route["action"] = "recurse"
+                    route["required_hops"] = fallback_hops
+                    route["target_slot"] = str(fallback_hops[-1].get("slot_name", "")).strip()
+                    route["expected_hop_count"] = len(fallback_hops)
+                    route["execution_mode"] = "typed_plan_exec"
+                    route["compositionality_score"] = max(
+                        float(route.get("compositionality_score", 0.0) or 0.0),
+                        0.8,
+                    )
+                    decomposition_source = "fallback_decompose"
+
+            slot_state = self._initialise_slot_state(route, target_profile)
+            required_hops = self._slot_snapshot(slot_state)
+            planned_hop_count = max(
+                int(route.get("expected_hop_count") or 0),
+                len(slot_state),
+                1,
+            )
+            route_action = str(route.get("action", "")).strip().lower()
+            route_confidence = float(route.get("confidence", 0.0) or 0.0)
+            compositionality = float(route.get("compositionality_score", 0.0) or 0.0)
+            target_slot = str(route.get("target_slot", "")).strip()
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="route",
+                    tokens=route_tokens,
+                    route_decision=route_action,
+                    route_confidence=route_confidence,
+                    route_draft_answer=str(route.get("draft_answer", "")).strip(),
+                    metadata={
+                        "controller": "slot_dag_sufficiency",
+                        "decomposition_source": decomposition_source,
+                        "execution_mode": str(route.get("execution_mode", "")),
+                        "planned_hop_count": planned_hop_count,
+                        "route_required_hops": required_hops,
+                    },
+                )
+            )
+
+            easy_direct = bool(
+                route_action == "single_probe"
+                and compositionality <= self.direct_probe_threshold
+                and len(slot_state) <= 1
+            )
+            if easy_direct:
+                probe_spec = self._structure_probe_spec(
+                    question=question,
+                    route=route,
+                    slot_state=slot_state,
+                    target_profile=target_profile,
+                )
+                probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=probe_spec["sub_question"],
+                    goal=probe_spec["goal"],
+                    prior_facts=[],
+                    retrieval_query=probe_spec["retrieval_query"],
+                    slot_name=probe_spec["slot_name"],
+                    slot_hint=probe_spec["slot_hint"],
+                    search_top_k_override=self.slot_dag_search_top_k or None,
+                    max_read_override=self.slot_dag_max_read or None,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += probe_tokens
+                subagent_tokens += probe_tokens
+                subagent_calls += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    probe_capsule,
+                )
+                fact_added = self._add_fact(
+                    memory,
+                    probe_capsule,
+                    step=len(step_trace),
+                    slot_name=probe_spec["slot_name"],
+                )
+                if fact_added:
+                    self._update_slot_resolution(slot_state, probe_spec["slot_name"], probe_capsule)
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="spawn",
+                        sub_question=probe_spec["sub_question"],
+                        fact_added=fact_added,
+                        tokens=probe_tokens,
+                        slot_name=probe_spec["slot_name"],
+                        metadata={
+                            "controller": "slot_dag_sufficiency",
+                            "execution_mode": "direct_probe",
+                            "probe_strategy": probe_spec["strategy"],
+                            "retrieval_query": probe_spec["retrieval_query"],
+                        },
+                    )
+                )
+                pending_slots = self._pending_slots(slot_state)
+                answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                answer_obj = self._apply_answer_object_fallback(answer_obj, memory.get_all(), "")
+                total_tokens += answer_tokens
+                orchestrator_tokens += answer_tokens
+
+                probe_slot_value = (
+                    self._best_slot_answer_span(memory.get_all(), probe_spec["slot_name"])
+                    or str(probe_capsule.fact.answer_span or "").strip()
+                    or str(probe_capsule.answer or "").strip()
+                )
+                s_conf = (
+                    float(probe_capsule.fact.confidence)
+                    if probe_capsule.fact and probe_capsule.fact.text.strip()
+                    else 0.0
+                )
+                answer_align = self._compute_alignment_score(probe_capsule, answer_obj["answer"])
+                slot_align = self._compute_slot_alignment(probe_capsule, probe_slot_value)
+                assess_result, assess_tokens = await self.orchestrator.assess_typed_probe_state_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    proposed_answer=answer_obj["answer"],
+                    probe_question=probe_spec["sub_question"],
+                    probe_strategy=probe_spec["strategy"],
+                    probe_slot_name=probe_spec["slot_name"],
+                    probe_slot_hint=probe_spec["slot_hint"],
+                    probe_expected_info_type=probe_spec["expected_info_type"],
+                    probe_slot_value=probe_slot_value,
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    resolved_slots=self._resolved_slot_names(slot_state),
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += assess_tokens
+                orchestrator_tokens += assess_tokens
+                slot_sufficiency_score = max(
+                    0.0,
+                    min(s_conf * float(assess_result["slot_sufficient"]) * slot_align, 1.0),
+                )
+                answer_sufficiency_score = max(
+                    0.0,
+                    min(s_conf * float(assess_result["answer_sufficient"]) * answer_align, 1.0),
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="assess",
+                        tokens=assess_tokens,
+                        slot_name=probe_spec["slot_name"],
+                        justification_confidence=answer_sufficiency_score,
+                        metadata={
+                            "controller": "slot_dag_sufficiency",
+                            "execution_mode": "direct_probe",
+                            "slot_sufficiency_score": slot_sufficiency_score,
+                            "answer_sufficiency_score": answer_sufficiency_score,
+                            "tau": self.direct_answer_threshold,
+                        },
+                    )
+                )
+                if answer_sufficiency_score >= self.direct_answer_threshold and answer_obj["answer"].strip():
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="answer",
+                            tokens=answer_tokens,
+                            cited_fact_ids=answer_obj["cited_fact_ids"],
+                            justification_confidence=answer_obj["justification_confidence"],
+                            metadata={"route": "answer_after_direct_probe"},
+                        )
+                    )
+                    return self._build_sufficiency_result(
+                        question_id=question_id,
+                        question=question,
+                        answer=answer_obj["answer"],
+                        step_trace=step_trace,
+                        memory=memory,
+                        subagent_calls=subagent_calls,
+                        total_tokens=total_tokens,
+                        orchestrator_tokens=orchestrator_tokens,
+                        subagent_tokens=subagent_tokens,
+                        retrieved_doc_ids=retrieved_doc_ids,
+                        retrieved_docs_total=retrieved_docs_total,
+                        route_label="answer_after_direct_probe",
+                        sufficiency=answer_sufficiency_score,
+                        sufficiency_components={"source": "slot_dag_direct_probe"},
+                        route_target_slot=target_slot,
+                        slot_state=self._slot_snapshot(slot_state),
+                        required_hops=required_hops,
+                        planned_hop_count=planned_hop_count,
+                        slot_sufficiency_score=slot_sufficiency_score,
+                        answer_sufficiency_score=answer_sufficiency_score,
+                        resolved_slots_after_probe=self._resolved_slot_names(slot_state),
+                        controller="slot_dag_sufficiency",
+                        extra_extras={
+                            "execution_mode": "direct_probe",
+                            "collapsed_to_single_agent": True,
+                            "parallel_batches": 0,
+                            "slot_exec_steps": 0,
+                            "slot_retries": 0,
+                            "recovery_steps": 0,
+                            "decomposition_source": decomposition_source,
+                        },
+                    )
+
+            return await self._run_slot_dag_execute(
+                question=question,
+                question_id=question_id,
+                route=route,
+                memory=memory,
+                step_trace=step_trace,
+                target_profile=target_profile,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                subagent_calls=subagent_calls,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                slot_state=slot_state,
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
+                decomposition_source=decomposition_source,
+                collapsed_to_single_agent=False,
+            )
+        except TokenBudgetExceededError:
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="answer",
+                    tokens=0,
+                    metadata={
+                        "controller": "slot_dag_sufficiency",
+                        "budget_exhausted": True,
+                    },
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=self._budget_fallback_answer(memory=memory, route=route),
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label="slot_dag_budget_fallback",
+                sufficiency=0.0,
+                sufficiency_components={"source": "hard_token_cap"},
+                route_target_slot=str(route.get("target_slot", "")),
+                slot_state=self._slot_snapshot(slot_state),
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
+                controller="slot_dag_sufficiency",
+                extra_extras={
+                    "execution_mode": "budget_fallback",
+                    "collapsed_to_single_agent": False,
+                    "parallel_batches": 0,
+                    "slot_exec_steps": 0,
+                    "slot_retries": 0,
+                    "recovery_steps": 0,
+                    "decomposition_source": decomposition_source,
+                },
+            )
+
+    async def _run_slot_dag_execute(
+        self,
+        *,
+        question: str,
+        question_id: str,
+        route: dict[str, Any],
+        memory: FactMemory,
+        step_trace: list[StepTrace],
+        target_profile: str,
+        total_tokens: int,
+        orchestrator_tokens: int,
+        subagent_tokens: int,
+        subagent_calls: int,
+        retrieved_doc_ids: list[str],
+        retrieved_docs_total: int,
+        slot_state: list[dict[str, Any]],
+        required_hops: list[dict[str, Any]],
+        planned_hop_count: int,
+        decomposition_source: str,
+        collapsed_to_single_agent: bool,
+    ) -> PipelineResult:
+        """Execute the routed slot DAG with parallel independent slots."""
+        parallel_batches = 0
+        slot_exec_steps = 0
+        slot_retries = 0
+        recovery_steps = 0
+        max_steps = max(0, int(self.slot_dag_max_steps))
+        max_parallel = max(1, int(self.slot_dag_max_parallel))
+
+        while slot_exec_steps < max_steps:
+            if self._should_force_budget_answer(total_tokens):
+                break
+            executable = [
+                slot
+                for slot in self._parallel_ready_slots(slot_state)
+                if int(slot.get("attempt_count", 0)) == 0
+            ]
+            if not executable:
+                break
+            ready_slots = executable[: min(max_parallel, max_steps - slot_exec_steps)]
+            if len(ready_slots) > 1:
+                parallel_batches += 1
+            memory_snapshot = memory.get_all()
+            plans: list[tuple[dict[str, Any], dict[str, str]]] = []
+            for slot in ready_slots:
+                slot_name = str(slot.get("slot_name", "")).strip()
+                plans.append(
+                    (
+                        slot,
+                        self._slot_guided_plan(
+                            question=question,
+                            slot_state=slot_state,
+                            slot_name=slot_name,
+                            target_profile=target_profile,
+                            facts=memory_snapshot,
+                        ),
+                    )
+                )
+
+            investigations = await asyncio.gather(
+                *[
+                    self.investigator.investigate_with_usage(
+                        sub_question=slot_plan["sub_question"],
+                        goal=slot_plan["goal"],
+                        prior_facts=memory_snapshot,
+                        retrieval_query=slot_plan["retrieval_query"],
+                        slot_name=str(slot.get("slot_name", "")).strip(),
+                        slot_hint=slot_plan["slot_hint"],
+                        search_top_k_override=self.slot_dag_search_top_k or None,
+                        max_read_override=self.slot_dag_max_read or None,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                    for slot, slot_plan in plans
+                ]
+            )
+
+            failed_slots: list[dict[str, Any]] = []
+            for (slot, slot_plan), (capsule, investigate_tokens) in zip(
+                plans,
+                investigations,
+                strict=False,
+            ):
+                slot_name = str(slot.get("slot_name", "")).strip()
+                total_tokens += investigate_tokens
+                subagent_tokens += investigate_tokens
+                subagent_calls += 1
+                slot_exec_steps += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    capsule,
+                )
+                fact_added = self._add_fact(
+                    memory,
+                    capsule,
+                    step=len(step_trace),
+                    slot_name=slot_name,
+                )
+                if fact_added:
+                    self._update_slot_resolution(slot_state, slot_name, capsule)
+                self._update_slot_execution_state(
+                    slot_state,
+                    slot_name,
+                    attempt_count=int(slot.get("attempt_count", 0)) + 1,
+                    sub_question=slot_plan["sub_question"],
+                    retrieval_query=slot_plan["retrieval_query"],
+                    goal=slot_plan["goal"],
+                    last_retrieved_doc_ids=list(capsule.retrieved_doc_ids),
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="spawn",
+                        sub_question=slot_plan["sub_question"],
+                        fact_added=fact_added,
+                        tokens=investigate_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "controller": "slot_dag_sufficiency",
+                            "execution_mode": "slot_dag_exec",
+                            "retrieval_query": slot_plan["retrieval_query"],
+                            "dependency_group": int(slot.get("dependency_group", 0)),
+                            "parallel_batch_size": len(ready_slots),
+                        },
+                    )
+                )
+                if slot_name not in self._resolved_slot_names(slot_state):
+                    failed_slots.append(slot)
+
+            for slot in failed_slots:
+                if slot_exec_steps >= max_steps:
+                    break
+                if self._should_force_budget_answer(total_tokens):
+                    break
+                slot_name = str(slot.get("slot_name", "")).strip()
+                attempts_used = int(slot.get("attempt_count", 0))
+                if attempts_used > self.slot_dag_max_retries_per_slot:
+                    continue
+                rewrite_decision, rewrite_tokens = await self.orchestrator.propose_spawn(
+                    question=question,
+                    facts=memory.get_all(),
+                    trace=step_trace,
+                    target_profile=target_profile,
+                    pending_slots=[slot],
+                    missing_reason=(
+                        f"Retry unresolved slot '{slot_name}' with one tighter, "
+                        "bridge-anchored retrieval question."
+                    ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += rewrite_tokens
+                orchestrator_tokens += rewrite_tokens
+                retry_sub_question = str(rewrite_decision.get("sub_question", "")).strip()
+                retry_query = str(rewrite_decision.get("retrieval_query", "")).strip()
+                retry_goal = str(rewrite_decision.get("goal", "")).strip()
+                fallback_plan = self._slot_guided_plan(
+                    question=question,
+                    slot_state=slot_state,
+                    slot_name=slot_name,
+                    target_profile=target_profile,
+                    facts=memory.get_all(),
+                )
+                retry_sub_question = retry_sub_question or fallback_plan["sub_question"]
+                retry_query = retry_query or fallback_plan["retrieval_query"]
+                retry_goal = retry_goal or fallback_plan["goal"]
+                retry_capsule, retry_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=retry_sub_question,
+                    goal=retry_goal,
+                    prior_facts=memory.get_all(),
+                    retrieval_query=retry_query,
+                    slot_name=slot_name,
+                    slot_hint=fallback_plan["slot_hint"],
+                    search_top_k_override=self.slot_dag_search_top_k or None,
+                    max_read_override=self.slot_dag_max_read or None,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += retry_tokens
+                subagent_tokens += retry_tokens
+                subagent_calls += 1
+                slot_exec_steps += 1
+                slot_retries += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    retry_capsule,
+                )
+                retry_fact_added = self._replace_fact(
+                    memory,
+                    retry_capsule,
+                    step=len(step_trace),
+                    slot_name=slot_name,
+                )
+                if retry_fact_added:
+                    self._update_slot_resolution(slot_state, slot_name, retry_capsule)
+                self._update_slot_execution_state(
+                    slot_state,
+                    slot_name,
+                    attempt_count=attempts_used + 1,
+                    sub_question=retry_sub_question,
+                    retrieval_query=retry_query,
+                    goal=retry_goal,
+                    last_retrieved_doc_ids=list(retry_capsule.retrieved_doc_ids),
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="refine",
+                        sub_question=retry_sub_question,
+                        fact_added=retry_fact_added,
+                        tokens=rewrite_tokens + retry_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "controller": "slot_dag_sufficiency",
+                            "execution_mode": "slot_dag_retry",
+                            "retrieval_query": retry_query,
+                            "retry": True,
+                        },
+                    )
+                )
+
+        conflicting_slots = self._conflicting_slot_names(memory.get_all(), slot_state)
+        if conflicting_slots:
+            conflicting = {str(name).strip() for name in conflicting_slots if str(name).strip()}
+            for slot in slot_state:
+                if str(slot.get("slot_name", "")).strip() in conflicting:
+                    slot["resolved"] = False
+
+        pending_slots = self._pending_slots(slot_state)
+        for slot in pending_slots[: max(0, int(self.slot_dag_recovery_steps))]:
+            if self._should_force_budget_answer(total_tokens):
+                break
+            slot_name = str(slot.get("slot_name", "")).strip()
+            recovery_plan = self._slot_guided_plan(
+                question=question,
+                slot_state=slot_state,
+                slot_name=slot_name,
+                target_profile=target_profile,
+                facts=memory.get_all(),
+            )
+            recovery_capsule, recovery_tokens = await self.investigator.investigate_with_usage(
+                sub_question=recovery_plan["sub_question"],
+                goal=recovery_plan["goal"],
+                prior_facts=memory.get_all(),
+                retrieval_query=recovery_plan["retrieval_query"],
+                slot_name=slot_name,
+                slot_hint=recovery_plan["slot_hint"],
+                search_top_k_override=self.slot_dag_search_top_k or None,
+                max_read_override=self.slot_dag_max_read or None,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
+            )
+            total_tokens += recovery_tokens
+            subagent_tokens += recovery_tokens
+            subagent_calls += 1
+            recovery_steps += 1
+            retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                retrieved_doc_ids,
+                retrieved_docs_total,
+                recovery_capsule,
+            )
+            recovery_fact_added = self._replace_fact(
+                memory,
+                recovery_capsule,
+                step=len(step_trace),
+                slot_name=slot_name,
+            )
+            if recovery_fact_added:
+                self._update_slot_resolution(slot_state, slot_name, recovery_capsule)
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="refine",
+                    sub_question=recovery_plan["sub_question"],
+                    fact_added=recovery_fact_added,
+                    tokens=recovery_tokens,
+                    slot_name=slot_name,
+                    metadata={
+                        "controller": "slot_dag_sufficiency",
+                        "execution_mode": "slot_guided_recovery",
+                        "retrieval_query": recovery_plan["retrieval_query"],
+                    },
+                )
+            )
+
+        final_pending_slots = self._pending_slots(slot_state)
+        answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+            question=question,
+            facts=memory.get_all(),
+            target_profile=target_profile,
+            pending_slots=final_pending_slots,
+            trace=step_trace,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
+        )
+        answer_obj = self._apply_answer_object_fallback(answer_obj, memory.get_all(), "")
+        total_tokens += answer_tokens
+        orchestrator_tokens += answer_tokens
+        answer_signal = float(answer_obj.get("justification_confidence", 0.0) or 0.0)
+        route_label = "answer_after_slot_dag_recovery" if recovery_steps else "answer_after_slot_dag"
+        step_trace.append(
+            StepTrace(
+                step=len(step_trace),
+                action="answer",
+                tokens=answer_tokens,
+                cited_fact_ids=answer_obj["cited_fact_ids"],
+                justification_confidence=answer_obj["justification_confidence"],
+                metadata={
+                    "route": route_label,
+                    "fallback_source": answer_obj.get("fallback_source", ""),
+                },
+            )
+        )
+        return self._build_sufficiency_result(
+            question_id=question_id,
+            question=question,
+            answer=answer_obj["answer"],
+            step_trace=step_trace,
+            memory=memory,
+            subagent_calls=subagent_calls,
+            total_tokens=total_tokens,
+            orchestrator_tokens=orchestrator_tokens,
+            subagent_tokens=subagent_tokens,
+            retrieved_doc_ids=retrieved_doc_ids,
+            retrieved_docs_total=retrieved_docs_total,
+            route_label=route_label,
+            sufficiency=answer_signal,
+            sufficiency_components={"source": "slot_dag_exec"},
+            route_target_slot=str(route.get("target_slot", "")),
+            slot_state=self._slot_snapshot(slot_state),
+            required_hops=required_hops,
+            planned_hop_count=planned_hop_count,
+            answer_sufficiency_score=answer_signal,
+            controller="slot_dag_sufficiency",
+            extra_extras={
+                "execution_mode": "slot_dag_exec",
+                "collapsed_to_single_agent": collapsed_to_single_agent,
+                "parallel_batches": parallel_batches,
+                "slot_exec_steps": slot_exec_steps,
+                "slot_retries": slot_retries,
+                "recovery_steps": recovery_steps,
+                "decomposition_source": decomposition_source,
+                "resolved_slots": self._resolved_slot_names(slot_state),
+                "unresolved_slots": [
+                    str(slot.get("slot_name", "")) for slot in final_pending_slots
+                ],
+                "conflicting_slots": conflicting_slots,
+            },
+        )
+
+    def _slot_dag_route_invalid(self, question: str, route: dict[str, Any]) -> bool:
+        """Return whether the route lacks a usable typed slot DAG."""
+        raw_hops = route.get("required_hops", []) or []
+        if not raw_hops:
+            return True
+        normalised = Orchestrator._normalise_required_hops(raw_hops)
+        if not normalised:
+            return True
+        action = str(route.get("action", "")).strip().lower()
+        try:
+            expected_hop_count = int(
+                route.get("expected_hop_count", len(normalised)) or len(normalised)
+            )
+        except (TypeError, ValueError):
+            expected_hop_count = len(normalised)
+        if action == "recurse" and expected_hop_count > 1 and len(normalised) <= 1:
+            return True
+        for hop in normalised:
+            slot_name = str(hop.get("slot_name", "")).strip()
+            if not slot_name or Orchestrator._is_placeholder_slot_name(slot_name):
+                return True
+        if action == "recurse":
+            first = normalised[0]
+            first_sub_question = str(first.get("sub_question", "")).strip()
+            first_query = str(first.get("retrieval_query", "")).strip()
+            if first_sub_question and Orchestrator._looks_like_question_echo(first_sub_question, question):
+                return True
+            if first_query and Orchestrator._looks_like_question_echo(first_query, question):
+                return True
+        return False
+
     async def _run_structure_aware(
         self, question: str, question_id: str
     ) -> PipelineResult:
@@ -339,21 +1888,68 @@ class AdaptiveRecursivePipeline:
         subagent_calls = 0
         retrieved_doc_ids: list[str] = []
         retrieved_docs_total = 0
+        route: dict[str, Any] = {}
+        slot_state: list[dict[str, Any]] = []
+        required_hops: list[dict[str, Any]] = []
+        planned_hop_count = 1
+        try:
+            route, route_tokens = await self.orchestrator.route_with_usage(
+                question=question,
+                target_profile=target_profile,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
+            )
+            total_tokens += route_tokens
+            orchestrator_tokens += route_tokens
 
-        route, route_tokens = await self.orchestrator.route_with_usage(
-            question=question,
-            target_profile=target_profile,
-        )
-        total_tokens += route_tokens
-        orchestrator_tokens += route_tokens
+            slot_state = self._initialise_slot_state(route, target_profile)
+            required_hops = self._slot_snapshot(slot_state)
+            planned_hop_count = max(
+                int(route.get("expected_hop_count") or 0),
+                len(slot_state),
+                1,
+            )
+            execution_mode = self._select_execution_mode(route, slot_state)
 
-        slot_state = self._initialise_slot_state(route, target_profile)
-        required_hops = self._slot_snapshot(slot_state)
-        planned_hop_count = int(route.get("expected_hop_count") or len(slot_state) or 1)
-        execution_mode = self._select_execution_mode(route, slot_state)
+            if execution_mode == "direct_probe":
+                return await self._run_structure_direct_probe(
+                    question=question,
+                    question_id=question_id,
+                    route=route,
+                    memory=memory,
+                    step_trace=step_trace,
+                    target_profile=target_profile,
+                    total_tokens=total_tokens,
+                    orchestrator_tokens=orchestrator_tokens,
+                    subagent_tokens=subagent_tokens,
+                    subagent_calls=subagent_calls,
+                    retrieved_doc_ids=retrieved_doc_ids,
+                    retrieved_docs_total=retrieved_docs_total,
+                    slot_state=slot_state,
+                    required_hops=required_hops,
+                    planned_hop_count=planned_hop_count,
+                )
 
-        if execution_mode == "direct_probe":
-            return await self._run_structure_direct_probe(
+            if execution_mode == "recursive_recovery":
+                return await self._run_structure_recovery(
+                    question=question,
+                    question_id=question_id,
+                    route=route,
+                    memory=memory,
+                    step_trace=step_trace,
+                    target_profile=target_profile,
+                    total_tokens=total_tokens,
+                    orchestrator_tokens=orchestrator_tokens,
+                    subagent_tokens=subagent_tokens,
+                    subagent_calls=subagent_calls,
+                    retrieved_doc_ids=retrieved_doc_ids,
+                    retrieved_docs_total=retrieved_docs_total,
+                    slot_state=slot_state,
+                    required_hops=required_hops,
+                    planned_hop_count=planned_hop_count,
+                    recovery_trigger="route_predicted_high_bridge_uncertainty",
+                )
+
+            return await self._run_structure_plan_exec(
                 question=question,
                 question_id=question_id,
                 route=route,
@@ -370,44 +1966,52 @@ class AdaptiveRecursivePipeline:
                 required_hops=required_hops,
                 planned_hop_count=planned_hop_count,
             )
-
-        if execution_mode == "recursive_recovery":
-            return await self._run_structure_recovery(
-                question=question,
+        except TokenBudgetExceededError:
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="answer",
+                    tokens=0,
+                    metadata={
+                        "budget_exhausted": True,
+                        "execution_mode": "budget_fallback",
+                    },
+                )
+            )
+            return self._build_sufficiency_result(
                 question_id=question_id,
-                route=route,
-                memory=memory,
+                question=question,
+                answer=self._budget_fallback_answer(memory=memory, route=route),
                 step_trace=step_trace,
-                target_profile=target_profile,
+                memory=memory,
+                subagent_calls=subagent_calls,
                 total_tokens=total_tokens,
                 orchestrator_tokens=orchestrator_tokens,
                 subagent_tokens=subagent_tokens,
-                subagent_calls=subagent_calls,
                 retrieved_doc_ids=retrieved_doc_ids,
                 retrieved_docs_total=retrieved_docs_total,
-                slot_state=slot_state,
+                route_label="budget_exhausted",
+                sufficiency=0.0,
+                sufficiency_components={"source": "hard_token_cap"},
+                route_target_slot=str(route.get("target_slot", "")),
+                slot_state=self._slot_snapshot(slot_state),
                 required_hops=required_hops,
                 planned_hop_count=planned_hop_count,
-                recovery_trigger="route_predicted_high_bridge_uncertainty",
+                controller=self.structure_controller_label,
+                extra_extras={
+                    "execution_mode": "budget_fallback",
+                    "slot_count": len(required_hops),
+                    "num_rewrites": 0,
+                    "num_plan_exec_steps": 0,
+                    "num_recovery_steps": 0,
+                    "recovery_trigger": "budget_exhausted",
+                    "resolved_slots": self._resolved_slot_names(slot_state),
+                    "unresolved_slots": [
+                        str(slot.get("slot_name", "")) for slot in self._pending_slots(slot_state)
+                    ],
+                    "conflicting_slots": self._conflicting_slot_names(memory.get_all(), slot_state),
+                },
             )
-
-        return await self._run_structure_plan_exec(
-            question=question,
-            question_id=question_id,
-            route=route,
-            memory=memory,
-            step_trace=step_trace,
-            target_profile=target_profile,
-            total_tokens=total_tokens,
-            orchestrator_tokens=orchestrator_tokens,
-            subagent_tokens=subagent_tokens,
-            subagent_calls=subagent_calls,
-            retrieved_doc_ids=retrieved_doc_ids,
-            retrieved_docs_total=retrieved_docs_total,
-            slot_state=slot_state,
-            required_hops=required_hops,
-            planned_hop_count=planned_hop_count,
-        )
 
     def _select_execution_mode(
         self,
@@ -418,23 +2022,27 @@ class AdaptiveRecursivePipeline:
         route_mode = str(route.get("execution_mode", "")).strip().lower()
         compositionality = float(route.get("compositionality_score", 0.0) or 0.0)
         bridge_uncertainty = float(route.get("bridge_uncertainty_score", 0.0) or 0.0)
-        planned_hop_count = int(route.get("expected_hop_count") or len(slot_state) or 1)
+        slot_count = len(slot_state)
+        planned_hop_count = max(
+            int(route.get("expected_hop_count") or 0),
+            slot_count,
+            1,
+        )
+        has_multi_slot_structure = slot_count > 1 or planned_hop_count > 1
 
-        if (
-            self.enable_recursive_recovery
-            and route_mode == "recursive_recovery"
-            and bridge_uncertainty >= self.recovery_trigger_threshold
-        ):
-            return "recursive_recovery"
+        # Recursive recovery is a fallback arm, not an initial execution mode.
         if (
             route_mode == "direct_probe"
-            and compositionality <= self.typed_plan_exec_threshold
+            and not has_multi_slot_structure
+            and compositionality <= self.direct_probe_threshold
             and bridge_uncertainty < self.recovery_trigger_threshold
         ):
             return "direct_probe"
-        if planned_hop_count <= 1 and compositionality < self.direct_probe_threshold:
-            return "direct_probe"
-        if route_mode == "direct_probe" and planned_hop_count <= 1:
+        if (
+            not has_multi_slot_structure
+            and compositionality < self.direct_probe_threshold
+            and bridge_uncertainty < self.typed_plan_exec_threshold
+        ):
             return "direct_probe"
         return "typed_plan_exec"
 
@@ -454,13 +2062,21 @@ class AdaptiveRecursivePipeline:
             slot_name=probe_slot_name,
             target_profile=target_profile,
         )
+        use_raw_question_probe = len(slot_state) <= 1
         return {
-            "sub_question": str(route.get("sub_question", "")).strip()
-            or slot_plan["sub_question"],
-            "retrieval_query": str(route.get("retrieval_query", "")).strip()
-            or slot_plan["retrieval_query"],
+            "sub_question": (
+                question.strip()
+                if use_raw_question_probe
+                else str(route.get("sub_question", "")).strip() or slot_plan["sub_question"]
+            ),
+            "retrieval_query": (
+                question.strip()
+                if use_raw_question_probe
+                else str(route.get("retrieval_query", "")).strip()
+                or slot_plan["retrieval_query"]
+            ),
             "goal": str(route.get("goal", "")).strip() or slot_plan["goal"],
-            "strategy": "direct_probe",
+            "strategy": "direct_probe_question" if use_raw_question_probe else "direct_probe",
             "slot_name": probe_slot_name,
             "slot_hint": slot_plan["slot_hint"],
             "expected_info_type": slot_plan["expected_info_type"],
@@ -501,6 +2117,7 @@ class AdaptiveRecursivePipeline:
             slot_hint=probe_spec["slot_hint"],
             search_top_k_override=self.bootstrap_search_top_k or None,
             max_read_override=self.bootstrap_max_read or None,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         total_tokens += probe_tokens
         subagent_tokens += probe_tokens
@@ -541,6 +2158,7 @@ class AdaptiveRecursivePipeline:
             target_profile=target_profile,
             pending_slots=pending_slots,
             trace=step_trace,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         answer_obj = self._apply_answer_object_fallback(answer_obj, memory.get_all(), "")
         total_tokens += answer_tokens
@@ -572,6 +2190,7 @@ class AdaptiveRecursivePipeline:
             pending_slots=pending_slots,
             resolved_slots=resolved_slots_after_probe,
             trace=step_trace,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         total_tokens += assess_tokens
         orchestrator_tokens += assess_tokens
@@ -634,7 +2253,7 @@ class AdaptiveRecursivePipeline:
                 slot_sufficiency_score=slot_sufficiency_score,
                 answer_sufficiency_score=answer_sufficiency_score,
                 resolved_slots_after_probe=resolved_slots_after_probe,
-                controller="structure_aware",
+                controller=self.structure_controller_label,
                 extra_extras={
                     "execution_mode": "direct_probe",
                     "slot_count": len(required_hops),
@@ -648,6 +2267,24 @@ class AdaptiveRecursivePipeline:
                     ],
                     "conflicting_slots": self._conflicting_slot_names(memory.get_all(), slot_state),
                 },
+            )
+        if required_hops:
+            return await self._run_structure_plan_exec(
+                question=question,
+                question_id=question_id,
+                route=route,
+                memory=memory,
+                step_trace=step_trace,
+                target_profile=target_profile,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                subagent_calls=subagent_calls,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                slot_state=slot_state,
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
             )
         if self.enable_recursive_recovery:
             if slot_sufficiency_score < self.recovery_trigger_threshold:
@@ -703,7 +2340,7 @@ class AdaptiveRecursivePipeline:
             slot_sufficiency_score=slot_sufficiency_score,
             answer_sufficiency_score=answer_sufficiency_score,
             resolved_slots_after_probe=resolved_slots_after_probe,
-            controller="structure_aware",
+            controller=self.structure_controller_label,
             extra_extras={
                 "execution_mode": "direct_probe",
                 "slot_count": len(required_hops),
@@ -740,7 +2377,12 @@ class AdaptiveRecursivePipeline:
     ) -> PipelineResult:
         """Typed decomposition plus one-shot execution per slot."""
         num_rewrites = 0
+        num_rewrite_skips = 0
         plan_steps = 0
+        latest_answer_obj: dict[str, Any] | None = None
+        latest_answer_sufficiency_score = 0.0
+        latest_slot_sufficiency_score = 0.0
+        latest_conflicting_slots: list[str] = []
         for _ in range(min(self.max_plan_exec_steps, len(required_hops))):
             pending_slots = self._pending_slots(slot_state)
             if not pending_slots:
@@ -761,6 +2403,7 @@ class AdaptiveRecursivePipeline:
                 retrieval_query=slot_plan["retrieval_query"],
                 slot_name=slot_name,
                 slot_hint=slot_plan["slot_hint"],
+                remaining_total_tokens=self._remaining_budget(total_tokens),
             )
             total_tokens += investigate_tokens
             subagent_tokens += investigate_tokens
@@ -779,6 +2422,11 @@ class AdaptiveRecursivePipeline:
             )
             if fact_added:
                 self._update_slot_resolution(slot_state, slot_name, capsule)
+            active_capsule = capsule
+            active_sub_question = slot_plan["sub_question"]
+            active_slot_hint = slot_plan["slot_hint"]
+            active_expected_info_type = slot_plan["expected_info_type"]
+            active_strategy = "typed_slot_exec"
             step_trace.append(
                 StepTrace(
                     step=len(step_trace),
@@ -794,105 +2442,273 @@ class AdaptiveRecursivePipeline:
                     },
                 )
             )
-            if slot_name in self._resolved_slot_names(slot_state):
-                continue
-            if not self.enable_slot_rewrite:
-                continue
-            rewrite_decision, rewrite_tokens = await self.orchestrator.propose_spawn(
-                question=question,
-                facts=memory.get_all(),
-                trace=step_trace,
-                target_profile=target_profile,
-                pending_slots=[slot],
-                missing_reason=(
-                    f"Rewrite the retrieval for unresolved slot '{slot_name}'. "
-                    "Keep it focused and bridge-anchored."
-                ),
-            )
-            total_tokens += rewrite_tokens
-            orchestrator_tokens += rewrite_tokens
-            num_rewrites += 1
-            rewrite_query = (
-                str(rewrite_decision.get("retrieval_query", "")).strip()
-                or slot_plan["retrieval_query"]
-            )
-            rewrite_sub_question = (
-                str(rewrite_decision.get("sub_question", "")).strip()
-                or slot_plan["sub_question"]
-            )
-            rewrite_goal = (
-                str(rewrite_decision.get("goal", "")).strip() or slot_plan["goal"]
-            )
-            rewrite_capsule, rewrite_investigate_tokens = (
-                await self.investigator.investigate_with_usage(
-                    sub_question=rewrite_sub_question,
-                    goal=rewrite_goal,
-                    prior_facts=memory.get_all(),
-                    retrieval_query=rewrite_query,
+            if slot_name not in self._resolved_slot_names(slot_state) and self.enable_slot_rewrite:
+                rewrite_decision, rewrite_tokens = await self.orchestrator.propose_spawn(
+                    question=question,
+                    facts=memory.get_all(),
+                    trace=step_trace,
+                    target_profile=target_profile,
+                    pending_slots=[slot],
+                    missing_reason=(
+                        f"Rewrite the retrieval for unresolved slot '{slot_name}'. "
+                        "Keep it focused and bridge-anchored."
+                    ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += rewrite_tokens
+                orchestrator_tokens += rewrite_tokens
+                num_rewrites += 1
+                rewrite_query = (
+                    str(rewrite_decision.get("retrieval_query", "")).strip()
+                    or slot_plan["retrieval_query"]
+                )
+                rewrite_sub_question = (
+                    str(rewrite_decision.get("sub_question", "")).strip()
+                    or slot_plan["sub_question"]
+                )
+                rewrite_goal = (
+                    str(rewrite_decision.get("goal", "")).strip() or slot_plan["goal"]
+                )
+                for slot_item in slot_state:
+                    if str(slot_item.get("slot_name", "")).strip() != slot_name:
+                        continue
+                    slot_item["sub_question"] = rewrite_sub_question
+                    slot_item["retrieval_query"] = rewrite_query
+                    slot_item["goal"] = rewrite_goal
+                    break
+                rewrite_capsule, rewrite_investigate_tokens = (
+                    await self.investigator.investigate_with_usage(
+                        sub_question=rewrite_sub_question,
+                        goal=rewrite_goal,
+                        prior_facts=memory.get_all(),
+                        retrieval_query=rewrite_query,
+                        slot_name=slot_name,
+                        slot_hint=slot_plan["slot_hint"],
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                )
+                total_tokens += rewrite_investigate_tokens
+                subagent_tokens += rewrite_investigate_tokens
+                subagent_calls += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    rewrite_capsule,
+                )
+                rewrite_fact_added = self._replace_fact(
+                    memory,
+                    rewrite_capsule,
+                    step=len(step_trace),
                     slot_name=slot_name,
-                    slot_hint=slot_plan["slot_hint"],
+                )
+                if rewrite_fact_added:
+                    self._update_slot_resolution(slot_state, slot_name, rewrite_capsule)
+                active_capsule = rewrite_capsule
+                active_sub_question = rewrite_sub_question
+                active_strategy = "typed_slot_rewrite"
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="refine",
+                        sub_question=rewrite_sub_question,
+                        fact_added=rewrite_fact_added,
+                        tokens=rewrite_investigate_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "execution_mode": "typed_plan_exec",
+                            "rewrite": True,
+                            "retrieval_query": rewrite_query,
+                        },
+                    )
+                )
+
+            if not self.assess_after_plan_step:
+                continue
+
+            pending_slots = self._pending_slots(slot_state)
+            latest_conflicting_slots = self._conflicting_slot_names(
+                memory.get_all(),
+                slot_state,
+            )
+            latest_answer_obj, answer_tokens = (
+                await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
                 )
             )
-            total_tokens += rewrite_investigate_tokens
-            subagent_tokens += rewrite_investigate_tokens
-            subagent_calls += 1
-            retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
-                retrieved_doc_ids,
-                retrieved_docs_total,
-                rewrite_capsule,
+            latest_answer_obj = self._apply_answer_object_fallback(
+                latest_answer_obj,
+                memory.get_all(),
+                "",
             )
-            rewrite_fact_added = self._replace_fact(
-                memory,
-                rewrite_capsule,
-                step=len(step_trace),
-                slot_name=slot_name,
+            total_tokens += answer_tokens
+            orchestrator_tokens += answer_tokens
+
+            probe_slot_value = (
+                self._best_slot_answer_span(memory.get_all(), slot_name)
+                or str(active_capsule.fact.answer_span or "").strip()
+                or str(active_capsule.answer or "").strip()
             )
-            if rewrite_fact_added:
-                self._update_slot_resolution(slot_state, slot_name, rewrite_capsule)
+            s_conf = (
+                float(active_capsule.fact.confidence)
+                if active_capsule.fact and active_capsule.fact.text.strip()
+                else 0.0
+            )
+            answer_align = self._compute_alignment_score(
+                active_capsule,
+                latest_answer_obj["answer"],
+            )
+            slot_align = self._compute_slot_alignment(active_capsule, probe_slot_value)
+            assess_result, assess_tokens = (
+                await self.orchestrator.assess_typed_probe_state_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    proposed_answer=latest_answer_obj["answer"],
+                    probe_question=active_sub_question,
+                    probe_strategy=active_strategy,
+                    probe_slot_name=slot_name,
+                    probe_slot_hint=active_slot_hint,
+                    probe_expected_info_type=active_expected_info_type,
+                    probe_slot_value=probe_slot_value,
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    resolved_slots=self._resolved_slot_names(slot_state),
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+            )
+            total_tokens += assess_tokens
+            orchestrator_tokens += assess_tokens
+            latest_slot_sufficiency_score = max(
+                0.0,
+                min(
+                    s_conf * float(assess_result["slot_sufficient"]) * slot_align,
+                    1.0,
+                ),
+            )
+            latest_answer_sufficiency_score = max(
+                0.0,
+                min(
+                    s_conf
+                    * float(assess_result["answer_sufficient"])
+                    * answer_align,
+                    1.0,
+                ),
+            )
             step_trace.append(
                 StepTrace(
                     step=len(step_trace),
-                    action="refine",
-                    sub_question=rewrite_sub_question,
-                    fact_added=rewrite_fact_added,
-                    tokens=rewrite_investigate_tokens,
+                    action="assess",
+                    tokens=assess_tokens,
                     slot_name=slot_name,
+                    justification_confidence=latest_answer_sufficiency_score,
                     metadata={
                         "execution_mode": "typed_plan_exec",
-                        "rewrite": True,
-                        "retrieval_query": rewrite_query,
+                        "probe_strategy": active_strategy,
+                        "probe_slot_name": slot_name,
+                        "slot_sufficient": latest_slot_sufficiency_score,
+                        "answer_sufficient": latest_answer_sufficiency_score,
+                        "resolved_slots": self._resolved_slot_names(slot_state),
                     },
                 )
             )
+            if (
+                latest_answer_sufficiency_score >= self.typed_plan_exec_threshold
+                and latest_answer_obj["answer"].strip()
+            ):
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="answer",
+                        tokens=answer_tokens,
+                        cited_fact_ids=latest_answer_obj["cited_fact_ids"],
+                        justification_confidence=latest_answer_obj[
+                            "justification_confidence"
+                        ],
+                        metadata={"route": "answer_after_typed_plan_exec"},
+                    )
+                )
+                return self._build_sufficiency_result(
+                    question_id=question_id,
+                    question=question,
+                    answer=latest_answer_obj["answer"],
+                    step_trace=step_trace,
+                    memory=memory,
+                    subagent_calls=subagent_calls,
+                    total_tokens=total_tokens,
+                    orchestrator_tokens=orchestrator_tokens,
+                    subagent_tokens=subagent_tokens,
+                    retrieved_doc_ids=retrieved_doc_ids,
+                    retrieved_docs_total=retrieved_docs_total,
+                    route_label="answer_after_typed_plan_exec",
+                    sufficiency=latest_answer_sufficiency_score,
+                    sufficiency_components={"source": "typed_plan_exec_step_assess"},
+                    route_target_slot=str(route.get("target_slot", "")),
+                    slot_state=self._slot_snapshot(slot_state),
+                    required_hops=required_hops,
+                    planned_hop_count=planned_hop_count,
+                    slot_sufficiency_score=latest_slot_sufficiency_score,
+                    answer_sufficiency_score=latest_answer_sufficiency_score,
+                    controller=self.structure_controller_label,
+                    extra_extras={
+                        "execution_mode": "typed_plan_exec",
+                        "slot_count": len(required_hops),
+                        "num_rewrites": num_rewrites,
+                        "num_plan_exec_steps": plan_steps,
+                        "num_recovery_steps": 0,
+                        "recovery_trigger": "",
+                        "resolved_slots": self._resolved_slot_names(slot_state),
+                        "unresolved_slots": [
+                            str(item.get("slot_name", "")) for item in pending_slots
+                        ],
+                        "conflicting_slots": latest_conflicting_slots,
+                    },
+                )
 
         pending_slots = self._pending_slots(slot_state)
-        conflicting_slots = self._conflicting_slot_names(memory.get_all(), slot_state)
-        answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
-            question=question,
-            facts=memory.get_all(),
-            target_profile=target_profile,
-            pending_slots=pending_slots,
-            trace=step_trace,
+        conflicting_slots = latest_conflicting_slots or self._conflicting_slot_names(
+            memory.get_all(),
+            slot_state,
         )
-        answer_obj = self._apply_answer_object_fallback(answer_obj, memory.get_all(), "")
-        total_tokens += answer_tokens
-        orchestrator_tokens += answer_tokens
+        answer_obj = latest_answer_obj
+        answer_signal = latest_answer_sufficiency_score
+        if answer_obj is None:
+            answer_obj, answer_tokens = (
+                await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    trace=step_trace,
+                )
+            )
+            answer_obj = self._apply_answer_object_fallback(
+                answer_obj,
+                memory.get_all(),
+                "",
+            )
+            total_tokens += answer_tokens
+            orchestrator_tokens += answer_tokens
+            answer_signal = float(answer_obj.get("justification_confidence", 0.0))
+        unresolved_count = len(pending_slots)
         should_recover = bool(
             self.enable_recursive_recovery
             and (
-                pending_slots
-                or conflicting_slots
-                or float(answer_obj.get("justification_confidence", 0.0))
-                < self.recovery_trigger_threshold
+                conflicting_slots
+                or unresolved_count == 1
             )
         )
         if should_recover:
             if conflicting_slots:
                 trigger = "conflicting_slots"
-            elif pending_slots:
+            elif unresolved_count == 1:
                 trigger = "unresolved_slots_after_plan_exec"
             else:
-                trigger = "low_answer_confidence_after_plan_exec"
+                trigger = "low_answer_sufficiency_after_plan_exec"
             return await self._run_structure_recovery(
                 question=question,
                 question_id=question_id,
@@ -913,12 +2729,14 @@ class AdaptiveRecursivePipeline:
                 num_rewrites=num_rewrites,
                 num_plan_exec_steps=plan_steps,
                 conflicting_slots=conflicting_slots,
+                answer_sufficiency_score=latest_answer_sufficiency_score,
+                slot_sufficiency_score=latest_slot_sufficiency_score,
             )
         step_trace.append(
             StepTrace(
                 step=len(step_trace),
                 action="answer",
-                tokens=answer_tokens,
+                tokens=0,
                 cited_fact_ids=answer_obj["cited_fact_ids"],
                 justification_confidence=answer_obj["justification_confidence"],
                 metadata={"route": "answer_after_typed_plan_exec"},
@@ -937,13 +2755,21 @@ class AdaptiveRecursivePipeline:
             retrieved_doc_ids=retrieved_doc_ids,
             retrieved_docs_total=retrieved_docs_total,
             route_label="answer_after_typed_plan_exec",
-            sufficiency=float(answer_obj.get("justification_confidence", 0.0)),
-            sufficiency_components={"source": "typed_plan_exec"},
+            sufficiency=answer_signal,
+            sufficiency_components={
+                "source": (
+                    "typed_plan_exec_step_assess"
+                    if self.assess_after_plan_step
+                    else "typed_plan_exec"
+                )
+            },
             route_target_slot=str(route.get("target_slot", "")),
             slot_state=self._slot_snapshot(slot_state),
             required_hops=required_hops,
             planned_hop_count=planned_hop_count,
-            controller="structure_aware",
+            slot_sufficiency_score=latest_slot_sufficiency_score,
+            answer_sufficiency_score=latest_answer_sufficiency_score,
+            controller=self.structure_controller_label,
             extra_extras={
                 "execution_mode": "typed_plan_exec",
                 "slot_count": len(required_hops),
@@ -988,6 +2814,12 @@ class AdaptiveRecursivePipeline:
         conflicting_slots: list[str] | None = None,
     ) -> PipelineResult:
         """Targeted recursive recovery for unresolved or conflicting slots."""
+        working_slot_state = self._slot_snapshot(slot_state)
+        if self.recover_conflicting_slots and conflicting_slots:
+            conflicting = {str(name).strip() for name in conflicting_slots if str(name).strip()}
+            for slot in working_slot_state:
+                if str(slot.get("slot_name", "")).strip() in conflicting:
+                    slot["resolved"] = False
         return await self._sufficiency_recurse(
             question=question,
             question_id=question_id,
@@ -1003,7 +2835,7 @@ class AdaptiveRecursivePipeline:
             recurse_steps=self.max_recovery_steps,
             sufficiency=answer_sufficiency_score,
             route_label="targeted_recursive_recovery",
-            slot_state=self._slot_snapshot(slot_state),
+            slot_state=working_slot_state,
             required_hops=required_hops,
             sufficiency_components={"source": "structure_recovery"},
             route_target_slot=str(route.get("target_slot", "")),
@@ -1014,7 +2846,8 @@ class AdaptiveRecursivePipeline:
             answer_sufficiency_score=answer_sufficiency_score,
             resolved_slots_after_probe=resolved_slots_after_probe,
             respect_slot_state=True,
-            controller="structure_aware",
+            controller=self.structure_controller_label,
+            slot_guided_recurse=self.structure_slot_guided_recovery,
             extra_extras={
                 "execution_mode": "recursive_recovery",
                 "slot_count": len(required_hops),
@@ -1026,6 +2859,454 @@ class AdaptiveRecursivePipeline:
                 ],
                 "conflicting_slots": conflicting_slots
                 or self._conflicting_slot_names(memory.get_all(), slot_state),
+            },
+        )
+
+    async def _run_sufficiency_typed_plan_exec(
+        self,
+        *,
+        question: str,
+        question_id: str,
+        route: dict[str, Any],
+        memory: FactMemory,
+        step_trace: list[StepTrace],
+        target_profile: str,
+        total_tokens: int,
+        orchestrator_tokens: int,
+        subagent_tokens: int,
+        subagent_calls: int,
+        retrieved_doc_ids: list[str],
+        retrieved_docs_total: int,
+        slot_state: list[dict[str, Any]],
+        required_hops: list[dict[str, Any]],
+        planned_hop_count: int,
+        sufficiency: float,
+        sufficiency_components: dict[str, Any],
+        route_target_slot: str,
+        probe_strategy: str,
+        probe_slot_name: str,
+        slot_sufficiency_score: float,
+        answer_sufficiency_score: float,
+        resolved_slots_after_probe: list[str] | None,
+    ) -> PipelineResult:
+        """Typed slot execution inside the sufficiency controller hard branch."""
+        num_rewrites = 0
+        num_rewrite_skips = 0
+        plan_steps = 0
+        latest_answer_obj: dict[str, Any] | None = None
+        latest_answer_sufficiency_score = answer_sufficiency_score
+        latest_slot_sufficiency_score = slot_sufficiency_score
+        latest_conflicting_slots: list[str] = []
+        grounded_slot_fact = False
+        tau = self.sufficiency_threshold
+
+        for _ in range(min(self.sufficiency_max_plan_exec_steps, len(required_hops))):
+            pending_slots = self._pending_slots(slot_state)
+            if not pending_slots:
+                break
+            slot = pending_slots[0]
+            slot_name = str(slot.get("slot_name", "")).strip()
+            attempts_used = max(0, int(slot.get("attempt_count", 0)))
+            while attempts_used < self.sufficiency_max_slot_attempts:
+                slot_plan = self._slot_guided_plan(
+                    question=question,
+                    slot_state=slot_state,
+                    slot_name=slot_name,
+                    target_profile=target_profile,
+                    facts=memory.get_all(),
+                )
+                active_slot_hint = slot_plan["slot_hint"]
+                active_expected_info_type = slot_plan["expected_info_type"]
+                active_sub_question = slot_plan["sub_question"]
+                active_strategy = (
+                    "sufficiency_typed_plan_exec"
+                    if attempts_used == 0
+                    else "sufficiency_typed_slot_rewrite"
+                )
+                capsule, investigate_tokens = await self.investigator.investigate_with_usage(
+                    sub_question=active_sub_question,
+                    goal=slot_plan["goal"],
+                    prior_facts=memory.get_all(),
+                    retrieval_query=slot_plan["retrieval_query"],
+                    slot_name=slot_name,
+                    slot_hint=active_slot_hint,
+                    search_top_k_override=(
+                        self.sufficiency_plan_exec_search_top_k
+                        or self.sufficiency_followup_search_top_k
+                        or None
+                    ),
+                    max_read_override=(
+                        self.sufficiency_plan_exec_max_read
+                        or self.sufficiency_followup_max_read
+                        or None
+                    ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += investigate_tokens
+                subagent_tokens += investigate_tokens
+                subagent_calls += 1
+                plan_steps += 1
+                retrieved_doc_ids, retrieved_docs_total = self._merge_retrieval_stats(
+                    retrieved_doc_ids,
+                    retrieved_docs_total,
+                    capsule,
+                )
+                fact_added = (
+                    self._add_fact(
+                        memory,
+                        capsule,
+                        step=len(step_trace),
+                        slot_name=slot_name,
+                    )
+                    if attempts_used == 0
+                    else self._replace_fact(
+                        memory,
+                        capsule,
+                        step=len(step_trace),
+                        slot_name=slot_name,
+                    )
+                )
+                grounded_slot_fact = grounded_slot_fact or fact_added
+                if fact_added:
+                    self._update_slot_resolution(slot_state, slot_name, capsule)
+                self._update_slot_execution_state(
+                    slot_state,
+                    slot_name,
+                    attempt_count=attempts_used + 1,
+                    sub_question=active_sub_question,
+                    retrieval_query=slot_plan["retrieval_query"],
+                    goal=slot_plan["goal"],
+                    last_retrieved_doc_ids=list(capsule.retrieved_doc_ids),
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="spawn" if attempts_used == 0 else "refine",
+                        sub_question=active_sub_question,
+                        fact_added=fact_added,
+                        tokens=investigate_tokens,
+                        slot_name=slot_name,
+                        metadata={
+                            "sufficiency_typed_plan_exec": True,
+                            "slot_name": slot_name,
+                            "attempt": attempts_used + 1,
+                            "rewrite": attempts_used > 0,
+                            "retrieval_query": slot_plan["retrieval_query"],
+                        },
+                    )
+                )
+
+                pending_slots = self._pending_slots(slot_state)
+                latest_conflicting_slots = self._conflicting_slot_names(
+                    memory.get_all(),
+                    slot_state,
+                )
+                latest_answer_obj, answer_tokens = (
+                    await self.orchestrator.generate_answer_object_with_usage(
+                        question=question,
+                        facts=memory.get_all(),
+                        target_profile=target_profile,
+                        pending_slots=pending_slots,
+                        trace=step_trace,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                )
+                latest_answer_obj = self._apply_answer_object_fallback(
+                    latest_answer_obj,
+                    memory.get_all(),
+                    "",
+                )
+                total_tokens += answer_tokens
+                orchestrator_tokens += answer_tokens
+
+                probe_slot_value = (
+                    self._best_slot_answer_span(memory.get_all(), slot_name)
+                    or str(capsule.fact.answer_span or "").strip()
+                    or str(capsule.answer or "").strip()
+                )
+                s_conf = (
+                    float(capsule.fact.confidence)
+                    if capsule.fact and capsule.fact.text.strip()
+                    else 0.0
+                )
+                answer_align = self._compute_alignment_score(
+                    capsule,
+                    latest_answer_obj["answer"],
+                )
+                slot_align = self._compute_slot_alignment(capsule, probe_slot_value)
+                assess_result, assess_tokens = (
+                    await self.orchestrator.assess_typed_probe_state_with_usage(
+                        question=question,
+                        facts=memory.get_all(),
+                        proposed_answer=latest_answer_obj["answer"],
+                        probe_question=active_sub_question,
+                        probe_strategy=active_strategy,
+                        probe_slot_name=slot_name,
+                        probe_slot_hint=active_slot_hint,
+                        probe_expected_info_type=active_expected_info_type,
+                        probe_slot_value=probe_slot_value,
+                        target_profile=target_profile,
+                        pending_slots=pending_slots,
+                        resolved_slots=self._resolved_slot_names(slot_state),
+                        trace=step_trace,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
+                    )
+                )
+                total_tokens += assess_tokens
+                orchestrator_tokens += assess_tokens
+                latest_slot_sufficiency_score = max(
+                    0.0,
+                    min(
+                        s_conf * float(assess_result["slot_sufficient"]) * slot_align,
+                        1.0,
+                    ),
+                )
+                latest_answer_sufficiency_score = max(
+                    0.0,
+                    min(
+                        s_conf
+                        * float(assess_result["answer_sufficient"])
+                        * answer_align,
+                        1.0,
+                    ),
+                )
+                failure_reason = (
+                    f"slot={assess_result.get('slot_reason', '')}; "
+                    f"answer={assess_result.get('answer_reason', '')}"
+                ).strip("; ")
+                self._update_slot_execution_state(
+                    slot_state,
+                    slot_name,
+                    last_failure_reason=failure_reason,
+                )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="assess",
+                        tokens=assess_tokens,
+                        slot_name=slot_name,
+                        justification_confidence=latest_answer_sufficiency_score,
+                        metadata={
+                            "sufficiency_typed_plan_exec": True,
+                            "probe_strategy": active_strategy,
+                            "probe_slot_name": slot_name,
+                            "attempt": attempts_used + 1,
+                            "slot_sufficient": latest_slot_sufficiency_score,
+                            "answer_sufficient": latest_answer_sufficiency_score,
+                            "resolved_slots": self._resolved_slot_names(slot_state),
+                        },
+                    )
+                )
+                if (
+                    latest_answer_sufficiency_score >= tau
+                    and latest_answer_obj["answer"].strip()
+                ):
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="answer",
+                            tokens=answer_tokens,
+                            cited_fact_ids=latest_answer_obj["cited_fact_ids"],
+                            justification_confidence=latest_answer_obj[
+                                "justification_confidence"
+                            ],
+                            metadata={"route": "answer_after_typed_plan_exec"},
+                        )
+                    )
+                    return self._build_sufficiency_result(
+                        question_id=question_id,
+                        question=question,
+                        answer=latest_answer_obj["answer"],
+                        step_trace=step_trace,
+                        memory=memory,
+                        subagent_calls=subagent_calls,
+                        total_tokens=total_tokens,
+                        orchestrator_tokens=orchestrator_tokens,
+                        subagent_tokens=subagent_tokens,
+                        retrieved_doc_ids=retrieved_doc_ids,
+                        retrieved_docs_total=retrieved_docs_total,
+                        route_label="answer_after_typed_plan_exec",
+                        sufficiency=latest_answer_sufficiency_score,
+                        sufficiency_components=sufficiency_components,
+                        route_target_slot=route_target_slot,
+                        slot_state=self._slot_snapshot(slot_state),
+                        required_hops=required_hops,
+                        planned_hop_count=planned_hop_count,
+                        slot_sufficiency_score=latest_slot_sufficiency_score,
+                        answer_sufficiency_score=latest_answer_sufficiency_score,
+                        resolved_slots_after_probe=resolved_slots_after_probe,
+                        extra_extras={
+                            "typed_plan_exec": True,
+                            "num_plan_exec_steps": plan_steps,
+                            "num_rewrites": num_rewrites,
+                            "num_recovery_steps": 0,
+                            "resolved_slots": self._resolved_slot_names(slot_state),
+                            "unresolved_slots": [
+                                str(item.get("slot_name", "")) for item in pending_slots
+                            ],
+                            "conflicting_slots": latest_conflicting_slots,
+                        },
+                    )
+                if slot_name in self._resolved_slot_names(slot_state):
+                    break
+                attempts_used += 1
+                if (
+                    attempts_used >= self.sufficiency_max_slot_attempts
+                    or not self.sufficiency_enable_slot_rewrite
+                ):
+                    break
+
+                evidence_hint = " | ".join(
+                    snippet.strip() for snippet in capsule.support_snippets[:2] if snippet.strip()
+                )
+                rewrite_decision, rewrite_tokens = await self.orchestrator.propose_spawn(
+                    question=question,
+                    facts=memory.get_all(),
+                    trace=step_trace,
+                    target_profile=target_profile,
+                    pending_slots=[slot],
+                    missing_reason=(
+                        f"Retry unresolved slot '{slot_name}' with a tighter typed query. "
+                        f"Earlier query failed to produce a grounded fact: "
+                        f"'{slot_plan['retrieval_query'] or slot_plan['sub_question']}'. "
+                        "Ask a DIFFERENT question; do not paraphrase minor words. "
+                        f"Failure: {failure_reason or 'no grounded slot fact'}. "
+                        f"Previous query: {slot_plan['retrieval_query']}. "
+                        f"Retrieved evidence: {evidence_hint or 'none'}"
+                    ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+                total_tokens += rewrite_tokens
+                orchestrator_tokens += rewrite_tokens
+                candidate_sub_question = (
+                    str(rewrite_decision.get("sub_question", "")).strip()
+                    or slot_plan["sub_question"]
+                )
+                candidate_retrieval_query = (
+                    str(rewrite_decision.get("retrieval_query", "")).strip()
+                    or slot_plan["retrieval_query"]
+                )
+                candidate_goal = (
+                    str(rewrite_decision.get("goal", "")).strip()
+                    or slot_plan["goal"]
+                )
+                rewrite_similarity = max(
+                    self._query_similarity(
+                        slot_plan["sub_question"],
+                        candidate_sub_question,
+                    ),
+                    self._query_similarity(
+                        slot_plan["retrieval_query"],
+                        candidate_retrieval_query,
+                    ),
+                )
+                if rewrite_similarity > 0.85:
+                    num_rewrite_skips += 1
+                    step_trace.append(
+                        StepTrace(
+                            step=len(step_trace),
+                            action="assess",
+                            tokens=rewrite_tokens,
+                            slot_name=slot_name,
+                            metadata={
+                                "sufficiency_typed_plan_exec": True,
+                                "probe_strategy": "sufficiency_typed_slot_rewrite",
+                                "rewrite_skipped": True,
+                                "rewrite_similarity": rewrite_similarity,
+                                "iter1_sub_question": slot_plan["sub_question"],
+                                "iter2_sub_question": candidate_sub_question,
+                                "iter1_retrieval_query": slot_plan["retrieval_query"],
+                                "iter2_retrieval_query": candidate_retrieval_query,
+                                "reason": "rewrite_too_similar",
+                            },
+                        )
+                    )
+                    break
+                num_rewrites += 1
+                self._update_slot_execution_state(
+                    slot_state,
+                    slot_name,
+                    sub_question=candidate_sub_question,
+                    retrieval_query=candidate_retrieval_query,
+                    goal=candidate_goal,
+                )
+
+            if slot_name in {
+                str(item.get("slot_name", "")).strip()
+                for item in self._pending_slots(slot_state)
+            }:
+                break
+
+        pending_slots = self._pending_slots(slot_state)
+        conflicting_slots = latest_conflicting_slots or self._conflicting_slot_names(
+            memory.get_all(),
+            slot_state,
+        )
+        answer_obj = latest_answer_obj
+        answer_signal = latest_answer_sufficiency_score
+        if answer_obj is None:
+            answer_obj, answer_tokens = (
+                await self.orchestrator.generate_answer_object_with_usage(
+                    question=question,
+                    facts=memory.get_all(),
+                    target_profile=target_profile,
+                    pending_slots=pending_slots,
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+            )
+            answer_obj = self._apply_answer_object_fallback(
+                answer_obj,
+                memory.get_all(),
+                "",
+            )
+            total_tokens += answer_tokens
+            orchestrator_tokens += answer_tokens
+            answer_signal = float(answer_obj.get("justification_confidence", 0.0))
+
+        step_trace.append(
+            StepTrace(
+                step=len(step_trace),
+                action="answer",
+                tokens=0,
+                cited_fact_ids=answer_obj["cited_fact_ids"],
+                justification_confidence=answer_obj["justification_confidence"],
+                metadata={"route": "answer_after_typed_plan_exec"},
+            )
+        )
+        return self._build_sufficiency_result(
+            question_id=question_id,
+            question=question,
+            answer=answer_obj["answer"],
+            step_trace=step_trace,
+            memory=memory,
+            subagent_calls=subagent_calls,
+            total_tokens=total_tokens,
+            orchestrator_tokens=orchestrator_tokens,
+            subagent_tokens=subagent_tokens,
+            retrieved_doc_ids=retrieved_doc_ids,
+            retrieved_docs_total=retrieved_docs_total,
+            route_label="answer_after_typed_plan_exec",
+            sufficiency=answer_signal,
+            sufficiency_components=sufficiency_components,
+            route_target_slot=route_target_slot,
+            slot_state=self._slot_snapshot(slot_state),
+            required_hops=required_hops,
+            planned_hop_count=planned_hop_count,
+            slot_sufficiency_score=latest_slot_sufficiency_score,
+            answer_sufficiency_score=latest_answer_sufficiency_score,
+            resolved_slots_after_probe=resolved_slots_after_probe,
+            extra_extras={
+                "typed_plan_exec": True,
+                "num_plan_exec_steps": plan_steps,
+                "num_rewrites": num_rewrites,
+                "num_rewrite_skips": num_rewrite_skips,
+                "num_recovery_steps": 0,
+                "resolved_slots": self._resolved_slot_names(slot_state),
+                "unresolved_slots": [
+                    str(slot.get("slot_name", "")) for slot in pending_slots
+                ],
+                "conflicting_slots": conflicting_slots,
             },
         )
 
@@ -1071,6 +3352,7 @@ class AdaptiveRecursivePipeline:
         route, route_tokens = await self.orchestrator.route_with_usage(
             question=question,
             target_profile=target_profile,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         total_tokens += route_tokens
         orchestrator_tokens += route_tokens
@@ -1121,6 +3403,7 @@ class AdaptiveRecursivePipeline:
             slot_hint=probe_spec["slot_hint"],
             search_top_k_override=self.bootstrap_search_top_k or None,
             max_read_override=self.bootstrap_max_read or None,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         total_tokens += probe_tokens
         subagent_tokens += probe_tokens
@@ -1175,6 +3458,7 @@ class AdaptiveRecursivePipeline:
                 target_profile=target_profile,
                 pending_slots=probe_pending_slots,
                 trace=step_trace,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
             )
         )
         probe_answer_obj = self._apply_answer_object_fallback(
@@ -1257,6 +3541,7 @@ class AdaptiveRecursivePipeline:
                     pending_slots=self._slot_snapshot(slot_state),
                     resolved_slots=resolved_slots_after_probe,
                     trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
                 )
             )
             total_tokens += assess_tokens
@@ -1290,6 +3575,7 @@ class AdaptiveRecursivePipeline:
                     proposed_answer=probe_answer,
                     target_profile=target_profile,
                     trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
                 )
             )
             total_tokens += assess_tokens
@@ -1373,10 +3659,16 @@ class AdaptiveRecursivePipeline:
             )
 
         # Sufficient: answer from the probe.
+        force_typed_plan_exec = bool(
+            self.sufficiency_typed_plan_exec_on_hard
+            and str(route.get("action", "")).strip() == "final_answer"
+            and planned_hop_count > 1
+            and not resolved_slots_after_probe
+        )
         should_answer_from_probe = (
             answer_sufficiency_score >= tau if self.sufficiency_split_assessment else sufficiency >= tau
         )
-        if should_answer_from_probe and probe_answer.strip():
+        if should_answer_from_probe and probe_answer.strip() and not force_typed_plan_exec:
             answer = probe_answer
             step_trace.append(
                 StepTrace(
@@ -1405,6 +3697,248 @@ class AdaptiveRecursivePipeline:
                 retrieved_docs_total=retrieved_docs_total,
                 route_label="answer_from_probe",
                 sufficiency=sufficiency,
+                sufficiency_components=sufficiency_components,
+                route_target_slot=route_target_slot,
+                slot_state=self._slot_snapshot(slot_state),
+                required_hops=required_hops,
+                probe_strategy=probe_spec["strategy"],
+                probe_slot_name=probe_spec["slot_name"],
+                planned_hop_count=planned_hop_count,
+                slot_sufficiency_score=slot_sufficiency_score,
+                answer_sufficiency_score=answer_sufficiency_score,
+                resolved_slots_after_probe=resolved_slots_after_probe,
+            )
+
+        should_run_cached_full_probe = bool(
+            self.sufficiency_cached_full_question_probe
+            and not should_answer_from_probe
+            and probe_spec["strategy"] != "full_question_probe"
+            and probe_capsule.retrieved_doc_ids
+        )
+        if should_run_cached_full_probe:
+            full_probe_slot_name = self._final_slot_name(slot_state)
+            full_probe_expected_info_type = self._slot_expected_info_type(
+                slot_state,
+                full_probe_slot_name,
+            )
+            full_probe_capsule, full_probe_tokens = (
+                await self.investigator.distill_from_chunk_ids_with_usage(
+                    sub_question=question,
+                    goal=target_profile,
+                    prior_facts=memory.get_all(),
+                    chunk_ids=probe_capsule.retrieved_doc_ids[
+                        : (
+                            self.bootstrap_max_read
+                            or len(probe_capsule.retrieved_doc_ids)
+                        )
+                    ],
+                    slot_name=full_probe_slot_name,
+                    slot_hint=self._slot_hint(slot_state, full_probe_slot_name),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+            )
+            total_tokens += full_probe_tokens
+            subagent_tokens += full_probe_tokens
+            subagent_calls += 1
+            full_probe_answer = (
+                str(full_probe_capsule.fact.answer_span or "").strip()
+                or str(full_probe_capsule.answer or "").strip()
+            )
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="spawn",
+                    sub_question=question,
+                    fact_added=bool(full_probe_capsule.fact.text.strip()),
+                    tokens=full_probe_tokens,
+                    slot_name=full_probe_slot_name or None,
+                    metadata={
+                        "sufficiency_probe": True,
+                        "probe_strategy": "full_question_probe",
+                        "probe_slot_name": full_probe_slot_name,
+                        "cached_probe_docs": True,
+                    },
+                )
+            )
+            full_probe_assess, full_probe_assess_tokens = (
+                await self.orchestrator.assess_probe_sufficiency_with_usage(
+                    question=question,
+                    facts=memory.get_all()
+                    + (
+                        [full_probe_capsule.fact]
+                        if full_probe_capsule.fact.text.strip()
+                        else []
+                    ),
+                    proposed_answer=full_probe_answer,
+                    target_profile=target_profile,
+                    trace=step_trace,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
+                )
+            )
+            total_tokens += full_probe_assess_tokens
+            orchestrator_tokens += full_probe_assess_tokens
+            full_probe_target = float(full_probe_assess["sufficient"])
+            full_probe_answer_align = self._compute_alignment_score(
+                full_probe_capsule,
+                full_probe_answer,
+            )
+            full_probe_sufficiency = max(
+                0.0,
+                min(
+                    float(full_probe_capsule.fact.confidence or 0.0)
+                    * full_probe_target
+                    * full_probe_answer_align,
+                    1.0,
+                ),
+            )
+            full_probe_shape_ok = self._answer_matches_expected_info_type(
+                full_probe_answer,
+                full_probe_expected_info_type,
+            )
+            full_probe_fact_added = bool(full_probe_capsule.fact.text.strip())
+            full_probe_accept = bool(
+                full_probe_sufficiency >= tau
+                and full_probe_answer
+                and full_probe_shape_ok
+                and not force_typed_plan_exec
+            )
+            reject_reasons: list[str] = []
+            if not full_probe_fact_added:
+                reject_reasons.append("no_grounded_fact")
+            if not full_probe_answer:
+                reject_reasons.append("empty_answer")
+            if full_probe_sufficiency < tau:
+                reject_reasons.append("below_tau")
+            if not full_probe_shape_ok:
+                reject_reasons.append("shape_check_failed")
+            if force_typed_plan_exec:
+                reject_reasons.append("forced_typed_exec")
+            step_trace.append(
+                StepTrace(
+                    step=len(step_trace),
+                    action="assess",
+                    tokens=full_probe_assess_tokens,
+                    slot_name=full_probe_slot_name or None,
+                    justification_confidence=full_probe_sufficiency,
+                    metadata={
+                        "sufficiency_probe": True,
+                        "probe_strategy": "full_question_probe",
+                        "probe_slot_name": full_probe_slot_name,
+                        "cached_probe_docs": True,
+                        "triggered": True,
+                        "sufficiency": full_probe_sufficiency,
+                        "shape_ok": full_probe_shape_ok,
+                        "fact_added": full_probe_fact_added,
+                        "accepted": full_probe_accept,
+                        "reject_reasons": reject_reasons,
+                        "tau": tau,
+                        "reason": full_probe_assess["reason"],
+                    },
+                )
+            )
+            if full_probe_accept:
+                accepted_fact_added = self._add_fact(
+                    memory,
+                    full_probe_capsule,
+                    step=len(step_trace),
+                    slot_name=full_probe_slot_name,
+                )
+                if accepted_fact_added:
+                    self._update_slot_resolution(
+                        slot_state,
+                        full_probe_slot_name,
+                        full_probe_capsule,
+                    )
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="answer",
+                        tokens=0,
+                        cited_fact_ids=[1] if accepted_fact_added else [],
+                        justification_confidence=full_probe_sufficiency,
+                        metadata={
+                            "sufficiency_probe": True,
+                            "route": "answer_from_full_probe",
+                        },
+                    )
+                )
+                return self._build_sufficiency_result(
+                    question_id=question_id,
+                    question=question,
+                    answer=full_probe_answer,
+                    step_trace=step_trace,
+                    memory=memory,
+                    subagent_calls=subagent_calls,
+                    total_tokens=total_tokens,
+                    orchestrator_tokens=orchestrator_tokens,
+                    subagent_tokens=subagent_tokens,
+                    retrieved_doc_ids=retrieved_doc_ids,
+                    retrieved_docs_total=retrieved_docs_total,
+                    route_label="answer_from_full_probe",
+                    sufficiency=full_probe_sufficiency,
+                    sufficiency_components={
+                        "s_conf": float(full_probe_capsule.fact.confidence or 0.0),
+                        "answer_align": full_probe_answer_align,
+                        "s_target": full_probe_target,
+                        "source": "cached_full_question_probe",
+                    },
+                    route_target_slot=route_target_slot,
+                    slot_state=self._slot_snapshot(slot_state),
+                    required_hops=required_hops,
+                    probe_strategy="full_question_probe",
+                    probe_slot_name=full_probe_slot_name,
+                    planned_hop_count=planned_hop_count,
+                    slot_sufficiency_score=slot_sufficiency_score,
+                    answer_sufficiency_score=full_probe_sufficiency,
+                    resolved_slots_after_probe=self._resolved_slot_names(slot_state),
+                    extra_extras={
+                        "cached_full_probe_triggered": 1,
+                        "cached_full_probe_accepted": 1,
+                        "cached_full_probe_reject_reasons": [],
+                    },
+                )
+
+        # On single-slot routes, the split gate can reject a grounded probe
+        # answer because the answer-sufficiency leg is stricter than the slot
+        # sufficiency leg. Promote these cases directly instead of sending
+        # them into the expensive generic recurse lane.
+        should_answer_single_slot_from_probe = bool(
+            self.sufficiency_typed_plan_exec_on_hard
+            and self.sufficiency_split_assessment
+            and planned_hop_count <= 1
+            and probe_fact_added
+            and probe_slot_value.strip()
+            and slot_sufficiency_score >= tau
+        )
+        if should_answer_single_slot_from_probe:
+            answer = probe_slot_value.strip() or probe_answer.strip()
+            step_trace.append(
+                StepTrace(
+                    step=2,
+                    action="answer",
+                    tokens=probe_answer_tokens,
+                    cited_fact_ids=probe_cited_fact_ids,
+                    justification_confidence=slot_sufficiency_score,
+                    metadata={
+                        "sufficiency_probe": True,
+                        "route": "answer_from_probe_single_slot",
+                    },
+                )
+            )
+            return self._build_sufficiency_result(
+                question_id=question_id,
+                question=question,
+                answer=answer,
+                step_trace=step_trace,
+                memory=memory,
+                subagent_calls=subagent_calls,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                route_label="answer_from_probe_single_slot",
+                sufficiency=slot_sufficiency_score,
                 sufficiency_components=sufficiency_components,
                 route_target_slot=route_target_slot,
                 slot_state=self._slot_snapshot(slot_state),
@@ -1452,6 +3986,37 @@ class AdaptiveRecursivePipeline:
                 strategy=self.fact_memory_strategy,
             )
             slot_state = self._initialise_slot_state(route, target_profile)
+        if (
+            self.sufficiency_typed_plan_exec_on_hard
+            and self.sufficiency_split_assessment
+            and planned_hop_count > 1
+            and self._pending_slots(slot_state)
+        ):
+            return await self._run_sufficiency_typed_plan_exec(
+                question=question,
+                question_id=question_id,
+                route=route,
+                memory=memory,
+                step_trace=step_trace,
+                target_profile=target_profile,
+                total_tokens=total_tokens,
+                orchestrator_tokens=orchestrator_tokens,
+                subagent_tokens=subagent_tokens,
+                subagent_calls=subagent_calls,
+                retrieved_doc_ids=retrieved_doc_ids,
+                retrieved_docs_total=retrieved_docs_total,
+                slot_state=self._slot_snapshot(slot_state),
+                required_hops=required_hops,
+                planned_hop_count=planned_hop_count,
+                sufficiency=sufficiency,
+                sufficiency_components=sufficiency_components,
+                route_target_slot=route_target_slot,
+                probe_strategy=probe_spec["strategy"],
+                probe_slot_name=probe_spec["slot_name"],
+                slot_sufficiency_score=slot_sufficiency_score,
+                answer_sufficiency_score=answer_sufficiency_score,
+                resolved_slots_after_probe=resolved_slots_after_probe,
+            )
         elif (
             self.sufficiency_typed_one_shot_followup
             and self.sufficiency_split_assessment
@@ -1484,6 +4049,7 @@ class AdaptiveRecursivePipeline:
                         f"Resolve slot '{followup_slot_name}' from the grounded facts already found. "
                         "Use one focused typed follow-up before broader recurse."
                     ),
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
                 )
                 total_tokens += followup_decide_tokens
                 orchestrator_tokens += followup_decide_tokens
@@ -1515,6 +4081,7 @@ class AdaptiveRecursivePipeline:
                 max_read_override=(
                     self.sufficiency_followup_max_read or None
                 ),
+                remaining_total_tokens=self._remaining_budget(total_tokens),
             )
             total_tokens += followup_tokens
             subagent_tokens += followup_tokens
@@ -1557,6 +4124,7 @@ class AdaptiveRecursivePipeline:
                         target_profile=target_profile,
                         pending_slots=[],
                         trace=step_trace,
+                        remaining_total_tokens=self._remaining_budget(total_tokens),
                     )
                 )
                 followup_answer_obj = self._apply_answer_object_fallback(
@@ -1607,31 +4175,65 @@ class AdaptiveRecursivePipeline:
                         answer_sufficiency_score=answer_sufficiency_score,
                         resolved_slots_after_probe=resolved_slots_after_probe,
                     )
-        return await self._sufficiency_recurse(
-            question=question,
+        fallback_answer_obj, fallback_answer_tokens = (
+            await self.orchestrator.generate_answer_object_with_usage(
+                question=question,
+                facts=memory.get_all(),
+                target_profile=target_profile,
+                pending_slots=self._pending_slots(slot_state),
+                trace=step_trace,
+                remaining_total_tokens=self._remaining_budget(total_tokens),
+            )
+        )
+        fallback_answer_obj = self._apply_answer_object_fallback(
+            fallback_answer_obj,
+            memory.get_all(),
+            "",
+        )
+        total_tokens += fallback_answer_tokens
+        orchestrator_tokens += fallback_answer_tokens
+        step_trace.append(
+            StepTrace(
+                step=len(step_trace),
+                action="answer",
+                tokens=fallback_answer_tokens,
+                cited_fact_ids=fallback_answer_obj["cited_fact_ids"],
+                justification_confidence=fallback_answer_obj["justification_confidence"],
+                metadata={"route": "answer_after_probe_fallback"},
+            )
+        )
+        return self._build_sufficiency_result(
             question_id=question_id,
-            memory=memory,
+            question=question,
+            answer=fallback_answer_obj["answer"],
             step_trace=step_trace,
-            target_profile=target_profile,
+            memory=memory,
+            subagent_calls=subagent_calls,
             total_tokens=total_tokens,
             orchestrator_tokens=orchestrator_tokens,
             subagent_tokens=subagent_tokens,
-            subagent_calls=subagent_calls,
             retrieved_doc_ids=retrieved_doc_ids,
             retrieved_docs_total=retrieved_docs_total,
-            recurse_steps=recurse_steps,
-            sufficiency=sufficiency,
-            route_label="recurse_after_probe",
-            slot_state=self._slot_snapshot(slot_state),
-            required_hops=required_hops,
+            route_label="answer_after_probe_fallback",
+            sufficiency=answer_sufficiency_score,
             sufficiency_components=sufficiency_components,
             route_target_slot=route_target_slot,
+            slot_state=self._slot_snapshot(slot_state),
+            required_hops=required_hops,
+            recurse_steps_used=0,
             probe_strategy=probe_spec["strategy"],
             probe_slot_name=probe_spec["slot_name"],
             planned_hop_count=planned_hop_count,
             slot_sufficiency_score=slot_sufficiency_score,
             answer_sufficiency_score=answer_sufficiency_score,
             resolved_slots_after_probe=resolved_slots_after_probe,
+            extra_extras={
+                "cached_full_probe_triggered": 1 if should_run_cached_full_probe else 0,
+                "cached_full_probe_accepted": 0,
+                "cached_full_probe_reject_reasons": (
+                    reject_reasons if should_run_cached_full_probe else ["not_triggered"]
+                ),
+            },
         )
 
     async def _sufficiency_recurse(
@@ -1663,6 +4265,7 @@ class AdaptiveRecursivePipeline:
         resolved_slots_after_probe: list[str] | None = None,
         respect_slot_state: bool = False,
         controller: str = "sufficiency",
+        slot_guided_recurse: bool = False,
         extra_extras: dict[str, Any] | None = None,
     ) -> PipelineResult:
         """Recursive lane for the sufficiency controller.
@@ -1700,7 +4303,7 @@ class AdaptiveRecursivePipeline:
                 if respect_slot_state or self.sufficiency_split_assessment
                 else required_hops or []
             )
-            if self.sufficiency_slot_guided_recurse and current_slot_state:
+            if (slot_guided_recurse or self.sufficiency_slot_guided_recurse) and current_slot_state:
                 if not pending_slots:
                     step_trace.append(
                         StepTrace(
@@ -1739,6 +4342,7 @@ class AdaptiveRecursivePipeline:
                     step=sub_step,
                     target_profile=target_profile,
                     pending_slots=pending_slots,
+                    remaining_total_tokens=self._remaining_budget(total_tokens),
                 )
                 total_tokens += decide_tokens
                 orchestrator_tokens += decide_tokens
@@ -1798,6 +4402,7 @@ class AdaptiveRecursivePipeline:
                 max_read_override=(
                     self.sufficiency_recurse_max_read or None
                 ),
+                remaining_total_tokens=self._remaining_budget(total_tokens),
             )
             total_tokens += investigate_tokens
             subagent_tokens += investigate_tokens
@@ -1824,7 +4429,8 @@ class AdaptiveRecursivePipeline:
                         "sufficiency_recurse": True,
                         "goal": goal,
                         "retrieval_query": retrieval_query or sub_question,
-                        "slot_guided": self.sufficiency_slot_guided_recurse,
+                        "slot_guided": slot_guided_recurse
+                        or self.sufficiency_slot_guided_recurse,
                     },
                 )
             )
@@ -1844,6 +4450,7 @@ class AdaptiveRecursivePipeline:
             target_profile=target_profile,
             pending_slots=final_pending_slots,
             trace=step_trace,
+            remaining_total_tokens=self._remaining_budget(total_tokens),
         )
         answer_obj = self._apply_answer_object_fallback(
             answer_obj,
@@ -1868,7 +4475,7 @@ class AdaptiveRecursivePipeline:
             )
         )
         final_extra_extras = dict(extra_extras or {})
-        if controller == "structure_aware":
+        if controller != "sufficiency":
             final_extra_extras["num_recovery_steps"] = steps_executed
             final_extra_extras["resolved_slots"] = self._resolved_slot_names(
                 current_slot_state
@@ -2147,6 +4754,24 @@ class AdaptiveRecursivePipeline:
             answer_rejection_count=0,
             extras=extras,
         )
+
+    def _current_usage_totals(self) -> dict[str, int]:
+        """Return the current aggregated prompt/completion usage."""
+        prompt_tokens = 0
+        completion_tokens = 0
+        for component in (self.orchestrator, self.investigator):
+            getter = getattr(component, "get_usage_totals", None)
+            if getter is None:
+                continue
+            usage = getter() or {}
+            if not isinstance(usage, dict):
+                continue
+            prompt_tokens += int(usage.get("prompt_tokens", 0) or 0)
+            completion_tokens += int(usage.get("completion_tokens", 0) or 0)
+        return {
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+        }
 
     @staticmethod
     def _load_oracle_table(path: str) -> dict[str, bool]:
@@ -3774,11 +6399,14 @@ class AdaptiveRecursivePipeline:
                         slot_name,
                         str(item.get("expected_info_type", "")).strip(),
                     ),
-                    "resolved": False,
-                    "dependency_group": dependency_group,
-                    "sub_question": str(item.get("sub_question", "")).strip(),
-                    "retrieval_query": str(item.get("retrieval_query", "")).strip(),
-                    "goal": str(item.get("goal", "")).strip(),
+                "resolved": False,
+                "dependency_group": dependency_group,
+                "sub_question": str(item.get("sub_question", "")).strip(),
+                "retrieval_query": str(item.get("retrieval_query", "")).strip(),
+                "goal": str(item.get("goal", "")).strip(),
+                "attempt_count": 0,
+                "last_failure_reason": "",
+                "last_retrieved_doc_ids": [],
                 }
             )
         if not slot_state:
@@ -3797,6 +6425,9 @@ class AdaptiveRecursivePipeline:
                     "sub_question": "",
                     "retrieval_query": "",
                     "goal": "",
+                    "attempt_count": 0,
+                    "last_failure_reason": "",
+                    "last_retrieved_doc_ids": [],
                 }
             )
         return slot_state
@@ -3814,6 +6445,11 @@ class AdaptiveRecursivePipeline:
                 "sub_question": str(slot.get("sub_question", "")),
                 "retrieval_query": str(slot.get("retrieval_query", "")),
                 "goal": str(slot.get("goal", "")),
+                "attempt_count": int(slot.get("attempt_count", 0)),
+                "last_failure_reason": str(slot.get("last_failure_reason", "")),
+                "last_retrieved_doc_ids": [
+                    str(doc_id) for doc_id in slot.get("last_retrieved_doc_ids", [])
+                ],
             }
             for slot in slot_state
         ]
@@ -4004,6 +6640,18 @@ class AdaptiveRecursivePipeline:
         return ""
 
     @staticmethod
+    def _update_slot_execution_state(
+        slot_state: list[dict[str, Any]],
+        slot_name: str,
+        **updates: Any,
+    ) -> None:
+        """Persist slot-local adaptive execution state for retries/recovery."""
+        for slot in slot_state:
+            if str(slot.get("slot_name", "")).strip() == slot_name:
+                slot.update(updates)
+                return
+
+    @staticmethod
     def _resolved_fact_anchor(facts: list[Any]) -> str:
         """Return the strongest grounded short answer span for query anchoring."""
         candidates: list[tuple[float, str]] = []
@@ -4068,6 +6716,251 @@ class AdaptiveRecursivePipeline:
         if not text or not anchor:
             return text
         return re.sub(r"\[[^\]]+\]", anchor, text)
+
+    @classmethod
+    def _looks_compositional_question(cls, question: str) -> bool:
+        """Cheap guard against collapsing bridge questions into direct SAS."""
+        q = f" {str(question or '').strip().lower()} "
+        markers = (
+            " of the ",
+            " by the ",
+            " from the ",
+            " whose ",
+            " which ",
+            " that ",
+            " performer in ",
+            " actor of ",
+            " author of ",
+            " director of ",
+            " headquarters ",
+            " located in ",
+            " licensed to ",
+            " married to ",
+            " wife of ",
+            " husband of ",
+            " parent of ",
+            " capital of ",
+        )
+        if "'s " in q or "’s " in q:
+            return True
+        if sum(1 for marker in markers if marker in q) >= 1:
+            return True
+        return q.count(" of ") >= 2
+
+    @classmethod
+    def _dod_needs_fallback_decomposition(
+        cls,
+        question: str,
+        slot_state: list[dict[str, Any]],
+    ) -> bool:
+        """Fallback when route collapses a likely bridge question to one slot."""
+        return cls._looks_compositional_question(question) and len(slot_state) <= 1
+
+    @classmethod
+    def _infer_expected_answer_type(cls, question: str) -> str:
+        """Infer a coarse final answer shape for cheap gate validation."""
+        q = str(question or "").strip().lower()
+        if re.search(r"\b(when|what year|which year|date)\b", q):
+            return "date"
+        if re.search(r"\b(how many|number of|count|population|age)\b", q):
+            return "number"
+        if re.search(r"\b(who|whose|which person)\b", q):
+            return "person"
+        if re.search(r"\b(where|what city|which city|country|county|state|province)\b", q):
+            return "location"
+        return "entity"
+
+    @classmethod
+    def _gate_checks(
+        cls,
+        answer_obj: dict[str, Any],
+        facts: list[Any],
+        *,
+        expected_info_type: str = "",
+        threshold: float = 0.85,
+        relaxed_grounding: bool = False,
+    ) -> dict[str, bool]:
+        """Return deterministic DoD gate checks for a candidate answer."""
+        answer = str(answer_obj.get("answer", "")).strip()
+        cited_fact_ids = cls._normalise_cited_fact_ids(answer_obj.get("cited_fact_ids", []))
+        try:
+            confidence = float(answer_obj.get("justification_confidence", 0.0) or 0.0)
+        except (TypeError, ValueError):
+            confidence = 0.0
+        cited_facts = [facts[idx - 1] for idx in cited_fact_ids if 0 < idx <= len(facts)]
+        checks = {
+            "non_empty_answer": bool(answer),
+            "cited_facts": bool(cited_facts),
+            "cited_support": any(getattr(fact, "support_ids", []) for fact in cited_facts),
+            "grounded_answer": cls._answer_grounded_in_facts(answer, facts, relaxed=relaxed_grounding),
+            "confidence": confidence >= float(threshold),
+            "not_meta_answer": bool(answer) and not cls._looks_meta_answer_text(answer),
+            "expected_type_shape": cls._answer_matches_expected_info_type(answer, expected_info_type),
+        }
+        return checks
+
+    @classmethod
+    def _is_gate_safe(
+        cls,
+        answer_obj: dict[str, Any],
+        facts: list[Any],
+        *,
+        expected_info_type: str = "",
+        threshold: float = 0.85,
+        relaxed_grounding: bool = False,
+    ) -> bool:
+        """Return true only when all cheap deterministic answer-safety signals pass."""
+        checks = cls._gate_checks(
+            answer_obj,
+            facts,
+            expected_info_type=expected_info_type,
+            threshold=threshold,
+            relaxed_grounding=relaxed_grounding,
+        )
+        return all(checks.values())
+
+    @staticmethod
+    def _normalise_cited_fact_ids(raw: Any) -> list[int]:
+        """Coerce model-provided fact ids into positive integers."""
+        if not isinstance(raw, list):
+            return []
+        ids: list[int] = []
+        for item in raw:
+            try:
+                value = int(item)
+            except (TypeError, ValueError):
+                continue
+            if value > 0:
+                ids.append(value)
+        return ids
+
+    @classmethod
+    def _answer_grounded_in_facts(
+        cls,
+        answer: str,
+        facts: list[Any],
+        *,
+        relaxed: bool = False,
+    ) -> bool:
+        """Cheap substring/lexical grounding check against accumulated facts."""
+        cleaned = str(answer or "").strip()
+        if not cleaned or cls._looks_meta_answer_text(cleaned):
+            return False
+        answer_norm = cls._normalise_grounding_text(cleaned)
+        if not answer_norm:
+            return False
+        answer_tokens = cls._grounding_tokens(cleaned)
+        for fact in facts:
+            fact_pieces = [
+                str(getattr(fact, "text", "")),
+                str(getattr(fact, "answer_span", "")),
+            ]
+            fact_text = " ".join(piece for piece in fact_pieces if piece).strip()
+            fact_norm = cls._normalise_grounding_text(fact_text)
+            if not fact_norm:
+                continue
+            if answer_norm in fact_norm or fact_norm in answer_norm:
+                return True
+            fact_tokens = set(cls._grounding_tokens(fact_text))
+            if not answer_tokens or not fact_tokens:
+                continue
+            overlap = len(set(answer_tokens) & fact_tokens) / max(len(set(answer_tokens)), 1)
+            if overlap >= (0.60 if relaxed else 0.75):
+                return True
+        return False
+
+    @staticmethod
+    def _looks_meta_answer_text(text: str) -> bool:
+        """Patch-safe meta/unknown answer detector for deterministic gates."""
+        cleaned = str(text or "").strip().lower()
+        if not cleaned:
+            return True
+        bad_markers = (
+            "cannot be answered",
+            "cannot be determined",
+            "cannot determine",
+            "i don't know",
+            "i do not know",
+            "not enough information",
+            "insufficient information",
+            "unable to find answer",
+            "unable to answer",
+            "provided facts",
+            "given facts",
+            "do not provide enough",
+            "do not contain enough",
+            "unknown",
+            "not specified",
+            "the question",
+            "the facts",
+        )
+        return any(marker in cleaned for marker in bad_markers)
+
+    @staticmethod
+    def _normalise_grounding_text(text: str) -> str:
+        """Lowercase alphanumeric text for deterministic grounding checks."""
+        return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", str(text or "").lower())).strip()
+
+    @classmethod
+    def _grounding_tokens(cls, text: str) -> list[str]:
+        """Return content-ish tokens for lexical grounding."""
+        stop = {
+            "the", "a", "an", "and", "or", "of", "in", "on", "at", "to", "for",
+            "by", "with", "from", "is", "was", "were", "are", "be", "as", "that",
+            "this", "these", "those", "answer", "question",
+        }
+        return [tok for tok in cls._normalise_grounding_text(text).split() if tok not in stop]
+
+    @staticmethod
+    def _normalise_query_text(text: str) -> str:
+        """Normalise a retrieval query for cheap degeneracy checks."""
+        return re.sub(r"\s+", " ", str(text or "").strip().lower())
+
+    @classmethod
+    def _query_similarity(cls, left: str, right: str) -> float:
+        """Return a cheap lexical similarity score in [0, 1]."""
+        left_norm = cls._normalise_query_text(left)
+        right_norm = cls._normalise_query_text(right)
+        if not left_norm or not right_norm:
+            return 0.0
+        return difflib.SequenceMatcher(None, left_norm, right_norm).ratio()
+
+    @staticmethod
+    def _answer_matches_expected_info_type(
+        answer: str,
+        expected_info_type: str,
+    ) -> bool:
+        """Cheap span-shape guard for direct full-question probe exits."""
+        cleaned = str(answer or "").strip()
+        lowered = cleaned.lower()
+        bad_markers = (
+            "cannot be answered",
+            "cannot be determined",
+            "cannot determine",
+            "not enough information",
+            "insufficient information",
+            "provided facts",
+            "given facts",
+            "do not provide enough",
+            "do not contain enough",
+            "unknown",
+            "not specified",
+            "the question",
+            "the facts",
+        )
+        if not cleaned or any(marker in lowered for marker in bad_markers):
+            return False
+
+        type_key = str(expected_info_type or "").strip().lower()
+        if not type_key or type_key in {"final_answer", "other"}:
+            return True
+        if type_key in {"year", "date", "construction_date", "award_year"}:
+            return bool(re.search(r"\d{3,4}", cleaned))
+        if type_key in {"number", "count", "population", "student_count"}:
+            return bool(re.search(r"\d", cleaned))
+        if type_key in {"person", "founder", "mother", "performer"}:
+            return bool(re.search(r"[A-Za-z]", cleaned)) and len(cleaned.split()) <= 6
+        return True
 
     @staticmethod
     def _normalise_expected_info_type(slot_name: str, raw_type: str) -> str:
@@ -4447,6 +7340,26 @@ class AdaptiveRecursivePipeline:
     def _should_force_budget_answer(self, total_tokens: int) -> bool:
         """Return whether the per-question token budget is exhausted."""
         return self.max_total_tokens > 0 and total_tokens >= self.max_total_tokens
+
+    def _remaining_budget(self, total_tokens: int) -> int | None:
+        """Return remaining per-question budget, or None if uncapped."""
+        if self.max_total_tokens <= 0:
+            return None
+        return max(self.max_total_tokens - int(total_tokens), 0)
+
+    def _budget_fallback_answer(
+        self,
+        *,
+        memory: FactMemory,
+        route: dict[str, Any] | None = None,
+    ) -> str:
+        """Return the best no-extra-LLM answer when the budget is exhausted."""
+        answer = self._best_fact_span(memory.get_all())
+        if answer:
+            return answer
+        if route:
+            return str(route.get("draft_answer", "")).strip()
+        return ""
 
     @staticmethod
     def _merge_retrieval_ids(

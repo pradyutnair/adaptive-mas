@@ -1,0 +1,124 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-24 10:58:35 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_exact3gpu_shard1.json
+2026-04-24 10:58:35 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-24 10:58:36 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 10:58:36 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__51465_53706_795904_580996, max_steps=4
+2026-04-24 10:58:38 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__284789_52835, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.45it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.53it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.03it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.42it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.99it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:02<00:00,  2.07s/it][ABatches: 100%|██████████| 1/1 [00:02<00:00,  2.07s/it]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.32s/it][ABatches: 100%|██████████| 1/1 [00:01<00:00,  1.32s/it]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.20s/it][ABatches: 100%|██████████| 1/1 [00:01<00:00,  1.20s/it]
+2026-04-24 10:59:13 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  7.49it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  7.47it/s]
+2026-04-24 10:59:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='', subagents=2, verify=0, tokens=15762
+Processing questions:   6%|▌         | 1/17 [00:39<10:34, 39.63s/q]2026-04-24 10:59:18 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__406043_831637_91775, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.93it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:03<00:00,  3.02s/it][ABatches: 100%|██████████| 1/1 [00:03<00:00,  3.02s/it]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.70s/it][ABatches: 100%|██████████| 1/1 [00:01<00:00,  1.70s/it]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.05it/s]
+2026-04-24 10:59:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='south carolina', subagents=3, verify=0, tokens=20526
+Processing questions:  12%|█▏        | 2/17 [00:52<05:58, 23.87s/q]2026-04-24 10:59:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__131829_39743_24526, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.81it/s]
+2026-04-24 10:59:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='venice', subagents=3, verify=0, tokens=21447
+Processing questions:  18%|█▊        | 3/17 [00:52<03:04, 13.18s/q]2026-04-24 10:59:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__749065_698949_157828_162309, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.91it/s]
+2026-04-24 10:59:33 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__51465_53706_795904_580996, answer='', subagents=2, verify=0, tokens=16440
+Processing questions:  24%|██▎       | 4/17 [00:54<01:52,  8.62s/q]2026-04-24 10:59:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__810884_22402, max_steps=4
+2026-04-24 10:59:34 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-24 10:59:35 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__284789_52835, answer='', subagents=2, verify=0, tokens=17243
+Processing questions:  29%|██▉       | 5/17 [00:57<01:18,  6.53s/q]2026-04-24 10:59:35 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__90327_73181_68042, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.10it/s]
+2026-04-24 10:59:39 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='fleur - de - lis', subagents=4, verify=0, tokens=26060
+Processing questions:  35%|███▌      | 6/17 [01:01<01:02,  5.67s/q]2026-04-24 10:59:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__802394_153080_159767_81096, max_steps=4
+2026-04-24 10:59:40 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='lzx', subagents=4, verify=0, tokens=27579
+Processing questions:  41%|████      | 7/17 [01:02<00:41,  4.13s/q]2026-04-24 10:59:40 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__518381_709625_84283, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.58it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.22it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.83it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.82it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.68it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 12.27it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  7.77it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  7.75it/s]
+2026-04-24 11:00:04 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__406043_831637_91775, answer='', subagents=2, verify=0, tokens=15728
+Processing questions:  47%|████▋     | 8/17 [01:25<01:31, 10.20s/q]2026-04-24 11:00:04 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__423001_503371_21711, max_steps=4
+2026-04-24 11:00:05 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='middle east', subagents=4, verify=0, tokens=29623
+Processing questions:  53%|█████▎    | 9/17 [01:26<00:59,  7.45s/q]2026-04-24 11:00:05 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop2__222979_133154_40768, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.69it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.18it/s]
+2026-04-24 11:00:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__810884_22402, answer='the university of western ontario', subagents=3, verify=0, tokens=20783
+Processing questions:  59%|█████▉    | 10/17 [01:33<00:50,  7.21s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.97it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.01it/s]
+2026-04-24 11:00:19 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__90327_73181_68042, answer='march 4, 1875', subagents=3, verify=0, tokens=19943
+Processing questions:  65%|██████▍   | 11/17 [01:41<00:43,  7.29s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  8.53it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  8.50it/s]
+2026-04-24 11:00:22 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.75it/s]

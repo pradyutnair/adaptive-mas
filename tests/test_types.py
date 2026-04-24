@@ -208,6 +208,8 @@ class TestPipelineResult:
         assert r.num_subagent_calls == 0
         assert r.num_verify_calls == 0
         assert r.total_tokens == 0
+        assert r.prompt_tokens == 0
+        assert r.completion_tokens == 0
         assert r.facts_used == []
 
     def test_to_dict_metadata(self):
@@ -358,3 +360,35 @@ class TestConfigLoading:
         assert c.get("adaptive.sufficiency_bridge_first_probe") is False
         assert c.get("adaptive.sufficiency_split_assessment") is True
         assert c.get("adaptive.sufficiency_typed_one_shot_followup") is True
+
+    def test_m1_6_hybrid_sufficiency_loads(self):
+        c = Config.from_yaml(_config_path("m1_6.hybrid_sufficiency"))
+        assert c.get("variant") == "m1_6_hybrid_sufficiency"
+        assert c.get("adaptive.sufficiency_controller") is True
+        assert c.get("adaptive.sufficiency_typed_plan_exec_on_hard") is True
+        assert c.get("adaptive.sufficiency_recurse_only_after_plan_exec_failure") is True
+        assert c.get("adaptive.sufficiency_max_recovery_steps") == 1
+
+    def test_m2_1_structure_aware_adaptive_loads(self):
+        c = Config.from_yaml(_config_path("m2_1.structure_aware_adaptive"))
+        assert c.get("variant") == "m2_1_structure_aware_adaptive"
+        assert c.get("adaptive.execution_mode_controller") is True
+        assert c.get("adaptive.enable_slot_rewrite") is True
+        assert c.get("adaptive.enable_recursive_recovery") is True
+
+    def test_m3_1a_structure_adaptive_slot_exec_loads(self):
+        c = Config.from_yaml(_config_path("m3_1a.structure_adaptive_slot_exec"))
+        assert c.get("variant") == "m3_1a_structure_adaptive_slot_exec"
+        assert c.get("adaptive.execution_mode_controller") is True
+        assert c.get("adaptive.assess_after_plan_step") is True
+        assert c.get("adaptive.enable_slot_rewrite") is False
+        assert c.get("adaptive.enable_recursive_recovery") is False
+
+    def test_m3_1_main_structure_adaptive_slot_exec_loads(self):
+        c = Config.from_yaml(_config_path("m3_1.structure_adaptive_slot_exec"))
+        assert c.get("variant") == "m3_1_structure_adaptive_slot_exec"
+        assert c.get("adaptive.execution_mode_controller") is True
+        assert c.get("adaptive.assess_after_plan_step") is True
+        assert c.get("adaptive.enable_slot_rewrite") is True
+        assert c.get("adaptive.enable_recursive_recovery") is True
+        assert c.get("runner.concurrency") == 16

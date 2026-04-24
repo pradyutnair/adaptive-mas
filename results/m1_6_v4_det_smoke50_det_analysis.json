@@ -1,0 +1,248 @@
+{
+  "headline": {
+    "v4": {
+      "contain": 0.22,
+      "f1": 0.2604,
+      "em": 0.14,
+      "mean_tokens": 58144.9,
+      "max_tokens": 121085.0
+    },
+    "m1_2": {
+      "contain": 0.34,
+      "f1": 0.3672,
+      "em": 0.24,
+      "mean_tokens": 49767.8,
+      "max_tokens": 171425.0
+    },
+    "iter55": {
+      "contain": 0.28,
+      "f1": 0.3029,
+      "em": 0.22,
+      "mean_tokens": 25713.0,
+      "max_tokens": 75188.0
+    },
+    "opera": {
+      "contain": 0.26,
+      "f1": 0.2212,
+      "em": 0.16,
+      "mean_tokens": 22614.1,
+      "max_tokens": 36739.0
+    }
+  },
+  "route_counts": {
+    "answer_from_probe": 5,
+    "recurse_after_typed_plan_exec": 10,
+    "answer_after_typed_plan_exec": 24,
+    "answer_from_probe_single_slot": 2,
+    "recurse_after_probe": 9
+  },
+  "family_counts": {
+    "bridge_probe": 7,
+    "cached_full_probe": 0,
+    "typed_exec": 24,
+    "recurse_after_typed": 10,
+    "recurse_after_probe": 9
+  },
+  "bucket_metrics": {
+    "bridge_probe": {
+      "n": 7,
+      "contain": 0.4286,
+      "mean_tokens": 17261.1,
+      "routes": {
+        "answer_from_probe": 5,
+        "answer_from_probe_single_slot": 2
+      }
+    },
+    "recurse_after_typed": {
+      "n": 10,
+      "contain": 0.1,
+      "mean_tokens": 73700.2,
+      "routes": {
+        "recurse_after_typed_plan_exec": 10
+      }
+    },
+    "typed_exec": {
+      "n": 24,
+      "contain": 0.25,
+      "mean_tokens": 64978.8,
+      "routes": {
+        "answer_after_typed_plan_exec": 24
+      }
+    },
+    "recurse_after_probe": {
+      "n": 9,
+      "contain": 0.1111,
+      "mean_tokens": 54436.2,
+      "routes": {
+        "recurse_after_probe": 9
+      }
+    }
+  },
+  "flips_vs_v3": [
+    {
+      "id": "musique_2hop__547045_131879",
+      "v3": 0,
+      "v4": 1,
+      "v4_bucket": "bridge_probe",
+      "v4_route": "answer_from_probe",
+      "v3_answer": "",
+      "v4_answer": "river great ouse"
+    },
+    {
+      "id": "musique_2hop__132469_533882",
+      "v3": 0,
+      "v4": 1,
+      "v4_bucket": "typed_exec",
+      "v4_route": "answer_after_typed_plan_exec",
+      "v3_answer": "",
+      "v4_answer": "martin marietta corporation"
+    },
+    {
+      "id": "musique_2hop__76402_653666",
+      "v3": 0,
+      "v4": 1,
+      "v4_bucket": "typed_exec",
+      "v4_route": "answer_after_typed_plan_exec",
+      "v3_answer": "Joseph Smith",
+      "v4_answer": "Lucy Mack Smith"
+    },
+    {
+      "id": "musique_3hop1__406043_831637_91775",
+      "v3": 1,
+      "v4": 0,
+      "v4_bucket": "recurse_after_probe",
+      "v4_route": "recurse_after_probe",
+      "v3_answer": "sea, air, and land",
+      "v4_answer": "seals' main functions are conducting small - unit maritime military operations that originate from, and return to, a river, ocean, swamp, delta, or coastline."
+    },
+    {
+      "id": "musique_2hop__781079_9237",
+      "v3": 1,
+      "v4": 0,
+      "v4_bucket": "recurse_after_typed",
+      "v4_route": "recurse_after_typed_plan_exec",
+      "v3_answer": "September 2012",
+      "v4_answer": "majuro"
+    },
+    {
+      "id": "musique_4hop1__708184_153080_159767_81096",
+      "v3": 1,
+      "v4": 0,
+      "v4_bucket": "typed_exec",
+      "v4_route": "answer_after_typed_plan_exec",
+      "v3_answer": "Mario Andretti",
+      "v4_answer": "american jazz musician charles mingus"
+    },
+    {
+      "id": "musique_2hop__119423_779396",
+      "v3": 0,
+      "v4": 1,
+      "v4_bucket": "typed_exec",
+      "v4_route": "answer_after_typed_plan_exec",
+      "v3_answer": "james watt",
+      "v4_answer": "the university of glasgow"
+    },
+    {
+      "id": "musique_2hop__503085_110222",
+      "v3": 1,
+      "v4": 0,
+      "v4_bucket": "bridge_probe",
+      "v4_route": "answer_from_probe",
+      "v3_answer": "10 june 1819",
+      "v4_answer": "1819"
+    },
+    {
+      "id": "musique_2hop__77518_548781",
+      "v3": 0,
+      "v4": 1,
+      "v4_bucket": "recurse_after_typed",
+      "v4_route": "recurse_after_typed_plan_exec",
+      "v3_answer": "calvin coolidge",
+      "v4_answer": "Plymouth Notch, Vermont"
+    }
+  ],
+  "recovery_audit": [
+    {
+      "id": "musique_2hop__547045_131879",
+      "answer": "river great ouse",
+      "contain": 1,
+      "route": "answer_from_probe",
+      "bucket": "bridge_probe",
+      "tokens": 17636.0
+    },
+    {
+      "id": "musique_3hop1__786067_228453_86925",
+      "answer": "produced by the sazerac company",
+      "contain": 0,
+      "route": "recurse_after_typed_plan_exec",
+      "bucket": "recurse_after_typed",
+      "tokens": 99314.0
+    },
+    {
+      "id": "musique_2hop__76402_653666",
+      "answer": "Lucy Mack Smith",
+      "contain": 1,
+      "route": "answer_after_typed_plan_exec",
+      "bucket": "typed_exec",
+      "tokens": 71566.0
+    },
+    {
+      "id": "musique_2hop__810884_22402",
+      "answer": "the university of zurich",
+      "contain": 0,
+      "route": "recurse_after_typed_plan_exec",
+      "bucket": "recurse_after_typed",
+      "tokens": 84703.0
+    },
+    {
+      "id": "musique_3hop1__423001_503371_21711",
+      "answer": "",
+      "contain": 0,
+      "route": "answer_after_typed_plan_exec",
+      "bucket": "typed_exec",
+      "tokens": 50631.0
+    }
+  ],
+  "iter2_samples": [
+    {
+      "id": "musique_3hop1__786067_228453_86925",
+      "slot": "manufacturer_headquarters_city",
+      "iter1": "Where is the headquarters of the manufacturer of McAfee's Benchmark?",
+      "iter2": "What is the headquarters city of the Sazerac Company?",
+      "similarity": 0.562
+    },
+    {
+      "id": "musique_3hop1__786067_228453_86925",
+      "slot": "saints_symbol",
+      "iter1": "What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?",
+      "iter2": "What is the symbol of the Saints in Frankfort, Kentucky?",
+      "similarity": 0.514
+    },
+    {
+      "id": "musique_4hop2__161602_426860_88460_20988",
+      "slot": "dam_origin_country",
+      "iter1": "Which country is That Dam located in?",
+      "iter2": "Which country is That Dam located in?",
+      "similarity": 1.0
+    },
+    {
+      "id": "musique_4hop2__9988_261673_70784_79935",
+      "slot": "shamal_terrain",
+      "iter1": "What terrain feature is associated with the shamal wind?",
+      "iter2": "What is the terrain feature associated with the shamal wind?",
+      "similarity": 0.914
+    },
+    {
+      "id": "musique_2hop__57638_615257",
+      "slot": "team",
+      "iter1": "What team is the person with the highest point average in NBA history on?",
+      "iter2": "Which team did Wilt Chamberlain play for?",
+      "similarity": 0.456
+    }
+  ],
+  "full_probe_hits": {
+    "count": 0,
+    "correct": 0,
+    "rows": []
+  }
+}

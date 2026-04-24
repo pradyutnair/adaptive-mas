@@ -1,0 +1,48 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-24 11:37:36 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_exact3gpu_shard1.json
+2026-04-24 11:37:36 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-24 11:37:37 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 11:37:37 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+2026-04-24 11:37:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 12.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.94it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.91it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 11.18it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.68it/s]
+2026-04-24 11:38:36 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='giovanni gabrieli', subagents=3, verify=0, tokens=21068
+Processing questions:   6%|▌         | 1/17 [00:56<15:06, 56.64s/q]2026-04-24 11:38:36 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__51465_53706_795904_580996, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.89it/s]
+2026-04-24 11:38:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='', subagents=3, verify=0, tokens=21330
+Processing questions:  12%|█▏        | 2/17 [01:04<06:56, 27.75s/q]2026-04-24 11:38:43 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__284789_52835, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.07it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.87it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.64it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.45it/s]
+2026-04-24 11:38:57 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='', subagents=3, verify=0, tokens=22174
+Processing questions:  18%|█▊        | 3/17 [01:18<04:59, 21.41s/q]2026-04-24 11:38:57 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__406043_831637_91775, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.86it/s]
+2026-04-24 11:39:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='msnbc', subagents=3, verify=0, tokens=28545
+Processing questions:  24%|██▎       | 4/17 [01:32<04:02, 18.66s/q]2026-04-24 11:39:12 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__131829_39743_24526, max_steps=4

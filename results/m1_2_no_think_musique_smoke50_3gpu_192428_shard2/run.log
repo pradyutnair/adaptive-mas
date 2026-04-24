@@ -1,0 +1,895 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-23 19:24:35 [INFO] __main__: Loaded 16 questions from data/musique/questions_smoke50_seed42_3gpu_shard2.json
+2026-04-23 19:24:35 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-23 19:24:36 [INFO] sentence_transformers.base.model: No device provided, using cuda:0
+2026-04-23 19:24:36 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/16 [00:00<?, ?q/s]2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__810884_22402, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__491195_265959, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__472486_97805, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__90327_73181_68042, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__622497_160088_85460, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33677, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__802394_153080_159767_81096, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__123145_66723, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop3__373573_132409_146285_35031, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__518381_709625_84283, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__77518_548781, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__80546_75184, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__423001_503371_21711, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__567956_39078_8987_8974, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__140345_2053_5289, max_steps=4
+2026-04-23 19:24:39 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop2__222979_133154_40768, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:50 [ERROR] __main__: Failed on question musique_4hop2__567956_39078_8987_8974: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:   6%|▋         | 1/16 [00:11<02:53, 11.57s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:50 [ERROR] __main__: Failed on question musique_2hop__123145_66723: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  12%|█▎        | 2/16 [00:11<01:08,  4.86s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:50 [ERROR] __main__: Failed on question musique_2hop__77518_548781: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  19%|█▉        | 3/16 [00:11<00:35,  2.70s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:51 [ERROR] __main__: Failed on question musique_2hop__810884_22402: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  25%|██▌       | 4/16 [00:12<00:20,  1.72s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:51 [ERROR] __main__: Failed on question musique_2hop__491195_265959: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  31%|███▏      | 5/16 [00:12<00:13,  1.21s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:51 [ERROR] __main__: Failed on question musique_3hop1__423001_503371_21711: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  38%|███▊      | 6/16 [00:12<00:09,  1.07q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:52 [ERROR] __main__: Failed on question musique_4hop1__802394_153080_159767_81096: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  44%|████▍     | 7/16 [00:13<00:06,  1.38q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:52 [ERROR] __main__: Failed on question musique_2hop__80546_75184: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  50%|█████     | 8/16 [00:13<00:04,  1.84q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:52 [ERROR] __main__: Failed on question musique_4hop3__373573_132409_146285_35031: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  56%|█████▋    | 9/16 [00:13<00:03,  2.26q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:52 [ERROR] __main__: Failed on question musique_2hop__472486_97805: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  62%|██████▎   | 10/16 [00:13<00:02,  2.74q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:53 [ERROR] __main__: Failed on question musique_3hop1__90327_73181_68042: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  69%|██████▉   | 11/16 [00:14<00:02,  1.96q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:53 [ERROR] __main__: Failed on question musique_3hop1__622497_160088_85460: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  75%|███████▌  | 12/16 [00:14<00:01,  2.47q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:55 [ERROR] __main__: Failed on question musique_3hop1__140345_2053_5289: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  81%|████████▏ | 13/16 [00:15<00:02,  1.45q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:55 [ERROR] __main__: Failed on question musique_3hop2__222979_133154_40768: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  88%|████████▊ | 14/16 [00:16<00:01,  1.74q/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:24:56 [ERROR] __main__: Failed on question musique_4hop1__152146_5274_458768_33677: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions:  94%|█████████▍| 15/16 [00:17<00:00,  1.20q/s]2026-04-23 19:25:11 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches:   0%|          | 0/1 [00:00<?, ?it/s]
+2026-04-23 19:25:11 [ERROR] __main__: Failed on question musique_3hop1__518381_709625_84283: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 145, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 243, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 1353, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 196, in investigate_with_usage
+    sem_result, sem_log = self.semantic_search.execute(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 115, in execute
+    query_embedding = self.embedding_model.encode(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/util/decorators.py", line 41, in wrapper
+    return func(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/sentence_transformer/model.py", line 651, in encode
+    out_features = self.forward(features, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/model.py", line 486, in forward
+    input = module(input, **module_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/sentence_transformers/base/modules/transformer.py", line 1046, in forward
+    model_output = model_method(**filtered_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 936, in forward
+    embedding_output = self.embeddings(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/models/bert/modeling_bert.py", line 179, in forward
+    inputs_embeds = self.word_embeddings(input_ids)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1775, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/module.py", line 1786, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/modules/sparse.py", line 192, in forward
+    return F.embedding(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/torch/nn/functional.py", line 2542, in embedding
+    return torch.embedding(weight, input, padding_idx, scale_grad_by_freq, sparse)
+torch.AcceleratorError: CUDA error: out of memory
+Search for `cudaErrorMemoryAllocation' in https://docs.nvidia.com/cuda/cuda-runtime-api/group__CUDART__TYPES.html for more information.
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Processing questions: 100%|██████████| 16/16 [00:32<00:00,  4.89s/q]Processing questions: 100%|██████████| 16/16 [00:32<00:00,  2.00s/q]
+
+============================================================
+Run complete: 0/16 succeeded, 16 failed
+Checkpoint had 0 previously completed
+Total in output: 16
+Elapsed: 32.0s (0.5min)
+============================================================

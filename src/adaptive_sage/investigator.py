@@ -17,7 +17,7 @@ from typing import Any, Optional
 
 from arag.core.config import Config
 from arag.core.context import AgentContext
-from arag.core.llm import LLMClient
+from arag.core.llm import LLMClient, TokenBudgetExceededError
 from arag.tools.keyword_search import KeywordSearchTool
 from arag.tools.read_chunk import ReadChunkTool
 from arag.tools.semantic_search import SemanticSearchTool
@@ -52,6 +52,8 @@ class Investigator:
     def __init__(self, config: Config, llm_client: LLMClient) -> None:
         self.config = config
         self.llm_client = llm_client
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
 
         # Read investigator-specific settings
         self.evidence_capsule_limit: int = config.get(
@@ -89,6 +91,18 @@ class Investigator:
             )
         prompt_path = Path(__file__).parent / "prompts" / prompt_name
         self._distill_template = prompt_path.read_text(encoding="utf-8")
+
+    def reset_usage_totals(self) -> None:
+        """Reset per-run prompt/completion token counters."""
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
+
+    def get_usage_totals(self) -> dict[str, int]:
+        """Return per-run prompt/completion token totals."""
+        return {
+            "prompt_tokens": self._prompt_tokens_total,
+            "completion_tokens": self._completion_tokens_total,
+        }
 
     # ------------------------------------------------------------------
     # Public API
@@ -145,6 +159,7 @@ class Investigator:
         slot_hint: str = "",
         search_top_k_override: int | None = None,
         max_read_override: int | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[EvidenceCapsule, int]:
         """Like :meth:`investigate`, but also returns token usage."""
         total_tokens = 0
@@ -204,7 +219,76 @@ class Investigator:
             chunk_result = "No relevant passages found."
             logger.warning("No chunks found for sub-question: %s", sub_question)
 
-        support_ids = ids_to_read[: self.evidence_capsule_limit]
+        return await self._distill_from_chunk_result_with_usage(
+            sub_question=sub_question,
+            goal=goal,
+            prior_facts=prior_facts,
+            slot_name=slot_name,
+            slot_hint=slot_hint,
+            chunk_result=chunk_result,
+            all_chunk_ids=all_chunk_ids,
+            semantic_result=sem_result,
+            remaining_total_tokens=remaining_total_tokens,
+            tokens_spent=total_tokens,
+        )
+
+    async def distill_from_chunk_ids_with_usage(
+        self,
+        sub_question: str,
+        goal: str,
+        prior_facts: list[Fact],
+        chunk_ids: list[str],
+        slot_name: str = "",
+        slot_hint: str = "",
+        remaining_total_tokens: int | None = None,
+    ) -> tuple[EvidenceCapsule, int]:
+        """Distil an evidence capsule from a fixed chunk-id set without new retrieval."""
+        seen: set[str] = set()
+        all_chunk_ids: list[str] = []
+        for chunk_id in chunk_ids:
+            cleaned = str(chunk_id).strip()
+            if cleaned and cleaned not in seen:
+                seen.add(cleaned)
+                all_chunk_ids.append(cleaned)
+
+        ctx = AgentContext()
+        if all_chunk_ids:
+            chunk_result, _ = self.read_chunk.execute(ctx, chunk_ids=all_chunk_ids)
+        else:
+            chunk_result = "No relevant passages found."
+            logger.warning("No cached chunks provided for sub-question: %s", sub_question)
+
+        return await self._distill_from_chunk_result_with_usage(
+            sub_question=sub_question,
+            goal=goal,
+            prior_facts=prior_facts,
+            slot_name=slot_name,
+            slot_hint=slot_hint,
+            chunk_result=chunk_result,
+            all_chunk_ids=all_chunk_ids,
+            semantic_result="",
+            remaining_total_tokens=remaining_total_tokens,
+            tokens_spent=0,
+        )
+
+    async def _distill_from_chunk_result_with_usage(
+        self,
+        *,
+        sub_question: str,
+        goal: str,
+        prior_facts: list[Fact],
+        slot_name: str,
+        slot_hint: str,
+        chunk_result: str,
+        all_chunk_ids: list[str],
+        semantic_result: str,
+        remaining_total_tokens: int | None,
+        tokens_spent: int,
+    ) -> tuple[EvidenceCapsule, int]:
+        """Distil a capsule from already selected passages."""
+        total_tokens = int(tokens_spent)
+
+        support_ids = all_chunk_ids[: self.evidence_capsule_limit]
         support_snippets = [
             self.read_chunk.chunks_dict[sid]
             for sid in support_ids
@@ -212,13 +296,14 @@ class Investigator:
         ]
 
         if self.raw_snippets:
+            has_support = bool(all_chunk_ids)
             capsule = EvidenceCapsule(
                 answer="",
                 fact=Fact(
-                    text=chunk_result if ids_to_read else "",
-                    confidence=0.5 if ids_to_read else 0.0,
+                    text=chunk_result if has_support else "",
+                    confidence=0.5 if has_support else 0.0,
                     confidence_self=0.0,
-                    confidence_retrieval=0.5 if ids_to_read else 0.0,
+                    confidence_retrieval=0.5 if has_support else 0.0,
                     slot_filled=False,
                     support_ids=support_ids,
                     source_step=0,
@@ -260,7 +345,15 @@ class Investigator:
         parsed: Optional[dict] = None
         for attempt in range(_MAX_JSON_RETRIES + 1):
             try:
-                response = await self.llm_client.async_chat(messages)
+                response = await self.llm_client.async_chat(
+                    messages,
+                    remaining_total_tokens=(
+                        None
+                        if remaining_total_tokens is None
+                        else max(int(remaining_total_tokens) - total_tokens, 0)
+                    ),
+                )
+                self._record_usage(response)
                 total_tokens += self._extract_total_tokens(response)
                 content: str = response["message"].get("content", "")
                 content = self._strip_thinking(content)
@@ -274,6 +367,8 @@ class Investigator:
                         {"role": "assistant", "content": content},
                         {"role": "user", "content": _REPAIR_PROMPT},
                     ]
+            except TokenBudgetExceededError:
+                raise
             except Exception as exc:
                 logger.warning(
                     "LLM call failed (attempt %d/%d): %s",
@@ -300,7 +395,7 @@ class Investigator:
             confidence_retrieval = self._compute_retrieval_confidence(
                 support_ids=support_ids,
                 fallback_ids=all_chunk_ids,
-                semantic_result=sem_result,
+                semantic_result=semantic_result,
             )
             confidence = (
                 0.4 * confidence_retrieval
@@ -613,3 +708,8 @@ class Investigator:
         if total_tokens is not None:
             return int(total_tokens)
         return int(response.get("input_tokens", 0)) + int(response.get("output_tokens", 0))
+
+    def _record_usage(self, response: dict[str, Any]) -> None:
+        """Accumulate prompt/completion usage from one LLM response."""
+        self._prompt_tokens_total += int(response.get("input_tokens", 0) or 0)
+        self._completion_tokens_total += int(response.get("output_tokens", 0) or 0)

@@ -21,7 +21,7 @@ from pathlib import Path
 from typing import Any, Optional
 
 from arag.core.config import Config
-from arag.core.llm import LLMClient
+from arag.core.llm import LLMClient, TokenBudgetExceededError
 
 from .types import Fact, StepTrace
 
@@ -186,6 +186,8 @@ class Orchestrator:
     def __init__(self, config: Config, llm_client: LLMClient) -> None:
         self.config = config
         self.llm_client = llm_client
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
 
         self.max_steps: int = config.get("orchestrator.max_steps", 4)
         self.max_verify_calls: int = config.get("orchestrator.max_verify_calls", 1)
@@ -214,6 +216,18 @@ class Orchestrator:
         self._probe_state_template = (
             prompts_dir / "orchestrator_probe_state.txt"
         ).read_text(encoding="utf-8")
+
+    def reset_usage_totals(self) -> None:
+        """Reset per-run prompt/completion token counters."""
+        self._prompt_tokens_total = 0
+        self._completion_tokens_total = 0
+
+    def get_usage_totals(self) -> dict[str, int]:
+        """Return per-run prompt/completion token totals."""
+        return {
+            "prompt_tokens": self._prompt_tokens_total,
+            "completion_tokens": self._completion_tokens_total,
+        }
 
     # ------------------------------------------------------------------
     # Public API
@@ -265,6 +279,7 @@ class Orchestrator:
         step: int,
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Like :meth:`decide`, but also returns token usage."""
         # Build prompt context
@@ -299,7 +314,10 @@ class Orchestrator:
         ]
 
         # Call LLM and parse JSON (with retry on parse failure)
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         # --- Post-validation ---
         action: Optional[str] = parsed.get("action")
@@ -354,6 +372,11 @@ class Orchestrator:
                 target_profile=target_profile,
                 pending_slots=pending_slots,
                 missing_reason="Retrieve the next missing fact.",
+                remaining_total_tokens=(
+                    None
+                    if remaining_total_tokens is None
+                    else max(int(remaining_total_tokens) - tokens, 0)
+                ),
             )
             return {
                 "action": action,
@@ -389,7 +412,12 @@ class Orchestrator:
         result, _ = await self.verify_claim_with_usage(claim, evidence)
         return result
 
-    async def verify_claim_with_usage(self, claim: str, evidence: str) -> tuple[dict[str, Any], int]:
+    async def verify_claim_with_usage(
+        self,
+        claim: str,
+        evidence: str,
+        remaining_total_tokens: int | None = None,
+    ) -> tuple[dict[str, Any], int]:
         """Like :meth:`verify_claim`, but also returns token usage."""
         user_content = self._verify_template.format(
             claim=claim,
@@ -407,7 +435,10 @@ class Orchestrator:
             {"role": "user", "content": user_content},
         ]
 
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         decision = parsed.get("decision", "").strip().lower()
         reason = parsed.get("reason", "").strip()
@@ -436,6 +467,7 @@ class Orchestrator:
         self,
         question: str,
         target_profile: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Like :meth:`route`, but also returns token usage."""
         user_content = self._route_template.format(
@@ -455,6 +487,7 @@ class Orchestrator:
         parsed, tokens = await self._call_and_parse_with_usage(
             messages,
             temperature=self.route_temperature,
+            remaining_total_tokens=remaining_total_tokens,
         )
         action = str(parsed.get("action", "")).strip().lower()
         if action == "direct_answer":
@@ -553,6 +586,7 @@ class Orchestrator:
         pending_slots: list[dict[str, Any]] | None = None,
         resolved_slots: list[str] | None = None,
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Score both slot resolution and final-answer sufficiency after a probe."""
         facts_text = self._format_facts(facts)
@@ -583,7 +617,10 @@ class Orchestrator:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
 
         def _score(key: str, fallback: float = 0.0) -> float:
             value = parsed.get(key, fallback)
@@ -612,6 +649,7 @@ class Orchestrator:
         proposed_answer: str,
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Return a sufficiency probability for the current evidence state.
 
@@ -638,7 +676,10 @@ class Orchestrator:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sufficient = parsed.get("sufficient", parsed.get("confidence", 0.0))
         try:
             sufficient = float(sufficient)
@@ -657,6 +698,7 @@ class Orchestrator:
         proposed_answer: str,
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Backward-compatible probe-gate wrapper used by legacy paths.
 
@@ -669,6 +711,7 @@ class Orchestrator:
             proposed_answer=proposed_answer,
             target_profile=target_profile,
             trace=trace,
+            remaining_total_tokens=remaining_total_tokens,
         )
         sufficient = float(result["sufficient"])
         if sufficient >= 0.7 and proposed_answer.strip():
@@ -715,6 +758,7 @@ class Orchestrator:
         target_profile: str = "",
         trace: list[StepTrace] | None = None,
         route_draft_answer: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[str, int]:
         """Like :meth:`generate_answer`, but also returns token usage."""
         facts_text = self._format_facts(facts)
@@ -742,7 +786,9 @@ class Orchestrator:
         response = await self.llm_client.async_chat(
             messages,
             max_tokens=96,
+            remaining_total_tokens=remaining_total_tokens,
         )
+        self._record_usage(response)
         content: str = response["message"].get("content", "")
         content = self._strip_thinking(content)
 
@@ -760,6 +806,7 @@ class Orchestrator:
         pending_slots: list[dict[str, str]] | None = None,
         trace: list[StepTrace] | None = None,
         route_draft_answer: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Generate a structured final answer with citations and confidence."""
         facts_text = self._format_facts(facts)
@@ -798,7 +845,10 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         cited_fact_ids = parsed.get("cited_fact_ids", [])
         if not isinstance(cited_fact_ids, list):
             cited_fact_ids = []
@@ -828,6 +878,7 @@ Rules for `answer`:
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
         missing_reason: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Force a spawn proposal even when normal decide would answer/verify."""
         facts_text = self._format_facts(facts)
@@ -851,7 +902,10 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sub_question = str(parsed.get("sub_question", "")).strip()
         retrieval_query = str(parsed.get("retrieval_query", "")).strip()
         goal = str(parsed.get("goal", "")).strip()
@@ -871,6 +925,11 @@ Rules for `answer`:
             target_profile=target_profile,
             pending_slots=pending_slots,
             missing_reason=missing_reason or "Retrieve the most critical missing fact.",
+            remaining_total_tokens=(
+                None
+                if remaining_total_tokens is None
+                else max(int(remaining_total_tokens) - tokens, 0)
+            ),
         )
         return {
             "action": "spawn",
@@ -947,6 +1006,7 @@ Rules for `answer`:
         self,
         messages: list[dict],
         temperature: float | None = None,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Call the LLM, strip thinking, parse JSON, and accumulate token usage."""
         total_tokens = 0
@@ -956,13 +1016,21 @@ Rules for `answer`:
                 response = await self.llm_client.async_chat(
                     messages,
                     temperature=temperature,
+                    remaining_total_tokens=(
+                        None
+                        if remaining_total_tokens is None
+                        else max(int(remaining_total_tokens) - total_tokens, 0)
+                    ),
                 )
+                self._record_usage(response)
                 total_tokens += self._extract_total_tokens(response)
                 last_content = response["message"].get("content", "")
                 content = self._strip_thinking(last_content)
                 parsed = self._parse_json(content)
                 if parsed is not None:
                     return parsed, total_tokens
+            except TokenBudgetExceededError:
+                raise
             except Exception as exc:
                 logger.warning(
                     "LLM call failed (attempt %d/%d): %s",
@@ -1102,7 +1170,9 @@ Rules for `answer`:
         for idx, item in enumerate(raw_items):
             if not isinstance(item, dict):
                 continue
-            slot_name = str(item.get("slot_name", "")).strip()
+            slot_name = str(
+                item.get("slot_name", item.get("target_slot", ""))
+            ).strip()
             hint = str(item.get("hint", "")).strip()
             if not slot_name or Orchestrator._is_placeholder_slot_name(slot_name):
                 continue
@@ -1144,6 +1214,7 @@ Rules for `answer`:
         target_profile: str,
         pending_slots: list[dict[str, str]] | None,
         missing_reason: str,
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, Any], int]:
         """Repair echoed or under-specified spawn decisions."""
         extra_tokens = 0
@@ -1167,6 +1238,11 @@ Rules for `answer`:
                 target_profile=target_profile,
                 pending_slots=pending_slots,
                 missing_reason=missing_reason,
+                remaining_total_tokens=(
+                    None
+                    if remaining_total_tokens is None
+                    else max(int(remaining_total_tokens) - extra_tokens, 0)
+                ),
             )
             extra_tokens += refine_tokens
             cleaned_sub_question = refined["sub_question"]
@@ -1208,6 +1284,7 @@ Rules for `answer`:
         target_profile: str = "",
         pending_slots: list[dict[str, str]] | None = None,
         missing_reason: str = "",
+        remaining_total_tokens: int | None = None,
     ) -> tuple[dict[str, str], int]:
         """Rewrite an echoed sub-question into the innermost useful clause."""
         facts_text = self._format_facts(facts)
@@ -1232,7 +1309,10 @@ Rules for `answer`:
             },
             {"role": "user", "content": user_content},
         ]
-        parsed, tokens = await self._call_and_parse_with_usage(messages)
+        parsed, tokens = await self._call_and_parse_with_usage(
+            messages,
+            remaining_total_tokens=remaining_total_tokens,
+        )
         sub_question = str(parsed.get("sub_question", "")).strip()
         retrieval_query = str(parsed.get("retrieval_query", "")).strip()
         goal = str(parsed.get("goal", "")).strip()
@@ -1459,3 +1539,8 @@ Rules for `answer`:
         if total_tokens is not None:
             return int(total_tokens)
         return int(response.get("input_tokens", 0)) + int(response.get("output_tokens", 0))
+
+    def _record_usage(self, response: dict[str, Any]) -> None:
+        """Accumulate prompt/completion usage from one LLM response."""
+        self._prompt_tokens_total += int(response.get("input_tokens", 0) or 0)
+        self._completion_tokens_total += int(response.get("output_tokens", 0) or 0)

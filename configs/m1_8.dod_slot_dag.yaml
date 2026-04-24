@@ -1,0 +1,54 @@
+# m1.8 direct-or-decompose Slot-DAG controller.
+# Stage 1 always tries direct SAS; hard cases decompose only after deterministic gate failure.
+
+variant: m1_8_dod_slot_dag
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 2
+  search_top_k: 4
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  dod_controller: true
+  dod_require_route_for_direct: true
+  dod_route_first: true
+  dod_gate_threshold: 0.90
+  dod_hop_threshold: 0.80
+  dod_recurse_steps: 1
+  direct_probe_threshold: 0.30
+  slot_dag_max_steps: 4
+  slot_dag_max_parallel: 2
+  slot_dag_max_retries_per_slot: 0
+  slot_dag_search_top_k: 4
+  slot_dag_max_read: 4
+  slot_dag_recovery_steps: 0
+  bootstrap_max_read: 4
+
+budget:
+  max_total_tokens: 30000
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 768
+  chat_template_kwargs:
+    enable_thinking: false
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 16
+  checkpoint: true

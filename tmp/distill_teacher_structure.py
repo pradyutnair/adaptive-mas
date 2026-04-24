@@ -108,6 +108,8 @@ def main() -> None:
     rewrite_counts: list[int] = []
     depths: list[int] = []
     step_costs: list[float] = []
+    prompt_tokens: list[float] = []
+    completion_tokens: list[float] = []
     failures_by_type: dict[str, dict[str, float]] = {}
 
     for qid in ids:
@@ -129,16 +131,31 @@ def main() -> None:
             _get_first(row, ("metadata", "total_tokens"), ("total_tokens",)),
             0.0,
         )
+        prompt_value = _floatish(
+            _get_first(row, ("metadata", "prompt_tokens"), ("prompt_tokens",)),
+            0.0,
+        )
+        completion_value = _floatish(
+            _get_first(row, ("metadata", "completion_tokens"), ("completion_tokens",)),
+            0.0,
+        )
 
         slot_counts.append(slot_count)
         rewrite_counts.append(rewrite_count)
         depths.append(depth)
+        if prompt_value > 0:
+            prompt_tokens.append(prompt_value)
+        if completion_value > 0:
+            completion_tokens.append(completion_value)
         if depth > 0 and total_tokens > 0:
             step_costs.append(total_tokens / depth)
 
+    coverage = round(len(depths) / len(ids), 4) if ids else 0.0
     summary = {
         args.label: {
             "n": len(depths),
+            "coverage": coverage,
+            "status": "complete" if coverage >= 1.0 else "partial",
             "mean_slot_count": round(mean(slot_counts), 3) if slot_counts else 0.0,
             "slot_count_histogram": {
                 str(value): slot_counts.count(value) for value in sorted(set(slot_counts))
@@ -157,6 +174,10 @@ def main() -> None:
                 str(value): depths.count(value) for value in sorted(set(depths))
             },
             "mean_step_token_cost": round(mean(step_costs), 1) if step_costs else 0.0,
+            "mean_prompt_tokens": round(mean(prompt_tokens), 1) if prompt_tokens else 0.0,
+            "mean_completion_tokens": round(mean(completion_tokens), 1)
+            if completion_tokens
+            else 0.0,
             "failure_patterns": {
                 key: {
                     "n": int(value["n"]),

@@ -1,0 +1,85 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+2026-04-24 11:00:49 [INFO] __main__: Loaded 17 questions from data/musique/questions_smoke50_seed42_exact3gpu_shard1.json
+2026-04-24 11:00:49 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-24 11:00:49 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 11:00:50 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__51465_53706_795904_580996, max_steps=4
+2026-04-24 11:00:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__284789_52835, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  3.79it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  3.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.71it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  3.41it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  3.41it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.56it/s]
+2026-04-24 11:01:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='venice, northern italy', subagents=1, verify=0, tokens=10362
+Processing questions:   6%|▌         | 1/17 [00:26<06:57, 26.12s/q]2026-04-24 11:01:18 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__406043_831637_91775, max_steps=4
+2026-04-24 11:01:19 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__284789_52835, answer='norah jones and lee alexander', subagents=1, verify=0, tokens=10068
+Processing questions:  12%|█▏        | 2/17 [00:26<02:46, 11.10s/q]2026-04-24 11:01:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__131829_39743_24526, max_steps=4
+2026-04-24 11:01:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='fleur - de - lis', subagents=1, verify=0, tokens=10286
+Processing questions:  18%|█▊        | 3/17 [00:27<01:31,  6.55s/q]2026-04-24 11:01:20 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__749065_698949_157828_162309, max_steps=4
+2026-04-24 11:01:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer="talca province of chile's maule region", subagents=1, verify=0, tokens=10340
+Processing questions:  24%|██▎       | 4/17 [00:28<00:54,  4.16s/q]2026-04-24 11:01:20 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__810884_22402, max_steps=4
+2026-04-24 11:01:22 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='CAB format', subagents=1, verify=0, tokens=11277
+Processing questions:  29%|██▉       | 5/17 [00:29<00:38,  3.18s/q]2026-04-24 11:01:22 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__90327_73181_68042, max_steps=4
+2026-04-24 11:01:22 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__51465_53706_795904_580996, answer='memphis', subagents=1, verify=0, tokens=11506
+Processing questions:  35%|███▌      | 6/17 [00:30<00:25,  2.33s/q]2026-04-24 11:01:22 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__802394_153080_159767_81096, max_steps=4
+2026-04-24 11:01:23 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='1999', subagents=1, verify=0, tokens=11199
+Processing questions:  41%|████      | 7/17 [00:30<00:16,  1.64s/q]2026-04-24 11:01:23 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__518381_709625_84283, max_steps=4
+2026-04-24 11:01:23 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='from march 4, 1875, to march 4, 1877', subagents=1, verify=0, tokens=11381
+Processing questions:  47%|████▋     | 8/17 [00:31<00:11,  1.29s/q]2026-04-24 11:01:23 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__423001_503371_21711, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.84it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.08it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.77it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.37it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.23it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.80it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 12.42it/s]
+2026-04-24 11:01:45 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__406043_831637_91775, answer="the u. s. navy's ` ` sea, air, and land'' teams, commonly abbreviated as the nav", subagents=1, verify=0, tokens=10471
+Processing questions:  53%|█████▎    | 9/17 [00:53<01:02,  7.81s/q]2026-04-24 11:01:45 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop2__222979_133154_40768, max_steps=4
+2026-04-24 11:01:46 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__810884_22402, answer='', subagents=1, verify=0, tokens=10992
+Processing questions:  59%|█████▉    | 10/17 [00:53<00:38,  5.48s/q]2026-04-24 11:01:46 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__131829_39743_24526, answer='the upper 40s – lower 50s °f ( 8 – 12 °c )', subagents=1, verify=0, tokens=10627
+Processing questions:  65%|██████▍   | 11/17 [00:54<00:24,  4.02s/q]2026-04-24 11:01:47 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__423001_503371_21711, answer='', subagents=1, verify=0, tokens=10878
+Processing questions:  71%|███████   | 12/17 [00:55<00:15,  3.06s/q]2026-04-24 11:01:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__802394_153080_159767_81096, answer='', subagents=1, verify=0, tokens=11130
+Processing questions:  76%|███████▋  | 13/17 [00:56<00:10,  2.56s/q]2026-04-24 11:01:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__90327_73181_68042, answer='', subagents=1, verify=0, tokens=11087
+Processing questions:  82%|████████▏ | 14/17 [00:56<00:05,  1.83s/q]2026-04-24 11:01:50 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__749065_698949_157828_162309, answer='2008', subagents=1, verify=0, tokens=10514
+Processing questions:  88%|████████▊ | 15/17 [00:57<00:03,  1.57s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.26it/s]
+2026-04-24 11:02:01 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.65it/s]
+2026-04-24 11:02:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__518381_709625_84283, answer='sony music entertainment', subagents=1, verify=0, tokens=14718
+Processing questions:  94%|█████████▍| 16/17 [01:15<00:06,  6.51s/q]2026-04-24 11:02:09 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop2__222979_133154_40768, answer='a decade after the 1973 oil crisis', subagents=1, verify=0, tokens=11680
+Processing questions: 100%|██████████| 17/17 [01:17<00:00,  5.08s/q]Processing questions: 100%|██████████| 17/17 [01:17<00:00,  4.56s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 77.5s (1.3min)
+============================================================

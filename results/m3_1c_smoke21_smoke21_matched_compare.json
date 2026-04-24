@@ -1,0 +1,97 @@
+{
+  "sufficiency": {
+    "n": 21,
+    "contain": 0.3333,
+    "token_f1": 0.345,
+    "norm_em": 0.2857,
+    "mean_total_tokens": 54991.8,
+    "mean_prompt_tokens": 0.0,
+    "mean_completion_tokens": 0.0,
+    "mean_wallclock_seconds": 267.0,
+    "mean_subagent_calls": 2.667,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "answer_from_probe": 8,
+      "recurse_after_probe": 13
+    },
+    "step_totals": {
+      "spawn": 55,
+      "refine": 1,
+      "answer": 29,
+      "assess": 21
+    }
+  },
+  "iter55": {
+    "n": 21,
+    "contain": 0.2381,
+    "token_f1": 0.2403,
+    "norm_em": 0.1905,
+    "mean_total_tokens": 26580.9,
+    "mean_prompt_tokens": 22935.2,
+    "mean_completion_tokens": 3645.7,
+    "mean_wallclock_seconds": 160.1,
+    "mean_subagent_calls": 6.0,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 21
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  },
+  "m3_1c_smoke21": {
+    "n": 20,
+    "contain": 0.35,
+    "token_f1": 0.3721,
+    "norm_em": 0.3,
+    "mean_total_tokens": 58540.6,
+    "mean_prompt_tokens": 260611.6,
+    "mean_completion_tokens": 37616.9,
+    "mean_wallclock_seconds": 229.6,
+    "mean_subagent_calls": 3.3,
+    "mean_planned_hops": 0.0,
+    "coverage": 0.9524,
+    "status": "partial",
+    "route_counts": {
+      "answer_after_typed_plan_exec": 7,
+      "targeted_recursive_recovery": 9,
+      "answer_after_direct_probe": 4
+    },
+    "step_totals": {
+      "spawn": 55,
+      "refine": 11,
+      "answer": 20,
+      "assess": 39
+    }
+  },
+  "opera": {
+    "n": 21,
+    "contain": 0.2381,
+    "token_f1": 0.2338,
+    "norm_em": 0.1905,
+    "mean_total_tokens": 21491.4,
+    "mean_prompt_tokens": 16902.2,
+    "mean_completion_tokens": 4589.2,
+    "mean_wallclock_seconds": 120.1,
+    "mean_subagent_calls": 5.0,
+    "mean_planned_hops": 0.0,
+    "coverage": 1.0,
+    "status": "complete",
+    "route_counts": {
+      "missing": 21
+    },
+    "step_totals": {
+      "spawn": 0,
+      "refine": 0,
+      "answer": 0,
+      "assess": 0
+    }
+  }
+}
