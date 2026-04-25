@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m5.cursor_style.yaml",
+  "questions_path": "results/m7_adaptive_50q_c24/questions_shard2.json",
+  "server_url": "http://localhost:8003/v1",
+  "concurrency": 24,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "/local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+  "completed_ids": 0,
+  "attempted": 16,
+  "succeeded": 16,
+  "failed": 0,
+  "total_output_rows": 16,
+  "elapsed_seconds": 314.649,
+  "mean_wallclock_seconds": 19.666,
+  "mean_question_wallclock_seconds": 212.756,
+  "p50_question_wallclock_seconds": 217.17,
+  "p95_question_wallclock_seconds": 314.641
+}

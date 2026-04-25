@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/_runtime/topology_typed_musique50.yaml",
+  "questions_path": "data/musique/smoke50_shards/questions_smoke50_seed42_shard1.json",
+  "server_url": "http://localhost:8002/v1",
+  "concurrency": 8,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "/local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+  "completed_ids": 0,
+  "attempted": 17,
+  "succeeded": 0,
+  "failed": 17,
+  "total_output_rows": 17,
+  "elapsed_seconds": 0.006,
+  "mean_wallclock_seconds": 0.0,
+  "mean_question_wallclock_seconds": 0.0,
+  "p50_question_wallclock_seconds": 0.0,
+  "p95_question_wallclock_seconds": 0.0
+}

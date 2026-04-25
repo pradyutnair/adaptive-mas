@@ -1,0 +1,84 @@
+2026-04-24 22:21:08 [INFO] __main__: Loaded 16 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard2.json
+2026-04-24 22:21:08 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-24 22:21:08 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 22:21:08 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/16 [00:00<?, ?q/s]2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33637, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__76402_653666, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__40485_40502, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__781079_9237, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__119423_779396, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__503085_110222, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__491195_265959, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__622497_160088_85460, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__123145_66723, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__77518_548781, max_steps=3
+2026-04-24 22:21:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__567956_39078_8987_8974, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.41it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.41it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.75it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.01it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.12it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.36it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.04it/s]
+2026-04-24 22:22:34 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__567956_39078_8987_8974, answer='Paraguay', subagents=1, verify=0, tokens=10981
+Processing questions:   6%|▋         | 1/16 [01:25<21:20, 85.34s/q]2026-04-24 22:22:39 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__123145_66723, answer='James Howard Meredith', subagents=1, verify=0, tokens=11067
+Processing questions:  12%|█▎        | 2/16 [01:30<08:51, 37.94s/q]2026-04-24 22:22:48 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__781079_9237, answer='September 2012', subagents=1, verify=0, tokens=12892
+Processing questions:  19%|█▉        | 3/16 [01:39<05:24, 24.98s/q]2026-04-24 22:22:52 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__40485_40502, answer='ca. 2 million', subagents=1, verify=0, tokens=11430
+Processing questions:  25%|██▌       | 4/16 [01:43<03:21, 16.79s/q]2026-04-24 22:22:55 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__503085_110222, answer='1819', subagents=1, verify=0, tokens=12000
+Processing questions:  31%|███▏      | 5/16 [01:45<02:06, 11.49s/q]2026-04-24 22:22:57 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__76402_653666, answer='Lucy Mack Smith', subagents=1, verify=0, tokens=12027
+Processing questions:  38%|███▊      | 6/16 [01:48<01:23,  8.36s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 32.41it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.31it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 26.81it/s]
+2026-04-24 22:23:42 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='emarcy records', subagents=2, verify=0, tokens=23121
+Processing questions:  44%|████▍     | 7/16 [02:33<03:02, 20.28s/q]2026-04-24 22:23:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer='superior graphics and sound compared to the NES (8-bit), with a larger game libr', subagents=1, verify=0, tokens=15762
+Processing questions:  50%|█████     | 8/16 [02:34<01:53, 14.17s/q]2026-04-24 22:23:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='glenn l. martin company', subagents=2, verify=0, tokens=24227
+Processing questions:  56%|█████▋    | 9/16 [02:35<01:10, 10.07s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 30.48it/s]
+2026-04-24 22:23:50 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='', subagents=1, verify=0, tokens=16159
+Processing questions:  62%|██████▎   | 10/16 [02:41<00:52,  8.83s/q]2026-04-24 22:24:01 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__491195_265959, answer='', subagents=1, verify=0, tokens=16841
+Processing questions:  69%|██████▉   | 11/16 [02:52<00:47,  9.51s/q]2026-04-24 22:24:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__77518_548781, answer='Calvin Coolidge', subagents=2, verify=0, tokens=23846
+Processing questions:  75%|███████▌  | 12/16 [02:59<00:34,  8.68s/q]2026-04-24 22:24:09 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__152146_5274_458768_33637, answer='', subagents=1, verify=0, tokens=17954
+Processing questions:  81%|████████▏ | 13/16 [03:00<00:19,  6.44s/q]2026-04-24 22:24:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='', subagents=1, verify=0, tokens=19969
+Processing questions:  88%|████████▊ | 14/16 [03:11<00:15,  7.88s/q]2026-04-24 22:24:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__622497_160088_85460, answer='', subagents=1, verify=0, tokens=20807
+Processing questions:  94%|█████████▍| 15/16 [03:17<00:07,  7.39s/q]2026-04-24 22:24:41 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__119423_779396, answer='the university of glasgow', subagents=2, verify=0, tokens=28355
+Processing questions: 100%|██████████| 16/16 [03:32<00:00,  9.67s/q]Processing questions: 100%|██████████| 16/16 [03:32<00:00, 13.30s/q]
+
+============================================================
+Run complete: 16/16 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 16
+Elapsed: 212.8s (3.5min)
+============================================================

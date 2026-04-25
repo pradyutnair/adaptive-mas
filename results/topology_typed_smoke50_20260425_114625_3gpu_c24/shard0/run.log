@@ -1,0 +1,31 @@
+2026-04-25 11:46:31 [INFO] __main__: Loaded 17 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard0.json
+2026-04-25 11:46:31 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-25 11:46:31 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-25 11:46:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  5.79it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  5.78it/s]
+2026-04-25 11:46:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  7.80it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  7.78it/s]
+2026-04-25 11:46:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 12.66it/s]
+2026-04-25 11:46:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__632623_160713_77246, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  6.98it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  6.96it/s]
+2026-04-25 11:46:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__222497_309482_41132, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.22it/s]
+2026-04-25 11:46:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__847760_80026, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.39it/s]
+2026-04-25 11:46:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__343844_17130_70784_79935, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 15.12it/s]
+2026-04-25 11:46:34 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__324448_831637_91775, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  8.46it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  8.44it/s]

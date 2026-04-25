@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/_runtime/m1_2.sufficiency_probeonly.yaml",
+  "questions_path": "data/musique/smoke50_shards/questions_smoke50_seed42_shard2.json",
+  "server_url": "http://localhost:8003/v1",
+  "concurrency": 24,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "/local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd",
+  "completed_ids": 0,
+  "attempted": 16,
+  "succeeded": 16,
+  "failed": 0,
+  "total_output_rows": 16,
+  "elapsed_seconds": 153.267,
+  "mean_wallclock_seconds": 9.579,
+  "mean_question_wallclock_seconds": 116.411,
+  "p50_question_wallclock_seconds": 117.457,
+  "p95_question_wallclock_seconds": 153.26
+}

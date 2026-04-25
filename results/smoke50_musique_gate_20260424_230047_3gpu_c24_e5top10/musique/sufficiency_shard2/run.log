@@ -1,0 +1,126 @@
+2026-04-24 23:00:53 [INFO] __main__: Loaded 16 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard2.json
+2026-04-24 23:00:53 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-24 23:00:54 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 23:00:54 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/16 [00:00<?, ?q/s]2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33637, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__76402_653666, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__40485_40502, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__781079_9237, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__119423_779396, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__503085_110222, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__491195_265959, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__622497_160088_85460, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__123145_66723, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__77518_548781, max_steps=3
+2026-04-24 23:00:54 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__567956_39078_8987_8974, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.78it/s]
+2026-04-24 23:01:09 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the wife of the actor of Grace's boyfriend in Frankie and Grace?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.53it/s]
+2026-04-24 23:01:12 [WARNING] adaptive_sage.investigator: Sub-agent failed for Normalization occurred in Country A that invaded Country B because the military branch was unprepared. Country B was the only communist country to have an embassy where?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.65it/s]
+2026-04-24 23:01:16 [WARNING] adaptive_sage.investigator: Sub-agent failed for When was the painter of Femme nue couchée born?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.88it/s]
+2026-04-24 23:01:21 [WARNING] adaptive_sage.investigator: Sub-agent failed for who was the first black student admitted to the university that Stewart Patridge attended?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.47it/s]
+2026-04-24 23:01:35 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the mother of the composer of Jag tror på sommaren?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.50it/s]
+2026-04-24 23:01:37 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the mother of the founder of Mormonism?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.62it/s]
+2026-04-24 23:01:38 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the first mosque in the place where the Marshall Islands International Airport is located open?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.41it/s]
+2026-04-24 23:01:38 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the explorer reach the headquarters location of the group Study in Brown's record label is part of?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.50it/s]
+2026-04-24 23:01:39 [WARNING] adaptive_sage.investigator: Sub-agent failed for How many ethnic minorities were looked at differently in the city where the headquarters of the only group larger than Långa nätter's record label is located?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.03it/s]
+2026-04-24 23:01:39 [WARNING] adaptive_sage.investigator: Sub-agent failed for What were the Genesis's advantages over the platform in which Robodemons is played?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  5.18it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  5.18it/s]
+2026-04-24 23:01:40 [WARNING] adaptive_sage.investigator: Sub-agent failed for What team is the person with the highest point average in NBA history on?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.27it/s]
+2026-04-24 23:01:41 [WARNING] adaptive_sage.investigator: Sub-agent failed for Which company followed the company that made AAM-N-4 Oriole?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.60it/s]
+2026-04-24 23:01:41 [WARNING] adaptive_sage.investigator: Sub-agent failed for Where is the embassy of Country B located?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+2026-04-24 23:01:41 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who painted Femme nue couchée?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.53it/s]
+2026-04-24 23:01:42 [WARNING] adaptive_sage.investigator: Sub-agent failed for What was the population of the European country the Huguenots felt kinship for emigration to before this emigration?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.07it/s]
+2026-04-24 23:01:45 [WARNING] adaptive_sage.investigator: Sub-agent failed for Where was the designer of the Lap Engine educated?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.21it/s]
+2026-04-24 23:01:46 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the average salary of a working person with the same nationality as the producer of The Wild Women of Chastity Gulch?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.80it/s]
+2026-04-24 23:01:47 [WARNING] adaptive_sage.investigator: Sub-agent failed for Which university did Stewart Patridge attend?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+2026-04-24 23:01:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__567956_39078_8987_8974, answer='', subagents=2, verify=0, tokens=4649
+Processing questions:   6%|▋         | 1/16 [00:55<13:46, 55.11s/q]2026-04-24 23:01:50 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__503085_110222, answer='', subagents=2, verify=0, tokens=4360
+Processing questions:  12%|█▎        | 2/16 [00:55<05:23, 23.10s/q]2026-04-24 23:01:54 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__123145_66723, answer='', subagents=2, verify=0, tokens=4599
+Processing questions:  19%|█▉        | 3/16 [01:00<03:10, 14.62s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.55it/s]
+2026-04-24 23:02:02 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the mother of Joseph Smith Jr.?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.21it/s]
+2026-04-24 23:02:03 [WARNING] adaptive_sage.investigator: Sub-agent failed for Identify the island atoll where the Marshall Islands International Airport is situated: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.66it/s]
+2026-04-24 23:02:04 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the manufacturer of AAM-N-4 Oriole?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.78it/s]
+2026-04-24 23:02:05 [WARNING] adaptive_sage.investigator: Sub-agent failed for What platform was Robodemons released on?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.74it/s]
+2026-04-24 23:02:07 [WARNING] adaptive_sage.investigator: Sub-agent failed for Which European country did the Huguenots feel kinship for emigration to?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 27.35it/s]
+2026-04-24 23:02:08 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the record label affiliated with Study in Brown?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+2026-04-24 23:02:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer='', subagents=2, verify=0, tokens=6777
+Processing questions:  25%|██▌       | 4/16 [01:17<03:05, 15.44s/q]2026-04-24 23:02:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__76402_653666, answer='', subagents=2, verify=0, tokens=6678
+2026-04-24 23:02:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__781079_9237, answer='', subagents=2, verify=0, tokens=6840
+Processing questions:  38%|███▊      | 6/16 [01:17<01:13,  7.37s/q]2026-04-24 23:02:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='', subagents=2, verify=0, tokens=6858
+Processing questions:  44%|████▍     | 7/16 [01:19<00:54,  6.01s/q]2026-04-24 23:02:15 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__40485_40502, answer='', subagents=2, verify=0, tokens=6208
+Processing questions:  50%|█████     | 8/16 [01:21<00:37,  4.65s/q]2026-04-24 23:02:17 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='', subagents=1, verify=0, tokens=7211
+Processing questions:  56%|█████▋    | 9/16 [01:23<00:27,  3.89s/q]2026-04-24 23:02:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='', subagents=2, verify=0, tokens=7160
+Processing questions:  62%|██████▎   | 10/16 [01:24<00:18,  3.17s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.49it/s]
+2026-04-24 23:02:19 [WARNING] adaptive_sage.investigator: Sub-agent failed for Where was the president born on the fourth of July born?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 25.94it/s]
+2026-04-24 23:02:24 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the designer of the Lap Engine?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+2026-04-24 23:02:32 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__119423_779396, answer='', subagents=2, verify=0, tokens=7799
+Processing questions:  69%|██████▉   | 11/16 [01:37<00:30,  6.20s/q]2026-04-24 23:02:48 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='', subagents=1, verify=0, tokens=7883
+Processing questions:  75%|███████▌  | 12/16 [01:53<00:36,  9.03s/q]2026-04-24 23:03:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__491195_265959, answer='', subagents=1, verify=0, tokens=10829
+Processing questions:  81%|████████▏ | 13/16 [02:05<00:29,  9.92s/q]2026-04-24 23:03:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__152146_5274_458768_33637, answer='', subagents=1, verify=0, tokens=11599
+Processing questions:  88%|████████▊ | 14/16 [02:08<00:15,  7.79s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 26.55it/s]
+2026-04-24 23:03:05 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who was the president born on July 4th?: 400, message='Bad Request', url='http://localhost:8003/v1/chat/completions'
+2026-04-24 23:03:13 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__77518_548781, answer='', subagents=2, verify=0, tokens=9858
+Processing questions:  94%|█████████▍| 15/16 [02:19<00:08,  8.66s/q]2026-04-24 23:03:16 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__622497_160088_85460, answer='', subagents=1, verify=0, tokens=10802
+Processing questions: 100%|██████████| 16/16 [02:21<00:00,  6.80s/q]Processing questions: 100%|██████████| 16/16 [02:21<00:00,  8.85s/q]
+
+============================================================
+Run complete: 16/16 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 16
+Elapsed: 141.7s (2.4min)
+============================================================

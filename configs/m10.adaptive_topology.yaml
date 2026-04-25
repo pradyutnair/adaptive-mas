@@ -1,0 +1,42 @@
+variant: m10_adaptive_topology
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 3
+  search_top_k: 5
+  min_fact_confidence: 0.3
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  sufficiency_threshold: 0.70
+  bootstrap_search_top_k: 5
+  bootstrap_max_read: 5
+  route_temperature: 0.0
+
+retriever:
+  base_url: http://localhost:8003
+  topk: 5
+  timeout_seconds: 30
+  excerpt_chars_per_hit: 900
+  distill_max_tokens: 512
+
+budget:
+  max_total_tokens: 20000
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+runner:
+  concurrency: 24
+  checkpoint: true

@@ -1,0 +1,90 @@
+ M .gitignore
+ M results/.smoke50_latest
+ M scripts/run_smoke50.sh
+ M scripts/runner.py
+ M src/adaptive_sage/investigator.py
+ M src/adaptive_sage/pipeline.py
+ M src/adaptive_sage/prompts/investigator_distill.txt
+ M src/adaptive_sage/prompts/investigator_distill_strict.txt
+ M src/adaptive_sage/types.py
+?? configs/_runtime/m1_2.hard_current_adaptive.yaml
+?? configs/_runtime/m1_2.hard_probe_only.yaml
+?? configs/_runtime/m1_2.sufficiency_1000_nonemptycapsule.yaml
+?? configs/_runtime/m1_2.sufficiency_fullbudget.yaml
+?? configs/_runtime/m1_2.sufficiency_fullbudget_max3.yaml
+?? configs/_runtime/m1_2.sufficiency_fullbudget_max3_floor2.yaml
+?? configs/_runtime/m1_2.sufficiency_fullbudget_max3_nopriorsnips.yaml
+?? configs/_runtime/m1_2.sufficiency_fullbudget_max3_top4.yaml
+?? configs/_runtime/m1_2.sufficiency_min2.yaml
+?? configs/_runtime/m1_2.sufficiency_pilot_fast.yaml
+?? configs/_runtime/m1_2.sufficiency_pilot_think.yaml
+?? configs/_runtime/m1_2.sufficiency_probeonly.yaml
+?? configs/_runtime/m1_2.sufficiency_semantic_topk.yaml
+?? configs/_runtime/m1_2.sufficiency_semantic_topk_think.yaml
+?? configs/_runtime/m1_2.sufficiency_supportsnips.yaml
+?? data/hotpotqa/index
+?? data/hotpotqa/index_e5_base_v2
+?? data/musique/index
+?? data/musique/index_e5_base_v2
+?? data/musique/questions_smoke50_hard_3hop2_4hop.json
+?? data/musique/questions_smoke50_seed42_shard0.json
+?? data/musique/questions_smoke50_seed42_shard1.json
+?? data/musique/questions_smoke50_seed42_shard2.json
+?? data/musique/smoke50_shards/
+?? frozen/m1_2_20260425_102730/
+?? results/.hard_subset_latest
+?? results/.musique1000_fullbudget_max3_latest
+?? results/.musique1000_latest
+?? results/.smoke50_fullbudget_latest
+?? results/.smoke50_fullbudget_max3_floor2_latest
+?? results/.smoke50_fullbudget_max3_latest
+?? results/.smoke50_fullbudget_max3_nopriorsnips_latest
+?? results/.smoke50_fullbudget_max3_top4_latest
+?? results/.smoke50_min2_latest
+?? results/.smoke50_supportsnips_latest
+?? results/hard_subset_launch.log
+?? results/hard_subset_probe_vs_adaptive_20260425_012817/
+?? results/m1_2_final_candidate_summary.json
+?? results/m1_2_final_candidate_summary.md
+?? results/musique1000_fullbudget_max3_20260425_022037_3gpu_c24/
+?? results/musique1000_nonemptycapsule_20260425_002037_3gpu_c24/
+?? results/smoke50_20260424_210351/
+?? results/smoke50_20260424_210408/
+?? results/smoke50_20260424_210700/
+?? results/smoke50_20260424_211038/
+?? results/smoke50_20260424_211101/
+?? results/smoke50_20260424_211237/
+?? results/smoke50_20260424_211650/
+?? results/smoke50_musique_fullbudget_20260425_015738_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_20260425_020906_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_floor2_20260425_034724_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_nopriorsnips_20260425_040919_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_nopriorsnips_20260425_041720_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_nopriorsnips_20260425_042534_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_top4_20260425_021948_3gpu_c24/
+?? results/smoke50_musique_fullbudget_max3_top4_20260425_035818_3gpu_c24/
+?? results/smoke50_musique_gate_20260424_212557/
+?? results/smoke50_musique_gate_20260424_212833/
+?? results/smoke50_musique_gate_20260424_213203/
+?? results/smoke50_musique_gate_20260424_214240/
+?? results/smoke50_musique_gate_20260424_214555/
+?? results/smoke50_musique_gate_20260424_214927_3gpu/
+?? results/smoke50_musique_gate_20260424_215042_3gpu_c24/
+?? results/smoke50_musique_gate_20260424_220902_3gpu_c24_nodup_cap/
+?? results/smoke50_musique_gate_20260424_221116_3gpu_c24_budgetguard/
+?? results/smoke50_musique_gate_20260424_221827_3gpu_c24_compacttopk/
+?? results/smoke50_musique_gate_20260424_222102_3gpu_c24_bestguess/
+?? results/smoke50_musique_gate_20260424_222753_3gpu_c24_bestguess_factfallback/
+?? results/smoke50_musique_gate_20260424_223533_3gpu_c24_nonemptycapsule/
+?? results/smoke50_musique_gate_20260424_224329_3gpu_c24_parsefix/
+?? results/smoke50_musique_gate_20260424_225233_3gpu_c24_hybridfallback/
+?? results/smoke50_musique_gate_20260424_230047_3gpu_c24_e5top10/
+?? results/smoke50_musique_gate_20260424_230837_3gpu_c24_s0cap/
+?? results/smoke50_musique_gate_20260424_232404_3gpu_c24_firsthop/
+?? results/smoke50_musique_gate_20260424_234614_3gpu_c24_slotgated/
+?? results/smoke50_musique_min2_20260425_013842_3gpu_c24/
+?? results/smoke50_musique_probeonly_20260424_233854_3gpu_c24/
+?? results/smoke50_musique_s0current_20260424_233401_3gpu_c24/
+?? results/smoke50_musique_supportsnips_20260425_014824_3gpu_c24/
+?? scripts/run_hard_subset_probe_vs_adaptive.sh
+?? tmp/

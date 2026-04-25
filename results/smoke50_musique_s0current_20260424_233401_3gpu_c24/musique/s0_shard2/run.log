@@ -1,0 +1,89 @@
+2026-04-24 23:34:08 [INFO] __main__: Loaded 16 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard2.json
+2026-04-24 23:34:08 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-24 23:34:09 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 23:34:09 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/16 [00:00<?, ?q/s]2026-04-24 23:34:10 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:02<00:00,  2.49s/it][ABatches: 100%|██████████| 1/1 [00:02<00:00,  2.49s/it]
+2026-04-24 23:34:12 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.49it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.49it/s]
+2026-04-24 23:34:13 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.16it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.16it/s]
+2026-04-24 23:34:14 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.11it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.11it/s]
+2026-04-24 23:34:15 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:01<00:00,  1.55s/it][ABatches: 100%|██████████| 1/1 [00:01<00:00,  1.55s/it]
+2026-04-24 23:34:17 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33637, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.14it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.14it/s]
+2026-04-24 23:34:17 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__76402_653666, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  9.30it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  9.28it/s]
+2026-04-24 23:34:18 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__40485_40502, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  1.44it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  1.44it/s]
+2026-04-24 23:34:18 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__781079_9237, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.14it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.13it/s]
+2026-04-24 23:34:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__119423_779396, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  2.54it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  2.54it/s]
+2026-04-24 23:34:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__503085_110222, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  9.30it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  9.28it/s]
+2026-04-24 23:34:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__491195_265959, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 10.03it/s]
+2026-04-24 23:34:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__622497_160088_85460, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  9.16it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  9.14it/s]
+2026-04-24 23:34:19 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__123145_66723, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 10.02it/s]
+2026-04-24 23:34:20 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__77518_548781, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  9.40it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  9.38it/s]
+2026-04-24 23:34:20 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__567956_39078_8987_8974, max_steps=0
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 10.15it/s]
+2026-04-24 23:35:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__781079_9237, answer='September 2012', subagents=1, verify=0, tokens=7429
+Processing questions:   6%|▋         | 1/16 [00:50<12:30, 50.05s/q]2026-04-24 23:35:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__622497_160088_85460, answer='##sta county, california, united states. the zip code is 96095. the community is', subagents=1, verify=0, tokens=7848
+Processing questions:  12%|█▎        | 2/16 [00:50<04:50, 20.74s/q]2026-04-24 23:35:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__123145_66723, answer='James Howard Meredith', subagents=1, verify=0, tokens=7558
+Processing questions:  19%|█▉        | 3/16 [00:52<02:40, 12.35s/q]2026-04-24 23:35:06 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__76402_653666, answer='lucy mack smith', subagents=1, verify=0, tokens=7449
+Processing questions:  25%|██▌       | 4/16 [00:56<01:48,  9.00s/q]2026-04-24 23:35:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__567956_39078_8987_8974, answer='paraguay', subagents=1, verify=0, tokens=7642
+Processing questions:  31%|███▏      | 5/16 [00:58<01:10,  6.44s/q]2026-04-24 23:35:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer='both systems were built on 16 - bit architectures and offered improved graphics ', subagents=1, verify=0, tokens=7836
+Processing questions:  38%|███▊      | 6/16 [01:08<01:16,  7.60s/q]2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='##king dutchman ", is a dutch retired professional basketball player who spent h', subagents=1, verify=0, tokens=8979
+Processing questions:  44%|████▍     | 7/16 [01:14<01:04,  7.19s/q]2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='screen by john mcgreevey. it first aired on television in two parts on sunday an', subagents=1, verify=0, tokens=8393
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='highest proportion of millionaires per capita in the us. real estate is among th', subagents=1, verify=0, tokens=8109
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__152146_5274_458768_33637, answer='was a civil servant. the younger william curphey was educated at glasgow academy', subagents=1, verify=0, tokens=8578
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='nyle dimarco website http : / / www. msd. edu hessian barracks u. s. national re', subagents=1, verify=0, tokens=8671
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__40485_40502, answer='domestic start for a regular season in mlb history, and the first time since 196', subagents=1, verify=0, tokens=8314
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__119423_779396, answer='and related areas. he is the earle c. williams eminent scholar and former electr', subagents=1, verify=0, tokens=8176
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__503085_110222, answer='frequency, with transmitters located near empire corners in haldimand county, ab', subagents=1, verify=0, tokens=8249
+2026-04-24 23:35:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__491195_265959, answer='prince of egypt by dorothy clarke wilson, pillar of fire by j. h. ingraham, on e', subagents=1, verify=0, tokens=8313
+2026-04-24 23:35:25 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__77518_548781, answer='divorced, but april is newly pregnant. in the present, april has just given birt', subagents=1, verify=0, tokens=8521
+Processing questions: 100%|██████████| 16/16 [01:14<00:00,  1.39s/q]Processing questions: 100%|██████████| 16/16 [01:14<00:00,  4.67s/q]
+
+============================================================
+Run complete: 16/16 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 16
+Elapsed: 74.8s (1.2min)
+============================================================

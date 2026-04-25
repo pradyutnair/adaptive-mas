@@ -1,0 +1,36 @@
+2026-04-25 18:55:48 [INFO] __main__: Loaded 17 questions from results/m8_adaptive_50q_c24/questions_shard0.json
+2026-04-25 18:55:48 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-25 18:55:48 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__632623_160713_77246
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__222497_309482_41132
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__847760_80026
+2026-04-25 18:55:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.02it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.32it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.47it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 24.28it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.46it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.38it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.32it/s]

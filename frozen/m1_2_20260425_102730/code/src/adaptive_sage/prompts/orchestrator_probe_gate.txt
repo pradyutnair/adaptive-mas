@@ -1,0 +1,36 @@
+You are evaluating whether the current grounded evidence is sufficient to answer the question.
+
+Output ONLY a single JSON object:
+
+```json
+{{
+  "sufficient": <float 0.0-1.0>,
+  "reason": "<short reason>"
+}}
+```
+
+Definition of `sufficient`:
+- 1.0 means the grounded facts and proposed answer fully resolve the exact target asked by the question.
+- 0.0 means the evidence does not address the target at all, or only resolves an intermediate bridge entity.
+- Intermediate values reflect partial support, ambiguity between candidates, or missing slots.
+
+Rules:
+- Use ONLY the grounded facts and the proposed answer below. Do not use outside knowledge.
+- Score lower when the proposed answer is empty, meta, or unsupported by the cited facts.
+- Score lower when the question requires comparison, boolean, count, or temporal reasoning that the current evidence does not perform.
+- Score higher only when a fact directly states the asked target with the correct slot type.
+- Do not output any text outside the JSON object.
+
+Question: {question}
+
+Target profile:
+{target_profile}
+
+Proposed answer:
+{proposed_answer}
+
+Grounded hop chain:
+{hop_chain}
+
+Grounded facts:
+{facts}

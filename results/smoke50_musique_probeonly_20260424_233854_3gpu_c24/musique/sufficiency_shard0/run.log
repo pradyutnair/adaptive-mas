@@ -1,0 +1,81 @@
+2026-04-24 23:39:01 [INFO] __main__: Loaded 17 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard0.json
+2026-04-24 23:39:01 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-24 23:39:01 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 23:39:01 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__547045_131879, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__161602_426860_88460_20988, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__304852_758385, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__632623_160713_77246, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__222497_309482_41132, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__847760_80026, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__343844_17130_70784_79935, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__324448_831637_91775, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__71753_685934_70784_79935, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__708184_153080_159767_81096, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__48784_70131, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__608902_653666, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__472486_97805, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33677, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop3__373573_132409_146285_35031, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__80546_75184, max_steps=3
+2026-04-24 23:39:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__140345_2053_5289, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.66it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.17it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.24it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.48it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.43it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.44it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 25.16it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.49it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.10it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  9.62it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  9.60it/s]
+2026-04-24 23:40:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__547045_131879, answer='River Great Ouse', subagents=1, verify=0, tokens=10276
+Processing questions:   6%|▌         | 1/17 [01:10<18:42, 70.17s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.04it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.43it/s]
+2026-04-24 23:40:32 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__608902_653666, answer='Yvonne Bailey', subagents=1, verify=0, tokens=10908
+Processing questions:  12%|█▏        | 2/17 [01:30<10:14, 40.95s/q]2026-04-24 23:40:47 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__161602_426860_88460_20988, answer='about 3. 5 percent ) extending into southwestern coconino county. its administra', subagents=1, verify=0, tokens=12085
+Processing questions:  18%|█▊        | 3/17 [01:45<06:49, 29.22s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.14it/s]
+2026-04-24 23:41:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__222497_309482_41132, answer='music and blues in the 1960s. it is now owned by the west view water authority a', subagents=1, verify=0, tokens=12013
+Processing questions:  24%|██▎       | 4/17 [01:58<04:52, 22.46s/q]2026-04-24 23:41:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__324448_831637_91775, answer='Sea, Air, and Land', subagents=1, verify=0, tokens=13070
+Processing questions:  29%|██▉       | 5/17 [02:00<03:02, 15.20s/q]2026-04-24 23:41:03 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__304852_758385, answer='minnesota', subagents=1, verify=0, tokens=13133
+Processing questions:  35%|███▌      | 6/17 [02:01<01:53, 10.30s/q]2026-04-24 23:41:06 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__152146_5274_458768_33677, answer='highest proportion of millionaires per capita in the us. real estate is among th', subagents=1, verify=0, tokens=12260
+Processing questions:  41%|████      | 7/17 [02:04<01:20,  8.05s/q]2026-04-24 23:41:10 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__847760_80026, answer='. in the 2005 film, it is revealed that she owns a pony, two dogs, four cats, si', subagents=1, verify=0, tokens=12949
+Processing questions:  47%|████▋     | 8/17 [02:08<00:59,  6.62s/q]2026-04-24 23:41:10 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__343844_17130_70784_79935, answer='azerbaijan ; to the north by kazakhstan and russia across the caspian sea ; to t', subagents=1, verify=0, tokens=14354
+Processing questions:  53%|█████▎    | 9/17 [02:08<00:37,  4.65s/q]2026-04-24 23:41:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop3__373573_132409_146285_35031, answer='a symbol of abuses by the monarchy ; its fall was the flashpoint of the french r', subagents=1, verify=0, tokens=14433
+Processing questions:  59%|█████▉    | 10/17 [02:08<00:23,  3.37s/q]2026-04-24 23:41:13 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__48784_70131, answer='". blue slide park is the debut studio album by american rapper mac miller. it w', subagents=1, verify=0, tokens=14365
+Processing questions:  65%|██████▍   | 11/17 [02:11<00:19,  3.25s/q]2026-04-24 23:41:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__140345_2053_5289, answer='all, is drawn : pga tour on abc is the " de facto " branding used for telecasts ', subagents=1, verify=0, tokens=14460
+Processing questions:  71%|███████   | 12/17 [02:16<00:18,  3.72s/q]2026-04-24 23:41:18 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__708184_153080_159767_81096, answer='was based on universal, recognisable truths. the notion of style in the arts was', subagents=1, verify=0, tokens=14921
+2026-04-24 23:41:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__71753_685934_70784_79935, answer='in the early 1920s', subagents=1, verify=0, tokens=14317
+Processing questions:  82%|████████▏ | 14/17 [02:22<00:09,  3.24s/q]2026-04-24 23:41:40 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__80546_75184, answer='. taylor king ( born may 30, 1988 ) is an american retired professional basketba', subagents=1, verify=0, tokens=17742
+Processing questions:  88%|████████▊ | 15/17 [02:38<00:12,  6.40s/q]2026-04-24 23:41:42 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__472486_97805, answer='the rest of the war', subagents=1, verify=0, tokens=16270
+Processing questions:  94%|█████████▍| 16/17 [02:40<00:05,  5.30s/q]2026-04-24 23:41:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__632623_160713_77246, answer='Islam', subagents=1, verify=0, tokens=17502
+Processing questions: 100%|██████████| 17/17 [02:47<00:00,  5.78s/q]Processing questions: 100%|██████████| 17/17 [02:47<00:00,  9.84s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 167.3s (2.8min)
+============================================================

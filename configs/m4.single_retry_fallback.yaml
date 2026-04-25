@@ -1,0 +1,45 @@
+variant: m4_single_retry_fallback
+
+orchestrator:
+  max_steps: 3
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 4
+  search_top_k: 5
+  min_fact_confidence: 0.45
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  single_retry_controller: true
+  single_retry_fallback_decompose: true
+  delegated_max_slots: 2
+  topology_max_slot_calls: 2
+  bootstrap_search_top_k: 5
+  bootstrap_max_read: 6
+  delegated_direct_retry_top_k: 10
+  route_temperature: 0.0
+
+budget:
+  max_total_tokens: 22000
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 8192
+  chat_template_kwargs:
+    enable_thinking: true
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd
+
+runner:
+  concurrency: 24
+  checkpoint: true
+  max_questions: 50

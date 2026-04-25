@@ -1,0 +1,145 @@
+2026-04-24 23:00:55 [INFO] __main__: Loaded 17 questions from data/musique/smoke50_shards/questions_smoke50_seed42_shard1.json
+2026-04-24 23:00:55 [INFO] __main__: Checkpoint: 0 completed, 17 remaining
+2026-04-24 23:00:55 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 23:00:55 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/17 [00:00<?, ?q/s]2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__786067_228453_86925, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__9988_261673_70784_79935, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__139773_88110_21193, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__843207_755530_88011, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__75207_365216, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__38738_78276_68042, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__51465_53706_795904_580996, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__284789_52835, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__406043_831637_91775, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__131829_39743_24526, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__749065_698949_157828_162309, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__810884_22402, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__90327_73181_68042, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__802394_153080_159767_81096, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__518381_709625_84283, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__423001_503371_21711, max_steps=3
+2026-04-24 23:00:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop2__222979_133154_40768, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.16it/s]
+2026-04-24 23:01:24 [WARNING] adaptive_sage.investigator: Sub-agent failed for When was the region immediately north of the region that prevailed with the disgrace of Near East and the terrain feature on which shamal is located created?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.21it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 14.00it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.74it/s]
+2026-04-24 23:01:32 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the political party that holds the majority in the political body that passed a bill giving regulators discretion to prohibit proprietary trades, gain control of the House?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.69it/s]
+2026-04-24 23:01:32 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:01:32 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the average winter daytime temperature in the region containing Richmond, in the state where WXBX is located?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:01:32 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the majority party in the body which approves members of the Cabinet gain control of the House?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.86it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  3.27it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  3.27it/s]
+2026-04-24 23:01:33 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the maker of the Acura EL, the company that owns Scion, and Nissan, open US assembly plants?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:01:33 [WARNING] adaptive_sage.investigator: Sub-agent failed for An Indy car race was held in the capital of the state where the performer of Mingus Plays Piano was born. Who won the race?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.82it/s]
+2026-04-24 23:01:45 [WARNING] adaptive_sage.investigator: Sub-agent failed for In which province is San Clemente, from the country where Fuser and Alberto meet the indigenous couple who were traveling to look for work?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.10it/s]
+2026-04-24 23:01:45 [WARNING] adaptive_sage.investigator: Sub-agent failed for What does seal stand for in the seals of the service operating list of destroyer classes of the operator of USS Peril?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.13it/s]
+2026-04-24 23:01:47 [WARNING] adaptive_sage.investigator: Sub-agent failed for How many students attend the university that Edith Humphrey was educated?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  5.16it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  5.15it/s]
+2026-04-24 23:01:47 [WARNING] adaptive_sage.investigator: Sub-agent failed for When did the country whose co-official language was used in the show named for the place Slavko Surdonja died first attend the Olympics games as an independent team?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.67it/s]
+2026-04-24 23:01:50 [WARNING] adaptive_sage.investigator: Sub-agent failed for When was the Palau de la Generalitat constructed in the city where Martin of the region of Pedrola died?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.58it/s]
+2026-04-24 23:01:55 [WARNING] adaptive_sage.investigator: Sub-agent failed for What compression method is part of the CAB format used by one of the original partners in the TV channel that hosts Rachel Maddow's show?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:01:59 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.56it/s]
+2026-04-24 23:01:59 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who wrote Turn Me On by the performer who also did Sinkin' Soon?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 26.99it/s]
+2026-04-24 23:01:59 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the location of the WXBX radio station?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 29.28it/s]
+2026-04-24 23:02:01 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the name of the bill that gives regulators discretion to prohibit proprietary trades?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 29.38it/s]
+2026-04-24 23:02:04 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the Near East region with historical downfall?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.94it/s]
+2026-04-24 23:02:05 [WARNING] adaptive_sage.investigator: Sub-agent failed for Where is the Bridge of Sighs located in the place of death of Sonata pian'e forte's composer?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.39it/s]
+2026-04-24 23:02:05 [WARNING] adaptive_sage.investigator: Sub-agent failed for What shares a border with the city where the person who went to the state where most billionaires in America live during the gold rush works?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__131829_39743_24526, answer='', subagents=2, verify=0, tokens=6614
+Processing questions:   6%|▌         | 1/17 [01:13<19:32, 73.27s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 30.32it/s]
+2026-04-24 23:02:11 [WARNING] adaptive_sage.investigator: Sub-agent failed for Which legislative body is responsible for approving members of the Cabinet?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__38738_78276_68042, answer='', subagents=2, verify=0, tokens=6843
+Processing questions:  12%|█▏        | 2/17 [01:16<07:59, 31.96s/q]2026-04-24 23:02:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__9988_261673_70784_79935, answer='', subagents=2, verify=0, tokens=5318
+Processing questions:  18%|█▊        | 3/17 [01:19<04:21, 18.66s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.73it/s]
+2026-04-24 23:02:17 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.38it/s]
+2026-04-24 23:02:17 [WARNING] adaptive_sage.investigator: Sub-agent failed for In which city did Martin of Pedrola die?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:17 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who owns the record label of the Lovin' All Night performer?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:21 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__90327_73181_68042, answer='', subagents=2, verify=0, tokens=7029
+Processing questions:  24%|██▎       | 4/17 [01:25<03:01, 13.93s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 24.92it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.21it/s]
+2026-04-24 23:02:22 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the opening date of Honda's US assembly plant?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:22 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the acronym for seal in the service operating list of the USS Peril's destroyer class?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 28.81it/s]
+2026-04-24 23:02:23 [WARNING] adaptive_sage.investigator: Sub-agent failed for Which university did Edith Humphrey attend?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.75it/s]
+2026-04-24 23:02:24 [WARNING] adaptive_sage.investigator: Sub-agent failed for In which country do Fuser and Alberto meet the indigenous couple seeking work?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:27 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__423001_503371_21711, answer='', subagents=2, verify=0, tokens=7262
+Processing questions:  29%|██▉       | 5/17 [01:31<02:13, 11.08s/q]2026-04-24 23:02:30 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-24 23:02:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__810884_22402, answer='', subagents=2, verify=0, tokens=6647
+Processing questions:  35%|███▌      | 6/17 [01:35<01:34,  8.59s/q]2026-04-24 23:02:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop2__222979_133154_40768, answer='', subagents=2, verify=0, tokens=7480
+Processing questions:  41%|████      | 7/17 [01:36<00:59,  5.97s/q]2026-04-24 23:02:32 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__406043_831637_91775, answer='', subagents=2, verify=0, tokens=6522
+Processing questions:  47%|████▋     | 8/17 [01:36<00:37,  4.20s/q]2026-04-24 23:02:32 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__75207_365216, answer='', subagents=2, verify=0, tokens=7063
+Processing questions:  53%|█████▎    | 9/17 [01:36<00:23,  3.00s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.08it/s]
+2026-04-24 23:02:37 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the state associated with the gold rush where most billionaires in America lived?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.64it/s]
+2026-04-24 23:02:39 [WARNING] adaptive_sage.investigator: Sub-agent failed for What country is associated with Slavko Surdonja's place and has a co-official language used in a show named after that place?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.64it/s]
+2026-04-24 23:02:41 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who composed Sonata pian'e forte?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.23it/s]
+2026-04-24 23:02:47 [WARNING] adaptive_sage.investigator: Sub-agent failed for What is the birthplace of the performer of Mingus Plays Piano?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:47 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__51465_53706_795904_580996, answer='', subagents=2, verify=0, tokens=10781
+Processing questions:  59%|█████▉    | 10/17 [01:51<00:46,  6.63s/q]2026-04-24 23:02:48 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__749065_698949_157828_162309, answer='', subagents=2, verify=0, tokens=9212
+Processing questions:  65%|██████▍   | 11/17 [01:53<00:30,  5.04s/q]2026-04-24 23:02:51 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__843207_755530_88011, answer='', subagents=2, verify=0, tokens=10834
+Processing questions:  71%|███████   | 12/17 [01:55<00:21,  4.37s/q]2026-04-24 23:02:52 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__786067_228453_86925, answer='', subagents=1, verify=0, tokens=10535
+Processing questions:  76%|███████▋  | 13/17 [01:56<00:12,  3.24s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.34it/s]
+2026-04-24 23:02:55 [WARNING] adaptive_sage.investigator: Sub-agent failed for Who is the performer of the song "Lovin' All Night"?: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+2026-04-24 23:02:56 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__802394_153080_159767_81096, answer='', subagents=2, verify=0, tokens=10938
+Processing questions:  82%|████████▏ | 14/17 [02:00<00:10,  3.47s/q]2026-04-24 23:03:04 [ERROR] adaptive_sage.orchestrator: All JSON parse attempts failed — returning fallback answer action
+2026-04-24 23:03:05 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__518381_709625_84283, answer='', subagents=2, verify=0, tokens=9997
+Processing questions:  88%|████████▊ | 15/17 [02:09<00:10,  5.06s/q]2026-04-24 23:03:13 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__284789_52835, answer='', subagents=1, verify=0, tokens=12907
+Processing questions:  94%|█████████▍| 16/17 [02:17<00:06,  6.08s/q]2026-04-24 23:03:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__139773_88110_21193, answer='', subagents=1, verify=0, tokens=13345
+Processing questions: 100%|██████████| 17/17 [02:48<00:00, 13.48s/q]Processing questions: 100%|██████████| 17/17 [02:48<00:00,  9.91s/q]
+
+============================================================
+Run complete: 17/17 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 17
+Elapsed: 168.5s (2.8min)
+============================================================

@@ -1,0 +1,18 @@
+---
+description: Adaptive MAS operational constraints and evaluation requirements
+alwaysApply: true
+---
+
+# Adaptive MAS Operational Constraints
+
+- Before any CUDA/GPU work, run `module load cuda12.6/toolkit/12.6`.
+- Use the project virtualenv at `/local/yzheng/pnair/workspace/adaptive-mas/.venv`.
+- Use the E5 model snapshot at `/local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd`.
+- Always compute contain and other metrics with `scripts/eval_offline.py`; do not trust ad-hoc contain scripts.
+- Current system goal: build an EMNLP-ready adaptive topology RAG system for MuSiQue with roughly SAS efficiency and MAS performance.
+- Target `contain >= 0.40`.
+- Average tokens should ideally be about `10-15k` and must stay below `20k`.
+- Do not use ensembling, pooling, or majority voting.
+- Agents must use thinking.
+- Subagents must retrieve internally; the orchestrator must never pass retrieved passages into subagent prompts.
+- Evidence capsules may expose only answer, justification, confidence, support ids/snippets, and must not expose raw full passages.

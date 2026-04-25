@@ -1,0 +1,24 @@
+2026-04-24 21:10:44 [INFO] __main__: Loaded 50 questions from data/musique/questions_smoke50_seed42.json
+2026-04-24 21:10:44 [INFO] __main__: Checkpoint: 0 completed, 50 remaining
+2026-04-24 21:10:44 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-24 21:10:44 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 383, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 368, in main
+    asyncio.run(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 245, in _run
+    pipeline = AdaptiveRecursivePipeline(config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 42, in __init__
+    self.investigator = Investigator(config, self.llm_client)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 82, in __init__
+    self.semantic_search = SemanticSearchTool(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 51, in __init__
+    self._load_index()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/tools/semantic_search.py", line 68, in _load_index
+    raise FileNotFoundError(f"Index not found: {index_file}")
+FileNotFoundError: Index not found: data/musique/index_e5_base_v2/sentence_index.pkl

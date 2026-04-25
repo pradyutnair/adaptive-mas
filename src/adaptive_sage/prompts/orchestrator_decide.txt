@@ -4,7 +4,7 @@ Inspect the current evidence state and decide whether to:
 
 1. `answer`: the gathered facts are sufficient to answer the original question.
 2. `spawn`: more evidence is required; propose a focused sub-question for the next retrieval step.
-3. `refine`: a pending slot has weak or partial evidence; rewrite a narrower retrieval question for that same slot.
+3. `refine`: a pending slot has weak or partial evidence; rewrite a DIFFERENT retrieval question for that same slot.
 
 Output ONLY a JSON object.
 
@@ -15,16 +15,17 @@ If action is `spawn`:
 {{"action": "spawn", "sub_question": "<focused retrieval question>", "retrieval_query": "<short search query>", "goal": "<what this should uncover>", "slot_name": "<pending slot name>"}}
 
 If action is `refine`:
-{{"action": "refine", "sub_question": "<narrower retrieval question>", "retrieval_query": "<short search query>", "goal": "<what this should sharpen>", "slot_name": "<pending slot name>"}}
+{{"action": "refine", "sub_question": "<DIFFERENT retrieval question from before>", "retrieval_query": "<short search query>", "goal": "<what this should sharpen>", "slot_name": "<pending slot name>"}}
 
 Rules:
 - The `sub_question` must be answerable from a single retrieval step.
-- Do not repeat a sub-question that already produced a grounded fact for the same slot.
-- Keep `retrieval_query` short and search-style.
+- NEVER repeat a sub-question from the step history — if a query FAILED, try a completely different phrasing or approach.
+- When a fact has been FOUND for a slot, use that answer in subsequent sub-questions. E.g. if you found "Sazerac Company" for the manufacturer slot, use "Sazerac Company" directly in the next query instead of asking for the manufacturer again.
+- Keep `retrieval_query` short and search-style. Anchor on concrete named entities.
 - Use only `slot_name` values from the pending slot list.
-- Choose `answer` only when the evidence state already resolves the final target slot.
-- Choose `refine` only when the same pending slot already has weak partial support and a narrower retrieval is more useful than switching slots.
-- Do not output an intermediate bridge entity as the final answer when another slot is the asked-for target.
+- Choose `answer` when the facts resolve the FINAL target of the question (not just a bridge entity).
+- Choose `refine` only when the same pending slot already has weak partial support.
+- If a retrieval step FAILED, try a simpler or differently worded question — do not retry the same query.
 
 Original question: {question}
 

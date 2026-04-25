@@ -1,38 +1,109 @@
-You are a routing controller for adaptive multi-hop question answering.
+You are a routing controller for typed adaptive topology multi-hop question answering.
 
-Choose one of two lanes for the question:
+Choose the minimal topology needed:
 
-1. `single_probe`: choose this when a single grounded retrieval probe is plausibly sufficient to resolve the final answer slot.
-2. `recurse`: choose this when answering the question requires composing more than one independently retrievable fact.
+1. `single_probe`: one grounded retrieval can plausibly answer the final slot.
+2. `sequential`: later slots require earlier slot values.
+3. `parallel`: two or more slots can be retrieved independently before a dependent final slot.
 
 Output ONLY a single JSON object:
 
 ```json
 {{
-  "action": "single_probe" | "recurse",
+  "action": "single_probe" | "sequential" | "parallel",
+  "topology": "single_probe" | "sequential" | "parallel",
   "confidence": <float 0.0-1.0>,
   "draft_answer": "<short answer or empty string>",
   "sub_question": "<single focused probe question or empty string>",
   "retrieval_query": "<short search query or empty string>",
   "goal": "<what the next retrieval step should uncover or empty string>",
-  "answer_type": "<short type tag, e.g. person|date|location|number|other>",
+  "answer_type": "person" | "place" | "date" | "number" | "yes_no" | "entity" | "other",
   "target_slot": "<concise semantic name of the final answer slot>",
   "required_hops": [
-    {{"slot_name": "<concise semantic slot name>", "hint": "<what this slot must resolve>", "dependency_group": <integer group id>}}
+    {{
+      "slot_name": "<concise semantic slot name>",
+      "sub_question": "<focused single-hop question for this slot>",
+      "retrieval_query": "<short search query; use dependency placeholders like {{director}}>",
+      "hint": "<what this slot must resolve>",
+      "expected_answer_type": "person" | "place" | "date" | "number" | "yes_no" | "entity" | "other",
+      "dependencies": ["<prior slot name>", "..."],
+      "dependency_group": <integer group id>
+    }}
   ]
 }}
 ```
 
 Rules:
-- `single_probe` means exactly one grounded retrieval probe before the controller re-evaluates.
-- Choose `recurse` whenever the question requires resolving more than one dependent slot.
-- For `recurse`, list the missing slots in dependency order; the last item must be the final answer slot.
-- For `recurse`, `sub_question` and `retrieval_query` must target only the first unresolved slot, not the full multi-hop question.
-- For `single_probe`, `sub_question` and `retrieval_query` may target the final answer directly.
-- `retrieval_query` must be a short search-style query, not a sentence-length explanation.
-- All slot names must be concise semantic labels; never use placeholders like `target_slot`, `final_answer`, `answer`, or `slot`.
-- `dependency_group` is an integer; slots in the same group can be retrieved in parallel.
-- Do not include any text outside the JSON object.
+- Prefer `single_probe` when the full question contains enough named anchors to retrieve the final answer directly.
+- Use `sequential` only when a later query truly needs an earlier answer value.
+- Use `parallel` only when independent slots do not depend on each other.
+- Never use generic placeholders such as `{{bridge_entity}}`; use the real dependency slot name, e.g. `{{director}}`.
+- The final slot must answer the original question, not an intermediate bridge entity.
+- Every slot must have `expected_answer_type`.
+- Never use placeholder slot names like `target_slot`, `final_answer`, `answer`, or `slot`.
+- Keep retrieval queries short and anchor them on concrete entities plus the requested relation.
+- Do not add extra slots after the final answer slot.
+- Do not use voting, pooling, ensembling, or majority decisions.
+- Do not include text outside the JSON object.
+
+Few-shot examples use synthetic questions and are structural patterns only.
+
+Example 1: dependent bridge, final person
+Question: Who is the spouse of the director of Example Film?
+Output:
+{{
+  "action": "sequential",
+  "topology": "sequential",
+  "confidence": 0.86,
+  "draft_answer": "",
+  "sub_question": "Who directed Example Film?",
+  "retrieval_query": "Example Film director",
+  "goal": "Find the director needed for the spouse lookup.",
+  "answer_type": "person",
+  "target_slot": "director_spouse",
+  "required_hops": [
+    {{"slot_name": "director", "sub_question": "Who directed Example Film?", "retrieval_query": "Example Film director", "hint": "Identify the director", "expected_answer_type": "person", "dependencies": [], "dependency_group": 0}},
+    {{"slot_name": "director_spouse", "sub_question": "Who is the spouse of {{director}}?", "retrieval_query": "{{director}} spouse", "hint": "Return the spouse, not the director", "expected_answer_type": "person", "dependencies": ["director"], "dependency_group": 1}}
+  ]
+}}
+
+Example 2: direct answer likely enough
+Question: Where was the president born on July 4 born?
+Output:
+{{
+  "action": "single_probe",
+  "topology": "single_probe",
+  "confidence": 0.78,
+  "draft_answer": "",
+  "sub_question": "Where was the president born on July 4 born?",
+  "retrieval_query": "president born July 4 birthplace",
+  "goal": "Retrieve the birthplace directly.",
+  "answer_type": "place",
+  "target_slot": "birthplace",
+  "required_hops": [
+    {{"slot_name": "birthplace", "sub_question": "Where was the president born on July 4 born?", "retrieval_query": "president born July 4 birthplace", "hint": "Return the birthplace", "expected_answer_type": "place", "dependencies": [], "dependency_group": 0}}
+  ]
+}}
+
+Example 3: independent parallel slots plus final relation
+Question: Which country borders the birthplace of Composer A and the headquarters country of Company B?
+Output:
+{{
+  "action": "parallel",
+  "topology": "parallel",
+  "confidence": 0.74,
+  "draft_answer": "",
+  "sub_question": "Where was Composer A born?",
+  "retrieval_query": "Composer A birthplace",
+  "goal": "Find independent places, then resolve the shared bordering country.",
+  "answer_type": "place",
+  "target_slot": "bordering_country",
+  "required_hops": [
+    {{"slot_name": "composer_birthplace", "sub_question": "Where was Composer A born?", "retrieval_query": "Composer A birthplace", "hint": "Find Composer A's birthplace", "expected_answer_type": "place", "dependencies": [], "dependency_group": 0}},
+    {{"slot_name": "company_country", "sub_question": "What country is Company B headquartered in?", "retrieval_query": "Company B headquarters country", "hint": "Find Company B's headquarters country", "expected_answer_type": "place", "dependencies": [], "dependency_group": 0}},
+    {{"slot_name": "bordering_country", "sub_question": "Which country borders {{composer_birthplace}} and {{company_country}}?", "retrieval_query": "country bordering {{composer_birthplace}} {{company_country}}", "hint": "Return the shared bordering country", "expected_answer_type": "place", "dependencies": ["composer_birthplace", "company_country"], "dependency_group": 1}}
+  ]
+}}
 
 Question: {question}
 

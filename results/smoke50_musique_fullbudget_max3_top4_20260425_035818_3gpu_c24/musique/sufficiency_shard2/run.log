@@ -1,0 +1,98 @@
+2026-04-25 03:58:24 [INFO] __main__: Loaded 16 questions from data/musique/questions_smoke50_seed42_shard2.json
+2026-04-25 03:58:24 [INFO] __main__: Checkpoint: 0 completed, 16 remaining
+2026-04-25 03:58:25 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-25 03:58:25 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from /local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd.
+Processing questions:   0%|          | 0/16 [00:00<?, ?q/s]2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__742464_15840_36002, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__57638_615257, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__47808_198548, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__132469_533882, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__567737_141375_458768_33633, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152146_5274_458768_33637, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__76402_653666, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__40485_40502, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__781079_9237, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__119423_779396, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__503085_110222, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__491195_265959, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__622497_160088_85460, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__123145_66723, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__77518_548781, max_steps=3
+2026-04-25 03:58:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__567956_39078_8987_8974, max_steps=3
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 16.52it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.34it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.73it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.19it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.76it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.54it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.88it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 18.79it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.78it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.00it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.63it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.85it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.18it/s]
+2026-04-25 03:59:30 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__503085_110222, answer='1819', subagents=1, verify=0, tokens=8207
+Processing questions:   6%|▋         | 1/16 [01:05<16:20, 65.35s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 17.55it/s]
+2026-04-25 03:59:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop2__567956_39078_8987_8974, answer='Paraguay', subagents=1, verify=0, tokens=8792
+Processing questions:  12%|█▎        | 2/16 [01:18<08:07, 34.81s/q]2026-04-25 03:59:47 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__781079_9237, answer='September 2012', subagents=1, verify=0, tokens=10478
+Processing questions:  19%|█▉        | 3/16 [01:22<04:27, 20.54s/q]2026-04-25 03:59:48 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__742464_15840_36002, answer='improved graphics and sound over the 8 - bit nes', subagents=1, verify=0, tokens=8893
+Processing questions:  25%|██▌       | 4/16 [01:23<02:32, 12.71s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 19.25it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.16it/s]
+2026-04-25 04:00:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__76402_653666, answer='Lucy Mack Smith', subagents=1, verify=0, tokens=10946
+Processing questions:  31%|███▏      | 5/16 [01:47<03:06, 16.93s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 20.90it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.62it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.66it/s]
+2026-04-25 04:00:44 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__132469_533882, answer='northrop corporation', subagents=1, verify=0, tokens=12211
+Processing questions:  38%|███▊      | 6/16 [02:19<03:40, 22.00s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 22.61it/s]
+2026-04-25 04:01:11 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__123145_66723, answer='James Howard Meredith', subagents=3, verify=0, tokens=24304
+Processing questions:  44%|████▍     | 7/16 [02:45<03:31, 23.47s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.42it/s]
+2026-04-25 04:01:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__622497_160088_85460, answer='##sta county, california, united states. the zip code is 96095. the community is', subagents=1, verify=0, tokens=17440
+Processing questions:  50%|█████     | 8/16 [02:54<02:30, 18.85s/q]2026-04-25 04:01:40 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__491195_265959, answer='prince of egypt by dorothy clarke wilson, pillar of fire by j. h. ingraham, on e', subagents=1, verify=0, tokens=19194
+Processing questions:  56%|█████▋    | 9/16 [03:14<02:14, 19.27s/q]2026-04-25 04:01:41 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__47808_198548, answer='screen by john mcgreevey. it first aired on television in two parts on sunday an', subagents=1, verify=0, tokens=20280
+Processing questions:  62%|██████▎   | 10/16 [03:16<01:22, 13.77s/q]2026-04-25 04:01:45 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__567737_141375_458768_33633, answer='highest proportion of millionaires per capita in the us. real estate is among th', subagents=1, verify=0, tokens=19133
+Processing questions:  69%|██████▉   | 11/16 [03:20<00:53, 10.77s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 23.32it/s]
+2026-04-25 04:01:56 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: 'What is the educational background of Earle C. Williams?' — forcing answer
+2026-04-25 04:02:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__152146_5274_458768_33637, answer='was a civil servant. the younger william curphey was educated at glasgow academy', subagents=1, verify=0, tokens=20802
+Processing questions:  75%|███████▌  | 12/16 [03:34<00:47, 11.92s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 21.22it/s]
+2026-04-25 04:02:28 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: 'Who is the president born on the fourth of July?' — forcing answer
+2026-04-25 04:02:38 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__40485_40502, answer='plantation. he added about 420 acres to cuba plantation, purchased from william ', subagents=2, verify=0, tokens=30125
+Processing questions:  81%|████████▏ | 13/16 [04:12<00:59, 19.81s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 27.82it/s]
+2026-04-25 04:02:57 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__57638_615257, answer='##king dutchman ", is a dutch retired professional basketball player who spent h', subagents=3, verify=0, tokens=33802
+Processing questions:  88%|████████▊ | 14/16 [04:31<00:39, 19.51s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 26.01it/s]
+2026-04-25 04:03:56 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__119423_779396, answer='James Watt', subagents=4, verify=0, tokens=45498
+Processing questions:  94%|█████████▍| 15/16 [05:30<00:31, 31.48s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 27.45it/s]
+2026-04-25 04:07:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__77518_548781, answer='divorced, but april is newly pregnant. in the present, april has just given birt', subagents=3, verify=0, tokens=65745
+Processing questions: 100%|██████████| 16/16 [09:17<00:00, 90.35s/q]Processing questions: 100%|██████████| 16/16 [09:17<00:00, 34.87s/q]
+
+============================================================
+Run complete: 16/16 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 16
+Elapsed: 558.0s (9.3min)
+============================================================

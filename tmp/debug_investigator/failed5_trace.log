@@ -1,0 +1,40 @@
+
+===== CASE 1: musique_3hop1__786067_228453_86925 =====
+QUESTION: What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?
+GOLD: fleur - de-lis
+PREV_PRED: fleur - de - lis
+CAPSULE answer='fleur - de - lis' fact="The fleur - de - lis is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called." conf=0.980 self=0.950 support=['446'] tokens=6631
+retrieved_doc_ids=['132', '446', '488', '466', '175', '647', '325', '33', '242', '243']
+support_snippets_len=0
+
+===== CASE 2: musique_2hop__547045_131879 =====
+QUESTION: What body of water is by the headquarters location of Wipac?
+GOLD: River Great Ouse
+PREV_PRED: Lake Volta
+CAPSULE answer='the bay of bengal' fact='The body of water by the headquarters location of Wipac is the Bay of Bengal.' conf=0.920 self=0.800 support=['27'] tokens=6510
+retrieved_doc_ids=['157', '141', '158', '557', '140', '1111', '7', '132', '1325', '27']
+support_snippets_len=0
+
+===== CASE 3: musique_4hop2__161602_426860_88460_20988 =====
+QUESTION: What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?
+GOLD: one of the world's longest-running ongoing civil wars.
+PREV_PRED: the 1986 FIFA World Cup
+CAPSULE answer='the 1986 fifa world cup' fact='The 1986 FIFA World Cup was hosted by Mexico, and the country where That Dam is from (Laos) is known for the 1986 FIFA World Cup.' conf=0.920 self=0.800 support=['231'] tokens=7912
+retrieved_doc_ids=['231', '230', '471', '959', '958', '229', '312', '451', '1288']
+support_snippets_len=0
+
+===== CASE 4: musique_3hop1__742464_15840_36002 =====
+QUESTION: What were the Genesis's advantages over the platform in which Robodemons is played?
+GOLD: built on 16-bit architectures and offered improved graphics and sound
+PREV_PRED: nintendo entertainment system
+CAPSULE answer='the genesis only represented an estimated 60 % of the american 16 - bit console market in june 1992, and neither console could maintain a definitive lead for several years' fact='The Genesis had a lower price point and a much larger library of games compared to the platform in which Robodemons is played.' conf=0.920 self=0.800 support=['373'] tokens=6778
+retrieved_doc_ids=['566', '563', '639', '353', '354', '373', '1078', '600', '372', '352']
+support_snippets_len=0
+
+===== CASE 5: musique_2hop__57638_615257 =====
+QUESTION: What team is the person with the highest point average in NBA history on?
+GOLD: Oklahoma City Thunder
+PREV_PRED: the indiana pacers
+CAPSULE answer='the indiana pacers' fact='Wilt Chamberlain holds the all - time records for total points scored and points per game, and he spent his entire career with the Indiana Pacers.' conf=0.980 self=0.950 support=['523'] tokens=7630
+retrieved_doc_ids=['246', '197', '449', '450', '523', '1260', '296', '384']
+support_snippets_len=0

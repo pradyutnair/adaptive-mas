@@ -16,6 +16,8 @@ StepAction = Literal[
     "answer_rejected_escalate",
     "answer_blocked_pending_slots",
     "answer_blocked_min_depth",
+    "assess",
+    "probe_recurse",
 ]
 """Possible actions the orchestrator can take at each step."""
 
@@ -32,6 +34,7 @@ class Fact:
     slot_name: str = ""
     answer_span: str = ""
     support_ids: list[str] = field(default_factory=list)
+    support_snippets: list[str] = field(default_factory=list)
     source_step: int = 0
 
     def to_dict(self) -> dict:

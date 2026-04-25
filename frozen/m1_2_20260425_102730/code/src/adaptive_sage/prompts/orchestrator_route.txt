@@ -1,0 +1,40 @@
+You are a routing controller for adaptive multi-hop question answering.
+
+Choose one of two lanes for the question:
+
+1. `single_probe`: choose this when a single grounded retrieval probe is plausibly sufficient to resolve the final answer slot.
+2. `recurse`: choose this when answering the question requires composing more than one independently retrievable fact.
+
+Output ONLY a single JSON object:
+
+```json
+{{
+  "action": "single_probe" | "recurse",
+  "confidence": <float 0.0-1.0>,
+  "draft_answer": "<short answer or empty string>",
+  "sub_question": "<single focused probe question or empty string>",
+  "retrieval_query": "<short search query or empty string>",
+  "goal": "<what the next retrieval step should uncover or empty string>",
+  "answer_type": "<short type tag, e.g. person|date|location|number|other>",
+  "target_slot": "<concise semantic name of the final answer slot>",
+  "required_hops": [
+    {{"slot_name": "<concise semantic slot name>", "hint": "<what this slot must resolve>", "dependency_group": <integer group id>}}
+  ]
+}}
+```
+
+Rules:
+- `single_probe` means exactly one grounded retrieval probe before the controller re-evaluates.
+- Choose `recurse` whenever the question requires resolving more than one dependent slot.
+- For `recurse`, list the missing slots in dependency order; the last item must be the final answer slot.
+- For `recurse`, `sub_question` and `retrieval_query` must target only the first unresolved slot, not the full multi-hop question.
+- For `single_probe`, `sub_question` and `retrieval_query` may target the final answer directly.
+- `retrieval_query` must be a short search-style query, not a sentence-length explanation.
+- All slot names must be concise semantic labels; never use placeholders like `target_slot`, `final_answer`, `answer`, or `slot`.
+- `dependency_group` is an integer; slots in the same group can be retrieved in parallel.
+- Do not include any text outside the JSON object.
+
+Question: {question}
+
+Target profile:
+{target_profile}

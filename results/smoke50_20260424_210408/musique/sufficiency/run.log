@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 383, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 368, in main
+    asyncio.run(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 208, in _run
+    config = Config.from_yaml(config_path)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/config.py", line 21, in from_yaml
+    config_dict = yaml.safe_load(f) or {}
+AttributeError: module 'yaml' has no attribute 'safe_load'

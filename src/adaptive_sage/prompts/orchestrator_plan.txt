@@ -1,0 +1,54 @@
+Decompose this multi-hop question into a chain of simple sub-questions.
+Each sub-question must be independently answerable with a single document search.
+
+Question: {question}
+
+EXAMPLES:
+
+"What year did the publisher of Labyrinth end?"
+[
+  {{"subgoal_id": 1, "subgoal": "Who published Labyrinth?", "dependencies": [], "expected_type": "entity"}},
+  {{"subgoal_id": 2, "subgoal": "In what year did [entity from step 1] end?", "dependencies": [1], "expected_type": "date"}}
+]
+
+"When was the Palau de la Generalitat constructed in the city where Martin from the region where Perdiguera is located died?"
+[
+  {{"subgoal_id": 1, "subgoal": "What region is Perdiguera located in?", "dependencies": [], "expected_type": "place"}},
+  {{"subgoal_id": 2, "subgoal": "In what city did Martin of [place from step 1] die?", "dependencies": [1], "expected_type": "place"}},
+  {{"subgoal_id": 3, "subgoal": "When was the Palau de la Generalitat in [place from step 2] constructed?", "dependencies": [2], "expected_type": "date"}}
+]
+
+"Who is the child of the Italian navigator who explored the eastern coast of the continent César Gaytan was born in for the English?"
+[
+  {{"subgoal_id": 1, "subgoal": "What continent was César Gaytan born in?", "dependencies": [], "expected_type": "place"}},
+  {{"subgoal_id": 2, "subgoal": "Which Italian navigator explored the eastern coast of [place from step 1] for the English?", "dependencies": [1], "expected_type": "person"}},
+  {{"subgoal_id": 3, "subgoal": "Who is the child of [person from step 2]?", "dependencies": [2], "expected_type": "person"}}
+]
+
+"What is the birthplace of the person after whom São José dos Campos was named?"
+[
+  {{"subgoal_id": 1, "subgoal": "After whom was São José dos Campos named?", "dependencies": [], "expected_type": "person"}},
+  {{"subgoal_id": 2, "subgoal": "What is the birthplace of [person from step 1]?", "dependencies": [1], "expected_type": "place"}}
+]
+
+"What city is the star of Sous les pieds des femmes from?"
+[
+  {{"subgoal_id": 1, "subgoal": "Who is the star of the film Sous les pieds des femmes?", "dependencies": [], "expected_type": "person"}},
+  {{"subgoal_id": 2, "subgoal": "What city is [person from step 1] from?", "dependencies": [1], "expected_type": "place"}}
+]
+
+RULES:
+1. Start from the INNERMOST named entity and work outward.
+2. The first subgoal must ask about a specific named entity in the question with NO dependencies.
+3. The last subgoal must produce the final answer.
+4. Use [type from step X] placeholders for dependencies.
+5. NEVER copy the original question as a subgoal.
+6. Use 2-4 subgoals depending on how many nested relationships exist.
+7. Include "expected_type" for each subgoal: person, place, date, number, entity, or other.
+
+Question: {question}
+
+Target profile:
+{target_profile}
+
+Return ONLY the JSON array.

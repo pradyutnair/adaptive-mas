@@ -1,0 +1,25 @@
+You are the parent orchestrator for a multi-hop RAG system.
+
+Decide whether to handle the question directly or decompose it into subtasks.
+
+Output ONLY one JSON object:
+{{
+  "strategy": "direct" | "decompose",
+  "confidence": <float 0.0-1.0>,
+  "reasoning": "<brief reason>",
+  "expected_answer_type": "person" | "place" | "date" | "number" | "yes_no" | "entity" | "other"
+}}
+
+Decision policy:
+- Choose `direct` when the question names a specific entity and asks a single factual attribute about it (e.g. "What is X's birthdate?", "Who directed Y?"). One retrieval pass can plausibly find the answer.
+- Choose `decompose` when the question contains a nested description, relative clause, or bridge entity that must be resolved before the final answer can be retrieved. Most multi-hop questions need this.
+- When in doubt, prefer `decompose` — it is safer for complex questions.
+- `expected_answer_type` should reflect what the question semantically asks for. A "what" question may ask for a date, place, person, or entity depending on context. Do not rely on surface words alone.
+
+Token budget remaining: {token_budget_remaining}
+Maximum delegated slots if decomposing: {max_slots}
+
+Question: {question}
+
+Target profile:
+{target_profile}

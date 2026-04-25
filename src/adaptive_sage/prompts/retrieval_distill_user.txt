@@ -1,0 +1,21 @@
+Sub-question: {sub_question}
+Goal: {goal}
+Target slot: {slot_name}
+Target slot hint: {slot_hint}
+Retrieval query used: {retrieval_query}
+
+Retrieved evidence excerpts:
+{evidence}
+
+Extract the best grounded answer from the evidence excerpts.
+
+Return exactly one JSON object:
+{{"answer_span":"<minimal answer span>","answer_type_valid":<true|false>,"justification":"<one short grounded reason>","confidence":<float 0.0-1.0>,"support_ids":["<chunk_id>"]}}
+
+Rules:
+- Use only the retrieved evidence excerpts.
+- `answer_span` must answer the sub-question and match the target slot hint.
+- Return the shortest possible answer span, usually 1-6 words.
+- `justification` must be a short fact summary, not copied passage text.
+- `support_ids` must cite the evidence IDs that directly support the answer.
+- If evidence is irrelevant, wrong type, or only resolves a bridge entity, return an empty answer, confidence 0.0, and no support IDs.

@@ -1,0 +1,868 @@
+[
+  {
+    "id": "musique_3hop1__786067_228453_86925",
+    "question": "What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?",
+    "answer": "fleur - de - lis",
+    "gold_answer": "fleur - de-lis",
+    "metadata": {
+      "step_trace": [
+        {
+          "step": 0,
+          "action": "spawn",
+          "sub_question": "What is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 7852,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route_target_slot": "symbol_of_saints",
+            "route_required_hops": [
+              {
+                "slot_name": "manufacturer_of_benchmark",
+                "hint": "Manufacturer of McAfee's Benchmark",
+                "dependency_group": 1
+              },
+              {
+                "slot_name": "headquarters_city",
+                "hint": "City where manufacturer is headquartered",
+                "dependency_group": 1
+              },
+              {
+                "slot_name": "symbol_of_saints",
+                "hint": "Symbol of the Saints from that city",
+                "dependency_group": 2
+              }
+            ],
+            "is_compositional": true,
+            "probe_targeted_first_hop": false
+          }
+        },
+        {
+          "step": 1,
+          "action": "assess",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 467,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": 0.98,
+          "metadata": {
+            "sufficiency_probe": true,
+            "proposed_answer": "fleur - de - lis",
+            "sufficiency": 0.98,
+            "sufficiency_components": {
+              "s_conf": 0.98,
+              "s_align": 1.0,
+              "s_target": 1.0,
+              "source": "calibrated_probe_gate"
+            },
+            "tau": 0.7,
+            "reason": "The grounded fact directly states the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark is located, which matches the question's target."
+          }
+        },
+        {
+          "step": 2,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 693,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [
+            1
+          ],
+          "justification_confidence": 0.98,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route": "answer_from_probe"
+          }
+        }
+      ],
+      "num_subagent_calls": 1,
+      "num_verify_calls": 0,
+      "total_tokens": 9746,
+      "orchestrator_tokens": 1894,
+      "subagent_tokens": 7852,
+      "facts_used": [
+        {
+          "text": "The fleur - de - lis is the symbol of the Saints from the city where the headquarters of the manufacturer of McAfee's Benchmark called.",
+          "confidence": 0.98,
+          "confidence_self": 0.95,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "",
+          "answer_span": "fleur - de - lis",
+          "support_ids": [
+            "446"
+          ],
+          "source_step": 0
+        }
+      ],
+      "retrieved_doc_ids": [
+        "132",
+        "446",
+        "488",
+        "466",
+        "175",
+        "647",
+        "325",
+        "33",
+        "242",
+        "243"
+      ],
+      "retrieved_docs_total": 10,
+      "evidence_capsule_limit": 4,
+      "fact_memory_capacity": 4,
+      "duplicate_subquestion_count": 0,
+      "route_decision": "answer_from_probe",
+      "route_confidence": 0.98,
+      "route_draft_answer": "",
+      "slot_resolution": {},
+      "auto_verify_calls": 0,
+      "answer_rejection_count": 0,
+      "wallclock_seconds": 15.434,
+      "extras": {
+        "sufficiency_score": 0.98,
+        "sufficiency_components": {
+          "s_conf": 0.98,
+          "s_align": 1.0,
+          "s_target": 1.0,
+          "source": "calibrated_probe_gate"
+        },
+        "sufficiency_tau": 0.7,
+        "route_target_slot": "symbol_of_saints",
+        "route_required_hops": [
+          {
+            "slot_name": "manufacturer_of_benchmark",
+            "hint": "Manufacturer of McAfee's Benchmark",
+            "dependency_group": 1
+          },
+          {
+            "slot_name": "headquarters_city",
+            "hint": "City where manufacturer is headquartered",
+            "dependency_group": 1
+          },
+          {
+            "slot_name": "symbol_of_saints",
+            "hint": "Symbol of the Saints from that city",
+            "dependency_group": 2
+          }
+        ],
+        "recurse_steps_used": 0,
+        "controller": "sufficiency"
+      }
+    }
+  },
+  {
+    "id": "musique_2hop__547045_131879",
+    "question": "What body of water is by the headquarters location of Wipac?",
+    "answer": "Lake Volta",
+    "gold_answer": "River Great Ouse",
+    "metadata": {
+      "step_trace": [
+        {
+          "step": 0,
+          "action": "spawn",
+          "sub_question": "What body of water is by the headquarters location of Wipac?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 7672,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route_target_slot": "headquarters_location",
+            "route_required_hops": [
+              {
+                "slot_name": "headquarters_location",
+                "hint": "Location of Wipac's headquarters",
+                "dependency_group": 1
+              }
+            ],
+            "is_compositional": false,
+            "probe_targeted_first_hop": false
+          }
+        },
+        {
+          "step": 1,
+          "action": "assess",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 422,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": 0.4600000000000001,
+          "metadata": {
+            "sufficiency_probe": true,
+            "proposed_answer": "Lake Volta",
+            "sufficiency": 0.4600000000000001,
+            "sufficiency_components": {
+              "s_conf": 0.9200000000000002,
+              "s_align": 1.0,
+              "s_target": 0.5,
+              "source": "calibrated_probe_gate"
+            },
+            "tau": 0.7,
+            "reason": "The answer is partially supported by the fact that Lake Volta is mentioned, but the connection between Lake Volta and the headquarters location of Wipac is not explicitly stated or directly confirmed."
+          }
+        },
+        {
+          "step": 2,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 531,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_recurse": true,
+            "decision": "answer"
+          }
+        },
+        {
+          "step": 3,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 665,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [
+            1
+          ],
+          "justification_confidence": 0.92,
+          "metadata": {
+            "sufficiency_recurse_final": true,
+            "route": "recurse_after_probe",
+            "fallback_source": ""
+          }
+        }
+      ],
+      "num_subagent_calls": 1,
+      "num_verify_calls": 0,
+      "total_tokens": 10597,
+      "orchestrator_tokens": 2925,
+      "subagent_tokens": 7672,
+      "facts_used": [
+        {
+          "text": "Dodi Island is an island in Ghana, located off the shore of Lake Volta.",
+          "confidence": 0.9200000000000002,
+          "confidence_self": 0.8,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "",
+          "answer_span": "lake volta",
+          "support_ids": [
+            "1111"
+          ],
+          "source_step": 0
+        }
+      ],
+      "retrieved_doc_ids": [
+        "157",
+        "141",
+        "158",
+        "557",
+        "140",
+        "1111",
+        "7",
+        "132",
+        "1325",
+        "27"
+      ],
+      "retrieved_docs_total": 10,
+      "evidence_capsule_limit": 4,
+      "fact_memory_capacity": 4,
+      "duplicate_subquestion_count": 0,
+      "route_decision": "recurse_after_probe",
+      "route_confidence": 0.4600000000000001,
+      "route_draft_answer": "",
+      "slot_resolution": {},
+      "auto_verify_calls": 0,
+      "answer_rejection_count": 0,
+      "wallclock_seconds": 15.517,
+      "extras": {
+        "sufficiency_score": 0.4600000000000001,
+        "sufficiency_components": {
+          "s_conf": 0.9200000000000002,
+          "s_align": 1.0,
+          "s_target": 0.5,
+          "source": "calibrated_probe_gate"
+        },
+        "sufficiency_tau": 0.7,
+        "route_target_slot": "headquarters_location",
+        "route_required_hops": [
+          {
+            "slot_name": "headquarters_location",
+            "hint": "Location of Wipac's headquarters",
+            "dependency_group": 1
+          }
+        ],
+        "recurse_steps_used": 0,
+        "controller": "sufficiency"
+      }
+    }
+  },
+  {
+    "id": "musique_4hop2__161602_426860_88460_20988",
+    "question": "What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?",
+    "answer": "the 1986 FIFA World Cup",
+    "gold_answer": "one of the world's longest-running ongoing civil wars.",
+    "metadata": {
+      "step_trace": [
+        {
+          "step": 0,
+          "action": "spawn",
+          "sub_question": "What major conflict is the country between the country that hosted the tournament and the country where That Dam is from known for?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 9104,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route_target_slot": "major_conflict",
+            "route_required_hops": [
+              {
+                "slot_name": "host_country",
+                "hint": "Country that hosted the tournament",
+                "dependency_group": 1
+              },
+              {
+                "slot_name": "dam_country",
+                "hint": "Country where That Dam is from",
+                "dependency_group": 1
+              },
+              {
+                "slot_name": "major_conflict",
+                "hint": "Major conflict between host_country and dam_country",
+                "dependency_group": 2
+              }
+            ],
+            "is_compositional": true,
+            "probe_targeted_first_hop": false
+          }
+        },
+        {
+          "step": 1,
+          "action": "assess",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 505,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": 0.47,
+          "metadata": {
+            "sufficiency_probe": true,
+            "proposed_answer": "the 1986 fifa world cup",
+            "sufficiency": 0.47,
+            "sufficiency_components": {
+              "s_conf": 0.94,
+              "s_align": 1.0,
+              "s_target": 0.5,
+              "source": "calibrated_probe_gate"
+            },
+            "tau": 0.7,
+            "reason": "The answer mentions the 1986 FIFA World Cup, but it does not clearly state the major conflict associated with the countries involved. The connection between the countries and the conflict is not explicitly established in the grounded facts."
+          }
+        },
+        {
+          "step": 2,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 633,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_recurse": true,
+            "decision": "answer"
+          }
+        },
+        {
+          "step": 3,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 804,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [
+            1
+          ],
+          "justification_confidence": 0.94,
+          "metadata": {
+            "sufficiency_recurse_final": true,
+            "route": "recurse_after_probe",
+            "fallback_source": ""
+          }
+        }
+      ],
+      "num_subagent_calls": 1,
+      "num_verify_calls": 0,
+      "total_tokens": 12522,
+      "orchestrator_tokens": 3418,
+      "subagent_tokens": 9104,
+      "facts_used": [
+        {
+          "text": "The country that hosted the tournament (Mexico) and the country where That Dam is from (Laos) are both known for the 1986 FIFA World Cup, which was hosted by Mexico.",
+          "confidence": 0.94,
+          "confidence_self": 0.85,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "",
+          "answer_span": "the 1986 fifa world cup",
+          "support_ids": [
+            "231",
+            "229"
+          ],
+          "source_step": 0
+        }
+      ],
+      "retrieved_doc_ids": [
+        "231",
+        "230",
+        "471",
+        "959",
+        "958",
+        "229",
+        "312",
+        "451",
+        "1288"
+      ],
+      "retrieved_docs_total": 9,
+      "evidence_capsule_limit": 4,
+      "fact_memory_capacity": 4,
+      "duplicate_subquestion_count": 0,
+      "route_decision": "recurse_after_probe",
+      "route_confidence": 0.47,
+      "route_draft_answer": "",
+      "slot_resolution": {},
+      "auto_verify_calls": 0,
+      "answer_rejection_count": 0,
+      "wallclock_seconds": 22.086,
+      "extras": {
+        "sufficiency_score": 0.47,
+        "sufficiency_components": {
+          "s_conf": 0.94,
+          "s_align": 1.0,
+          "s_target": 0.5,
+          "source": "calibrated_probe_gate"
+        },
+        "sufficiency_tau": 0.7,
+        "route_target_slot": "major_conflict",
+        "route_required_hops": [
+          {
+            "slot_name": "host_country",
+            "hint": "Country that hosted the tournament",
+            "dependency_group": 1
+          },
+          {
+            "slot_name": "dam_country",
+            "hint": "Country where That Dam is from",
+            "dependency_group": 1
+          },
+          {
+            "slot_name": "major_conflict",
+            "hint": "Major conflict between host_country and dam_country",
+            "dependency_group": 2
+          }
+        ],
+        "recurse_steps_used": 0,
+        "controller": "sufficiency"
+      }
+    }
+  },
+  {
+    "id": "musique_3hop1__742464_15840_36002",
+    "question": "What were the Genesis's advantages over the platform in which Robodemons is played?",
+    "answer": "nintendo entertainment system",
+    "gold_answer": "built on 16-bit architectures and offered improved graphics and sound",
+    "metadata": {
+      "step_trace": [
+        {
+          "step": 0,
+          "action": "spawn",
+          "sub_question": "What were the Genesis's advantages over the platform in which Robodemons is played?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 7890,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route_target_slot": "platform",
+            "route_required_hops": [
+              {
+                "slot_name": "platform",
+                "hint": "Platform where Robodemons is played",
+                "dependency_group": 1
+              }
+            ],
+            "is_compositional": false,
+            "probe_targeted_first_hop": false
+          }
+        },
+        {
+          "step": 1,
+          "action": "assess",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 490,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": 0.48,
+          "metadata": {
+            "sufficiency_probe": true,
+            "proposed_answer": "60 % of the american 16 - bit console market",
+            "sufficiency": 0.48,
+            "sufficiency_components": {
+              "s_conf": 0.96,
+              "s_align": 1.0,
+              "s_target": 0.5,
+              "source": "calibrated_probe_gate"
+            },
+            "tau": 0.7,
+            "reason": "The grounded fact provides market share data but does not explicitly state the advantages of the Genesis over the platform in which Robodemons is played."
+          }
+        },
+        {
+          "step": 2,
+          "action": "spawn",
+          "sub_question": "What were the Genesis's advantages over the platform where Robodemons is played?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 6621,
+          "slot_name": "platform",
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_recurse": true,
+            "goal": "Identify the platform where Robodemons is played to compare the Genesis's advantages",
+            "retrieval_query": "platform where Robodemons is played"
+          }
+        },
+        {
+          "step": 3,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 635,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_recurse": true,
+            "decision": "answer"
+          }
+        },
+        {
+          "step": 4,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 813,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [
+            2
+          ],
+          "justification_confidence": 0.95,
+          "metadata": {
+            "sufficiency_recurse_final": true,
+            "route": "recurse_after_probe",
+            "fallback_source": ""
+          }
+        }
+      ],
+      "num_subagent_calls": 2,
+      "num_verify_calls": 0,
+      "total_tokens": 18959,
+      "orchestrator_tokens": 4448,
+      "subagent_tokens": 14511,
+      "facts_used": [
+        {
+          "text": "The Genesis had a larger library of games and lower price point, but still only captured 60% of the market.",
+          "confidence": 0.96,
+          "confidence_self": 0.9,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "",
+          "answer_span": "the genesis only represented an estimated 60 % of the american 16 - bit console market in june 1992",
+          "support_ids": [
+            "373"
+          ],
+          "source_step": 0
+        },
+        {
+          "text": "Robodemons is an action video game that was released for the Nintendo Entertainment System.",
+          "confidence": 0.9452,
+          "confidence_self": 0.863,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "platform",
+          "answer_span": "nintendo entertainment system",
+          "support_ids": [
+            "1078"
+          ],
+          "source_step": 2
+        }
+      ],
+      "retrieved_doc_ids": [
+        "566",
+        "563",
+        "639",
+        "353",
+        "354",
+        "373",
+        "1078",
+        "600",
+        "372",
+        "352",
+        "497",
+        "324",
+        "10",
+        "425"
+      ],
+      "retrieved_docs_total": 20,
+      "evidence_capsule_limit": 4,
+      "fact_memory_capacity": 4,
+      "duplicate_subquestion_count": 0,
+      "route_decision": "recurse_after_probe",
+      "route_confidence": 0.48,
+      "route_draft_answer": "",
+      "slot_resolution": {},
+      "auto_verify_calls": 0,
+      "answer_rejection_count": 0,
+      "wallclock_seconds": 24.896,
+      "extras": {
+        "sufficiency_score": 0.48,
+        "sufficiency_components": {
+          "s_conf": 0.96,
+          "s_align": 1.0,
+          "s_target": 0.5,
+          "source": "calibrated_probe_gate"
+        },
+        "sufficiency_tau": 0.7,
+        "route_target_slot": "platform",
+        "route_required_hops": [
+          {
+            "slot_name": "platform",
+            "hint": "Platform where Robodemons is played",
+            "dependency_group": 1
+          }
+        ],
+        "recurse_steps_used": 1,
+        "controller": "sufficiency"
+      }
+    }
+  },
+  {
+    "id": "musique_2hop__57638_615257",
+    "question": "What team is the person with the highest point average in NBA history on?",
+    "answer": "the indiana pacers",
+    "gold_answer": "Oklahoma City Thunder",
+    "metadata": {
+      "step_trace": [
+        {
+          "step": 0,
+          "action": "spawn",
+          "sub_question": "What team is the person with the highest point average in NBA history on?",
+          "claim": null,
+          "fact_added": true,
+          "tokens": 8854,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": null,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route_target_slot": "player",
+            "route_required_hops": [
+              {
+                "slot_name": "player",
+                "hint": "Player with the highest point average in NBA history",
+                "dependency_group": 1
+              }
+            ],
+            "is_compositional": false,
+            "probe_targeted_first_hop": false
+          }
+        },
+        {
+          "step": 1,
+          "action": "assess",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 430,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [],
+          "justification_confidence": 0.98,
+          "metadata": {
+            "sufficiency_probe": true,
+            "proposed_answer": "the indiana pacers",
+            "sufficiency": 0.98,
+            "sufficiency_components": {
+              "s_conf": 0.98,
+              "s_align": 1.0,
+              "s_target": 1.0,
+              "source": "calibrated_probe_gate"
+            },
+            "tau": 0.7,
+            "reason": "The grounded fact directly states that Wilt Chamberlain, who holds the highest point average in NBA history, played for the Indiana Pacers."
+          }
+        },
+        {
+          "step": 2,
+          "action": "answer",
+          "sub_question": null,
+          "claim": null,
+          "fact_added": false,
+          "tokens": 663,
+          "slot_name": null,
+          "route_decision": null,
+          "route_confidence": null,
+          "route_draft_answer": null,
+          "cited_fact_ids": [
+            1
+          ],
+          "justification_confidence": 0.98,
+          "metadata": {
+            "sufficiency_probe": true,
+            "route": "answer_from_probe"
+          }
+        }
+      ],
+      "num_subagent_calls": 1,
+      "num_verify_calls": 0,
+      "total_tokens": 10606,
+      "orchestrator_tokens": 1752,
+      "subagent_tokens": 8854,
+      "facts_used": [
+        {
+          "text": "Wilt Chamberlain holds the all-time records for total points scored and points per game, and he played for the Indiana Pacers.",
+          "confidence": 0.98,
+          "confidence_self": 0.95,
+          "confidence_retrieval": 1.0,
+          "slot_filled": true,
+          "slot_name": "",
+          "answer_span": "the indiana pacers",
+          "support_ids": [
+            "523"
+          ],
+          "source_step": 0
+        }
+      ],
+      "retrieved_doc_ids": [
+        "246",
+        "197",
+        "449",
+        "450",
+        "523",
+        "1260",
+        "296",
+        "384"
+      ],
+      "retrieved_docs_total": 8,
+      "evidence_capsule_limit": 4,
+      "fact_memory_capacity": 4,
+      "duplicate_subquestion_count": 0,
+      "route_decision": "answer_from_probe",
+      "route_confidence": 0.98,
+      "route_draft_answer": "",
+      "slot_resolution": {},
+      "auto_verify_calls": 0,
+      "answer_rejection_count": 0,
+      "wallclock_seconds": 11.865,
+      "extras": {
+        "sufficiency_score": 0.98,
+        "sufficiency_components": {
+          "s_conf": 0.98,
+          "s_align": 1.0,
+          "s_target": 1.0,
+          "source": "calibrated_probe_gate"
+        },
+        "sufficiency_tau": 0.7,
+        "route_target_slot": "player",
+        "route_required_hops": [
+          {
+            "slot_name": "player",
+            "hint": "Player with the highest point average in NBA history",
+            "dependency_group": 1
+          }
+        ],
+        "recurse_steps_used": 0,
+        "controller": "sufficiency"
+      }
+    }
+  }
+]

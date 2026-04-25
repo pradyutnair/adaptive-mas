@@ -1,0 +1,1239 @@
+diff --git a/.gitignore b/.gitignore
+index c26ae6c..6b6450f 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -9,3 +9,5 @@ data/**/index/
+ data/**/index_*/
+ data/**/index_qwen3_embedding_06b/
+ data/**/sentence_index.pkl
++
++.venv/
+\ No newline at end of file
+diff --git a/results/.smoke50_latest b/results/.smoke50_latest
+index bd98acd..861fd30 100644
+--- a/results/.smoke50_latest
++++ b/results/.smoke50_latest
+@@ -1 +1 @@
+-results/smoke50_20260418_214053
++results/smoke50_musique_gate_20260424_234614_3gpu_c24_slotgated
+diff --git a/scripts/run_smoke50.sh b/scripts/run_smoke50.sh
+index b0f0602..15d207a 100755
+--- a/scripts/run_smoke50.sh
++++ b/scripts/run_smoke50.sh
+@@ -6,6 +6,8 @@ set -euo pipefail
+ cd "$(dirname "$0")/.."
+ 
+ SERVER=http://localhost:8001/v1
++EMBEDDING_MODEL=${EMBEDDING_MODEL:-/local/yzheng/pnair/.cache/huggingface/models--intfloat--e5-base-v2/snapshots/f52bf8ec8c7124536f0efb74aca902b2995e5bcd}
++CONFIG=${CONFIG:-configs/m1_2.sufficiency.yaml}
+ CONC=${CONC:-16}
+ TS=$(date +%Y%m%d_%H%M%S)
+ ROOT=results/smoke50_${TS}
+@@ -21,14 +23,14 @@ run() {
+   mkdir -p "$out"
+   echo "[$(date +%T)] >>> sufficiency on $ds -> $out"
+   python3 scripts/runner.py \
+-    --config configs/m1_2.sufficiency.yaml \
++    --config "$CONFIG" \
+     --questions "$q" \
+     --output-dir "$out" \
+     --server-url "$SERVER" \
+     --concurrency "$CONC" \
+     --chunks-file "$chunks" \
+     --index-dir "$idx" \
+-    --embedding-model intfloat/e5-base-v2 \
++    --embedding-model "$EMBEDDING_MODEL" \
+     2>&1 | tee "$out/run.log" | tail -1
+   echo "[$(date +%T)] <<< sufficiency on $ds done"
+ }
+diff --git a/scripts/runner.py b/scripts/runner.py
+index 67c17b1..a2fffb1 100644
+--- a/scripts/runner.py
++++ b/scripts/runner.py
+@@ -24,7 +24,17 @@ import sys
+ import time
+ from pathlib import Path
+ 
+-from tqdm import tqdm
++try:
++    from tqdm import tqdm
++except Exception:
++    class tqdm:
++        def __init__(self, total=None, desc=None, unit=None):
++            self.total = total
++            self.n = 0
++        def update(self, n=1):
++            self.n += n
++        def close(self):
++            pass
+ 
+ # Ensure src/ is on the path so that arag and adaptive_sage are importable
+ _SCRIPT_DIR = Path(__file__).resolve().parent
+diff --git a/src/adaptive_sage/investigator.py b/src/adaptive_sage/investigator.py
+index 7fdc784..c5d9e49 100644
+--- a/src/adaptive_sage/investigator.py
++++ b/src/adaptive_sage/investigator.py
+@@ -1,8 +1,8 @@
+ """Focused investigator subagent for Adaptive Recursive SAGE.
+ 
+-Performs targeted retrieval (keyword + semantic search) and distills
+-the results into a bounded :class:`EvidenceCapsule` — a concise answer,
+-a single distilled fact, and a limited number of supporting snippet IDs.
++Runs a focused tool-using retrieval sub-agent and returns a bounded
++:class:`EvidenceCapsule`: answer, justification/fact, confidence, and
++support IDs. Raw retrieved passages are never passed back to the orchestrator.
+ """
+ 
+ from __future__ import annotations
+@@ -11,16 +11,16 @@ import ast
+ import json
+ import logging
+ import os
++import pickle
+ import re
+ from pathlib import Path
+ from typing import Any, Optional
+ 
++import numpy as np
++from sentence_transformers import SentenceTransformer
++
+ from arag.core.config import Config
+-from arag.core.context import AgentContext
+ from arag.core.llm import LLMClient
+-from arag.tools.keyword_search import KeywordSearchTool
+-from arag.tools.read_chunk import ReadChunkTool
+-from arag.tools.semantic_search import SemanticSearchTool
+ 
+ from .types import EvidenceCapsule, Fact
+ 
+@@ -36,7 +36,7 @@ _REPAIR_PROMPT = (
+ 
+ 
+ class Investigator:
+-    """Focused subagent that retrieves and distills evidence for a sub-question.
++    """Focused tool-using subagent for one sub-question.
+ 
+     Parameters
+     ----------
+@@ -46,7 +46,7 @@ class Investigator:
+         ``investigator.evidence_capsule_limit`` and
+         ``investigator.search_top_k``.
+     llm_client:
+-        An initialised :class:`LLMClient` used for distillation.
++        An initialised :class:`LLMClient` used by the isolated tool agent.
+     """
+ 
+     def __init__(self, config: Config, llm_client: LLMClient) -> None:
+@@ -63,6 +63,14 @@ class Investigator:
+         )
+         self.raw_snippets: bool = bool(config.get("ablation.raw_snippets", False))
+         self.blind_subagent: bool = bool(config.get("ablation.blind_subagent", False))
++        self.subagent_max_loops: int = int(config.get("investigator.subagent_max_loops", 4))
++        self.subagent_token_budget: int = int(
++            config.get("investigator.subagent_token_budget", 24000)
++        )
++
++        self.include_prior_support_snippets: bool = bool(
++            config.get("investigator.include_prior_support_snippets", True)
++        )
+ 
+         # Data paths
+         chunks_file: str = config.get("data.chunks_file")
+@@ -72,23 +80,27 @@ class Investigator:
+             config.get("data.embedding_model", "intfloat/e5-base-v2"),
+         )
+ 
+-        # Initialise ARAG retrieval tools
+-        self.keyword_search = KeywordSearchTool(chunks_file)
+-        self.semantic_search = SemanticSearchTool(
+-            chunks_file, index_dir, embedding_model
+-        )
+-        self.read_chunk = ReadChunkTool(chunks_file)
+-
+-        # Load distillation prompt template
+-        prompt_name = str(config.get("investigator.prompt_file", "")).strip()
+-        if not prompt_name:
+-            prompt_name = (
+-                "investigator_distill_strict.txt"
+-                if bool(config.get("investigator.use_strict_distill", True))
+-                else "investigator_distill.txt"
+-            )
+-        prompt_path = Path(__file__).parent / "prompts" / prompt_name
+-        self._distill_template = prompt_path.read_text(encoding="utf-8")
++        # Single retrieval surface for sub-agents: E5 top-k semantic chunk search,
++        # with an internal lexical fallback for exact-entity recall.
++        self.index_dir = index_dir
++        self.embedding_model_name = embedding_model
++        with open(Path(index_dir) / "sentence_index.pkl", "rb") as f:
++            index_data = pickle.load(f)
++        self.sentences = index_data["sentences"]
++        self.embeddings = index_data["embeddings"]
++        self.sentence_to_chunk = index_data["sentence_to_chunk"]
++        self.chunks = index_data["chunks"]
++        self.embedding_model = SentenceTransformer(embedding_model)
++        self.chunk_texts = [
++            (chunk.get("text", str(chunk)) if isinstance(chunk, dict) else str(chunk))
++            for chunk in self.chunks
++        ] if isinstance(self.chunks, list) else {
++            str(cid): (chunk.get("text", str(chunk)) if isinstance(chunk, dict) else str(chunk))
++            for cid, chunk in self.chunks.items()
++        }
++
++        # Prompt construction is inline so no retrieved passage text can be
++        # accidentally templated in by the orchestrator.
+ 
+     # ------------------------------------------------------------------
+     # Public API
+@@ -105,23 +117,10 @@ class Investigator:
+         search_top_k_override: int | None = None,
+         max_read_override: int | None = None,
+     ) -> EvidenceCapsule:
+-        """Retrieve evidence for *sub_question* and distil into a capsule.
+-
+-        Steps
+-        -----
+-        1. Extract keyword terms and a semantic query from *sub_question*.
+-        2. Run keyword search and semantic search in parallel (both
+-           return chunk IDs + abbreviated snippets).
+-        3. Merge and de-duplicate chunk IDs, keep top-scoring ones.
+-        4. Read the full text of the top chunks.
+-        5. Build a distillation prompt with the sub-question, goal,
+-           prior facts, and retrieved passage texts.
+-        6. Call the LLM to extract answer / fact / confidence /
+-           support_ids.
+-        7. Parse the JSON response (with retry / fallback on malformed
+-           JSON).
+-        8. Enforce *evidence_capsule_limit* on ``support_ids``.
+-        9. Return an :class:`EvidenceCapsule`.
++        """Run an isolated retrieval sub-agent for *sub_question*.
++
++        The prompt contains only the task and prior capsule facts. Any passage
++        text seen by the sub-agent must come from its own tool calls.
+         """
+         capsule, _ = await self.investigate_with_usage(
+             sub_question,
+@@ -146,12 +145,18 @@ class Investigator:
+         search_top_k_override: int | None = None,
+         max_read_override: int | None = None,
+     ) -> tuple[EvidenceCapsule, int]:
+-        """Like :meth:`investigate`, but also returns token usage."""
+-        total_tokens = 0
++        """Run an isolated tool-using sub-agent and return its capsule.
++
++        The orchestrator never passes retrieved passages into this prompt. The
++        sub-agent receives only the task, optional prior capsule facts, and
++        tool access. It must retrieve/read evidence inside its own context and
++        return a final JSON answer, justification, confidence, and support IDs.
++        """
+         if self.blind_subagent:
+             goal = ""
+             prior_facts = []
+-        effective_top_k = (
++
++        top_k = (
+             int(search_top_k_override)
+             if search_top_k_override is not None
+             else self.search_top_k
+@@ -159,228 +164,389 @@ class Investigator:
+         max_read = (
+             int(max_read_override)
+             if max_read_override is not None
+-            else effective_top_k * 2
+-        )
+-
+-        # 1. Generate search queries
+-        effective_query = retrieval_query.strip() if retrieval_query and retrieval_query.strip() else sub_question
+-        keywords = self._extract_keywords(effective_query)
+-        semantic_query = self._build_semantic_query(
+-            effective_query,
+-            goal,
+-            prior_facts,
+-            slot_name=slot_name,
+-            slot_hint=slot_hint,
+-        )
+-
+-        # 2–3. Run both searches and collect chunk IDs
+-        ctx = AgentContext()
+-
+-        kw_result, kw_log = self.keyword_search.execute(
+-            ctx, keywords=keywords, top_k=effective_top_k
+-        )
+-        sem_result, sem_log = self.semantic_search.execute(
+-            ctx, query=semantic_query, top_k=effective_top_k
++            else max(top_k, self.evidence_capsule_limit)
+         )
+-
+-        kw_chunk_ids = self._extract_chunk_ids(kw_result)
+-        sem_chunk_ids = self._extract_chunk_ids(sem_result)
+-
+-        # Merge preserving order (keyword first), de-duplicate
+-        seen: set[str] = set()
+-        all_chunk_ids: list[str] = []
+-        for cid in kw_chunk_ids + sem_chunk_ids:
+-            if cid not in seen:
+-                seen.add(cid)
+-                all_chunk_ids.append(cid)
+-
+-        # 4. Read top chunks
+-        ids_to_read = all_chunk_ids[:max_read]
+-        if ids_to_read:
+-            chunk_result, chunk_log = self.read_chunk.execute(
+-                ctx, chunk_ids=ids_to_read
+-            )
+-        else:
+-            chunk_result = "No relevant passages found."
+-            logger.warning("No chunks found for sub-question: %s", sub_question)
+-
+-        support_ids = ids_to_read[: self.evidence_capsule_limit]
+-        support_snippets = [
+-            self.read_chunk.chunks_dict[sid]
+-            for sid in support_ids
+-            if sid in self.read_chunk.chunks_dict
+-        ]
+-
+-        if self.raw_snippets:
+-            capsule = EvidenceCapsule(
+-                answer="",
+-                fact=Fact(
+-                    text=chunk_result if ids_to_read else "",
+-                    confidence=0.5 if ids_to_read else 0.0,
+-                    confidence_self=0.0,
+-                    confidence_retrieval=0.5 if ids_to_read else 0.0,
+-                    slot_filled=False,
+-                    support_ids=support_ids,
+-                    source_step=0,
+-                ),
+-                support_snippets=support_snippets,
+-                retrieved_doc_ids=all_chunk_ids,
+-                retrieved_docs_total=len(all_chunk_ids),
+-            )
+-            return capsule, total_tokens
+-
+-        # 5. Build distillation prompt
+         prior_facts_text = (
+-            "\n".join(f"- {f.text}" for f in prior_facts)
++            self._format_prior_capsules(
++                prior_facts, include_support_snippets=self.include_prior_support_snippets
++            )
+             if prior_facts
+             else "None"
+         )
+-        user_prompt = self._distill_template.format(
+-            sub_question=sub_question,
+-            goal=goal,
+-            target_slot=slot_name or "final_answer",
+-            target_slot_hint=slot_hint or "No extra slot hint available.",
+-            prior_facts=prior_facts_text,
+-            retrieved_passages=chunk_result,
+-            capsule_limit=self.evidence_capsule_limit,
++        seed_query = (
++            retrieval_query.strip()
++            if retrieval_query and retrieval_query.strip()
++            else sub_question.strip()
+         )
+ 
+-        # 6–7. Call LLM with retry logic for malformed JSON
+-        messages = [
+-            {
+-                "role": "system",
+-                "content": (
+-                    "You are a precise fact extraction assistant. "
+-                    "Always respond with valid JSON."
+-                ),
+-            },
+-            {"role": "user", "content": user_prompt},
+-        ]
++        system_prompt = (
++            "You are an isolated retrieval sub-agent. You are not given evidence. "
++            "Use the semantic_topk retrieval tool to find evidence yourself. "
++            "Do not answer from memory. Read chunks before producing the final JSON. "
++            "When you have enough evidence, stop calling tools and output only JSON. "
++            "Never include raw passage text in the final answer or justification."
++        )
++        user_prompt = f"""Sub-question: {sub_question}
++Goal: {goal}
++Target slot: {slot_name or 'final_answer'}
++Target slot hint: {slot_hint or 'No extra slot hint available.'}
++Suggested retrieval query: {seed_query}
++Prior capsule facts:
++{prior_facts_text}
++
++Constraints:
++- Retrieve inside this sub-agent using tools.
++- Use search top_k <= {top_k}.
++- Read at most {max_read} chunks unless needed to disambiguate.
++- Final output must be exactly one JSON object:
++  {{"answer_span": "...", "justification": "...", "confidence": 0.0, "support_ids": ["..."]}}
++- `answer_span` is the minimal answer span for the sub-question.
++- `justification` should be 1-3 short sentences, not copied passages.
++- answer_span MUST be non-empty whenever any retrieved chunk is even partially relevant. Use low confidence for weak evidence; empty output is valid only when every retrieved chunk is irrelevant.
++"""
+ 
+-        parsed: Optional[dict] = None
+-        for attempt in range(_MAX_JSON_RETRIES + 1):
+-            try:
+-                response = await self.llm_client.async_chat(messages)
+-                total_tokens += self._extract_total_tokens(response)
+-                content: str = response["message"].get("content", "")
+-                content = self._strip_thinking(content)
+-                parsed = self._parse_json_response(content)
+-                if parsed is not None:
+-                    break
+-                if attempt < _MAX_JSON_RETRIES:
+-                    messages = [
+-                        messages[0],
+-                        messages[1],
+-                        {"role": "assistant", "content": content},
+-                        {"role": "user", "content": _REPAIR_PROMPT},
+-                    ]
+-            except Exception as exc:
+-                logger.warning(
+-                    "LLM call failed (attempt %d/%d): %s",
+-                    attempt + 1,
+-                    _MAX_JSON_RETRIES + 1,
+-                    exc,
+-                )
+-
+-        # 8. Build EvidenceCapsule (with fallback on total failure)
+-        if parsed is not None:
+-            # Normalise support_ids: the LLM sometimes prepends "Chunk "
+-            # to the numeric ID (e.g. "Chunk 354" instead of "354").
+-            raw_ids = parsed.get("support_ids", [])[: self.evidence_capsule_limit]
+-            support_ids = [
+-                self._normalise_chunk_id(str(sid))
+-                for sid in raw_ids
+-            ]
+-            answer = str(
+-                parsed.get("answer_span", parsed.get("answer", ""))
+-            ).strip()
+-            fact_text = parsed.get("fact", "").strip()
+-            confidence_self = float(parsed.get("confidence", 0.0))
+-            slot_filled = bool(answer and fact_text and support_ids)
+-            confidence_retrieval = self._compute_retrieval_confidence(
+-                support_ids=support_ids,
+-                fallback_ids=all_chunk_ids,
+-                semantic_result=sem_result,
+-            )
+-            confidence = (
+-                0.4 * confidence_retrieval
+-                + 0.4 * max(min(confidence_self, 1.0), 0.0)
+-                + 0.2 * float(slot_filled)
++        try:
++            result = await self._run_isolated_tool_loop(
++                system_prompt=system_prompt,
++                user_prompt=user_prompt,
++                max_read=max_read,
+             )
++        except Exception as exc:
++            logger.warning("Sub-agent failed for %s: %s", sub_question, exc)
++            result = {"answer": "", "trajectory": [], "total_tokens": 0}
++
++        total_tokens = int(result.get("total_tokens", 0) or 0)
++        parsed = self._normalise_agent_result(result)
++        answer = parsed["answer"]
++        fact_text = parsed["fact"] or parsed["answer"]
++        hits = result.get("hits", []) or []
++        if not answer and hits:
++            fallback_hit = hits[0]
++            fallback_text = self._clean_snippet_text(str(fallback_hit.get("text", "")))[:420]
++            answer = fallback_text
++            fact_text = fallback_text
++            parsed["support_ids"] = [fallback_hit.get("chunk_id", "")]
++            parsed["confidence"] = min(float(parsed.get("confidence") or 0.25), 0.35)
++        support_ids = [
++            self._normalise_chunk_id(str(sid))
++            for sid in parsed["support_ids"][: self.evidence_capsule_limit]
++        ]
++        support_ids = [sid for sid in support_ids if sid]
++        confidence_self = max(0.0, min(float(parsed["confidence"]), 1.0))
++        retrieved_doc_ids = self._extract_trajectory_chunk_ids(result.get("trajectory", []))
++        if not support_ids:
++            support_ids = retrieved_doc_ids[: self.evidence_capsule_limit]
++        confidence_retrieval = 1.0 if support_ids else 0.0
++        slot_filled = bool(answer and fact_text and support_ids)
++        confidence = (
++            0.4 * confidence_retrieval
++            + 0.4 * confidence_self
++            + 0.2 * float(slot_filled)
++        )
+ 
+-            if not answer or not fact_text or not support_ids:
+-                answer = ""
+-                fact_text = ""
+-                confidence = 0.0
+-                confidence_self = 0.0
+-                confidence_retrieval = 0.0
+-                slot_filled = False
+-                support_ids = []
+-            elif confidence < self.min_fact_confidence:
+-                # Preserve weak grounded hypotheses for one-step recursive
+-                # refinement without marking the slot as solved.
+-                slot_filled = False
+-
+-            # Populate support_snippets from actual chunk texts
++        support_snippets = self._build_support_snippets(
++            hits, support_ids, answer, fact_text
++        )
++
++        if not answer or not fact_text or not support_ids:
++            answer = ""
++            fact_text = ""
++            confidence = 0.0
++            confidence_self = 0.0
++            confidence_retrieval = 0.0
++            slot_filled = False
++            support_ids = []
+             support_snippets = []
+-            for sid in support_ids:
+-                if sid in self.read_chunk.chunks_dict:
+-                    support_snippets.append(self.read_chunk.chunks_dict[sid])
+-
+-            fact = Fact(
+-                text=fact_text,
+-                confidence=confidence,
+-                confidence_self=confidence_self,
+-                confidence_retrieval=confidence_retrieval,
+-                slot_filled=slot_filled,
+-                answer_span=answer,
+-                support_ids=support_ids,
+-                source_step=0,  # set by the pipeline
+-            )
+-            capsule = EvidenceCapsule(
+-                answer=answer,
+-                fact=fact,
+-                support_snippets=support_snippets,
+-                retrieved_doc_ids=all_chunk_ids,
+-                retrieved_docs_total=len(all_chunk_ids),
+-            )
+-        else:
+-            # Fallback: empty capsule
+-            logger.error(
+-                "All JSON parse attempts failed for sub-question: %s",
+-                sub_question,
+-            )
+-            capsule = EvidenceCapsule(
+-                answer="",
+-                fact=Fact(
+-                    text="",
+-                    confidence=0.0,
+-                    confidence_self=0.0,
+-                    confidence_retrieval=0.0,
+-                    slot_filled=False,
+-                    answer_span="",
+-                    support_ids=[],
+-                    source_step=0,
+-                ),
+-                support_snippets=[],
+-                retrieved_doc_ids=all_chunk_ids,
+-                retrieved_docs_total=len(all_chunk_ids),
+-            )
++        elif confidence < self.min_fact_confidence:
++            slot_filled = False
++
++        fact = Fact(
++            text=fact_text,
++            confidence=confidence,
++            confidence_self=confidence_self,
++            confidence_retrieval=confidence_retrieval,
++            slot_filled=slot_filled,
++            slot_name=slot_name,
++            answer_span=answer,
++            support_ids=support_ids,
++            support_snippets=support_snippets,
++            source_step=0,
++        )
++        capsule = EvidenceCapsule(
++            answer=answer,
++            fact=fact,
++            support_snippets=support_snippets,
++            retrieved_doc_ids=retrieved_doc_ids,
++            retrieved_docs_total=len(retrieved_doc_ids),
++        )
+ 
+         logger.debug(
+-            "Investigator capsule: answer=%r, confidence=%.2f, "
+-            "support_ids=%s",
++            "Investigator capsule: answer=%r, confidence=%.2f, support_ids=%s",
+             capsule.answer,
+             capsule.fact.confidence,
+             capsule.fact.support_ids,
+         )
+-
+         return capsule, total_tokens
+ 
+     # ------------------------------------------------------------------
+     # Private helpers
+     # ------------------------------------------------------------------
+ 
++
++
++    async def _run_isolated_tool_loop(
++        self,
++        *,
++        system_prompt: str,
++        user_prompt: str,
++        max_read: int,
++    ) -> dict[str, Any]:
++        query_match = re.search(r"Suggested retrieval query:\s*(.+)", user_prompt)
++        query = query_match.group(1).strip() if query_match else user_prompt[:240]
++        hits = self._semantic_retrieve(query, top_k=max_read)
++        retrieval_text = "\n\n".join(
++            f"[Chunk {hit['chunk_id']}] score={hit['score']:.3f}\n{hit['text']}"
++            for hit in hits
++        ) or "No relevant chunks found."
++        trajectory = [{
++            "tool_name": "semantic_topk",
++            "arguments": {"query": query, "top_k": max_read},
++            "tool_result": retrieval_text,
++            "chunk_ids": [hit["chunk_id"] for hit in hits],
++            "chunks_found": len(hits),
++        }]
++        prompt = user_prompt + """
++
++Retrieved evidence from your semantic_topk tool:
++""" + retrieval_text + """
++
++Extract the best grounded answer from the retrieved evidence.
++Return exactly one JSON object:
++{"answer_span":"<minimal answer span>","justification":"<short fact directly supporting the answer>","confidence":<float 0.0-1.0>,"support_ids":["<chunk_id>"]}
++Rules:
++- Use only the retrieved evidence.
++- Answer the sub-question exactly, not a broader description or upstream bridge entity.
++- answer_span must be the shortest copied span that best resolves the target slot.
++- answer_span MUST be non-empty whenever any retrieved chunk is even partially relevant. Use low confidence for weak evidence; empty output is valid only when every retrieved chunk is irrelevant.
++- Do not output text outside JSON.
++"""
++        response = await self.llm_client.async_chat(
++            messages=[
++                {"role": "system", "content": system_prompt},
++                {"role": "user", "content": prompt},
++            ]
++        )
++        total_tokens = self._extract_total_tokens(response)
++        content = self._strip_thinking(response["message"].get("content", ""))
++        return {
++            "answer": content,
++            "trajectory": trajectory,
++            "total_tokens": total_tokens,
++            "hits": hits,
++        }
++
++
++    def _build_support_snippets(
++        self,
++        hits: list[dict[str, Any]],
++        support_ids: list[str],
++        answer: str,
++        justification: str,
++    ) -> list[str]:
++        """Return tiny capsule evidence snippets from supported chunks only."""
++        wanted = {self._normalise_chunk_id(str(cid)) for cid in support_ids}
++        snippets: list[str] = []
++        for hit in hits:
++            chunk_id = self._normalise_chunk_id(str(hit.get("chunk_id", "")))
++            if wanted and chunk_id not in wanted:
++                continue
++            text = self._clean_snippet_text(str(hit.get("text", "")))
++            snippet = self._window_around_answer(text, answer)
++            if not snippet and justification:
++                snippet = self._window_around_answer(text, justification[:80])
++            if not snippet:
++                snippet = text[:260].strip()
++            if snippet:
++                snippets.append(f"[{chunk_id}] {snippet}")
++            if len(snippets) >= min(2, self.evidence_capsule_limit):
++                break
++        return snippets
++
++    @staticmethod
++    def _clean_snippet_text(text: str) -> str:
++        return re.sub(r"\s+", " ", text).strip()
++
++    @staticmethod
++    def _window_around_answer(text: str, answer: str) -> str:
++        answer = answer.strip()
++        if not text or not answer:
++            return ""
++        match = re.search(re.escape(answer), text, flags=re.IGNORECASE)
++        if not match:
++            return ""
++        start = max(0, match.start() - 120)
++        end = min(len(text), match.end() + 120)
++        snippet = text[start:end].strip()
++        if start > 0:
++            snippet = "..." + snippet
++        if end < len(text):
++            snippet += "..."
++        return snippet[:320].strip()
++
++    @staticmethod
++    def _format_prior_capsules(
++        prior_facts: list[Fact], include_support_snippets: bool = True
++    ) -> str:
++        if not prior_facts:
++            return "None"
++        lines: list[str] = []
++        for fact in prior_facts:
++            answer = fact.answer_span.strip() or fact.text.strip()
++            line = f"- {fact.slot_name or 'fact'}: {answer}"
++            if fact.text.strip() and fact.text.strip() != answer:
++                line += f"; {fact.text.strip()}"
++            if fact.support_ids:
++                line += f" (chunks: {', '.join(fact.support_ids[:3])})"
++            lines.append(line)
++            if include_support_snippets:
++                for snippet in fact.support_snippets[:2]:
++                    lines.append(f"  evidence: {snippet}")
++        return "\n".join(lines)
++
++
++    def _merge_keyword_fallback(
++        self,
++        query: str,
++        hits: list[dict[str, Any]],
++        top_k: int,
++    ) -> list[dict[str, Any]]:
++        """Add exact lexical matches without exposing a second tool."""
++        seen = {str(hit.get("chunk_id", "")) for hit in hits}
++        terms = self._query_terms(query)
++        if not terms:
++            return hits
++        scored: list[tuple[float, str, str]] = []
++        items = enumerate(self.chunk_texts) if isinstance(self.chunk_texts, list) else self.chunk_texts.items()
++        for cid, text in items:
++            text_str = str(text)
++            text_norm = text_str.lower()
++            score = 0.0
++            for term in terms:
++                if term in text_norm:
++                    score += 3.0 if " " in term else 1.0
++            if score > 0:
++                scored.append((score, str(cid), text_str))
++        scored.sort(key=lambda item: item[0], reverse=True)
++        merged = list(hits)
++        for score, cid, text in scored:
++            if cid in seen:
++                continue
++            merged.append({"chunk_id": cid, "score": score / 10.0, "text": text})
++            seen.add(cid)
++            if len(merged) >= top_k + 3:
++                break
++        return merged
++
++    @staticmethod
++    def _query_terms(query: str) -> list[str]:
++        quoted = re.findall(r'[\'"]([^\'"]{3,80})[\'"]', query)
++        caps = re.findall(r"\b[A-Z][A-Za-z0-9-]*(?:\s+[A-Z][A-Za-z0-9-]*){0,4}\b", query)
++        tokens = [t.lower() for t in re.findall(r"[A-Za-z0-9][A-Za-z0-9-]{2,}", query)]
++        stop = {"what", "which", "where", "when", "who", "whose", "that", "this", "with", "from", "were", "was", "are", "the", "and", "for", "did", "does", "has", "had"}
++        terms = [t.strip().lower() for t in quoted + caps if len(t.strip()) >= 3]
++        terms.extend(t for t in tokens if t not in stop and len(t) >= 4)
++        dedup: list[str] = []
++        seen: set[str] = set()
++        for term in terms:
++            term = re.sub(r"\s+", " ", term).strip()
++            if term and term not in seen:
++                dedup.append(term)
++                seen.add(term)
++        return dedup[:12]
++
++    def _semantic_retrieve(self, query: str, top_k: int) -> list[dict[str, Any]]:
++        top_k = max(1, min(int(top_k), 20))
++        try:
++            query_embedding = self.embedding_model.encode(
++                [query],
++                prompt_name=os.getenv("ARAG_QUERY_PROMPT_NAME", "query"),
++                normalize_embeddings=True,
++            )[0]
++        except TypeError:
++            query_embedding = self.embedding_model.encode([query], normalize_embeddings=True)[0]
++        similarities = np.dot(self.embeddings, query_embedding)
++        top_indices = np.argsort(similarities)[::-1][: top_k * 4]
++        by_chunk: dict[str, float] = {}
++        for idx in top_indices:
++            chunk_id = str(self.sentence_to_chunk[idx])
++            score = float(similarities[idx])
++            by_chunk[chunk_id] = max(score, by_chunk.get(chunk_id, -1.0))
++        ranked = sorted(by_chunk.items(), key=lambda x: x[1], reverse=True)[:top_k]
++        hits = []
++        for chunk_id, score in ranked:
++            chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[chunk_id]
++            text = chunk.get("text", str(chunk)) if isinstance(chunk, dict) else str(chunk)
++            hits.append({"chunk_id": chunk_id, "score": score, "text": text})
++        return hits
++
++    @staticmethod
++    def _normalise_agent_result(result: dict[str, Any]) -> dict[str, Any]:
++        raw_answer = str(result.get("answer", "") or "").strip()
++        parsed: dict[str, Any] = {}
++        parsed_obj = Investigator._parse_json_response(raw_answer)
++        if isinstance(parsed_obj, dict):
++            parsed = parsed_obj
++
++        answer = str(
++            parsed.get("answer_span", parsed.get("answer", ""))
++        ).strip()
++        justification = str(
++            result.get("justification")
++            or parsed.get("justification")
++            or parsed.get("fact")
++            or ""
++        ).strip()
++        confidence = result.get("confidence", parsed.get("confidence", 0.0))
++        try:
++            confidence = float(confidence)
++        except (TypeError, ValueError):
++            confidence = 0.0
++        support_ids = (
++            parsed.get("support_ids")
++            or []
++        )
++        if not isinstance(support_ids, list):
++            support_ids = [support_ids]
++        return {
++            "answer": answer,
++            "fact": justification,
++            "confidence": confidence,
++            "support_ids": support_ids,
++        }
++
++    @classmethod
++    def _extract_trajectory_chunk_ids(cls, trajectory: list[dict[str, Any]]) -> list[str]:
++        ids: list[str] = []
++        seen: set[str] = set()
++        for entry in trajectory:
++            args = entry.get("arguments", {}) if isinstance(entry, dict) else {}
++            candidates: list[Any] = []
++            if isinstance(args, dict):
++                if "chunk_id" in args:
++                    candidates.append(args["chunk_id"])
++                if isinstance(args.get("chunk_ids"), list):
++                    candidates.extend(args["chunk_ids"])
++            if isinstance(entry.get("chunk_ids"), list):
++                candidates.extend(entry["chunk_ids"])
++            tool_result = str(entry.get("tool_result", "")) if isinstance(entry, dict) else ""
++            candidates.extend(re.findall(r"Chunk(?: ID)?:\s*([A-Za-z0-9_.:-]+)", tool_result))
++            for cid in candidates:
++                norm = cls._normalise_chunk_id(str(cid))
++                if norm and norm not in seen:
++                    seen.add(norm)
++                    ids.append(norm)
++        return ids
++
+     @staticmethod
+     def _extract_keywords(question: str) -> list[str]:
+         """Extract short keyword terms from a natural-language question.
+@@ -509,7 +675,11 @@ class Investigator:
+     @staticmethod
+     def _strip_thinking(text: str) -> str:
+         """Remove Qwen3-style ``<think>...</think>`` blocks from *text*."""
+-        return re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL).strip()
++        text = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
++        if "<think>" in text:
++            json_start = text.find("{")
++            text = text[json_start:] if json_start >= 0 else re.sub(r"<think>.*", "", text, flags=re.DOTALL)
++        return text.strip()
+ 
+     @staticmethod
+     def _parse_json_response(text: str) -> Optional[dict]:
+diff --git a/src/adaptive_sage/pipeline.py b/src/adaptive_sage/pipeline.py
+index 2cfb633..bbe5e78 100644
+--- a/src/adaptive_sage/pipeline.py
++++ b/src/adaptive_sage/pipeline.py
+@@ -7,6 +7,7 @@ import json
+ import logging
+ import math
+ import random
++import re
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -51,6 +52,7 @@ class AdaptiveRecursivePipeline:
+             config.get("adaptive.direct_answer_threshold", 0.9)
+         )
+         self.max_total_tokens: int = int(config.get("budget.max_total_tokens", 0) or 0)
++        self.recursion_token_guard: int = int(config.get("budget.recursion_token_guard", 0) or 0)
+         self.final_answer_threshold: float = float(
+             config.get("adaptive.final_answer_threshold", 0.75)
+         )
+@@ -332,19 +334,42 @@ class AdaptiveRecursivePipeline:
+                 route_target_slot=route_target_slot,
+             )
+ 
+-        # Always probe with the full question. Probing only the first-hop
+-        # hint on compositional questions throws away signal that often
+-        # short-circuits the controller (especially on hotpot-style chains
+-        # where one retrieval already contains the answer span). The route
+-        # output is used downstream as the slot scaffold for the recursive
+-        # lane; it does not constrain the probe's retrieval target.
+         probe_sub_question = question
+         probe_goal = target_profile
++        probe_retrieval_query: str | None = None
++        probe_slot_name = ""
++        probe_slot_hint = ""
++        probe_targeted_first_hop = False
++        probe_refine_tokens = 0
++        if self.bootstrap_probe_first and is_compositional and required_hops:
++            first_slot = dict(required_hops[0])
++            spawn_decision, probe_refine_tokens = await self.orchestrator.propose_spawn(
++                question=question,
++                facts=[],
++                trace=step_trace,
++                target_profile=target_profile,
++                pending_slots=[first_slot],
++                missing_reason=(
++                    "Start with the first unresolved dependency only. "
++                    "Do not answer the full multi-hop question yet."
++                ),
++            )
++            total_tokens += probe_refine_tokens
++            orchestrator_tokens += probe_refine_tokens
++            probe_sub_question = str(spawn_decision.get("sub_question", "")).strip() or question
++            probe_goal = str(spawn_decision.get("goal", "")).strip() or target_profile
++            probe_retrieval_query = str(spawn_decision.get("retrieval_query", "")).strip() or None
++            probe_slot_name = str(spawn_decision.get("slot_name", "")).strip() or str(first_slot.get("slot_name", "")).strip()
++            probe_slot_hint = str(first_slot.get("hint", "")).strip()
++            probe_targeted_first_hop = True
+ 
+         probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+             sub_question=probe_sub_question,
+             goal=probe_goal,
+             prior_facts=[],
++            retrieval_query=probe_retrieval_query,
++            slot_name=probe_slot_name,
++            slot_hint=probe_slot_hint,
+             search_top_k_override=self.bootstrap_search_top_k or None,
+             max_read_override=self.bootstrap_max_read or None,
+         )
+@@ -363,13 +388,15 @@ class AdaptiveRecursivePipeline:
+                 action="spawn",
+                 sub_question=probe_sub_question,
+                 fact_added=probe_fact_added,
+-                tokens=probe_tokens,
++                tokens=probe_refine_tokens + probe_tokens,
+                 metadata={
+                     "sufficiency_probe": True,
+                     "route_target_slot": route_target_slot,
+                     "route_required_hops": required_hops,
+                     "is_compositional": is_compositional,
+-                    "probe_targeted_first_hop": False,
++                    "probe_targeted_first_hop": probe_targeted_first_hop,
++                    "probe_refine_tokens": probe_refine_tokens,
++                    "retrieval_query": probe_retrieval_query or probe_sub_question,
+                 },
+             )
+         )
+@@ -621,6 +648,21 @@ class AdaptiveRecursivePipeline:
+         steps_executed = 0
+         for sub_step in range(recurse_steps):
+             absolute_step = len(step_trace)
++            if self.recursion_token_guard and total_tokens >= self.recursion_token_guard:
++                step_trace.append(
++                    StepTrace(
++                        step=absolute_step,
++                        action="answer",
++                        tokens=0,
++                        metadata={
++                            "sufficiency_recurse": True,
++                            "decision": "answer",
++                            "fallback": "recursion_token_guard",
++                            "token_guard": self.recursion_token_guard,
++                        },
++                    )
++                )
++                break
+             decision, decide_tokens = await self.orchestrator.decide_with_usage(
+                 question=question,
+                 facts=memory.get_all(),
+@@ -632,6 +674,27 @@ class AdaptiveRecursivePipeline:
+             total_tokens += decide_tokens
+             orchestrator_tokens += decide_tokens
+             action = decision.get("action", "answer")
++            missing_slots = self._missing_required_slots(required_hops or [], memory.get_all())
++            min_recurse_steps = min(recurse_steps, max(0, self.sufficiency_min_recurse_steps))
++            if action == "answer" and (missing_slots or steps_executed < min_recurse_steps):
++                pending_slot = missing_slots[0] if missing_slots else {}
++                forced_decision, forced_tokens = await self.orchestrator.propose_spawn(
++                    question=question,
++                    facts=memory.get_all(),
++                    trace=step_trace,
++                    target_profile=target_profile,
++                    pending_slots=[pending_slot] if pending_slot else (required_hops or []),
++                    missing_reason=(
++                        "The recursive lane has not completed its configured minimum "
++                        "number of distinct retrieval steps. Retrieve a different "
++                        "unresolved bridge fact before answering."
++                    ),
++                )
++                total_tokens += forced_tokens
++                orchestrator_tokens += forced_tokens
++                decide_tokens += forced_tokens
++                decision = forced_decision
++                action = "spawn"
+ 
+             if action == "answer":
+                 step_trace.append(
+@@ -665,6 +728,37 @@ class AdaptiveRecursivePipeline:
+             retrieval_query = str(decision.get("retrieval_query", "")).strip() or None
+             goal = str(decision.get("goal", "")).strip() or target_profile
+             slot_name = str(decision.get("slot_name", "")).strip()
++            duplicate_before_refine = self._is_duplicate_subquestion(sub_question, step_trace)
++            if duplicate_before_refine:
++                refined, refine_tokens = await self.orchestrator.refine_innermost_sub_question_with_usage(
++                    question=question,
++                    candidate_sub_question=sub_question,
++                    facts=memory.get_all(),
++                    trace=step_trace,
++                    target_profile=target_profile,
++                    pending_slots=required_hops or [],
++                    missing_reason="The proposed sub-question repeats an earlier retrieval. Rewrite it to target a different unresolved bridge fact.",
++                )
++                total_tokens += refine_tokens
++                orchestrator_tokens += refine_tokens
++                sub_question = refined["sub_question"]
++                retrieval_query = refined.get("retrieval_query") or sub_question
++                goal = refined.get("goal") or goal
++                slot_name = refined.get("slot_name") or slot_name
++                if self._is_duplicate_subquestion(sub_question, step_trace):
++                    step_trace.append(
++                        StepTrace(
++                            step=absolute_step,
++                            action="answer",
++                            tokens=decide_tokens + refine_tokens,
++                            metadata={
++                                "sufficiency_recurse": True,
++                                "decision": "answer",
++                                "fallback": "duplicate_subquestion_after_refine",
++                            },
++                        )
++                    )
++                    break
+ 
+             capsule, investigate_tokens = await self.investigator.investigate_with_usage(
+                 sub_question=sub_question,
+@@ -697,6 +791,7 @@ class AdaptiveRecursivePipeline:
+                         "sufficiency_recurse": True,
+                         "goal": goal,
+                         "retrieval_query": retrieval_query or sub_question,
++                        "duplicate_refined": duplicate_before_refine,
+                     },
+                 )
+             )
+@@ -752,6 +847,26 @@ class AdaptiveRecursivePipeline:
+             recurse_steps_used=steps_executed,
+         )
+ 
++
++    @staticmethod
++    def _missing_required_slots(required_hops: list[dict], facts: list) -> list[dict]:
++        if not required_hops:
++            return []
++        resolved = {
++            str(getattr(fact, "slot_name", "")).strip()
++            for fact in facts
++            if getattr(fact, "slot_filled", False) and str(getattr(fact, "slot_name", "")).strip()
++        }
++        missing = [
++            slot for slot in required_hops
++            if str(slot.get("slot_name", "")).strip()
++            and str(slot.get("slot_name", "")).strip() not in resolved
++        ]
++        if not missing:
++            return []
++        min_group = min(int(slot.get("dependency_group", 0) or 0) for slot in missing)
++        return [slot for slot in missing if int(slot.get("dependency_group", 0) or 0) == min_group]
++
+     def _sufficiency_recurse_budget(self, sufficiency: float) -> int:
+         """Map sufficiency to a recurse step budget.
+ 
+@@ -763,8 +878,10 @@ class AdaptiveRecursivePipeline:
+         floor.
+         """
+         s = max(0.0, min(float(sufficiency), 1.0))
+-        scaled = math.ceil(self.sufficiency_max_recurse_steps * (1.0 - s))
+         floor = max(1, self.sufficiency_min_recurse_steps)
++        if s <= 0.0:
++            return self.sufficiency_max_recurse_steps
++        scaled = math.ceil(self.sufficiency_max_recurse_steps * (1.0 - s))
+         return max(
+             floor,
+             min(scaled, self.sufficiency_max_recurse_steps),
+@@ -2935,16 +3052,34 @@ class AdaptiveRecursivePipeline:
+ 
+     @staticmethod
+     def _is_duplicate_subquestion(sub_question: str, step_trace: list[StepTrace]) -> bool:
+-        """Return whether a proposed spawn repeats a previous spawn question."""
+-        normalized = sub_question.strip().lower()
++        """Return whether a proposed spawn repeats a previous retrieval intent."""
++        normalized = AdaptiveRecursivePipeline._normalise_subquestion(sub_question)
+         if not normalized:
+             return False
+         for entry in step_trace:
+-            if entry.action == "spawn" and entry.sub_question:
+-                if entry.sub_question.strip().lower() == normalized:
++            if entry.action in {"spawn", "refine"} and entry.sub_question:
++                previous = AdaptiveRecursivePipeline._normalise_subquestion(entry.sub_question)
++                if previous == normalized:
+                     return True
++                if previous and normalized:
++                    overlap = AdaptiveRecursivePipeline._token_overlap(previous, normalized)
++                    if overlap >= 0.86:
++                        return True
+         return False
+ 
++    @staticmethod
++    def _normalise_subquestion(text: str) -> str:
++        cleaned = re.sub(r"[^a-z0-9 ]+", " ", str(text).lower())
++        return re.sub(r"\s+", " ", cleaned).strip()
++
++    @staticmethod
++    def _token_overlap(left: str, right: str) -> float:
++        left_tokens = set(left.split())
++        right_tokens = set(right.split())
++        if not left_tokens or not right_tokens:
++            return 0.0
++        return len(left_tokens & right_tokens) / min(len(left_tokens), len(right_tokens))
++
+     def _capsule_supports_answer(
+         self,
+         capsule: EvidenceCapsule,
+diff --git a/src/adaptive_sage/prompts/investigator_distill.txt b/src/adaptive_sage/prompts/investigator_distill.txt
+index 51875e0..314e560 100644
+--- a/src/adaptive_sage/prompts/investigator_distill.txt
++++ b/src/adaptive_sage/prompts/investigator_distill.txt
+@@ -1,63 +1,11 @@
+-You are a precise fact extraction assistant. Your task is to distill retrieved passages into a concise factual answer for a specific sub-question.
++Use the available retrieval tools to answer one sub-question.
+ 
+-## Context
++When you have enough evidence, stop calling tools and output exactly one JSON object:
++{"answer_span": "<minimal answer span>", "justification": "<1-3 short evidence-grounded sentences>", "confidence": <float 0.0-1.0>, "support_ids": ["<chunk_id>"]}
+ 
+-You are given:
+-- A **sub-question** that needs to be answered
+-- A **goal** describing what information is needed
+-- **Prior facts** already established in the reasoning chain
+-- **Retrieved passages** from a knowledge base
+-
+-## Instructions
+-
+-1. Read the retrieved passages carefully.
+-2. Extract the answer to the sub-question from the passages.
+-3. Formulate a single concise fact statement that captures the key information.
+-4. Assess your confidence (0.0-1.0) based on how well the evidence supports the answer.
+-5. List the chunk IDs that most directly support your answer (max {capsule_limit}).
+-
+-## Chain Grounding
+-
+-When prior facts are provided, prefer extracting information that EXTENDS the established reasoning chain. If prior facts identify entity X, and the passages mention X in a new context, extract the fact that connects X to the answer target. Do not extract unrelated facts when a chain-consistent fact is available.
+-
+-## Output Format
+-
+-You MUST output a single JSON object with exactly these keys:
+-
+-```json
+-{{
+-  "answer_span": "<concise answer to the sub-question>",
+-  "fact": "<one-sentence factual statement>",
+-  "confidence": <float between 0.0 and 1.0>,
+-  "support_ids": ["<chunk_id_1>", "<chunk_id_2>"]
+-}}
+-```
+-
+-## Rules
+-
+-- The answer_span should be short and direct (a name, date, place, or brief phrase).
+-- The fact should be a self-contained declarative sentence.
+-- confidence reflects how clearly the evidence supports the answer:
+-  - 0.9-1.0: Evidence directly and unambiguously states the answer
+-  - 0.7-0.9: Evidence strongly supports but requires minor inference
+-  - 0.4-0.7: Evidence partially supports; answer is plausible but uncertain
+-  - Below 0.4: Evidence is weak or contradictory
+-- support_ids lists the chunk IDs that provide the strongest evidence (max {capsule_limit}).
+-- If the passages contain NO relevant information, set answer_span and fact to empty strings and confidence to 0.0.
+-- Do NOT guess beyond what the evidence supports.
+-- Prefer the minimal canonical answer span stated in the evidence.
+-- Do NOT include any text outside the JSON object.
+-
+----
+-
+-## Sub-question
+-{sub_question}
+-
+-## Goal
+-{goal}
+-
+-## Prior facts
+-{prior_facts}
+-
+-## Retrieved passages
+-{retrieved_passages}
++Rules:
++- You are not given evidence in the prompt.
++- Search and read chunks yourself before producing the final JSON.
++- Do not answer from memory.
++- Do not include raw passage text in the final answer or justification.
++- If evidence is insufficient, output an empty answer, empty justification, confidence 0.0, and no support IDs.
+diff --git a/src/adaptive_sage/prompts/investigator_distill_strict.txt b/src/adaptive_sage/prompts/investigator_distill_strict.txt
+index ddffc93..314e560 100644
+--- a/src/adaptive_sage/prompts/investigator_distill_strict.txt
++++ b/src/adaptive_sage/prompts/investigator_distill_strict.txt
+@@ -1,38 +1,11 @@
+-Extract one grounded answer from the retrieved passages.
++Use the available retrieval tools to answer one sub-question.
+ 
+-Return exactly one JSON object with this schema:
+-```json
+-{{
+-  "answer_span": "<minimal answer span>",
+-  "fact": "<short fact that directly states the same answer>",
+-  "confidence": <float 0.0-1.0>,
+-  "support_ids": ["<chunk_id_1>", "<chunk_id_2>"]
+-}}
+-```
++When you have enough evidence, stop calling tools and output exactly one JSON object:
++{"answer_span": "<minimal answer span>", "justification": "<1-3 short evidence-grounded sentences>", "confidence": <float 0.0-1.0>, "support_ids": ["<chunk_id>"]}
+ 
+ Rules:
+-- Use only the retrieved passages.
+-- Answer the sub-question exactly, not a broader description or an upstream bridge entity.
+-- `answer_span` must be the shortest copied span that resolves the target slot with the correct type and boundary.
+-- Preserve units, titles, administrative qualifiers, and official names when they are needed for correctness.
+-- If the passage contains both a bridge entity and the slot value asked for, return the slot value.
+-- For yes/no questions, `answer_span` must be exactly `yes` or `no`, and `fact` must explicitly state the proposition that makes it true or false.
+-- `fact` must restate the same answer and directly support it with no extra claims.
+-- Cite only chunk IDs present in the passages.
+-- If the passages do not directly support a single answer, abstain with:
+-  - `"answer_span": ""`
+-  - `"fact": ""`
+-  - `"confidence": 0.0`
+-  - `"support_ids": []`
+-- Do not guess.
+-- Do not output any text outside the JSON object.
+-
+-Sub-question: {sub_question}
+-Goal: {goal}
+-Target slot: {target_slot}
+-Target slot hint: {target_slot_hint}
+-Prior facts:
+-{prior_facts}
+-
+-Retrieved passages:
+-{retrieved_passages}
++- You are not given evidence in the prompt.
++- Search and read chunks yourself before producing the final JSON.
++- Do not answer from memory.
++- Do not include raw passage text in the final answer or justification.
++- If evidence is insufficient, output an empty answer, empty justification, confidence 0.0, and no support IDs.
+diff --git a/src/adaptive_sage/types.py b/src/adaptive_sage/types.py
+index db56390..44d6671 100644
+--- a/src/adaptive_sage/types.py
++++ b/src/adaptive_sage/types.py
+@@ -32,6 +32,7 @@ class Fact:
+     slot_name: str = ""
+     answer_span: str = ""
+     support_ids: list[str] = field(default_factory=list)
++    support_snippets: list[str] = field(default_factory=list)
+     source_step: int = 0
+ 
+     def to_dict(self) -> dict:

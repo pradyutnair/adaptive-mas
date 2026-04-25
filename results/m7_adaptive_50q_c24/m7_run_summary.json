@@ -1,0 +1,17 @@
+{
+  "attempted": 50,
+  "succeeded": 50,
+  "failed": 0,
+  "total_output_rows": 50,
+  "elapsed_seconds": 414.667,
+  "mean_wallclock_seconds": 8.293,
+  "mean_question_wallclock_seconds": 249.59,
+  "p50_question_wallclock_seconds": 261.99,
+  "p95_question_wallclock_seconds": 348.61,
+  "questions_path": "results/m7_adaptive_50q_c24/questions.json",
+  "inputs": [
+    "results/m7_adaptive_50q_c24/shard0/predictions.jsonl",
+    "results/m7_adaptive_50q_c24/shard1/predictions.jsonl",
+    "results/m7_adaptive_50q_c24/shard2/predictions.jsonl"
+  ]
+}
