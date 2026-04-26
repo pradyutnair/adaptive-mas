@@ -1,0 +1,34 @@
+{
+  "llm_defaults": {
+    "model": "Qwen/Qwen3-8B",
+    "base_url": "http://localhost:8001/v1",
+    "api_key": "EMPTY",
+    "temperature": 0.0,
+    "max_tokens": 1024,
+    "enable_thinking": true,
+    "timeout_seconds": 600
+  },
+  "agents": {
+    "orchestrator": {
+      "max_tokens": 4096
+    },
+    "investigator": {
+      "max_tokens": 2048
+    }
+  },
+  "retriever": {
+    "base_url": "http://node408:8003",
+    "top_k": 10,
+    "timeout_seconds": 30
+  },
+  "pipeline": {
+    "max_turns": 8,
+    "max_searches_per_subagent": 5,
+    "min_fact_confidence": 0.3,
+    "max_answer_words": 8,
+    "context_token_budget": 28000
+  },
+  "runner": {
+    "concurrency": 8
+  }
+}

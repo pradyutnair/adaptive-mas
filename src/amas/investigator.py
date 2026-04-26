@@ -13,9 +13,13 @@ import json
 import logging
 from pathlib import Path
 
+import tiktoken
+
 from .llm import LLMClient, parse_json_object, strip_thinking
 from .retriever import RetrievalHit, Retriever
 from .types import AnswerType, EvidenceCapsule, Fact
+
+_TOKENIZER = tiktoken.get_encoding("cl100k_base")
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +66,7 @@ class Investigator:
         messages: list[dict] = [{"role": "user", "content": prompt}]
         retrieved_ids: list[str] = []
         total_tokens = 0
+        chunk_tokens = 0
         searches_used = 0
         last_content = ""
 
@@ -79,19 +84,20 @@ class Investigator:
                 for cid in ids:
                     if cid not in retrieved_ids:
                         retrieved_ids.append(cid)
-                messages.append({
-                    "role": "user",
-                    "content": json.dumps({"search_result": [
-                        {"chunk_id": h.chunk_id, "score": round(h.score, 4), "text": h.text}
-                        for h in hits
-                    ]}),
-                })
+                search_payload = json.dumps({"search_result": [
+                    {"chunk_id": h.chunk_id, "score": round(h.score, 4), "text": h.text}
+                    for h in hits
+                ]})
+                chunk_tokens += self._estimate_chunk_tokens(search_payload)
+                messages.append({"role": "user", "content": search_payload})
                 searches_used += 1
                 continue
 
             if action == "final":
                 self.last_searches_used = searches_used
-                return self._build_capsule(parsed, retrieved_ids, slot_name, ans_type), total_tokens
+                capsule = self._build_capsule(parsed, retrieved_ids, slot_name, ans_type)
+                capsule.chunk_tokens = chunk_tokens
+                return capsule, total_tokens
 
             # Bad turn: nudge.
             messages.append({"role": "assistant", "content": content})
@@ -109,13 +115,16 @@ class Investigator:
         self.last_searches_used = searches_used
         salvage = parse_json_object(last_content)
         if salvage.get("action") == "final":
-            return self._build_capsule(salvage, retrieved_ids, slot_name, ans_type), total_tokens
+            capsule = self._build_capsule(salvage, retrieved_ids, slot_name, ans_type)
+            capsule.chunk_tokens = chunk_tokens
+            return capsule, total_tokens
         empty = Fact(text="", confidence=0.0, slot_name=slot_name)
         return (
             EvidenceCapsule(
                 answer="", fact=empty,
                 retrieved_doc_ids=retrieved_ids,
                 retrieved_docs_total=len(retrieved_ids),
+                chunk_tokens=chunk_tokens,
             ),
             total_tokens,
         )
@@ -191,6 +200,10 @@ class Investigator:
             retrieved_doc_ids=retrieved_ids,
             retrieved_docs_total=len(retrieved_ids),
         )
+
+    @staticmethod
+    def _estimate_chunk_tokens(payload: str) -> int:
+        return len(_TOKENIZER.encode(payload))
 
     @staticmethod
     def _bounded_float(v) -> float:

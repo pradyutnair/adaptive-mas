@@ -79,5 +79,7 @@ class AMASPipeline:
                 "n_searches": result.n_searches,
                 "n_spawn_turns": result.n_spawn_turns,
                 "n_subagents": result.n_subagents,
+                "chunk_tokens": result.chunk_tokens,
+                "reasoning_tokens": result.reasoning_tokens,
             },
         )

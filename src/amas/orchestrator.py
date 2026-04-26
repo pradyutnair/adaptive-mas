@@ -74,6 +74,8 @@ class OrchestratorResult:
     total_tokens: int = 0
     orchestrator_tokens: int = 0
     subagent_tokens: int = 0
+    chunk_tokens: int = 0
+    reasoning_tokens: int = 0
     n_searches: int = 0
     n_spawn_turns: int = 0
     n_subagents: int = 0
@@ -118,6 +120,7 @@ class Orchestrator:
         total_tokens = 0
         orch_tokens = 0
         agent_tokens = 0
+        chunk_tokens = 0
         n_searches = 0
         n_spawn_turns = 0
         n_subagents = 0
@@ -158,14 +161,17 @@ class Orchestrator:
                         retrieved_ids.append(cid)
                 retrieved_total += len(hits)
                 messages.append({"role": "assistant", "content": content})
-                messages.append({
-                    "role": "user",
-                    "content": json.dumps({"search_result": [
-                        {"chunk_id": h.chunk_id, "score": round(h.score, 4),
-                         "text": h.text[:300]}
-                        for h in hits[:5]
-                    ]}),
-                })
+                full_payload = json.dumps({"search_result": [
+                    {"chunk_id": h.chunk_id, "score": round(h.score, 4), "text": h.text}
+                    for h in hits
+                ]})
+                chunk_tokens += len(_TOKENIZER.encode(full_payload))
+                trimmed_payload = json.dumps({"search_result": [
+                    {"chunk_id": h.chunk_id, "score": round(h.score, 4),
+                     "text": h.text[:300]}
+                    for h in hits[:5]
+                ]})
+                messages.append({"role": "user", "content": trimmed_payload})
                 n_searches += 1
                 trace.append(StepTrace(
                     step=len(trace), action="route", tokens=resp.total_tokens,
@@ -234,6 +240,7 @@ class Orchestrator:
                     capsule, inv_tok = result
                     total_tokens += inv_tok
                     agent_tokens += inv_tok
+                    chunk_tokens += capsule.chunk_tokens
                     capsules.append(capsule)
                     for cid in capsule.retrieved_doc_ids:
                         if cid not in retrieved_ids:
@@ -334,6 +341,8 @@ class Orchestrator:
                     total_tokens=total_tokens,
                     orchestrator_tokens=orch_tokens,
                     subagent_tokens=agent_tokens,
+                    chunk_tokens=chunk_tokens,
+                    reasoning_tokens=total_tokens - chunk_tokens,
                     n_searches=n_searches,
                     n_spawn_turns=n_spawn_turns,
                     n_subagents=n_subagents,
@@ -371,6 +380,8 @@ class Orchestrator:
             total_tokens=total_tokens,
             orchestrator_tokens=orch_tokens,
             subagent_tokens=agent_tokens,
+            chunk_tokens=chunk_tokens,
+            reasoning_tokens=total_tokens - chunk_tokens,
             n_searches=n_searches,
             n_spawn_turns=n_spawn_turns,
             n_subagents=n_subagents,

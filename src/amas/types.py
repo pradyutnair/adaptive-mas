@@ -146,6 +146,7 @@ class EvidenceCapsule:
     fact: Fact
     retrieved_doc_ids: list[str] = field(default_factory=list)
     retrieved_docs_total: int = 0
+    chunk_tokens: int = 0
 
     def to_dict(self) -> dict:
         return {
