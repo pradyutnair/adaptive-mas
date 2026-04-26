@@ -70,11 +70,17 @@ class AnswerType(str, Enum):
 
 
 StepAction = Literal[
+    "plan",
     "answer",
     "spawn",
     "refine",
     "verify",
     "route",
+    "investigate",
+    "direct",
+    "synthesize",
+    "rewrite",
+    "retrieve",
     "answer_rejected_escalate",
     "answer_blocked_pending_slots",
     "answer_blocked_min_depth",
@@ -135,6 +141,56 @@ class StepTrace:
 
 
 @dataclass
+class SubgoalNode:
+    """One node in the question-specific dependency graph."""
+
+    id: int
+    question: str
+    depends_on: list[int] = field(default_factory=list)
+    answer_type: AnswerType = AnswerType.ENTITY
+    rationale: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "id": self.id,
+            "question": self.question,
+            "depends_on": self.depends_on,
+            "answer_type": self.answer_type.value,
+            "rationale": self.rationale,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> "SubgoalNode":
+        return cls(
+            id=int(data.get("id", data.get("subgoal_id", 1))),
+            question=str(data.get("question", data.get("subgoal", ""))).strip(),
+            depends_on=[int(x) for x in data.get("depends_on", data.get("dependencies", []))],
+            answer_type=AnswerType.coerce(data.get("answer_type", data.get("expected_type", "entity"))),
+            rationale=str(data.get("rationale", "")).strip(),
+        )
+
+
+@dataclass
+class ExecutionPlan:
+    """Planner output: simple lane or dependency DAG."""
+
+    complexity: Literal["simple", "compositional"]
+    subgoals: list[SubgoalNode]
+    final_answer_type: AnswerType = AnswerType.ENTITY
+    confidence: float = 0.0
+    reasoning: str = ""
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "complexity": self.complexity,
+            "subgoals": [s.to_dict() for s in self.subgoals],
+            "final_answer_type": self.final_answer_type.value,
+            "confidence": self.confidence,
+            "reasoning": self.reasoning,
+        }
+
+
+@dataclass
 class EvidenceCapsule:
     """Bounded evidence returned by an investigator subagent.
 
@@ -144,6 +200,9 @@ class EvidenceCapsule:
 
     answer: str
     fact: Fact
+    subgoal_id: int = 0
+    sub_question: str = ""
+    answer_type: AnswerType = AnswerType.ENTITY
     retrieved_doc_ids: list[str] = field(default_factory=list)
     retrieved_docs_total: int = 0
     chunk_tokens: int = 0
@@ -152,8 +211,12 @@ class EvidenceCapsule:
         return {
             "answer": self.answer,
             "fact": self.fact.to_dict(),
+            "subgoal_id": self.subgoal_id,
+            "sub_question": self.sub_question,
+            "answer_type": self.answer_type.value,
             "retrieved_doc_ids": self.retrieved_doc_ids,
             "retrieved_docs_total": self.retrieved_docs_total,
+            "chunk_tokens": self.chunk_tokens,
         }
 
     @classmethod
@@ -163,8 +226,12 @@ class EvidenceCapsule:
         return cls(
             answer=data["answer"],
             fact=fact,
+            subgoal_id=int(data.get("subgoal_id", 0)),
+            sub_question=str(data.get("sub_question", "")),
+            answer_type=AnswerType.coerce(data.get("answer_type", "entity")),
             retrieved_doc_ids=data.get("retrieved_doc_ids", []),
             retrieved_docs_total=data.get("retrieved_docs_total", 0),
+            chunk_tokens=int(data.get("chunk_tokens", 0)),
         )
 
 

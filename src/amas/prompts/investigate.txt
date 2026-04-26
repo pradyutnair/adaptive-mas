@@ -23,4 +23,4 @@ Answer rules:
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}
-Hint from orchestrator: {hint}
+Dependency hint: {hint}

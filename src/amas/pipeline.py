@@ -1,33 +1,31 @@
-"""AMAS pipeline: thin wrapper around the Cursor-style orchestrator.
-
-The orchestrator is a single tool-using agent. Topology emerges from its
-tool choices on each turn (search / spawn / final). This pipeline simply
-constructs the agent + retriever + investigator from config and exposes a
-``run(question, qid)`` method that returns a :class:`PipelineResult`.
-"""
+"""AMAS v2: structure-aware adaptive topology RAG."""
 
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from .config import Config
+from .dag_executor import DAGExecutor
 from .investigator import Investigator
 from .llm import LLMClient
-from .orchestrator import Orchestrator
+from .planner import Planner
 from .retriever import Retriever
-from .types import PipelineResult
+from .synthesizer import Synthesizer
+from .types import AnswerType, EvidenceCapsule, PipelineResult, StepTrace
 
 logger = logging.getLogger(__name__)
 
 
 class AMASPipeline:
-    """Adaptive Multi-Agent System pipeline (Cursor-style emergent topology)."""
+    """Plan -> execute DAG -> synthesize pipeline."""
 
     def __init__(self, config: Config) -> None:
         self.config = config
 
-        orch_llm = LLMClient.from_config(config.agent_llm("orchestrator"))
+        planner_llm = LLMClient.from_config(_agent_llm(config, "planner", "orchestrator"))
         inv_llm = LLMClient.from_config(config.agent_llm("investigator"))
+        synth_llm = LLMClient.from_config(_agent_llm(config, "synthesizer", "orchestrator"))
 
         ret_cfg = config.raw().get("retriever", {}) or {}
         self.retriever = Retriever(
@@ -36,50 +34,217 @@ class AMASPipeline:
             timeout_seconds=float(ret_cfg.get("timeout_seconds", 30)),
         )
 
+        self.planner = Planner(
+            llm=planner_llm,
+            max_subgoals=int(config.get("pipeline.max_subgoals", 6)),
+        )
         self.investigator = Investigator(
             llm=inv_llm,
             retriever=self.retriever,
             top_k=int(ret_cfg.get("top_k", 10)),
             min_confidence=float(config.get("pipeline.min_fact_confidence", 0.3)),
-            max_searches=int(config.get("pipeline.max_searches_per_subagent", 3)),
+            max_searches=int(config.get("pipeline.max_searches_per_subagent", 2)),
             max_answer_words=int(config.get("pipeline.max_answer_words", 8)),
         )
-        self.orchestrator = Orchestrator(
-            llm=orch_llm,
-            investigator=self.investigator,
-            retriever=self.retriever,
-            max_turns=int(config.get("pipeline.max_turns", 8)),
-            default_top_k=int(ret_cfg.get("top_k", 10)),
-            context_token_budget=int(config.get("pipeline.context_token_budget", 28000)),
-            max_response_tokens=int(orch_llm.max_tokens),
+        self.dag_executor = DAGExecutor(self.investigator)
+        self.synthesizer = Synthesizer(
+            llm=synth_llm,
+            max_answer_words=int(config.get("pipeline.max_answer_words", 8)),
         )
 
     async def run(self, question: str, question_id: str) -> PipelineResult:
-        logger.info("AMAS start: qid=%s", question_id)
-        result = await self.orchestrator.solve(question)
+        logger.info("AMAS v2 start: qid=%s", question_id)
+        plan, planner_tokens = await self.planner.plan(question)
 
+        trace = [
+            StepTrace(
+                step=0,
+                action="plan",
+                tokens=planner_tokens,
+                route_decision=plan.complexity,
+                route_confidence=plan.confidence,
+                metadata={
+                    "plan": plan.to_dict(),
+                    "topology_shape": _topology_shape(plan.subgoals),
+                },
+            )
+        ]
+
+        if plan.complexity == "simple" or len(plan.subgoals) == 1:
+            return await self._run_direct(question_id, question, plan, trace, planner_tokens)
+
+        exec_result = await self.dag_executor.execute(plan)
+        trace.extend(_renumber_trace(exec_result.trace, start=1))
+
+        synth_obj, synth_tokens = await self.synthesizer.synthesize(
+            question=question,
+            capsules=exec_result.capsules,
+            answer_type=plan.final_answer_type,
+        )
+        answer = _final_answer_or_fallback(synth_obj, exec_result.capsules)
+        trace.append(
+            StepTrace(
+                step=len(trace),
+                action="synthesize",
+                tokens=synth_tokens,
+                route_decision=plan.complexity,
+                justification_confidence=_bounded_float(synth_obj.get("confidence", 0.0)),
+                metadata={
+                    "answer": answer,
+                    "synthesis": synth_obj,
+                    "reasoning_tokens_excluding_chunks": (
+                        planner_tokens + exec_result.subagent_tokens + synth_tokens
+                        - exec_result.chunk_tokens
+                    ),
+                },
+            )
+        )
+
+        total_tokens = planner_tokens + exec_result.subagent_tokens + synth_tokens
+        reasoning_tokens = max(0, total_tokens - exec_result.chunk_tokens)
         return PipelineResult(
             question_id=question_id,
             question=question,
-            answer=result.answer,
-            step_trace=result.trace,
-            num_subagent_calls=result.n_subagents,
-            total_tokens=result.total_tokens,
-            orchestrator_tokens=result.orchestrator_tokens,
-            subagent_tokens=result.subagent_tokens,
-            facts_used=[c.fact for c in result.capsules],
-            retrieved_doc_ids=result.retrieved_ids,
-            retrieved_docs_total=result.retrieved_total,
-            route_decision=result.route,
-            route_confidence=result.confidence,
+            answer=answer,
+            step_trace=trace,
+            num_subagent_calls=exec_result.n_subagents,
+            total_tokens=total_tokens,
+            orchestrator_tokens=planner_tokens + synth_tokens,
+            subagent_tokens=exec_result.subagent_tokens,
+            facts_used=[capsule.fact for capsule in exec_result.capsules],
+            retrieved_doc_ids=exec_result.retrieved_doc_ids,
+            retrieved_docs_total=exec_result.retrieved_docs_total,
+            route_decision=plan.complexity,
+            route_confidence=plan.confidence,
             extras={
-                "answer_type": result.answer_type,
-                "support_ids": result.support_ids,
-                "justification": result.justification,
-                "n_searches": result.n_searches,
-                "n_spawn_turns": result.n_spawn_turns,
-                "n_subagents": result.n_subagents,
-                "chunk_tokens": result.chunk_tokens,
-                "reasoning_tokens": result.reasoning_tokens,
+                "architecture": "saat_dag_v2",
+                "answer_type": plan.final_answer_type.value,
+                "support_ids": _support_ids(exec_result.capsules),
+                "justification": str(synth_obj.get("justification", "")),
+                "n_searches": exec_result.n_searches,
+                "n_subagents": exec_result.n_subagents,
+                "chunk_tokens": exec_result.chunk_tokens,
+                "reasoning_tokens": reasoning_tokens,
+                "topology_shape": _topology_shape(plan.subgoals),
+                "dag_levels": exec_result.levels,
+                "plan": plan.to_dict(),
             },
         )
+
+    async def _run_direct(
+        self,
+        question_id: str,
+        question: str,
+        plan,
+        trace: list[StepTrace],
+        planner_tokens: int,
+    ) -> PipelineResult:
+        node = plan.subgoals[0]
+        capsule, subagent_tokens = await self.investigator.investigate_node(node)
+        trace.append(
+            StepTrace(
+                step=1,
+                action="direct",
+                sub_question=node.question,
+                fact_added=capsule.fact.slot_filled,
+                tokens=subagent_tokens,
+                slot_name=f"subgoal_{node.id}",
+                route_decision="simple",
+                justification_confidence=capsule.fact.confidence,
+                metadata={
+                    "answer": capsule.answer,
+                    "support_ids": capsule.fact.support_ids,
+                    "chunk_tokens": capsule.chunk_tokens,
+                },
+            )
+        )
+        total_tokens = planner_tokens + subagent_tokens
+        reasoning_tokens = max(0, total_tokens - capsule.chunk_tokens)
+        answer = capsule.answer or capsule.fact.answer_span
+        return PipelineResult(
+            question_id=question_id,
+            question=question,
+            answer=answer,
+            step_trace=trace,
+            num_subagent_calls=1,
+            total_tokens=total_tokens,
+            orchestrator_tokens=planner_tokens,
+            subagent_tokens=subagent_tokens,
+            facts_used=[capsule.fact],
+            retrieved_doc_ids=capsule.retrieved_doc_ids,
+            retrieved_docs_total=capsule.retrieved_docs_total,
+            route_decision="simple",
+            route_confidence=plan.confidence,
+            extras={
+                "architecture": "saat_dag_v2",
+                "answer_type": node.answer_type.value,
+                "support_ids": capsule.fact.support_ids,
+                "justification": capsule.fact.text,
+                "n_searches": self.investigator.last_searches_used,
+                "n_subagents": 1,
+                "chunk_tokens": capsule.chunk_tokens,
+                "reasoning_tokens": reasoning_tokens,
+                "topology_shape": "single",
+                "dag_levels": [[node.id]],
+                "plan": plan.to_dict(),
+            },
+        )
+
+
+def _agent_llm(config: Config, agent: str, fallback: str) -> dict[str, Any]:
+    raw = config.raw()
+    agents = raw.get("agents", {}) or {}
+    if agent in agents:
+        return config.agent_llm(agent)
+    merged = dict(raw.get("llm_defaults", {}) or {})
+    merged.update(agents.get(fallback, {}) or {})
+    return merged
+
+
+def _final_answer_or_fallback(
+    synth_obj: dict[str, Any],
+    capsules: list[EvidenceCapsule],
+) -> str:
+    answer = str(synth_obj.get("answer_span", "")).strip()
+    if answer:
+        return answer
+    filled = [c for c in capsules if c.answer and c.fact.slot_filled]
+    if filled:
+        return max(filled, key=lambda c: c.fact.confidence).answer
+    return ""
+
+
+def _support_ids(capsules: list[EvidenceCapsule]) -> list[str]:
+    ids: list[str] = []
+    for capsule in capsules:
+        for support_id in capsule.fact.support_ids:
+            if support_id not in ids:
+                ids.append(support_id)
+    return ids
+
+
+def _topology_shape(subgoals) -> str:
+    if len(subgoals) <= 1:
+        return "single"
+    indep = sum(1 for node in subgoals if not node.depends_on)
+    max_deps = max((len(node.depends_on) for node in subgoals), default=0)
+    if indep == 1 and max_deps <= 1:
+        return "chain"
+    if indep > 1 and max_deps > 1:
+        return "fan_in"
+    if indep > 1:
+        return "parallel"
+    return "dag"
+
+
+def _renumber_trace(trace: list[StepTrace], start: int) -> list[StepTrace]:
+    for offset, item in enumerate(trace):
+        item.step = start + offset
+    return trace
+
+
+def _bounded_float(value: Any) -> float:
+    try:
+        return max(0.0, min(float(value), 1.0))
+    except (TypeError, ValueError):
+        return 0.0
