@@ -13,6 +13,7 @@ llm_defaults:
 
 agents:
   orchestrator:
+    model: gpt-4o
     max_tokens: 2048
   investigator:
     max_tokens: 1024
@@ -24,7 +25,7 @@ retriever:
 
 pipeline:
   max_turns: 8                   # max orchestrator turns
-  max_searches_per_subagent: 3   # search budget inside an investigator
+  max_searches_per_subagent: 5   # search budget inside an investigator
   min_fact_confidence: 0.3
   max_answer_words: 8            # softly penalise long enumeration answers
   context_token_budget: 28000    # hard stop before vLLM 32k overflow (4k margin for thinking)

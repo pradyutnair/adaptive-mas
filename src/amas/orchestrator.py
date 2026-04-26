@@ -124,7 +124,7 @@ class Orchestrator:
         last_content = ""
 
         budget_hit = False
-        verification_used = False
+        verification_count = 0
         for turn in range(self.max_turns + 1):
             # Hard budget stop: if the next prompt would exceed the context
             # budget (with response margin), break and emit best-effort final.
@@ -161,17 +161,18 @@ class Orchestrator:
                 messages.append({
                     "role": "user",
                     "content": json.dumps({"search_result": [
-                        {"chunk_id": h.chunk_id, "score": round(h.score, 4), "text": h.text}
-                        for h in hits
+                        {"chunk_id": h.chunk_id, "score": round(h.score, 4),
+                         "text": h.text[:300]}
+                        for h in hits[:5]
                     ]}),
                 })
+                n_searches += 1
                 trace.append(StepTrace(
                     step=len(trace), action="route", tokens=resp.total_tokens,
                     route_decision="search",
                     metadata={"turn": turn, "query": parsed.get("query", ""),
                               "n_hits": len(hits)},
                 ))
-                n_searches += 1
                 continue
 
             if action == "spawn" and turn < self.max_turns:
@@ -268,38 +269,34 @@ class Orchestrator:
                 ans = str(parsed.get("answer_span", parsed.get("answer", ""))).strip()
                 ans_type = AnswerType.coerce(parsed.get("answer_type", "entity"))
 
-                # Guardrail: catch the common "answered the bridge entity" failure.
-                # If `final` fires after only 1 search and no spawn (and we haven't
-                # already challenged the model), force a self-check turn.
-                if (not verification_used
-                        and n_spawn_turns == 0
-                        and n_searches <= 1
+                # Guardrail: catch "answered the bridge entity" failures.
+                total_actions = n_searches + n_spawn_turns
+                if (verification_count < 1
+                        and total_actions <= 2
                         and turn < self.max_turns
                         and ans
                         and ans.lower() not in {"unknown", "n/a", ""}):
-                    verification_used = True
+                    verification_count += 1
                     messages.append({"role": "assistant", "content": content})
                     messages.append({
                         "role": "user",
                         "content": json.dumps({
                             "system_check": (
-                                "Before you finalize: re-read the original question. "
-                                f"Your draft answer is '{ans}'. Is that the FINAL "
-                                "attribute the question asks for, or just a BRIDGE "
-                                "entity (e.g. a city, a person, a company name) "
-                                "you found along the way? If it is the bridge, do "
-                                "NOT emit `final`; instead `spawn` a subagent to "
-                                "resolve the next hop using the bridge as the "
-                                "anchor in `hint`. Only re-emit `final` if the "
-                                "answer span directly answers the original "
-                                "question word-for-word."
+                                "MANDATORY VERIFICATION — re-read the original "
+                                "question carefully before finalizing.\n"
+                                f"Your draft answer is: '{ans}'\n"
+                                f"Original question: '{question}'\n\n"
+                                "Check TWO things:\n"
+                                "1) BRIDGE vs FINAL: Is your answer the FINAL "
+                                "attribute the question asks for, or a bridge "
+                                "entity along the way? If bridge, `spawn` for "
+                                "the remaining hop(s).\n"
+                                "2) ANSWER TYPE: Does your answer match what the "
+                                "question asks? (e.g. 'which university' needs a "
+                                "name, 'when' needs a date, 'who' needs a person)\n\n"
+                                "If both checks pass, re-emit `final` with the "
+                                "same answer. Otherwise, take the corrective action."
                             ),
-                            "original_question": question,
-                            "draft_answer_span": ans,
-                            "actions_so_far": {
-                                "searches": n_searches,
-                                "spawn_turns": n_spawn_turns,
-                            },
                         }),
                     })
                     trace.append(StepTrace(

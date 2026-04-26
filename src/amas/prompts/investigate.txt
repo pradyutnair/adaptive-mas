@@ -5,18 +5,21 @@ Output ONE JSON object per turn (no prose, no code fences):
 (1) {{"action":"search","query":"<short search-style query>","top_k":<int 1..20>}}
 (2) {{"action":"final","answer_span":"<minimal exact span>","justification":"<one short sentence>","confidence":<float 0.0-1.0>,"support_ids":["<chunk_id>", "..."]}}
 
-Strategy:
-- First search: anchor on the most concrete proper noun in the sub-question and the relation asked.
-- If the first results are off-topic or ambiguous, refine the query using the orchestrator's `hint` to disambiguate (e.g. add a country, era, or full name).
-- Stop searching as soon as you have a chunk that clearly supports the answer.
+Search strategy:
+- First search: use the most concrete proper noun from the sub-question plus the relation being asked. Include context from the hint to disambiguate.
+- If results are off-topic: refine the query using the hint (add country, era, full name, etc.).
+- If the first results partially answer but you need one more fact: search for that specific fact.
+- Stop searching once you have a chunk that clearly supports the answer.
 
-Rules:
-- Use ONLY chunks from your own search results in this conversation. No background knowledge.
-- The `answer_span` MUST be the SHORTEST exact span answering the sub-question, copied verbatim from a chunk. Typically 1-3 words; never more than 6.
-- NEVER list multiple options or enumerations ("X, Y, and Z"). Pick the single most specific span.
-- Match the expected answer type: {expected_answer_type}.
-- `support_ids` MUST cite at least one chunk_id that supports the answer (or be empty if you found nothing).
-- If after {max_searches} searches you have no grounded evidence, emit final with empty `answer_span`, `confidence` 0.0, and empty `support_ids`.
+Answer rules:
+- Use ONLY chunks from your own search results. No background knowledge.
+- `answer_span` MUST be a short exact span copied verbatim from a chunk (1-6 words).
+- For NAMES: always use the FULL name as it appears in the chunk. If the chunk says "Helen Pitts Douglass", answer "Helen Pitts Douglass", not "Helen Pitts". If the chunk says "University of South Carolina", use the full name.
+- NEVER list multiple options. Pick the single best span.
+- Match the expected answer type: {expected_answer_type}. If the sub-question asks "what is the capital of X", answer with the capital city name, not X itself.
+- READ THE SUB-QUESTION CAREFULLY: answer exactly what is asked. "Capital of Arizona" → "Phoenix", NOT "Arizona".
+- `support_ids` MUST cite at least one chunk_id (or be empty if nothing found).
+- If after {max_searches} searches you have no evidence, emit final with empty answer_span, confidence 0.0.
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}
