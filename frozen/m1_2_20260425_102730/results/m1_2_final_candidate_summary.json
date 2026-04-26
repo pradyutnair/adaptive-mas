@@ -1,0 +1,123 @@
+[
+  {
+    "run": "isolated_nonempty_1000",
+    "root": "results/musique1000_nonemptycapsule_20260425_002037_3gpu_c24",
+    "n": 1000,
+    "contain": 0.323,
+    "avg_tokens": 23439.551,
+    "empty": 2
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "calls=1",
+    "n": 496,
+    "contain": 0.5383064516129032,
+    "avg_tokens": 14707.296370967742
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "calls=2",
+    "n": 409,
+    "contain": 0.07823960880195599,
+    "avg_tokens": 27655.0
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "calls=3",
+    "n": 58,
+    "contain": 0.3448275862068966,
+    "avg_tokens": 45338.224137931036
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "calls=4",
+    "n": 34,
+    "contain": 0.11764705882352941,
+    "avg_tokens": 58247.794117647056
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "calls=5",
+    "n": 3,
+    "contain": 0.0,
+    "avg_tokens": 74598.33333333333
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "2hop",
+    "n": 518,
+    "contain": 0.44015444015444016,
+    "avg_tokens": 19739.339768339767
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "3hop",
+    "n": 316,
+    "contain": 0.2310126582278481,
+    "avg_tokens": 26593.335443037973
+  },
+  {
+    "run": "isolated_nonempty_1000",
+    "slice": "4hop",
+    "n": 166,
+    "contain": 0.13253012048192772,
+    "avg_tokens": 28982.40361445783
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "root": "results/musique1000_fullbudget_max3_20260425_022037_3gpu_c24",
+    "n": 1000,
+    "contain": 0.387,
+    "avg_tokens": 29563.415,
+    "empty": 0
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "calls=1",
+    "n": 492,
+    "contain": 0.5630081300813008,
+    "avg_tokens": 14417.512195121952
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "calls=2",
+    "n": 138,
+    "contain": 0.11594202898550725,
+    "avg_tokens": 34853.59420289855
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "calls=3",
+    "n": 228,
+    "contain": 0.2675438596491228,
+    "avg_tokens": 43988.04385964912
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "calls=4",
+    "n": 142,
+    "contain": 0.2323943661971831,
+    "avg_tokens": 53738.93661971831
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "2hop",
+    "n": 518,
+    "contain": 0.5,
+    "avg_tokens": 23567.702702702703
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "3hop",
+    "n": 316,
+    "contain": 0.31645569620253167,
+    "avg_tokens": 34570.01898734177
+  },
+  {
+    "run": "fullbudget_max3_1000",
+    "slice": "4hop",
+    "n": 166,
+    "contain": 0.1686746987951807,
+    "avg_tokens": 38742.28313253012
+  }
+]
