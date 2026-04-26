@@ -1,10 +1,72 @@
-"""Core data types for Adaptive Recursive SAGE pipeline."""
+"""Core data types for AMAS pipeline."""
 
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field, asdict
+from enum import Enum
 from typing import Any, Literal, Optional
+
+
+class AnswerType(str, Enum):
+    """Strict enum of allowed answer types. Mirrors the prompt schema."""
+
+    PERSON = "person"
+    PLACE = "place"
+    DATE = "date"
+    NUMBER = "number"
+    YES_NO = "yes_no"
+    ENTITY = "entity"
+    OTHER = "other"
+
+    @classmethod
+    def coerce(cls, value: Any) -> "AnswerType":
+        """Best-effort coercion + alias collapsing."""
+        v = str(value or "").strip().lower().replace("-", "_")
+        aliases = {
+            "location": "place", "loc": "place", "country": "place", "city": "place",
+            "boolean": "yes_no", "bool": "yes_no", "yes/no": "yes_no",
+            "year": "date", "time": "date", "datetime": "date",
+            "numeric": "number", "count": "number", "quantity": "number",
+            "name": "person", "people": "person",
+        }
+        v = aliases.get(v, v)
+        try:
+            return cls(v)
+        except ValueError:
+            return cls.ENTITY
+
+    def validate_span(self, span: str) -> bool:
+        """Lightweight type-consistency check on a candidate answer span."""
+        s = str(span or "").strip()
+        if not s:
+            return False
+        if self is AnswerType.YES_NO:
+            return s.lower() in {"yes", "no", "true", "false"}
+        if self is AnswerType.NUMBER:
+            return bool(re.search(r"\d", s)) and len(s) <= 40
+        if self is AnswerType.DATE:
+            return bool(re.search(r"\b(1[0-9]|20)\d{2}\b", s)) or bool(
+                re.search(
+                    r"\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|"
+                    r"january|february|march|april|june|july|august|september|"
+                    r"october|november|december)\b",
+                    s.lower(),
+                )
+            )
+        if self is AnswerType.OTHER:
+            # `other` is a fallback bucket. Reject generic filler answers.
+            words = s.split()
+            if len(words) > 12 or len(s) > 100:
+                return False
+            generic = {
+                "yes", "no", "unknown", "nothing", "various", "multiple",
+                "n/a", "none", "everyone", "everything",
+            }
+            return s.lower() not in generic
+        # PERSON / PLACE / ENTITY: minimal heuristic — non-empty, not too long.
+        return 0 < len(s) < 120
 
 
 StepAction = Literal[
@@ -76,35 +138,30 @@ class StepTrace:
 class EvidenceCapsule:
     """Bounded evidence returned by an investigator subagent.
 
-    Contains the distilled answer, a single fact, and a limited number
-    of supporting text snippets for verification.
+    Contains only distilled outputs. Raw passage text is intentionally
+    NOT exposed back to the orchestrator.
     """
 
     answer: str
     fact: Fact
-    support_snippets: list[str] = field(default_factory=list)
     retrieved_doc_ids: list[str] = field(default_factory=list)
     retrieved_docs_total: int = 0
 
     def to_dict(self) -> dict:
-        """Serialize to a JSON-compatible dictionary."""
         return {
             "answer": self.answer,
             "fact": self.fact.to_dict(),
-            "support_snippets": self.support_snippets,
             "retrieved_doc_ids": self.retrieved_doc_ids,
             "retrieved_docs_total": self.retrieved_docs_total,
         }
 
     @classmethod
     def from_dict(cls, data: dict) -> EvidenceCapsule:
-        """Deserialize from a dictionary."""
         fact_data = data["fact"]
         fact = Fact.from_dict(fact_data) if isinstance(fact_data, dict) else fact_data
         return cls(
             answer=data["answer"],
             fact=fact,
-            support_snippets=data.get("support_snippets", []),
             retrieved_doc_ids=data.get("retrieved_doc_ids", []),
             retrieved_docs_total=data.get("retrieved_docs_total", 0),
         )

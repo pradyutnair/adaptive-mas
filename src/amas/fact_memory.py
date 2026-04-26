@@ -1,4 +1,4 @@
-"""Bounded fact memory with configurable eviction for Adaptive Recursive SAGE.
+"""Bounded fact memory with configurable eviction for AMAS.
 
 Stores distilled facts extracted by investigator subagents.  When the
 memory reaches its configured capacity, an eviction policy chooses which
