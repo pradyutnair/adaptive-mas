@@ -1,0 +1,9 @@
+[2026-04-19T16:29:41.713890+00:00] active_dataset=hotpotqa
+progress: hotpotqa=174/1000 em=0.2874 f1=0.4337 contain=0.5575, 2wikimultihop=0/1000 em=0.0000 f1=0.0000 contain=0.0000, musique=0/1000 em=0.0000 f1=0.0000 contain=0.0000
+gpu: gpu0 util=98% mem=44974/49140MiB, gpu1 util=96% mem=44278/49140MiB, gpu2 util=97% mem=44808/49140MiB
+actions: progress advanced to 174
+[2026-04-19T16:44:47.453930+00:00] active_dataset=hotpotqa
+progress: hotpotqa=209/1000 em=0.2775 f1=0.4274 contain=0.5598, 2wikimultihop=0/1000 em=0.0000 f1=0.0000 contain=0.0000, musique=0/1000 em=0.0000 f1=0.0000 contain=0.0000
+gpu: gpu0 util=97% mem=44974/49140MiB, gpu1 util=97% mem=44278/49140MiB, gpu2 util=98% mem=44808/49140MiB
+actions: progress advanced to 209
+[2026-04-19T16:47:31.977707+00:00] received signal 15, exiting
