@@ -92,7 +92,11 @@ async def _process_one(
                 "metadata": {
                     "error": str(exc),
                     "wallclock_seconds": round(elapsed, 3),
-                    "total_tokens": 0,
+                    "total_tokens": 0, "orchestrator_tokens": 0,
+                    "subagent_tokens": 0, "num_subagent_calls": 0,
+                    "step_trace": [], "facts_used": [],
+                    "retrieved_doc_ids": [], "retrieved_docs_total": 0,
+                    "route_decision": "error", "extras": {},
                 },
             }
         async with lock:

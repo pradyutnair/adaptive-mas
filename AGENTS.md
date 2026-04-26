@@ -32,6 +32,7 @@ Primary active machine:
 - Active repo: `/local/yzheng/pnair/workspace/adaptive-mas`
 - Python: `/local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python`
 - Do not use system `python3`; it is old and can break scripts.
+- Use module load cuda12.6/toolkit/12.6 to activate the correct CUDA version.
 
 Retriever:
 
