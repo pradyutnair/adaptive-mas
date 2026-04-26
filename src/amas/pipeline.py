@@ -50,6 +50,8 @@ class AMASPipeline:
             retriever=self.retriever,
             max_turns=int(config.get("pipeline.max_turns", 8)),
             default_top_k=int(ret_cfg.get("top_k", 10)),
+            context_token_budget=int(config.get("pipeline.context_token_budget", 28000)),
+            max_response_tokens=int(orch_llm.max_tokens),
         )
 
     async def run(self, question: str, question_id: str) -> PipelineResult:

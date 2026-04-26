@@ -3,23 +3,18 @@
 # Investigators are isolated subagents; multiple can run in parallel per spawn.
 
 llm_defaults:
-  model: Qwen/Qwen3-8B
-  base_url: http://localhost:8001/v1
-  api_key: EMPTY
+  model: gpt-4o-mini
+  base_url: https://api.openai.com/v1
+  api_key_env: OPENAI_API_KEY
   temperature: 0.0
   max_tokens: 1024
   enable_thinking: false
   timeout_seconds: 600
 
 agents:
-  orchestrator:                  # Qwen3-8B + thinking (the brain)
-    enable_thinking: true
-    max_tokens: 4096
-  investigator:                  # GPT-4o-mini (parallel-friendly worker)
-    model: gpt-4o-mini
-    base_url: https://api.openai.com/v1
-    api_key_env: OPENAI_API_KEY
-    enable_thinking: false
+  orchestrator:
+    max_tokens: 2048
+  investigator:
     max_tokens: 1024
 
 retriever:
@@ -32,6 +27,7 @@ pipeline:
   max_searches_per_subagent: 3   # search budget inside an investigator
   min_fact_confidence: 0.3
   max_answer_words: 8            # softly penalise long enumeration answers
+  context_token_budget: 28000    # hard stop before vLLM 32k overflow (4k margin for thinking)
 
 runner:
   concurrency: 8

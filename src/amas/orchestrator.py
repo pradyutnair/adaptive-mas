@@ -27,10 +27,33 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import tiktoken
+
 from .investigator import Investigator
 from .llm import LLMClient, parse_json_object, strip_thinking
 from .retriever import RetrievalHit, Retriever
 from .types import AnswerType, EvidenceCapsule, StepTrace
+
+# Cheap, deterministic token estimator. Used only for budget enforcement, never
+# for billing — actual usage comes from the API.
+_TOKENIZER = tiktoken.get_encoding("cl100k_base")
+
+
+def _estimate_tokens(messages: list[dict[str, Any]]) -> int:
+    """Estimate total tokens of a chat-style message list.
+
+    Each message has ~4 tokens of role/structure overhead in OpenAI-format
+    transcripts; we add that on top of the raw content tokens.
+    """
+    total = 0
+    for m in messages:
+        content = m.get("content", "")
+        if isinstance(content, str):
+            total += len(_TOKENIZER.encode(content))
+        else:
+            total += len(_TOKENIZER.encode(json.dumps(content, ensure_ascii=False)))
+        total += 4
+    return total + 2  # priming tokens
 
 logger = logging.getLogger(__name__)
 
@@ -67,12 +90,20 @@ class Orchestrator:
         retriever: Retriever,
         max_turns: int = 8,
         default_top_k: int = 10,
+        context_token_budget: int = 28000,
+        max_response_tokens: int = 4096,
     ) -> None:
         self.llm = llm
         self.investigator = investigator
         self.retriever = retriever
         self.max_turns = int(max_turns)
         self.default_top_k = int(default_top_k)
+        # Hard stop: if the next prompt would exceed this, abort the agent
+        # loop and emit the best available answer. Sized with a safety margin
+        # below vLLM's max_model_len.
+        self.context_token_budget = int(context_token_budget)
+        # Reserve room for the model's response (output tokens).
+        self.max_response_tokens = int(max_response_tokens)
         self._tpl = (
             Path(__file__).parent / "prompts" / "orchestrator.txt"
         ).read_text(encoding="utf-8")
@@ -92,7 +123,26 @@ class Orchestrator:
         n_subagents = 0
         last_content = ""
 
+        budget_hit = False
+        verification_used = False
         for turn in range(self.max_turns + 1):
+            # Hard budget stop: if the next prompt would exceed the context
+            # budget (with response margin), break and emit best-effort final.
+            est = _estimate_tokens(messages)
+            if est + self.max_response_tokens > self.context_token_budget:
+                logger.info(
+                    "Context budget hit at turn=%d est_prompt=%d budget=%d",
+                    turn, est, self.context_token_budget,
+                )
+                trace.append(StepTrace(
+                    step=len(trace), action="answer", tokens=0,
+                    metadata={"turn": turn, "reason": "context_budget_hit",
+                              "estimated_prompt_tokens": est,
+                              "budget": self.context_token_budget},
+                ))
+                budget_hit = True
+                break
+
             resp = await self.llm.chat(messages=messages)
             total_tokens += resp.total_tokens
             orch_tokens += resp.total_tokens
@@ -217,6 +267,49 @@ class Orchestrator:
             if action == "final":
                 ans = str(parsed.get("answer_span", parsed.get("answer", ""))).strip()
                 ans_type = AnswerType.coerce(parsed.get("answer_type", "entity"))
+
+                # Guardrail: catch the common "answered the bridge entity" failure.
+                # If `final` fires after only 1 search and no spawn (and we haven't
+                # already challenged the model), force a self-check turn.
+                if (not verification_used
+                        and n_spawn_turns == 0
+                        and n_searches <= 1
+                        and turn < self.max_turns
+                        and ans
+                        and ans.lower() not in {"unknown", "n/a", ""}):
+                    verification_used = True
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({
+                        "role": "user",
+                        "content": json.dumps({
+                            "system_check": (
+                                "Before you finalize: re-read the original question. "
+                                f"Your draft answer is '{ans}'. Is that the FINAL "
+                                "attribute the question asks for, or just a BRIDGE "
+                                "entity (e.g. a city, a person, a company name) "
+                                "you found along the way? If it is the bridge, do "
+                                "NOT emit `final`; instead `spawn` a subagent to "
+                                "resolve the next hop using the bridge as the "
+                                "anchor in `hint`. Only re-emit `final` if the "
+                                "answer span directly answers the original "
+                                "question word-for-word."
+                            ),
+                            "original_question": question,
+                            "draft_answer_span": ans,
+                            "actions_so_far": {
+                                "searches": n_searches,
+                                "spawn_turns": n_spawn_turns,
+                            },
+                        }),
+                    })
+                    trace.append(StepTrace(
+                        step=len(trace), action="route",
+                        tokens=resp.total_tokens,
+                        route_decision="bridge_check",
+                        metadata={"turn": turn, "draft_answer": ans},
+                    ))
+                    continue
+
                 support_raw = parsed.get("support_ids") or []
                 # support_ids must come from things the orchestrator has actually seen
                 # (its own searches OR capsules returned by spawned investigators).
@@ -259,7 +352,7 @@ class Orchestrator:
                 ),
             })})
 
-        # Loop exhausted: salvage best we can.
+        # Loop exhausted OR budget hit: salvage best we can.
         salvage = parse_json_object(last_content)
         ans = str(salvage.get("answer_span", "")).strip()
         if not ans:
@@ -269,10 +362,11 @@ class Orchestrator:
                     break
         if not ans:
             ans = "unknown"
+        reason = "context_budget_hit" if budget_hit else "loop_exhausted"
         return OrchestratorResult(
             answer=ans,
             answer_type=AnswerType.coerce(salvage.get("answer_type", "entity")).value,
-            justification="(loop exhausted)",
+            justification=f"({reason})",
             trace=trace,
             retrieved_ids=retrieved_ids,
             retrieved_total=retrieved_total,
