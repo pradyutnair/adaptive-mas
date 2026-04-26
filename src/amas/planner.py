@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 from typing import Any
 
@@ -72,6 +73,7 @@ class Planner:
                 dep for dep in node.depends_on
                 if dep in valid_ids and dep != node.id
             ]
+            node.question = _replace_pronouns_with_placeholders(node.question, node.depends_on)
 
         repaired = False
         if _has_cycle(subgoals):
@@ -97,6 +99,8 @@ class Planner:
         if repaired:
             reasoning = (reasoning + " ").strip() + "cycle-repaired-to-chain"
 
+        subgoals = _augment_subgoals(question, subgoals, final_answer_type)
+
         return ExecutionPlan(
             complexity=complexity,
             subgoals=subgoals,
@@ -104,6 +108,90 @@ class Planner:
             confidence=_bounded_float(parsed.get("confidence", 0.0)),
             reasoning=reasoning,
         )
+
+
+def _augment_subgoals(
+    question: str,
+    subgoals: list[SubgoalNode],
+    final_answer_type: AnswerType,
+) -> list[SubgoalNode]:
+    if not subgoals:
+        return subgoals
+    context_hint = _question_context_hint(question)
+    final_relation = _relation_hint(question)
+
+    for idx, node in enumerate(subgoals):
+        extra_parts: list[str] = []
+        if idx == 0 and len(subgoals) > 1:
+            extra_parts.append("First resolve the bridge entity needed by the final question.")
+            if context_hint:
+                extra_parts.append(f"Question context: {context_hint}.")
+            if final_relation:
+                extra_parts.append(f"Final relation: {final_relation}.")
+            if node.answer_type in {AnswerType.DATE, AnswerType.NUMBER, AnswerType.YES_NO}:
+                node.answer_type = AnswerType.ENTITY
+        elif node.depends_on:
+            if final_relation:
+                extra_parts.append(f"Use prior result to answer the final relation: {final_relation}.")
+            if context_hint:
+                extra_parts.append(f"Question context: {context_hint}.")
+
+        merged = " ".join(part for part in [node.rationale.strip(), *extra_parts] if part).strip()
+        node.rationale = merged
+
+    if len(subgoals) == 1 and not subgoals[0].rationale:
+        subgoals[0].rationale = "Direct retrieval task."
+    return subgoals
+
+
+def _replace_pronouns_with_placeholders(question: str, depends_on: list[int]) -> str:
+    if len(depends_on) != 1:
+        return question.strip()
+    dep_id = depends_on[0]
+    placeholder = f"[result_{dep_id}]"
+    patterns = [
+        r"this person", r"that person", r"this country", r"that country",
+        r"this city", r"that city", r"this place", r"that place",
+        r"this publisher", r"that publisher", r"this team", r"that team",
+        r"this organization", r"that organization", r"this entity", r"that entity",
+        r"this player", r"that player", r"this actor", r"that actor",
+    ]
+    out = question.strip()
+    for pattern in patterns:
+        out = re.sub(pattern, placeholder, out, flags=re.IGNORECASE)
+    return out
+
+
+def _question_context_hint(question: str, limit: int = 10) -> str:
+    words = re.findall(r"[A-Za-z0-9][A-Za-z0-9'/-]*", question)
+    stop = {
+        "what", "when", "where", "which", "who", "whom", "whose", "is", "was", "were", "are",
+        "did", "does", "do", "the", "a", "an", "of", "to", "in", "on", "for", "by", "and",
+        "or", "that", "this", "these", "those", "be", "been", "being", "it", "its", "their",
+    }
+    keep: list[str] = []
+    for word in words:
+        lower = word.lower()
+        if lower in stop:
+            continue
+        if word[0].isupper() or len(word) >= 6 or lower in {
+            "birthplace", "publisher", "signed", "abolished", "compared", "capital", "county",
+            "month", "year", "founded", "directed", "wrote", "originated",
+        }:
+            keep.append(word)
+    return " ".join(keep[:limit])
+
+
+def _relation_hint(question: str) -> str:
+    lower = question.lower()
+    patterns = [
+        "signed by", "signed for", "birthplace", "publisher of", "capital of", "compared to",
+        "abolished", "ended", "founded", "directed", "wrote", "originated in", "part of",
+    ]
+    for pattern in patterns:
+        if pattern in lower:
+            return pattern
+    return ""
 
 
 def _has_cycle(nodes: list[SubgoalNode]) -> bool:

@@ -7,7 +7,7 @@ import re
 from dataclasses import dataclass, field
 
 from .investigator import Investigator
-from .types import EvidenceCapsule, ExecutionPlan, StepTrace, SubgoalNode
+from .types import EvidenceCapsule, ExecutionPlan, Fact, StepTrace, SubgoalNode
 
 
 @dataclass
@@ -82,8 +82,34 @@ class DAGExecutor:
         node: SubgoalNode,
         capsules_by_id: dict[int, EvidenceCapsule],
     ) -> tuple[EvidenceCapsule, int, int]:
+        unresolved = [
+            dep_id for dep_id in node.depends_on
+            if not self._dependency_answer(capsules_by_id.get(dep_id))
+        ]
+        if unresolved:
+            empty = EvidenceCapsule(
+                answer="",
+                fact=Fact(
+                    text="",
+                    confidence=0.0,
+                    confidence_self=0.0,
+                    confidence_retrieval=0.0,
+                    slot_filled=False,
+                    slot_name=f"subgoal_{node.id}",
+                    answer_span="",
+                    support_ids=[],
+                ),
+                subgoal_id=node.id,
+                sub_question=node.question,
+                answer_type=node.answer_type,
+                retrieved_doc_ids=[],
+                retrieved_docs_total=0,
+            )
+            return empty, 0, 0
+
         resolved = self._resolve_question(node.question, capsules_by_id)
-        hint = self._dependency_hint(node, capsules_by_id)
+        dependency_hint = self._dependency_hint(node, capsules_by_id)
+        hint = " ".join(part for part in [node.rationale.strip(), dependency_hint] if part).strip()
         run_node = SubgoalNode(
             id=node.id,
             question=resolved,
@@ -99,13 +125,19 @@ class DAGExecutor:
         return capsule, tokens, self.investigator.last_searches_used
 
     @staticmethod
+    def _dependency_answer(capsule: EvidenceCapsule | None) -> str:
+        if not capsule:
+            return ""
+        return capsule.answer or capsule.fact.answer_span
+
+    @staticmethod
     def _resolve_question(
         question: str,
         capsules_by_id: dict[int, EvidenceCapsule],
     ) -> str:
         resolved = question
         for subgoal_id, capsule in capsules_by_id.items():
-            answer = capsule.answer or capsule.fact.answer_span
+            answer = DAGExecutor._dependency_answer(capsule)
             patterns = [
                 rf"\[result_{subgoal_id}\]",
                 rf"\[result from step {subgoal_id}\]",
@@ -125,7 +157,7 @@ class DAGExecutor:
             capsule = capsules_by_id.get(dep_id)
             if not capsule:
                 continue
-            answer = capsule.answer or capsule.fact.answer_span
+            answer = DAGExecutor._dependency_answer(capsule)
             if answer:
                 facts.append(f"Subgoal {dep_id} answer: {answer}. {capsule.fact.text}")
         return " ".join(facts)

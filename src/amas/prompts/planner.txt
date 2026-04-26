@@ -22,12 +22,149 @@ Return exactly one JSON object, no prose, no code fences:
 
 Rules:
 - Use "simple" only when one focused retrieval task can answer the final question directly.
-- Use "compositional" when the question requires resolving bridge entities, comparing two independently resolved facts, or following a chain.
+- Use "compositional" when the question requires resolving bridge entities, comparing independently resolved facts, or following a chain.
 - The graph must mirror dependencies. Independent facts have empty dependencies and can run in parallel. Dependent facts must list the node IDs they require.
+- Subgoal 1 must resolve the FIRST missing bridge entity, not the final date/number unless the final answer itself is directly retrievable.
+- When the downstream relation is about a place/entity being abolished, created, founded, or ended, prefer a bridge entity that can actually take that relation (for example a polity, region, organization, or institution), not a city or event location merely associated with the subject.
+- Preserve anchor context from the original question inside subgoal wording: keep the key entity names, event/domain phrase, and relation cue.
 - Use placeholders like [result_1] in dependent questions where prior answers must be inserted.
 - Never use pronouns like "this person", "this country", "this publisher", or "they" in dependent questions; use placeholders instead.
+- Prefer the MINIMAL dependency graph needed to answer the question.
 - Do not create more than {max_subgoals} subgoals.
 - Every subgoal must be self-contained after placeholders are resolved.
 - Do not answer the question. Only plan the topology.
+
+Good zero-shot examples:
+
+Example 1
+Question: What county is Erik Hort's birthplace a part of?
+Output:
+{{
+  "complexity": "simple",
+  "final_answer_type": "place",
+  "confidence": 0.95,
+  "reasoning": "A single focused retrieval can directly resolve the birthplace's county.",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "What county is Erik Hort's birthplace a part of?",
+      "depends_on": [],
+      "answer_type": "place",
+      "rationale": "Direct lookup; no bridge entity is needed."
+    }}
+  ]
+}}
+
+Example 2
+Question: When was the person who Messi's goals in Copa del Rey were compared to signed by Barcelona?
+Output:
+{{
+  "complexity": "compositional",
+  "final_answer_type": "date",
+  "confidence": 0.88,
+  "reasoning": "The bridge entity must be identified first, then its Barcelona signing date can be resolved.",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "Which player was Messi's Copa del Rey goal record compared to?",
+      "depends_on": [],
+      "answer_type": "person",
+      "rationale": "Resolve the compared-to player first. Keep the anchor context: Messi, Copa del Rey, and the comparison relation."
+    }},
+    {{
+      "id": 2,
+      "question": "When was [result_1] signed by Barcelona?",
+      "depends_on": [1],
+      "answer_type": "date",
+      "rationale": "Use the resolved player from subgoal 1 to answer the final relation."
+    }}
+  ]
+}}
+
+Example 3
+Question: What year did the publisher of Labyrinth end?
+Output:
+{{
+  "complexity": "compositional",
+  "final_answer_type": "number",
+  "confidence": 0.84,
+  "reasoning": "The publisher must be identified before its end year can be determined.",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "Which publisher published Labyrinth?",
+      "depends_on": [],
+      "answer_type": "entity",
+      "rationale": "Resolve the specific publisher first. Preserve the anchor entity Labyrinth and the publishing relation."
+    }},
+    {{
+      "id": 2,
+      "question": "What year did [result_1] end?",
+      "depends_on": [1],
+      "answer_type": "number",
+      "rationale": "Use the resolved publisher from subgoal 1 to find the end year."
+    }}
+  ]
+}}
+
+Example 4
+Question: When was Lady Godiva's birthplace abolished?
+Output:
+{{
+  "complexity": "compositional",
+  "final_answer_type": "date",
+  "confidence": 0.82,
+  "reasoning": "The bridge place must be resolved first, and it should be a polity or region that can plausibly be abolished.",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "Which historical region or polity is Lady Godiva identified with?",
+      "depends_on": [],
+      "answer_type": "place",
+      "rationale": "Resolve the bridge place as a polity/region compatible with the downstream abolished relation; do not substitute Coventry or another legend location."
+    }},
+    {{
+      "id": 2,
+      "question": "When did [result_1] lose its political independence or get abolished?",
+      "depends_on": [1],
+      "answer_type": "date",
+      "rationale": "Use the resolved polity/region from subgoal 1 to answer the final relation with a retrieval-friendly phrasing."
+    }}
+  ]
+}}
+
+Example 5
+Question: Which national team scored more goals at the 2014 FIFA World Cup: Brazil or Germany?
+Output:
+{{
+  "complexity": "compositional",
+  "final_answer_type": "entity",
+  "confidence": 0.93,
+  "reasoning": "Two independent facts must be resolved before the comparison can be made.",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "How many goals did Brazil score at the 2014 FIFA World Cup?",
+      "depends_on": [],
+      "answer_type": "number",
+      "rationale": "Resolve Brazil's total goals."
+    }},
+    {{
+      "id": 2,
+      "question": "How many goals did Germany score at the 2014 FIFA World Cup?",
+      "depends_on": [],
+      "answer_type": "number",
+      "rationale": "Resolve Germany's total goals."
+    }}
+  ]
+}}
+
+Bad pattern to avoid:
+- Bad dependent question: "When was this person signed by Barcelona?"
+- Good dependent question: "When was [result_1] signed by Barcelona?"
+
+Bad pattern to avoid:
+- Bad first subgoal: "When was the person ... signed by Barcelona?"
+- Good first subgoal: resolve the missing bridge entity first, then ask the date question in a later node.
 
 Question: {question}

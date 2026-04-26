@@ -81,7 +81,7 @@ class AMASPipeline:
             capsules=exec_result.capsules,
             answer_type=plan.final_answer_type,
         )
-        answer = _final_answer_or_fallback(synth_obj, exec_result.capsules)
+        answer = _final_answer_or_fallback(synth_obj, exec_result.capsules, plan.final_answer_type)
         trace.append(
             StepTrace(
                 step=len(trace),
@@ -161,6 +161,8 @@ class AMASPipeline:
         total_tokens = planner_tokens + subagent_tokens
         reasoning_tokens = max(0, total_tokens - capsule.chunk_tokens)
         answer = capsule.answer or capsule.fact.answer_span
+        if answer and not node.answer_type.validate_span(answer):
+            answer = ""
         return PipelineResult(
             question_id=question_id,
             question=question,
@@ -204,11 +206,15 @@ def _agent_llm(config: Config, agent: str, fallback: str) -> dict[str, Any]:
 def _final_answer_or_fallback(
     synth_obj: dict[str, Any],
     capsules: list[EvidenceCapsule],
+    answer_type: AnswerType,
 ) -> str:
     answer = str(synth_obj.get("answer_span", "")).strip()
-    if answer:
+    if answer and answer_type.validate_span(answer):
         return answer
-    filled = [c for c in capsules if c.answer and c.fact.slot_filled]
+    filled = [
+        c for c in capsules
+        if c.answer and c.fact.slot_filled and answer_type.validate_span(c.answer)
+    ]
     if filled:
         return max(filled, key=lambda c: c.fact.confidence).answer
     return ""

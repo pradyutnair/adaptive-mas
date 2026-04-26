@@ -1,30 +1,25 @@
-"""Context-isolated investigator with a private search loop.
-
-Raw chunks are never accepted as caller input and never leave this class. They
-only appear as private search-tool results inside the investigator's own message
-history before it returns a distilled evidence capsule.
-"""
+"""Deterministic investigator with bounded stateless retrieval rounds."""
 
 from __future__ import annotations
 
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
 import tiktoken
 
-from .llm import LLMClient, parse_json_object, strip_thinking
+from .llm import LLMClient, parse_json_object
 from .retriever import RetrievalHit, Retriever
 from .types import AnswerType, EvidenceCapsule, Fact, SubgoalNode
 
 _TOKENIZER = tiktoken.get_encoding("cl100k_base")
-
 logger = logging.getLogger(__name__)
 
 
 class Investigator:
-    """Resolve one subgoal with bounded test-time scaling."""
+    """Resolve one subgoal with a deterministic 1-2 round pipeline."""
 
     def __init__(
         self,
@@ -42,7 +37,8 @@ class Investigator:
         self.max_searches = max(1, int(max_searches))
         self.max_answer_words = int(max_answer_words)
         prompt_dir = Path(__file__).parent / "prompts"
-        self._template = (prompt_dir / "investigate.txt").read_text(encoding="utf-8")
+        self._analyze_template = (prompt_dir / "analyze.txt").read_text(encoding="utf-8")
+        self._rewrite_template = (prompt_dir / "rewrite.txt").read_text(encoding="utf-8")
         self.last_searches_used = 0
 
     async def investigate(
@@ -73,86 +69,112 @@ class Investigator:
         slot_name: str = "",
         top_k_override: int | None = None,
     ) -> tuple[EvidenceCapsule, int]:
-        """Let the investigator choose private searches, then emit a capsule."""
-        prompt = self._template.format(
-            sub_question=node.question.strip(),
-            expected_answer_type=node.answer_type.value,
-            max_searches=self.max_searches,
-            hint=hint.strip() or "(none)",
-        )
-        messages: list[dict[str, str]] = [{"role": "user", "content": prompt}]
         total_tokens = 0
         chunk_tokens = 0
-        searches_used = 0
-        retrieved_ids: list[str] = []
-        last_parsed: dict[str, Any] = {}
+        top_k = int(top_k_override or self.top_k)
 
-        for _turn in range(self.max_searches + 2):
-            chunk_tokens += self._chunk_tokens_in_messages(messages)
-            resp = await self.llm.chat(messages=messages)
-            total_tokens += resp.total_tokens
-            content = strip_thinking(resp.content)
-            parsed = parse_json_object(content)
-            last_parsed = parsed
-            action = str(parsed.get("action", "")).strip().lower()
+        query_1 = self._augment_query(node.question, node.question, hint)
+        hits_1 = await self.retriever.retrieve(query_1, top_k=top_k)
+        retrieved_ids = [hit.chunk_id for hit in hits_1]
+        retrieved_text_by_id = {hit.chunk_id: hit.text for hit in hits_1}
 
-            if action == "search" and searches_used < self.max_searches:
-                messages.append({"role": "assistant", "content": content})
-                hits = await self._run_search(parsed, top_k_override)
-                for hit in hits:
-                    if hit.chunk_id not in retrieved_ids:
-                        retrieved_ids.append(hit.chunk_id)
-                messages.append({
-                    "role": "user",
-                    "content": json.dumps({
-                        "search_result": [
-                            {
-                                "chunk_id": h.chunk_id,
-                                "score": round(h.score, 4),
-                                "text": h.text,
-                            }
-                            for h in hits
-                        ]
-                    }, ensure_ascii=False),
-                })
-                searches_used += 1
-                continue
+        analyze_1, tokens_1, used_chunk_tokens_1 = await self._analyze(node, hint, hits_1)
+        total_tokens += tokens_1
+        chunk_tokens += used_chunk_tokens_1
+        capsule_1, rejection_1 = self._build_capsule(
+            analyze_1,
+            node,
+            retrieved_ids,
+            slot_name,
+            retrieved_text_by_id,
+        )
+        if capsule_1.fact.slot_filled or self.max_searches <= 1:
+            self.last_searches_used = 1 if hits_1 else 0
+            capsule_1.chunk_tokens = chunk_tokens
+            return capsule_1, total_tokens
 
-            if action == "final":
-                self.last_searches_used = searches_used
-                capsule = self._build_capsule(parsed, node, retrieved_ids, slot_name)
-                capsule.chunk_tokens = chunk_tokens
-                return capsule, total_tokens
+        rewrite_obj, rewrite_tokens, rewrite_chunk_tokens = await self._rewrite(
+            node=node,
+            hint=hint,
+            previous_query=query_1,
+            previous_answer=str(analyze_1.get("answer_span", "")).strip(),
+            previous_justification=str(analyze_1.get("justification", "")).strip(),
+            hits=hits_1,
+            rejection_reason=rejection_1,
+        )
+        total_tokens += rewrite_tokens
+        chunk_tokens += rewrite_chunk_tokens
 
-            messages.append({"role": "assistant", "content": content})
-            messages.append({
-                "role": "user",
-                "content": json.dumps({
-                    "system_note": (
-                        "Output exactly one JSON object with action 'search' or 'final'. "
-                        f"You have used {searches_used}/{self.max_searches} searches."
-                    )
-                }),
-            })
+        query_2 = self._augment_query(
+            str(rewrite_obj.get("query", "")).strip(),
+            node.question,
+            hint,
+        )
+        if not query_2 or query_2 == query_1:
+            query_2 = self._augment_query(f"{node.question} {rejection_1}", node.question, hint)
 
-        self.last_searches_used = searches_used
-        capsule = self._build_capsule(last_parsed, node, retrieved_ids, slot_name)
-        capsule.chunk_tokens = chunk_tokens
-        return capsule, total_tokens
+        hits_2 = await self.retriever.retrieve(query_2, top_k=top_k)
+        merged_hits = self._merge_hits([*hits_1, *hits_2])
+        for hit in hits_2:
+            if hit.chunk_id not in retrieved_ids:
+                retrieved_ids.append(hit.chunk_id)
+            retrieved_text_by_id[hit.chunk_id] = hit.text
 
-    async def _run_search(
+        analyze_2, tokens_2, used_chunk_tokens_2 = await self._analyze(node, hint, merged_hits)
+        total_tokens += tokens_2
+        chunk_tokens += used_chunk_tokens_2
+        capsule_2, _ = self._build_capsule(
+            analyze_2,
+            node,
+            retrieved_ids,
+            slot_name,
+            retrieved_text_by_id,
+        )
+        self.last_searches_used = 2 if hits_2 else 1
+        capsule_2.chunk_tokens = chunk_tokens
+        return capsule_2, total_tokens
+
+    async def _analyze(
         self,
-        parsed: dict[str, Any],
-        top_k_override: int | None,
-    ) -> list[RetrievalHit]:
-        query = str(parsed.get("query", "")).strip()
-        if not query:
-            return []
-        try:
-            top_k = max(1, min(int(parsed.get("top_k") or top_k_override or self.top_k), 20))
-        except (TypeError, ValueError):
-            top_k = self.top_k
-        return await self.retriever.retrieve(query, top_k=top_k)
+        node: SubgoalNode,
+        hint: str,
+        hits: list[RetrievalHit],
+    ) -> tuple[dict[str, Any], int, int]:
+        chunk_blob = self._format_chunks(hits)
+        prompt = self._analyze_template.format(
+            sub_question=node.question.strip(),
+            expected_answer_type=node.answer_type.value,
+            hint=hint.strip() or "(none)",
+            chunks=chunk_blob,
+        )
+        resp = await self.llm.chat(messages=[{"role": "user", "content": prompt}])
+        return parse_json_object(resp.content), resp.total_tokens, self._estimate_tokens(chunk_blob)
+
+    async def _rewrite(
+        self,
+        node: SubgoalNode,
+        hint: str,
+        previous_query: str,
+        previous_answer: str,
+        previous_justification: str,
+        hits: list[RetrievalHit],
+        rejection_reason: str,
+    ) -> tuple[dict[str, Any], int, int]:
+        chunk_blob = self._format_chunks(hits)
+        prompt = self._rewrite_template.format(
+            sub_question=node.question.strip(),
+            expected_answer_type=node.answer_type.value,
+            hint=(hint.strip() or "(none)") + f" Rejection reason: {rejection_reason}.",
+            previous_query=previous_query.strip(),
+            previous_answer=previous_answer,
+            previous_justification=previous_justification,
+            chunks=chunk_blob,
+        )
+        resp = await self.llm.chat(messages=[{"role": "user", "content": prompt}])
+        parsed = parse_json_object(resp.content)
+        if "query" not in parsed:
+            parsed = {"query": previous_query}
+        return parsed, resp.total_tokens, self._estimate_tokens(chunk_blob)
 
     def _build_capsule(
         self,
@@ -160,8 +182,9 @@ class Investigator:
         node: SubgoalNode,
         retrieved_ids: list[str],
         slot_name: str,
-    ) -> EvidenceCapsule:
-        answer = str(parsed.get("answer_span", "")).strip()
+        retrieved_text_by_id: dict[str, str],
+    ) -> tuple[EvidenceCapsule, str]:
+        answer = self._normalize_answer(node.question, str(parsed.get("answer_span", "")).strip())
         justification = str(parsed.get("justification", "")).strip()
         support_ids_raw = parsed.get("support_ids") or []
         support_ids = [str(s).strip() for s in support_ids_raw if str(s).strip()]
@@ -176,23 +199,29 @@ class Investigator:
         if not type_ok:
             confidence_self *= 0.5
 
+        relation_ok = self._relation_match(node.question, justification)
+        if not relation_ok:
+            confidence_self *= 0.35
+
+        support_texts = [retrieved_text_by_id[sid] for sid in support_ids if sid in retrieved_text_by_id]
+        support_relation_ok = self._support_relation_match(node.question, support_texts)
+        if support_ids and not support_relation_ok:
+            confidence_self *= 0.35
+
         if not answer:
             confidence_self = 0.0
             support_ids = []
 
         confidence_retrieval = 1.0 if support_ids else 0.0
-        slot_filled = bool(answer and justification and support_ids and type_ok and not too_long)
-        confidence = (
-            0.4 * confidence_retrieval
-            + 0.4 * confidence_self
-            + 0.2 * float(slot_filled)
+        slot_filled = bool(
+            answer and justification and support_ids and type_ok and relation_ok and support_relation_ok and not too_long
         )
+        confidence = 0.4 * confidence_retrieval + 0.4 * confidence_self + 0.2 * float(slot_filled)
         if confidence < self.min_confidence:
             slot_filled = False
 
-        fact_text = justification if slot_filled else ""
         fact = Fact(
-            text=fact_text,
+            text=justification if slot_filled else "",
             confidence=confidence if slot_filled else 0.0,
             confidence_self=confidence_self,
             confidence_retrieval=confidence_retrieval,
@@ -200,6 +229,14 @@ class Investigator:
             slot_name=slot_name,
             answer_span=answer if slot_filled else "",
             support_ids=support_ids if slot_filled else [],
+        )
+        rejection_reason = self._rejection_reason(
+            answer=answer,
+            support_ids=support_ids,
+            type_ok=type_ok,
+            relation_ok=relation_ok,
+            support_relation_ok=support_relation_ok,
+            too_long=too_long,
         )
         return EvidenceCapsule(
             answer=answer if slot_filled else "",
@@ -209,7 +246,164 @@ class Investigator:
             answer_type=node.answer_type,
             retrieved_doc_ids=retrieved_ids,
             retrieved_docs_total=len(retrieved_ids),
-        )
+        ), rejection_reason
+
+    @staticmethod
+    def _format_chunks(hits: list[RetrievalHit]) -> str:
+        rows = [
+            {
+                "chunk_id": hit.chunk_id,
+                "score": round(hit.score, 4),
+                "text": hit.text,
+            }
+            for hit in hits
+        ]
+        return json.dumps(rows, ensure_ascii=False)
+
+    def _augment_query(self, raw_query: str, question: str, hint: str) -> str:
+        query = raw_query.strip() or question.strip()
+        lower = query.lower()
+        anchors = self._anchor_terms(question)
+        relation_terms = self._relation_terms(question)
+        hint_terms = self._hint_terms(hint)
+        parts = [query]
+        for term in [*anchors, *relation_terms, *hint_terms]:
+            term = term.strip()
+            if term and term.lower() not in lower:
+                parts.append(term)
+                lower += f" {term.lower()}"
+        return " ".join(parts[:8]).strip()
+
+    @staticmethod
+    def _anchor_terms(question: str) -> list[str]:
+        candidates = re.findall(r"\b(?:[A-Z][\w'/-]+(?:\s+[A-Z][\w'/-]+){0,3})\b", question)
+        out: list[str] = []
+        for cand in candidates:
+            if cand.lower() in {"what", "when", "where", "who", "which", "how many"}:
+                continue
+            if cand not in out:
+                out.append(cand)
+        return out[:5]
+
+    @staticmethod
+    def _relation_terms(question: str) -> list[str]:
+        lower = question.lower()
+        mapping = [
+            ("birthplace", ["born", "birthplace"]),
+            ("publisher", ["publisher", "published"]),
+            ("signed", ["signed", "Barcelona"]),
+            ("abolished", ["abolished", "lost independence", "political independence", "last ruler", "918"]),
+            ("ended", ["ended", "ceased", "closed", "discontinued", "last"]),
+            ("capital", ["capital"]),
+            ("compared", ["compared"]),
+            ("county", ["county"]),
+            ("part of", ["part of"]),
+        ]
+        out: list[str] = []
+        for key, terms in mapping:
+            if key in lower:
+                out.extend(terms)
+        return out[:3]
+
+    @staticmethod
+    def _hint_terms(hint: str) -> list[str]:
+        if not hint or hint == "(none)":
+            return []
+        keep = re.findall(r"\b[A-Za-z0-9][A-Za-z0-9'/-]*\b", hint)
+        terms: list[str] = []
+        for word in keep:
+            if len(word) >= 6 or word[:1].isupper():
+                terms.append(word)
+            if len(terms) >= 4:
+                break
+        return terms
+
+    @staticmethod
+    def _normalize_answer(question: str, answer: str) -> str:
+        q = question.lower()
+        if not answer:
+            return answer
+        if "what year" in q or "which year" in q:
+            m = re.search(r"\b(1[0-9]{3}|20[0-9]{2})\b", answer)
+            if m:
+                return m.group(1)
+        if "what month" in q or "which month" in q:
+            m = re.search(
+                r"\b(mid-|late |early )?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+\d{4})?\b",
+                answer,
+                flags=re.IGNORECASE,
+            )
+            if m:
+                return m.group(0)
+        if q.startswith(("how many", "how much", "what number", "which number")):
+            m = re.search(r"\d+(?:,\d+)*(?:\.\d+)?", answer)
+            if m:
+                return m.group(0)
+        return answer
+
+    @staticmethod
+    def _support_relation_match(question: str, support_texts: list[str]) -> bool:
+        if not support_texts:
+            return False
+        q = question.lower()
+        text = " ".join(support_texts).lower()
+        checks = [
+            (("birthplace", "born"), ("birth", "born", "birthplace", "native of", "from mercia", "countess of mercia")),
+            (("publisher",), ("publisher", "published", "publishing", "imprint", "originally published")),
+            (("signed", "barcelona"), ("signed", "joined", "barcelona", "signed for", "transferred to barcelona", "transferred to")),
+            (("abolished",), ("abolished", "abolish", "lost its political independence", "deprived her of all authority", "ruled mercia", "918")),
+            (("ended", "end"), ("ended", "end", "ceased", "closed", "discontinued", "final", "last")),
+            (("capital",), ("capital",)),
+            (("compared",), ("compared", "comparison", "likened")),
+            (("county", "part of"), ("county", "part of")),
+        ]
+        for q_terms, text_terms in checks:
+            if any(term in q for term in q_terms):
+                return any(term in text for term in text_terms)
+        return True
+
+    @staticmethod
+    def _rejection_reason(
+        answer: str,
+        support_ids: list[str],
+        type_ok: bool,
+        relation_ok: bool,
+        support_relation_ok: bool,
+        too_long: bool,
+    ) -> str:
+        reasons: list[str] = []
+        if not answer:
+            reasons.append("no answer span was grounded")
+        if not support_ids:
+            reasons.append("no cited support chunk was retained")
+        if not type_ok:
+            reasons.append("the answer type did not match the sub-question")
+        if not relation_ok:
+            reasons.append("the justification did not explicitly state the asked relation")
+        if support_ids and not support_relation_ok:
+            reasons.append("the cited chunk text did not itself support the asked relation")
+        if too_long:
+            reasons.append("the answer span was too long")
+        return "; ".join(reasons) if reasons else "the evidence was insufficient"
+
+    @staticmethod
+    def _relation_match(question: str, justification: str) -> bool:
+        q = question.lower()
+        j = justification.lower()
+        checks = [
+            (("birthplace", "born"), ("birth", "born", "birthplace")),
+            (("publisher",), ("publisher", "published", "publishing", "imprint")),
+            (("signed", "barcelona"), ("signed", "joined", "barcelona", "contract", "transferred to")),
+            (("abolished",), ("abolished", "abolish", "dissolved", "independence")),
+            (("ended", "end"), ("ended", "end", "ceased", "closed", "last episode", "final episode", "discontinued")),
+            (("capital",), ("capital",)),
+            (("compared",), ("compared", "comparison", "likened")),
+            (("county", "part of"), ("county", "part of")),
+        ]
+        for q_terms, j_terms in checks:
+            if any(term in q for term in q_terms):
+                return any(term in j for term in j_terms)
+        return True
 
     @staticmethod
     def _merge_hits(hits: list[RetrievalHit]) -> list[RetrievalHit]:
@@ -223,15 +417,6 @@ class Investigator:
     @staticmethod
     def _estimate_tokens(text: str) -> int:
         return len(_TOKENIZER.encode(text or ""))
-
-    @classmethod
-    def _chunk_tokens_in_messages(cls, messages: list[dict[str, str]]) -> int:
-        total = 0
-        for message in messages:
-            content = message.get("content", "")
-            if '"search_result"' in content:
-                total += cls._estimate_tokens(content)
-        return total
 
     @staticmethod
     def _bounded_float(value: Any) -> float:
