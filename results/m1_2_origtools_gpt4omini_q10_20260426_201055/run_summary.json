@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.sufficiency_gpt4omini_origtools.yaml",
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/musique/opera_matched/questions_10_tmp.json",
+  "server_url": "https://api.openai.com/v1",
+  "concurrency": 4,
+  "chunks_file": "/local/yzheng/pnair/workspace/tmp/05-mas/data/musique/chunks.json",
+  "index_dir": "/local/yzheng/pnair/workspace/tmp/05-mas/data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 10,
+  "succeeded": 10,
+  "failed": 0,
+  "total_output_rows": 10,
+  "elapsed_seconds": 63.939,
+  "mean_wallclock_seconds": 6.394,
+  "mean_question_wallclock_seconds": 23.105,
+  "p50_question_wallclock_seconds": 24.223,
+  "p95_question_wallclock_seconds": 34.929
+}

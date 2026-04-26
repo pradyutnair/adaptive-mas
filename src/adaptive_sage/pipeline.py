@@ -31,7 +31,7 @@ class AdaptiveRecursivePipeline:
         llm_cfg = config.get("llm", {})
         self.llm_client = LLMClient(
             model=llm_cfg.get("model", "Qwen/Qwen3-8B"),
-            api_key=llm_cfg.get("api_key", "EMPTY"),
+            api_key=llm_cfg.get("api_key"),
             base_url=llm_cfg.get("base_url", "http://localhost:8001/v1"),
             temperature=llm_cfg.get("temperature", 0.6),
             max_tokens=llm_cfg.get("max_tokens", 8192),
@@ -619,15 +619,20 @@ class AdaptiveRecursivePipeline:
         """
         recurse_steps = max(0, int(recurse_steps))
         steps_executed = 0
+        slot_state = self._initialise_slot_state(
+            {"required_hops": required_hops or [], "target_slot": route_target_slot},
+            target_profile,
+        )
         for sub_step in range(recurse_steps):
             absolute_step = len(step_trace)
+            pending_slots = self._pending_slots(slot_state)
             decision, decide_tokens = await self.orchestrator.decide_with_usage(
                 question=question,
                 facts=memory.get_all(),
                 trace=step_trace,
                 step=sub_step,
                 target_profile=target_profile,
-                pending_slots=required_hops or [],
+                pending_slots=pending_slots,
             )
             total_tokens += decide_tokens
             orchestrator_tokens += decide_tokens
@@ -685,6 +690,7 @@ class AdaptiveRecursivePipeline:
             fact_added = self._add_fact(
                 memory, capsule, step=absolute_step, slot_name=slot_name
             )
+            self._update_slot_resolution(slot_state, slot_name, capsule)
             step_trace.append(
                 StepTrace(
                     step=absolute_step,
@@ -707,7 +713,7 @@ class AdaptiveRecursivePipeline:
             question=question,
             facts=memory.get_all(),
             target_profile=target_profile,
-            pending_slots=required_hops or [],
+            pending_slots=self._pending_slots(slot_state),
             trace=step_trace,
         )
         answer_obj = self._apply_answer_object_fallback(
@@ -860,10 +866,10 @@ class AdaptiveRecursivePipeline:
             route_decision=route_label,
             route_confidence=float(sufficiency),
             route_draft_answer="",
-            slot_resolution={},
             auto_verify_calls=0,
             answer_rejection_count=0,
             extras=extras,
+            slot_resolution=self._slot_resolution_map(slot_state) if "slot_state" in locals() else {},
         )
 
     @staticmethod
@@ -1127,8 +1133,7 @@ class AdaptiveRecursivePipeline:
                         route_decision="bootstrap_probe",
                         route_confidence=bootstrap_confidence,
                         route_draft_answer="",
-                        slot_resolution={},
-                        auto_verify_calls=auto_verify_calls,
+                                    auto_verify_calls=auto_verify_calls,
                         answer_rejection_count=answer_rejection_count,
                     )
                 if probe_gate["action"] == "refine":
@@ -1262,8 +1267,7 @@ class AdaptiveRecursivePipeline:
                             route_decision="bootstrap_followup",
                             route_confidence=followup_answer_obj["justification_confidence"],
                             route_draft_answer=bootstrap_answer,
-                            slot_resolution={},
-                            auto_verify_calls=auto_verify_calls,
+                                            auto_verify_calls=auto_verify_calls,
                             answer_rejection_count=answer_rejection_count,
                         )
                     answer_rejection_count += 1

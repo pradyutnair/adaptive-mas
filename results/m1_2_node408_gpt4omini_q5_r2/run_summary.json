@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.node408_gpt4omini.yaml",
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/musique/opera_matched/questions_5_tmp.json",
+  "server_url": "https://api.openai.com/v1",
+  "concurrency": 1,
+  "chunks_file": "",
+  "index_dir": "",
+  "embedding_model": "",
+  "completed_ids": 0,
+  "attempted": 5,
+  "succeeded": 5,
+  "failed": 0,
+  "total_output_rows": 5,
+  "elapsed_seconds": 115.293,
+  "mean_wallclock_seconds": 23.059,
+  "mean_question_wallclock_seconds": 23.056,
+  "p50_question_wallclock_seconds": 16.828,
+  "p95_question_wallclock_seconds": 52.635
+}

@@ -8,6 +8,7 @@ a single distilled fact, and a limited number of supporting snippet IDs.
 from __future__ import annotations
 
 import ast
+import asyncio
 import json
 import logging
 import os
@@ -15,12 +16,10 @@ import re
 from pathlib import Path
 from typing import Any, Optional
 
+import requests
+
 from arag.core.config import Config
-from arag.core.context import AgentContext
 from arag.core.llm import LLMClient
-from arag.tools.keyword_search import KeywordSearchTool
-from arag.tools.read_chunk import ReadChunkTool
-from arag.tools.semantic_search import SemanticSearchTool
 
 from .types import EvidenceCapsule, Fact
 
@@ -64,20 +63,15 @@ class Investigator:
         self.raw_snippets: bool = bool(config.get("ablation.raw_snippets", False))
         self.blind_subagent: bool = bool(config.get("ablation.blind_subagent", False))
 
-        # Data paths
-        chunks_file: str = config.get("data.chunks_file")
-        index_dir: str = config.get("data.index_dir")
-        embedding_model: str = os.environ.get(
-            "ARAG_EMBEDDING_MODEL",
-            config.get("data.embedding_model", "intfloat/e5-base-v2"),
+        self.retriever_url: str = str(
+            config.get("data.retriever_url", "http://node408:8003/retrieve")
+        ).strip()
+        self.max_passage_chars: int = int(
+            config.get("investigator.max_passage_chars", 1200)
         )
-
-        # Initialise ARAG retrieval tools
-        self.keyword_search = KeywordSearchTool(chunks_file)
-        self.semantic_search = SemanticSearchTool(
-            chunks_file, index_dir, embedding_model
+        self.max_query_variants: int = int(
+            config.get("investigator.max_query_variants", 2)
         )
-        self.read_chunk = ReadChunkTool(chunks_file)
 
         # Load distillation prompt template
         prompt_name = str(config.get("investigator.prompt_file", "")).strip()
@@ -162,9 +156,8 @@ class Investigator:
             else effective_top_k * 2
         )
 
-        # 1. Generate search queries
+        # 1. Generate retrieval queries
         effective_query = retrieval_query.strip() if retrieval_query and retrieval_query.strip() else sub_question
-        keywords = self._extract_keywords(effective_query)
         semantic_query = self._build_semantic_query(
             effective_query,
             goal,
@@ -172,44 +165,33 @@ class Investigator:
             slot_name=slot_name,
             slot_hint=slot_hint,
         )
-
-        # 2–3. Run both searches and collect chunk IDs
-        ctx = AgentContext()
-
-        kw_result, kw_log = self.keyword_search.execute(
-            ctx, keywords=keywords, top_k=effective_top_k
-        )
-        sem_result, sem_log = self.semantic_search.execute(
-            ctx, query=semantic_query, top_k=effective_top_k
+        query_candidates = self._build_query_candidates(
+            effective_query=effective_query,
+            semantic_query=semantic_query,
+            sub_question=sub_question,
+            goal=goal,
         )
 
-        kw_chunk_ids = self._extract_chunk_ids(kw_result)
-        sem_chunk_ids = self._extract_chunk_ids(sem_result)
-
-        # Merge preserving order (keyword first), de-duplicate
-        seen: set[str] = set()
-        all_chunk_ids: list[str] = []
-        for cid in kw_chunk_ids + sem_chunk_ids:
-            if cid not in seen:
-                seen.add(cid)
-                all_chunk_ids.append(cid)
-
-        # 4. Read top chunks
-        ids_to_read = all_chunk_ids[:max_read]
-        if ids_to_read:
-            chunk_result, chunk_log = self.read_chunk.execute(
-                ctx, chunk_ids=ids_to_read
-            )
+        # 2. Retrieve from node408 only; keep investigators stateless and isolated.
+        retrieved_docs = await self._retrieve_docs(
+            query_candidates=query_candidates,
+            top_k=effective_top_k,
+            max_docs=max_read,
+        )
+        docs_by_id = {
+            str(doc["chunk_id"]): str(doc["text"])
+            for doc in retrieved_docs
+            if str(doc.get("chunk_id", "")).strip() and str(doc.get("text", "")).strip()
+        }
+        all_chunk_ids = [str(doc["chunk_id"]) for doc in retrieved_docs]
+        if retrieved_docs:
+            chunk_result = self._format_retrieved_passages(retrieved_docs)
         else:
             chunk_result = "No relevant passages found."
             logger.warning("No chunks found for sub-question: %s", sub_question)
 
-        support_ids = ids_to_read[: self.evidence_capsule_limit]
-        support_snippets = [
-            self.read_chunk.chunks_dict[sid]
-            for sid in support_ids
-            if sid in self.read_chunk.chunks_dict
-        ]
+        support_ids = all_chunk_ids[: self.evidence_capsule_limit]
+        support_snippets = [docs_by_id[sid] for sid in support_ids if sid in docs_by_id]
 
         if self.raw_snippets:
             capsule = EvidenceCapsule(
@@ -300,7 +282,7 @@ class Investigator:
             confidence_retrieval = self._compute_retrieval_confidence(
                 support_ids=support_ids,
                 fallback_ids=all_chunk_ids,
-                semantic_result=sem_result,
+                retrieved_docs=retrieved_docs,
             )
             confidence = (
                 0.4 * confidence_retrieval
@@ -324,8 +306,8 @@ class Investigator:
             # Populate support_snippets from actual chunk texts
             support_snippets = []
             for sid in support_ids:
-                if sid in self.read_chunk.chunks_dict:
-                    support_snippets.append(self.read_chunk.chunks_dict[sid])
+                if sid in docs_by_id:
+                    support_snippets.append(docs_by_id[sid])
 
             fact = Fact(
                 text=fact_text,
@@ -462,20 +444,102 @@ class Investigator:
 
         return "\n".join(part for part in parts if part)
 
+    def _build_query_candidates(
+        self,
+        *,
+        effective_query: str,
+        semantic_query: str,
+        sub_question: str,
+        goal: str,
+    ) -> list[str]:
+        candidates: list[str] = []
+        for item in (
+            effective_query.strip(),
+            semantic_query.strip(),
+            sub_question.strip(),
+            f"{sub_question.strip()} Goal: {goal.strip()}".strip(),
+        ):
+            if not item:
+                continue
+            if item not in candidates:
+                candidates.append(item)
+        return candidates[: max(1, self.max_query_variants)]
+
+    async def _retrieve_docs(
+        self,
+        *,
+        query_candidates: list[str],
+        top_k: int,
+        max_docs: int,
+    ) -> list[dict[str, Any]]:
+        merged: list[dict[str, Any]] = []
+        seen: set[str] = set()
+        for query in query_candidates:
+            docs = await asyncio.to_thread(self._retrieve_once, query, top_k)
+            for doc in docs:
+                cid = str(doc.get("chunk_id", "")).strip()
+                text = str(doc.get("text", "")).strip()
+                if not cid or not text or cid in seen:
+                    continue
+                seen.add(cid)
+                merged.append({
+                    "chunk_id": cid,
+                    "text": text,
+                    "score": float(doc.get("score", 0.0) or 0.0),
+                })
+                if len(merged) >= max_docs:
+                    return merged
+        return merged
+
+    def _retrieve_once(self, query: str, top_k: int) -> list[dict[str, Any]]:
+        payload = {
+            "queries": [query],
+            "topk": min(max(int(top_k), 1), 10),
+            "mode": "text",
+        }
+        response = requests.post(self.retriever_url, json=payload, timeout=60)
+        response.raise_for_status()
+        data = response.json()
+        results = data.get("results") or []
+        if not results:
+            return []
+        docs = results[0] or []
+        normalised: list[dict[str, Any]] = []
+        for doc in docs:
+            cid = str(doc.get("chunk_id") or doc.get("id") or "").strip()
+            text = str(doc.get("text") or doc.get("content") or "").strip()
+            if not cid or not text:
+                continue
+            normalised.append({
+                "chunk_id": cid,
+                "text": text,
+                "score": float(doc.get("score", 0.0) or 0.0),
+            })
+        return normalised
+
+    def _format_retrieved_passages(self, docs: list[dict[str, Any]]) -> str:
+        parts: list[str] = []
+        for doc in docs:
+            cid = str(doc.get("chunk_id", "")).strip()
+            text = str(doc.get("text", "")).strip()
+            clipped = text[: self.max_passage_chars]
+            parts.append(f"Chunk {cid}:\n{clipped}")
+        return "\n\n".join(parts)
+
+
     @staticmethod
     def _compute_retrieval_confidence(
         support_ids: list[str],
         fallback_ids: list[str],
-        semantic_result: str,
+        retrieved_docs: list[dict[str, Any]],
     ) -> float:
-        """Estimate retrieval confidence from semantic-search scores."""
-        similarity_by_chunk = Investigator._extract_similarity_scores(semantic_result)
+        """Estimate retrieval confidence from node408 similarity scores."""
+        score_by_chunk = {
+            str(doc.get("chunk_id", "")): float(doc.get("score", 0.0) or 0.0)
+            for doc in retrieved_docs
+        }
         candidate_ids = support_ids or fallback_ids
-        scores = [
-            similarity_by_chunk[cid]
-            for cid in candidate_ids
-            if cid in similarity_by_chunk
-        ]
+        scores = [score_by_chunk[cid] for cid in candidate_ids if cid in score_by_chunk]
         if not scores:
             return 0.0
         top_scores = sorted(scores, reverse=True)[:2]

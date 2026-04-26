@@ -9,3 +9,5 @@ data/**/index/
 data/**/index_*/
 data/**/index_qwen3_embedding_06b/
 data/**/sentence_index.pkl
+
+.venv/
