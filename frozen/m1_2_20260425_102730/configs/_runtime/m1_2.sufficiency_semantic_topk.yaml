@@ -1,0 +1,52 @@
+# Sufficiency-controlled adaptive MAS (m1.2)
+# Single dataset-agnostic policy:
+#   1. Always run one grounded probe.
+#   2. Compute s = s_conf * s_target * s_align.
+#   3. If s >= tau (a priori 0.70), answer from the probe.
+#   4. Else, recurse with budget = ceil(MAX_STEPS * (1 - s)) clamped to [min, max].
+#
+# No question-text heuristics, no per-dataset thresholds, no entity-class lists.
+# This config is run unchanged on HotpotQA, MuSiQue, and 2WikiMH.
+
+variant: m1_2_sufficiency
+
+orchestrator:
+  max_steps: 4
+  max_verify_calls: 0
+
+investigator:
+  evidence_capsule_limit: 4
+  search_top_k: 6
+  subagent_max_loops: 1
+  subagent_token_budget: 20000
+  min_fact_confidence: 0.50
+  use_strict_distill: true
+
+fact_memory:
+  capacity: 4
+  strategy: salience
+
+adaptive:
+  sufficiency_controller: true
+  sufficiency_threshold: 0.70
+  sufficiency_max_recurse_steps: 4
+  sufficiency_min_recurse_steps: 1
+  bootstrap_search_top_k: 6
+  bootstrap_max_read: 6
+
+llm:
+  model: Qwen/Qwen3-8B
+  base_url: http://localhost:8001/v1
+  temperature: 0.0
+  max_tokens: 2048
+  chat_template_kwargs:
+    enable_thinking: false
+
+data:
+  chunks_file: data/musique/chunks.json
+  index_dir: data/musique/index_e5_base_v2
+  embedding_model: intfloat/e5-base-v2
+
+runner:
+  concurrency: 24
+  checkpoint: true

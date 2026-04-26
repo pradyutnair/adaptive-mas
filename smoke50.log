@@ -1,7 +1,0 @@
-[20:54:02] >>> sufficiency on musique -> results/smoke50_20260418_205402/musique/sufficiency
-============================================================
-[21:05:44] <<< sufficiency on musique done
-[21:05:44] >>> sufficiency on hotpotqa -> results/smoke50_20260418_205402/hotpotqa/sufficiency
-============================================================
-[21:11:41] <<< sufficiency on hotpotqa done
-ALL DONE -> results/smoke50_20260418_205402
