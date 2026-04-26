@@ -1,4 +1,4 @@
-# SAAT/AMAS v2 with local Qwen3-8B + thinking for every role.
+# SAAT/AMAS v3 with local Qwen3-8B + thinking for every role.
 
 llm_defaults:
   model: Qwen/Qwen3-8B
@@ -27,6 +27,9 @@ pipeline:
   max_searches_per_subagent: 2
   min_fact_confidence: 0.3
   max_answer_words: 8
+  direct_probe_top_k: 5
+  direct_probe_max_searches: 2
+  direct_probe_confidence: 0.78
 
 runner:
   concurrency: 8

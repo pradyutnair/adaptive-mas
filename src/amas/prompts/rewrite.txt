@@ -1,0 +1,24 @@
+You are rewriting a retrieval query for one failed sub-question.
+
+Return exactly one JSON object, no prose, no code fences:
+
+{{
+  "query": "improved focused search query"
+}}
+
+Rules:
+- Keep the query short and concrete.
+- Preserve the target relation from the sub-question.
+- Use the hint to disambiguate entities, era, location, or role.
+- If the previous attempt found a likely bridge entity, include it in the new query.
+- Do not ask the final question if the missing piece is an intermediate bridge.
+
+Sub-question: {sub_question}
+Expected answer type: {expected_answer_type}
+Dependency hint: {hint}
+Previous query: {previous_query}
+Previous answer attempt: {previous_answer}
+Previous justification: {previous_justification}
+
+Previous chunks:
+{chunks}

@@ -25,6 +25,7 @@ Rules:
 - Use "compositional" when the question requires resolving bridge entities, comparing two independently resolved facts, or following a chain.
 - The graph must mirror dependencies. Independent facts have empty dependencies and can run in parallel. Dependent facts must list the node IDs they require.
 - Use placeholders like [result_1] in dependent questions where prior answers must be inserted.
+- Never use pronouns like "this person", "this country", "this publisher", or "they" in dependent questions; use placeholders instead.
 - Do not create more than {max_subgoals} subgoals.
 - Every subgoal must be self-contained after placeholders are resolved.
 - Do not answer the question. Only plan the topology.

@@ -418,3 +418,37 @@ Do not use:
 - Leave a clear run note in the result directory when a run is important.
 - Do not overwrite previous predictions.
 - Stop bad runs early when early rows show blank answers, parse failures, or obvious route collapse.
+
+## Original Thesis Proposal:
+Retrieval-Augmented Generation with Multi-Agent Collaborative Search
+Description
+Large language models (LLMs) exhibit strong reasoning capabilities in solving human-level tasks.
+However, they are prone to hallucinations due to a lack of grounded knowledge. Retrieval-Augmented
+Generation (RAG) has emerged as a practical approach to mitigate this issue. Recent work has further
+integrated LLM reasoning into the RAG process, leading to iterative RAG methods [1, 2]. In these
+methods, the LLM serves as a search agent, dynamically interacting with the retrieval system to gather
+external knowledge and generate more reliable outputs. Despite their promise, these methods often
+rely on lengthy multi-round searches, which can be time-consuming and are vulnerable if any step in
+the reasoning chain fails to retrieve relevant supporting documents. In contrast, recent studies
+suggest that coordinated multi-agent collaboration can harness collective intelligence to surpass the
+performance of individual agents [3, 4]. This observation motivates the central question of this
+research: Can RAG systems benefit from multi-agent collaborative search? Specifically, multi-agent
+collaborative search allows parallel exploration of multiple search trajectories and facilitates the
+exchange of valuable findings through inter-agent communication, offering a more efficient and
+robust solution to RAG applications.
+The goal of this project is to develop multi-agent collaborative search strategies that address the
+efficiency limitations of existing iterative RAG methods while improving the reliability of generated
+outputs. The potential research questions include, but are not limited to:
+Q1. Can multi-agent collaborative search increase the parallelism of iterative RAG, thereby improving
+both efficiency and overall performance?
+Q2. What collaboration strategies can maximise the utilisation of collective intelligence in multi-agent
+RAG systems?
+Q3. Can inference-time scaling laws be observed in multi-agent RAG systems?
+The project falls under Machine Learning and Artificial Intelligence, highly related to Information
+Retrieval and Large Language Model Reasoning.
+The project will be conducted at the Informatics Institute of the University of Amsterdam under the
+guidance of Yijia Zheng, a PhD student at the Multimedia Analytics Lab (https://multix.io).
+This project is designed for students to complete their Master's thesis and does not pay for working
+hours. The student is expected to be comfortable programming in Python (especially LLM inference
+and training frameworks, like vLLM, Transformers, DeepSpeed, etc) and working with multiple kinds of
+datasets for RAG (e.g., multi-hop QA datasets and open-domain summarisation datasets).
