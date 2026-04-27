@@ -18,10 +18,12 @@ Orchestrator on Qwen3 with thinking, investigator on GPT-4o-mini::
 from __future__ import annotations
 
 import asyncio
+import itertools
 import json
 import logging
 import os
 import ssl
+import threading
 from dataclasses import dataclass
 from typing import Any
 
@@ -67,9 +69,13 @@ class LLMClient:
         max_tokens: int = 1024,
         enable_thinking: bool = False,
         timeout_seconds: float = 600.0,
+        base_urls: list[str] | None = None,
     ) -> None:
         self.model = model
         self.base_url = base_url.rstrip("/")
+        self._base_urls = [u.rstrip("/") for u in base_urls] if base_urls else None
+        self._rr_lock = threading.Lock()
+        self._rr_iter = itertools.cycle(self._base_urls) if self._base_urls else None
         self.api_key = api_key or os.getenv("OPENAI_API_KEY", "EMPTY")
         self.temperature = temperature
         self.max_tokens = max_tokens
@@ -98,7 +104,12 @@ class LLMClient:
             payload["tools"] = tools
             payload["tool_choice"] = tool_choice or "auto"
 
-        url = f"{self.base_url}/chat/completions"
+        if self._rr_iter is not None:
+            with self._rr_lock:
+                base = next(self._rr_iter)
+        else:
+            base = self.base_url
+        url = f"{base}/chat/completions"
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -175,14 +186,16 @@ class LLMClient:
         """Construct from a flat config dict."""
         api_key_env = cfg.get("api_key_env")
         api_key = os.getenv(api_key_env) if api_key_env else cfg.get("api_key")
+        urls = cfg.get("base_urls")
         return cls(
             model=cfg["model"],
-            base_url=cfg["base_url"],
+            base_url=cfg["base_url"] if not urls else urls[0],
             api_key=api_key,
             temperature=float(cfg.get("temperature", 0.0)),
             max_tokens=int(cfg.get("max_tokens", 1024)),
             enable_thinking=bool(cfg.get("enable_thinking", False)),
             timeout_seconds=float(cfg.get("timeout_seconds", 600.0)),
+            base_urls=list(urls) if urls else None,
         )
 
 

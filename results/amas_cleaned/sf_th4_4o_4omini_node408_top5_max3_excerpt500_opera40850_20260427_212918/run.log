@@ -1,0 +1,20 @@
+21:29:19 [INFO] amas.runner: Loaded 50 questions; 0 done; 50 to run.
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__13548_13529
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__9285_5188_23307
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__766973_770570
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__170823_120171
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511454_120259
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__71753_648517_70784_79935
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__94201_642284_131926_89261
+21:29:19 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152562_5274_458768_33633
+21:29:24 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__305282_282081_73772
+21:29:26 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__655505_110949
+21:29:27 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__619265_45326
+21:29:29 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__754156_88460_30152_20999
+21:29:33 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__199513_801817
+21:29:33 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__820301_720914_41132
+21:29:37 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__136129_87694_124169
+21:29:40 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__354635_174222
+21:29:41 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__849312_503371_21711
+21:29:44 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511296_577502
+21:29:47 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__731956_126089

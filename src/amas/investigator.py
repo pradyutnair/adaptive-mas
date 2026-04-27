@@ -91,7 +91,7 @@ class Investigator:
                 chunk_tokens += self._estimate_chunk_tokens(full_payload)
                 trimmed_payload = json.dumps({"search_result": [
                     {"chunk_id": h.chunk_id, "score": round(h.score, 4),
-                     "text": h.text[:700]}
+                     "text": h.text[:int(__import__("os").environ.get("AMAS_EXCERPT_CHARS","700"))]}
                     for h in hits
                 ]})
                 messages.append({"role": "user", "content": trimmed_payload})

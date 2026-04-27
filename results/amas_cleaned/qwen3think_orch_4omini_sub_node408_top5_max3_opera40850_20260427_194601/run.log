@@ -1,0 +1,70 @@
+19:46:01 [INFO] amas.runner: Loaded 50 questions; 0 done; 50 to run.
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__13548_13529
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__9285_5188_23307
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__766973_770570
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__170823_120171
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511454_120259
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__71753_648517_70784_79935
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__94201_642284_131926_89261
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152562_5274_458768_33633
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__305282_282081_73772
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__655505_110949
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__619265_45326
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__754156_88460_30152_20999
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__199513_801817
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__820301_720914_41132
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__136129_87694_124169
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__354635_174222
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__849312_503371_21711
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511296_577502
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__731956_126089
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__123545_47134
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__786632_831637_91775
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__124412_402641
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__159215_779396
+19:46:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__59048_827343
+19:46:44 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__726675_508773_85832_745702
+19:46:50 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__693444_220151
+19:46:51 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__108833_720914_41132
+19:46:52 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__347686_127399
+19:47:29 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__33845_42197_18397
+19:47:36 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__645448_77615
+19:47:38 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__524186_219173_638950_72134
+19:47:42 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__734582_71302
+19:47:51 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__639955_834494_34099
+19:47:53 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__9988_261673_70784_79935
+19:47:53 [INFO] amas.orchestrator: Context budget hit at turn=1 est_prompt=4947 budget=9000
+19:47:53 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__77233_33207
+19:47:54 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__84847_148696
+19:47:57 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__90327_83076_319330
+19:48:01 [INFO] amas.orchestrator: Context budget hit at turn=1 est_prompt=4953 budget=9000
+19:48:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__998_25855
+19:48:01 [INFO] amas.orchestrator: Context budget hit at turn=1 est_prompt=4941 budget=9000
+19:48:01 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__81659_52835
+19:48:04 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__88342_75218_128008_48717
+19:48:10 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__144678_443779_52195
+19:48:14 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5381 budget=9000
+19:48:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__865961_159109
+19:48:17 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5389 budget=9000
+19:48:17 [INFO] amas.pipeline: AMAS start: qid=musique_3hop2__127483_60649_10557
+19:48:25 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__46862_68042
+19:48:25 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5470 budget=9000
+19:48:25 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__78401_158262
+19:48:39 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__95970_152907
+19:48:44 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__105837_160713_77246
+19:48:45 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5066 budget=9000
+19:48:45 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__179322_83289
+19:48:51 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5486 budget=9000
+19:48:51 [INFO] amas.pipeline: AMAS start: qid=musique_3hop2__87184_90327_76291
+19:49:03 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152146_5274_458768_33637
+19:49:06 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5410 budget=9000
+19:49:09 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5531 budget=9000
+19:49:12 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5590 budget=9000
+19:49:15 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5175 budget=9000
+19:49:35 [INFO] amas.orchestrator: Context budget hit at turn=1 est_prompt=4948 budget=9000
+19:50:35 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5463 budget=9000
+19:50:59 [INFO] amas.orchestrator: Context budget hit at turn=4 est_prompt=6041 budget=9000
+19:51:22 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5497 budget=9000
+19:51:39 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=5394 budget=9000
+19:52:05 [INFO] amas.orchestrator: Context budget hit at turn=2 est_prompt=8906 budget=9000
+Done: 50 processed in 377.6s (answered=50/50)
