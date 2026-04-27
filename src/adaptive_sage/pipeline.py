@@ -653,11 +653,25 @@ class AdaptiveRecursivePipeline:
         """
         recurse_steps = max(0, int(recurse_steps))
         steps_executed = 0
+        duplicate_subquestion_count = 0
         slot_state = self._initialise_slot_state(
             {"required_hops": required_hops or [], "target_slot": route_target_slot},
             target_profile,
         )
         for sub_step in range(recurse_steps):
+            if self._should_force_budget_answer(total_tokens):
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="answer",
+                        tokens=0,
+                        metadata={
+                            "sufficiency_recurse": True,
+                            "budget_exhausted": True,
+                        },
+                    )
+                )
+                break
             absolute_step = len(step_trace)
             pending_slots = self._pending_slots(slot_state)
             decision, decide_tokens = await self.orchestrator.decide_with_usage(
@@ -704,6 +718,23 @@ class AdaptiveRecursivePipeline:
             retrieval_query = str(decision.get("retrieval_query", "")).strip() or None
             goal = str(decision.get("goal", "")).strip() or target_profile
             slot_name = str(decision.get("slot_name", "")).strip()
+            duplicate = self._is_duplicate_subquestion(sub_question, step_trace)
+            duplicate_subquestion_count += int(duplicate)
+            if duplicate:
+                step_trace.append(
+                    StepTrace(
+                        step=absolute_step,
+                        action="answer",
+                        tokens=0,
+                        metadata={
+                            "sufficiency_recurse": True,
+                            "duplicate_subquestion_guard": True,
+                            "sub_question": sub_question,
+                            "retrieval_query": retrieval_query or sub_question,
+                        },
+                    )
+                )
+                break
 
             capsule, investigate_tokens = await self.investigator.investigate_with_usage(
                 sub_question=sub_question,
@@ -741,20 +772,47 @@ class AdaptiveRecursivePipeline:
                 )
             )
             steps_executed += 1
+            if self._should_force_budget_answer(total_tokens):
+                step_trace.append(
+                    StepTrace(
+                        step=len(step_trace),
+                        action="answer",
+                        tokens=0,
+                        metadata={
+                            "sufficiency_recurse": True,
+                            "budget_exhausted": True,
+                        },
+                    )
+                )
+                break
 
         # Final answer synthesis from the accumulated fact memory.
-        answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
-            question=question,
-            facts=memory.get_all(),
-            target_profile=target_profile,
-            pending_slots=self._pending_slots(slot_state),
-            trace=step_trace,
-        )
-        answer_obj = self._apply_answer_object_fallback(
-            answer_obj,
-            memory.get_all(),
-            "",
-        )
+        if self._should_force_budget_answer(total_tokens):
+            answer_tokens = 0
+            answer_obj = self._apply_answer_object_fallback(
+                {
+                    "answer": "",
+                    "cited_fact_ids": [],
+                    "justification_confidence": 0.0,
+                    "justification": "Budget exhausted; used grounded fact fallback.",
+                    "missing_slot": "",
+                },
+                memory.get_all(),
+                "",
+            )
+        else:
+            answer_obj, answer_tokens = await self.orchestrator.generate_answer_object_with_usage(
+                question=question,
+                facts=memory.get_all(),
+                target_profile=target_profile,
+                pending_slots=self._pending_slots(slot_state),
+                trace=step_trace,
+            )
+            answer_obj = self._apply_answer_object_fallback(
+                answer_obj,
+                memory.get_all(),
+                "",
+            )
         total_tokens += answer_tokens
         orchestrator_tokens += answer_tokens
         answer = answer_obj["answer"]
@@ -790,6 +848,7 @@ class AdaptiveRecursivePipeline:
             route_target_slot=route_target_slot,
             required_hops=required_hops,
             recurse_steps_used=steps_executed,
+            duplicate_subquestion_count=duplicate_subquestion_count,
         )
 
     def _sufficiency_recurse_budget(self, sufficiency: float) -> int:
@@ -870,6 +929,7 @@ class AdaptiveRecursivePipeline:
         route_target_slot: str = "",
         required_hops: list[dict] | None = None,
         recurse_steps_used: int = 0,
+        duplicate_subquestion_count: int = 0,
     ) -> PipelineResult:
         """Assemble a PipelineResult from the sufficiency-controlled path."""
         extras = {
@@ -896,7 +956,7 @@ class AdaptiveRecursivePipeline:
             retrieved_docs_total=retrieved_docs_total,
             evidence_capsule_limit=self.investigator.evidence_capsule_limit,
             fact_memory_capacity=self.fact_memory_capacity,
-            duplicate_subquestion_count=0,
+            duplicate_subquestion_count=duplicate_subquestion_count,
             route_decision=route_label,
             route_confidence=float(sufficiency),
             route_draft_answer="",

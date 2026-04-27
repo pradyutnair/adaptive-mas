@@ -633,9 +633,11 @@ Return ONLY a single JSON object:
 }
 
 Rules for `answer`:
-- return the shortest final answer span only
+- return the complete final answer span only
 - do not return a sentence or explanation
 - if a cited fact's `answer span` resolves the final target, copy that span exactly
+- preserve required date qualifiers such as month, day, season, era, and year
+- preserve administrative qualifiers needed for location answers
 """
         messages = [
             {

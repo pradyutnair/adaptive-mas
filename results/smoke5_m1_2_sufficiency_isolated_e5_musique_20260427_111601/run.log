@@ -1,0 +1,30 @@
+2026-04-27 11:16:08 [INFO] __main__: Loaded 5 questions from results/smoke5_m1_2_sufficiency_isolated_e5_musique_20260427_111601/questions_5.json
+2026-04-27 11:16:08 [INFO] __main__: Checkpoint: 0 completed, 5 remaining
+2026-04-27 11:16:08 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-27 11:16:08 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/5 [00:00<?, ?q/s]2026-04-27 11:16:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__13548_13529, max_steps=4
+2026-04-27 11:16:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__9285_5188_23307, max_steps=4
+2026-04-27 11:16:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__766973_770570, max_steps=4
+2026-04-27 11:16:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__170823_120171, max_steps=4
+2026-04-27 11:16:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__511454_120259, max_steps=4
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  8.53it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  8.50it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.88it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.87it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  5.66it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  5.65it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  4.92it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.91it/s]
+2026-04-27 11:17:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__170823_120171, answer='1986', subagents=2, verify=0, tokens=4506
+Processing questions:  20%|██        | 1/5 [00:57<03:49, 57.49s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
+Batches: 100%|██████████| 1/1 [00:00<00:00,  6.29it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  6.28it/s]
+2026-04-27 11:17:34 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__9285_5188_23307, answer='June', subagents=2, verify=0, tokens=6000
+Processing questions:  40%|████      | 2/5 [01:22<01:56, 38.68s/q]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 12.57it/s]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 13.04it/s]

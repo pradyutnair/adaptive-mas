@@ -1,0 +1,102 @@
+2026-04-27 11:19:49 [INFO] __main__: Loaded 5 questions from results/smoke5_m1_2_sufficiency_tool_e5_musique_20260427_111944/questions_5.json
+2026-04-27 11:19:49 [INFO] __main__: Checkpoint: 0 completed, 5 remaining
+2026-04-27 11:19:50 [INFO] sentence_transformers.base.model: No device provided, using cpu
+2026-04-27 11:19:50 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
+Processing questions:   0%|          | 0/5 [00:00<?, ?q/s]2026-04-27 11:19:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__13548_13529, max_steps=4
+2026-04-27 11:19:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__9285_5188_23307, max_steps=4
+2026-04-27 11:19:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__766973_770570, max_steps=4
+2026-04-27 11:19:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__170823_120171, max_steps=4
+2026-04-27 11:19:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__511454_120259, max_steps=4
+2026-04-27 11:20:05 [ERROR] __main__: Failed on question musique_2hop__170823_120171: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 143, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 164, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 361, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 165, in investigate_with_usage
+    return await self._investigate_with_tools(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 224, in _investigate_with_tools
+    response = await self.llm_client.async_chat(messages=messages, tools=tool_schemas)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/llm.py", line 240, in async_chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Processing questions:  20%|██        | 1/5 [00:12<00:51, 12.97s/q]2026-04-27 11:20:05 [ERROR] __main__: Failed on question musique_2hop__511454_120259: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 143, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 164, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 361, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 165, in investigate_with_usage
+    return await self._investigate_with_tools(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 224, in _investigate_with_tools
+    response = await self.llm_client.async_chat(messages=messages, tools=tool_schemas)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/llm.py", line 240, in async_chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Processing questions:  40%|████      | 2/5 [00:13<00:16,  5.43s/q]2026-04-27 11:20:06 [ERROR] __main__: Failed on question musique_2hop__766973_770570: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 143, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 164, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 361, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 165, in investigate_with_usage
+    return await self._investigate_with_tools(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 224, in _investigate_with_tools
+    response = await self.llm_client.async_chat(messages=messages, tools=tool_schemas)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/llm.py", line 240, in async_chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Processing questions:  60%|██████    | 3/5 [00:14<00:06,  3.38s/q]2026-04-27 11:20:18 [ERROR] __main__: Failed on question musique_3hop1__9285_5188_23307: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 143, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 164, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 361, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 165, in investigate_with_usage
+    return await self._investigate_with_tools(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 224, in _investigate_with_tools
+    response = await self.llm_client.async_chat(messages=messages, tools=tool_schemas)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/llm.py", line 240, in async_chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Processing questions:  80%|████████  | 4/5 [00:25<00:06,  6.71s/q]2026-04-27 11:20:33 [ERROR] __main__: Failed on question musique_2hop__13548_13529: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/runner.py", line 143, in _process_question
+    result: PipelineResult = await pipeline.run(question=q_text, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 164, in run
+    result = await self._run_sufficiency(question, question_id)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/pipeline.py", line 361, in _run_sufficiency
+    probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 165, in investigate_with_usage
+    return await self._investigate_with_tools(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/adaptive_sage/investigator.py", line 224, in _investigate_with_tools
+    response = await self.llm_client.async_chat(messages=messages, tools=tool_schemas)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/arag/core/llm.py", line 240, in async_chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 400, message='Bad Request', url='http://localhost:8002/v1/chat/completions'
+Processing questions: 100%|██████████| 5/5 [00:40<00:00,  9.48s/q]Processing questions: 100%|██████████| 5/5 [00:40<00:00,  8.06s/q]
+
+============================================================
+Run complete: 0/5 succeeded, 5 failed
+Checkpoint had 0 previously completed
+Total in output: 5
+Elapsed: 40.3s (0.7min)
+============================================================

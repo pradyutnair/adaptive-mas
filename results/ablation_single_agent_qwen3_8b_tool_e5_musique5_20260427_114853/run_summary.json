@@ -1,0 +1,13 @@
+{
+  "questions_path": "data/musique/questions_1000_seedfull_combined.json",
+  "server_url": "http://localhost:8002/v1",
+  "model": "Qwen/Qwen3-8B",
+  "thinking": true,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "/local/yzheng/pnair/data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "attempted": 5,
+  "em": 1,
+  "elapsed_seconds": 154.599,
+  "mean_tokens": 2517.0
+}

@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.sufficiency.yaml",
+  "questions_path": "results/smoke5_m1_2_sufficiency_jsoncmd_e5_musique_20260427_112328/questions_5.json",
+  "server_url": "http://localhost:8002/v1",
+  "concurrency": 24,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "/local/yzheng/pnair/data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 5,
+  "succeeded": 5,
+  "failed": 0,
+  "total_output_rows": 5,
+  "elapsed_seconds": 372.906,
+  "mean_wallclock_seconds": 74.581,
+  "mean_question_wallclock_seconds": 252.074,
+  "p50_question_wallclock_seconds": 235.128,
+  "p95_question_wallclock_seconds": 372.901
+}

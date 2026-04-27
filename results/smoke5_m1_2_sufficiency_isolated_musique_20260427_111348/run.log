@@ -1,0 +1,7 @@
+2026-04-27 11:13:48 [INFO] __main__: Loaded 5 questions from results/smoke5_m1_2_sufficiency_isolated_musique_20260427_111348/questions_5.json
+2026-04-27 11:13:48 [INFO] __main__: Checkpoint: 0 completed, 5 remaining
+Processing questions:   0%|          | 0/5 [00:00<?, ?q/s]2026-04-27 11:13:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__13548_13529, max_steps=4
+2026-04-27 11:13:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__9285_5188_23307, max_steps=4
+2026-04-27 11:13:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__766973_770570, max_steps=4
+2026-04-27 11:13:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__170823_120171, max_steps=4
+2026-04-27 11:13:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__511454_120259, max_steps=4
