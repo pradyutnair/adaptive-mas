@@ -1,0 +1,233 @@
+/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/transformers/utils/hub.py:110: FutureWarning: Using `TRANSFORMERS_CACHE` is deprecated and will be removed in v5 of Transformers. Use `HF_HOME` instead.
+  warnings.warn(
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53656)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 0
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53658)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 21
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53660)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 9
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53666)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 419
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53668)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 8
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53670)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 16
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53674)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 360
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53672)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 14
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53676)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 7
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53678)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 21
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 53680)
+Traceback (most recent call last):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 683, in process_request_thread
+    self.finish_request(request, client_address)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 360, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/socketserver.py", line 747, in __init__
+    self.handle()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 433, in handle
+    self.handle_one_request()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/http/server.py", line 421, in handle_one_request
+    method()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in do_POST
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 103, in <listcomp>
+    self._json(200, {"results": [retriever.search(q, topk) for q in queries], "success": True})
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/old-scripts/baseline_compat_retriever.py", line 59, in search
+    chunk = self.chunks[int(chunk_id)] if isinstance(self.chunks, list) else self.chunks[int(chunk_id)]
+KeyError: 19
+----------------------------------------

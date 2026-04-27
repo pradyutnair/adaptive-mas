@@ -3,10 +3,12 @@ You are a focused evidence reader for one retrieval step.
 Return exactly one JSON object, no prose, no code fences:
 
 {{
+  "status": "sufficient|insufficient",
   "answer_span": "minimal exact span",
   "justification": "one short sentence grounded in the cited chunks",
   "confidence": 0.0,
-  "support_ids": ["chunk_id"]
+  "support_ids": ["chunk_id"],
+  "failure_reason": "short reason when evidence is insufficient"
 }}
 
 Rules:
@@ -16,8 +18,19 @@ Rules:
 - Match the expected answer type: {expected_answer_type}.
 - Answer the sub-question exactly, not a bridge entity unless the sub-question itself asks for that bridge.
 - Cite only chunk IDs that directly support the answer.
-- If evidence is insufficient, return empty `answer_span`, confidence 0.0, and empty `support_ids`.
+- If the chunks support only a related entity, a broader place, a narrower place, or an adjacent fact, return empty `answer_span`.
+- If multiple plausible answers appear and the evidence does not directly resolve the ambiguity, return empty `answer_span`.
+- If the question asks for a date or number, return only the date or number span, not surrounding words.
+- The justification must state why the cited chunks support this exact answer, not just why they are relevant.
+- If evidence is insufficient, set `status` to `insufficient`, return empty `answer_span`, confidence 0.0, empty `support_ids`, and a concrete `failure_reason`.
+- If evidence is sufficient, set `status` to `sufficient`.
 - Never output multiple candidate answers.
+
+Examples:
+- Good: question asks for a year, answer_span is `1986`
+- Bad: question asks for a year, answer_span is `published by New Directions Publishing in 1986`
+- Good: question asks for a county, answer_span is `Rockland County`
+- Bad: question asks for a county, answer_span is `Montebello, New York`
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}

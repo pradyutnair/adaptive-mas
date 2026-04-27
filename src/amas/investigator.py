@@ -73,10 +73,9 @@ class Investigator:
         chunk_tokens = 0
         top_k = int(top_k_override or self.top_k)
 
-        query_1 = self._augment_query(node.question, node.question, hint)
+        query_1 = node.question.strip()
         hits_1 = await self.retriever.retrieve(query_1, top_k=top_k)
         retrieved_ids = [hit.chunk_id for hit in hits_1]
-        retrieved_text_by_id = {hit.chunk_id: hit.text for hit in hits_1}
 
         analyze_1, tokens_1, used_chunk_tokens_1 = await self._analyze(node, hint, hits_1)
         total_tokens += tokens_1
@@ -86,7 +85,6 @@ class Investigator:
             node,
             retrieved_ids,
             slot_name,
-            retrieved_text_by_id,
         )
         if capsule_1.fact.slot_filled or self.max_searches <= 1:
             self.last_searches_used = 1 if hits_1 else 0
@@ -105,20 +103,15 @@ class Investigator:
         total_tokens += rewrite_tokens
         chunk_tokens += rewrite_chunk_tokens
 
-        query_2 = self._augment_query(
-            str(rewrite_obj.get("query", "")).strip(),
-            node.question,
-            hint,
-        )
+        query_2 = str(rewrite_obj.get("query", "")).strip()
         if not query_2 or query_2 == query_1:
-            query_2 = self._augment_query(f"{node.question} {rejection_1}", node.question, hint)
+            query_2 = query_1
 
         hits_2 = await self.retriever.retrieve(query_2, top_k=top_k)
         merged_hits = self._merge_hits([*hits_1, *hits_2])
         for hit in hits_2:
             if hit.chunk_id not in retrieved_ids:
                 retrieved_ids.append(hit.chunk_id)
-            retrieved_text_by_id[hit.chunk_id] = hit.text
 
         analyze_2, tokens_2, used_chunk_tokens_2 = await self._analyze(node, hint, merged_hits)
         total_tokens += tokens_2
@@ -128,7 +121,6 @@ class Investigator:
             node,
             retrieved_ids,
             slot_name,
-            retrieved_text_by_id,
         )
         self.last_searches_used = 2 if hits_2 else 1
         capsule_2.chunk_tokens = chunk_tokens
@@ -182,14 +174,18 @@ class Investigator:
         node: SubgoalNode,
         retrieved_ids: list[str],
         slot_name: str,
-        retrieved_text_by_id: dict[str, str],
     ) -> tuple[EvidenceCapsule, str]:
+        status = str(parsed.get("status", "")).strip().lower()
         answer = self._normalize_answer(node.question, str(parsed.get("answer_span", "")).strip())
         justification = str(parsed.get("justification", "")).strip()
+        failure_reason = str(parsed.get("failure_reason", "")).strip()
         support_ids_raw = parsed.get("support_ids") or []
         support_ids = [str(s).strip() for s in support_ids_raw if str(s).strip()]
         support_ids = [s for s in support_ids if s in set(retrieved_ids)]
         confidence_self = self._bounded_float(parsed.get("confidence", 0.0))
+
+        explicitly_sufficient = status == "sufficient"
+        explicitly_insufficient = status == "insufficient"
 
         too_long = len(answer.split()) > self.max_answer_words
         if too_long:
@@ -199,23 +195,22 @@ class Investigator:
         if not type_ok:
             confidence_self *= 0.5
 
-        relation_ok = self._relation_match(node.question, justification)
-        if not relation_ok:
-            confidence_self *= 0.35
-
-        support_texts = [retrieved_text_by_id[sid] for sid in support_ids if sid in retrieved_text_by_id]
-        support_relation_ok = self._support_relation_match(node.question, support_texts)
-        if support_ids and not support_relation_ok:
-            confidence_self *= 0.35
-
         if not answer:
             confidence_self = 0.0
             support_ids = []
 
+        if explicitly_insufficient:
+            answer = ""
+            justification = ""
+            support_ids = []
+            confidence_self = 0.0
+
         confidence_retrieval = 1.0 if support_ids else 0.0
         slot_filled = bool(
-            answer and justification and support_ids and type_ok and relation_ok and support_relation_ok and not too_long
+            answer and justification and support_ids and type_ok and not too_long
         )
+        if not explicitly_sufficient:
+            slot_filled = False
         confidence = 0.4 * confidence_retrieval + 0.4 * confidence_self + 0.2 * float(slot_filled)
         if confidence < self.min_confidence:
             slot_filled = False
@@ -230,12 +225,10 @@ class Investigator:
             answer_span=answer if slot_filled else "",
             support_ids=support_ids if slot_filled else [],
         )
-        rejection_reason = self._rejection_reason(
+        rejection_reason = failure_reason or self._rejection_reason(
             answer=answer,
             support_ids=support_ids,
             type_ok=type_ok,
-            relation_ok=relation_ok,
-            support_relation_ok=support_relation_ok,
             too_long=too_long,
         )
         return EvidenceCapsule(
@@ -260,115 +253,15 @@ class Investigator:
         ]
         return json.dumps(rows, ensure_ascii=False)
 
-    def _augment_query(self, raw_query: str, question: str, hint: str) -> str:
-        query = raw_query.strip() or question.strip()
-        lower = query.lower()
-        anchors = self._anchor_terms(question)
-        relation_terms = self._relation_terms(question)
-        hint_terms = self._hint_terms(hint)
-        parts = [query]
-        for term in [*anchors, *relation_terms, *hint_terms]:
-            term = term.strip()
-            if term and term.lower() not in lower:
-                parts.append(term)
-                lower += f" {term.lower()}"
-        return " ".join(parts[:8]).strip()
-
-    @staticmethod
-    def _anchor_terms(question: str) -> list[str]:
-        candidates = re.findall(r"\b(?:[A-Z][\w'/-]+(?:\s+[A-Z][\w'/-]+){0,3})\b", question)
-        out: list[str] = []
-        for cand in candidates:
-            if cand.lower() in {"what", "when", "where", "who", "which", "how many"}:
-                continue
-            if cand not in out:
-                out.append(cand)
-        return out[:5]
-
-    @staticmethod
-    def _relation_terms(question: str) -> list[str]:
-        lower = question.lower()
-        mapping = [
-            ("birthplace", ["born", "birthplace"]),
-            ("publisher", ["publisher", "published"]),
-            ("signed", ["signed", "Barcelona"]),
-            ("abolished", ["abolished", "lost independence", "political independence", "last ruler", "918"]),
-            ("ended", ["ended", "ceased", "closed", "discontinued", "last"]),
-            ("capital", ["capital"]),
-            ("compared", ["compared"]),
-            ("county", ["county"]),
-            ("part of", ["part of"]),
-        ]
-        out: list[str] = []
-        for key, terms in mapping:
-            if key in lower:
-                out.extend(terms)
-        return out[:3]
-
-    @staticmethod
-    def _hint_terms(hint: str) -> list[str]:
-        if not hint or hint == "(none)":
-            return []
-        keep = re.findall(r"\b[A-Za-z0-9][A-Za-z0-9'/-]*\b", hint)
-        terms: list[str] = []
-        for word in keep:
-            if len(word) >= 6 or word[:1].isupper():
-                terms.append(word)
-            if len(terms) >= 4:
-                break
-        return terms
-
     @staticmethod
     def _normalize_answer(question: str, answer: str) -> str:
-        q = question.lower()
-        if not answer:
-            return answer
-        if "what year" in q or "which year" in q:
-            m = re.search(r"\b(1[0-9]{3}|20[0-9]{2})\b", answer)
-            if m:
-                return m.group(1)
-        if "what month" in q or "which month" in q:
-            m = re.search(
-                r"\b(mid-|late |early )?(jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|jun(?:e)?|jul(?:y)?|aug(?:ust)?|sep(?:tember)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)(?:\s+\d{4})?\b",
-                answer,
-                flags=re.IGNORECASE,
-            )
-            if m:
-                return m.group(0)
-        if q.startswith(("how many", "how much", "what number", "which number")):
-            m = re.search(r"\d+(?:,\d+)*(?:\.\d+)?", answer)
-            if m:
-                return m.group(0)
         return answer
-
-    @staticmethod
-    def _support_relation_match(question: str, support_texts: list[str]) -> bool:
-        if not support_texts:
-            return False
-        q = question.lower()
-        text = " ".join(support_texts).lower()
-        checks = [
-            (("birthplace", "born"), ("birth", "born", "birthplace", "native of", "from mercia", "countess of mercia")),
-            (("publisher",), ("publisher", "published", "publishing", "imprint", "originally published")),
-            (("signed", "barcelona"), ("signed", "joined", "barcelona", "signed for", "transferred to barcelona", "transferred to")),
-            (("abolished",), ("abolished", "abolish", "lost its political independence", "deprived her of all authority", "ruled mercia", "918")),
-            (("ended", "end"), ("ended", "end", "ceased", "closed", "discontinued", "final", "last")),
-            (("capital",), ("capital",)),
-            (("compared",), ("compared", "comparison", "likened")),
-            (("county", "part of"), ("county", "part of")),
-        ]
-        for q_terms, text_terms in checks:
-            if any(term in q for term in q_terms):
-                return any(term in text for term in text_terms)
-        return True
 
     @staticmethod
     def _rejection_reason(
         answer: str,
         support_ids: list[str],
         type_ok: bool,
-        relation_ok: bool,
-        support_relation_ok: bool,
         too_long: bool,
     ) -> str:
         reasons: list[str] = []
@@ -378,32 +271,9 @@ class Investigator:
             reasons.append("no cited support chunk was retained")
         if not type_ok:
             reasons.append("the answer type did not match the sub-question")
-        if not relation_ok:
-            reasons.append("the justification did not explicitly state the asked relation")
-        if support_ids and not support_relation_ok:
-            reasons.append("the cited chunk text did not itself support the asked relation")
         if too_long:
             reasons.append("the answer span was too long")
         return "; ".join(reasons) if reasons else "the evidence was insufficient"
-
-    @staticmethod
-    def _relation_match(question: str, justification: str) -> bool:
-        q = question.lower()
-        j = justification.lower()
-        checks = [
-            (("birthplace", "born"), ("birth", "born", "birthplace")),
-            (("publisher",), ("publisher", "published", "publishing", "imprint")),
-            (("signed", "barcelona"), ("signed", "joined", "barcelona", "contract", "transferred to")),
-            (("abolished",), ("abolished", "abolish", "dissolved", "independence")),
-            (("ended", "end"), ("ended", "end", "ceased", "closed", "last episode", "final episode", "discontinued")),
-            (("capital",), ("capital",)),
-            (("compared",), ("compared", "comparison", "likened")),
-            (("county", "part of"), ("county", "part of")),
-        ]
-        for q_terms, j_terms in checks:
-            if any(term in q for term in q_terms):
-                return any(term in j for term in j_terms)
-        return True
 
     @staticmethod
     def _merge_hits(hits: list[RetrievalHit]) -> list[RetrievalHit]:

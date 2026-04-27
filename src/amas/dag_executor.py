@@ -21,6 +21,8 @@ class DAGExecutionResult:
     retrieved_doc_ids: list[str] = field(default_factory=list)
     retrieved_docs_total: int = 0
     levels: list[list[int]] = field(default_factory=list)
+    node_statuses: dict[int, str] = field(default_factory=dict)
+    terminal_ids: list[int] = field(default_factory=list)
 
 
 class DAGExecutor:
@@ -32,7 +34,7 @@ class DAGExecutor:
     async def execute(self, plan: ExecutionPlan) -> DAGExecutionResult:
         levels = self._levels(plan.subgoals)
         capsules_by_id: dict[int, EvidenceCapsule] = {}
-        result = DAGExecutionResult(levels=levels)
+        result = DAGExecutionResult(levels=levels, terminal_ids=self._terminal_ids(plan.subgoals))
         step = 0
 
         for level_idx, level in enumerate(levels):
@@ -43,8 +45,9 @@ class DAGExecutor:
             ]
             outputs = await asyncio.gather(*tasks)
 
-            for node, (capsule, tokens, searches) in zip(ready_nodes, outputs):
+            for node, (capsule, tokens, searches, status) in zip(ready_nodes, outputs):
                 capsules_by_id[node.id] = capsule
+                result.node_statuses[node.id] = status
                 result.capsules.append(capsule)
                 result.subagent_tokens += tokens
                 result.chunk_tokens += capsule.chunk_tokens
@@ -69,6 +72,7 @@ class DAGExecutor:
                             "subgoal_id": node.id,
                             "depends_on": node.depends_on,
                             "answer": capsule.answer,
+                            "status": status,
                             "support_ids": capsule.fact.support_ids,
                             "chunk_tokens": capsule.chunk_tokens,
                         },
@@ -81,7 +85,7 @@ class DAGExecutor:
         self,
         node: SubgoalNode,
         capsules_by_id: dict[int, EvidenceCapsule],
-    ) -> tuple[EvidenceCapsule, int, int]:
+    ) -> tuple[EvidenceCapsule, int, int, str]:
         unresolved = [
             dep_id for dep_id in node.depends_on
             if not self._dependency_answer(capsules_by_id.get(dep_id))
@@ -105,7 +109,7 @@ class DAGExecutor:
                 retrieved_doc_ids=[],
                 retrieved_docs_total=0,
             )
-            return empty, 0, 0
+            return empty, 0, 0, "blocked"
 
         resolved = self._resolve_question(node.question, capsules_by_id)
         dependency_hint = self._dependency_hint(node, capsules_by_id)
@@ -122,7 +126,8 @@ class DAGExecutor:
             hint=hint,
             slot_name=f"subgoal_{node.id}",
         )
-        return capsule, tokens, self.investigator.last_searches_used
+        status = "verified" if capsule.fact.slot_filled and capsule.answer else "failed"
+        return capsule, tokens, self.investigator.last_searches_used, status
 
     @staticmethod
     def _dependency_answer(capsule: EvidenceCapsule | None) -> str:
@@ -174,13 +179,22 @@ class DAGExecutor:
                 if deps.issubset(emitted)
             )
             if not ready:
-                ready = [min(pending)]
+                raise ValueError("invalid execution plan: no dependency-free nodes available")
             levels.append(ready)
             for node_id in ready:
                 emitted.add(node_id)
                 pending.pop(node_id, None)
 
         return levels
+
+    @staticmethod
+    def _terminal_ids(nodes: list[SubgoalNode]) -> list[int]:
+        if not nodes:
+            return []
+        depended_on: set[int] = set()
+        for node in nodes:
+            depended_on.update(node.depends_on)
+        return sorted(node.id for node in nodes if node.id not in depended_on)
 
     @staticmethod
     def _node_by_id(nodes: list[SubgoalNode], node_id: int) -> SubgoalNode:

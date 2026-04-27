@@ -23,7 +23,8 @@ This is thesis-critical work with roughly one month remaining. Prioritize reprod
 - Do not confuse local fallback retrieval with target retrieval. Local fallback results are diagnostic only.
 - Save configs, predictions, intermediate metadata, and eval summaries for every experiment.
 - Keep code clean enough for EMNLP-style methods: explainable routing, grounded evidence, reproducible configs.
-- Investigator never receives raw chunks as input, it has search tool to go do its own retrieval, chunks should NEVER BE PASSED ONTO DIFFERENT AGENTS THAT WILL BLOW UP TOKEN COSTS                                    
+- Investigator never receives raw chunks as input, it has search tool to go do its own retrieval, chunks should NEVER BE PASSED ONTO DIFFERENT AGENTS THAT WILL BLOW UP TOKEN COSTS   
+- Never introduce hardcoded patterns in the code and do not ever do any benchmark-gaming or introduce slop. Code must be clean and research-grade.                                 
 
 ## Compute and Paths
 

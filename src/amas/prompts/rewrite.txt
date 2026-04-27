@@ -12,6 +12,10 @@ Rules:
 - Use the hint to disambiguate entities, era, location, or role.
 - If the previous attempt found a likely bridge entity, include it in the new query.
 - Do not ask the final question if the missing piece is an intermediate bridge.
+- Rewrite only for the current missing slot.
+- Prefer entity names, titles, roles, dates, and relation words over natural-language filler.
+- If the previous answer was the wrong level of specificity, rewrite toward the exact target level.
+- Use the rejection reason directly. If the failure was ambiguity, add the best disambiguating anchor. If the failure was wrong granularity, target the exact requested granularity.
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}

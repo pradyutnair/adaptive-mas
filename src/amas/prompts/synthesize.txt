@@ -16,7 +16,9 @@ Return exactly one JSON object, no prose, no code fences:
 Rules:
 - Answer the original question's final target, not an intermediate bridge.
 - Use only the provided capsules.
-- If the capsules are insufficient, return the best supported short answer and lower confidence.
+- If the capsules are insufficient, return empty `answer_span`, confidence 0.0, and empty `cited_subgoals`.
+- Do not convert a bridge entity into a final answer.
+- Do not answer with a broader or adjacent entity if the final target is more specific.
 - Do not enumerate multiple answers.
 
 Original question: {question}
