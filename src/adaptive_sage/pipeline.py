@@ -332,19 +332,39 @@ class AdaptiveRecursivePipeline:
                 route_target_slot=route_target_slot,
             )
 
-        # Always probe with the full question. Probing only the first-hop
-        # hint on compositional questions throws away signal that often
-        # short-circuits the controller (especially on hotpot-style chains
-        # where one retrieval already contains the answer span). The route
-        # output is used downstream as the slot scaffold for the recursive
-        # lane; it does not constrain the probe's retrieval target.
+        # Probe the first unresolved slot for compositional questions.
+        # Only simple questions are allowed to finalize directly from the
+        # probe. This keeps the probe useful for bridge grounding without
+        # letting it short-circuit multi-hop questions with a wrong final.
+        probe_slot_name = ""
+        probe_slot_hint = ""
+        probe_retrieval_query: str | None = None
+        probe_targeted_first_hop = False
+        probe_slot_state = self._initialise_slot_state(route, target_profile)
+        probe_pending_slots = self._pending_slots(probe_slot_state)
+
         probe_sub_question = question
         probe_goal = target_profile
+        if is_compositional and probe_pending_slots:
+            first_slot = probe_pending_slots[0]
+            probe_slot_name = str(first_slot.get("slot_name", "")).strip()
+            probe_slot_hint = str(first_slot.get("hint", "")).strip()
+            probe_sub_question = self._slot_probe_question(question, first_slot)
+            probe_goal = (
+                f"Resolve the {probe_slot_name or 'first missing slot'} needed for the original question."
+            )
+            probe_retrieval_query = (
+                probe_slot_hint or probe_slot_name.replace("_", " ") or None
+            )
+            probe_targeted_first_hop = True
 
         probe_capsule, probe_tokens = await self.investigator.investigate_with_usage(
             sub_question=probe_sub_question,
             goal=probe_goal,
             prior_facts=[],
+            retrieval_query=probe_retrieval_query,
+            slot_name=probe_slot_name,
+            slot_hint=probe_slot_hint or target_profile,
             search_top_k_override=self.bootstrap_search_top_k or None,
             max_read_override=self.bootstrap_max_read or None,
         )
@@ -356,7 +376,7 @@ class AdaptiveRecursivePipeline:
             retrieved_docs_total,
             probe_capsule,
         )
-        probe_fact_added = self._add_fact(memory, probe_capsule, step=0)
+        probe_fact_added = self._add_fact(memory, probe_capsule, step=0, slot_name=probe_slot_name)
         step_trace.append(
             StepTrace(
                 step=0,
@@ -369,92 +389,106 @@ class AdaptiveRecursivePipeline:
                     "route_target_slot": route_target_slot,
                     "route_required_hops": required_hops,
                     "is_compositional": is_compositional,
-                    "probe_targeted_first_hop": False,
+                    "probe_targeted_first_hop": probe_targeted_first_hop,
                 },
             )
         )
 
-        # Generate a candidate answer object grounded in the probe fact.
-        probe_answer_obj, probe_answer_tokens = (
-            await self.orchestrator.generate_answer_object_with_usage(
-                question=question,
-                facts=memory.get_all(),
-                target_profile=target_profile,
-                pending_slots=[],
-                trace=step_trace,
-            )
-        )
-        probe_answer_obj = self._apply_answer_object_fallback(
-            probe_answer_obj,
-            memory.get_all(),
-            "",
-        )
-        total_tokens += probe_answer_tokens
-        orchestrator_tokens += probe_answer_tokens
-        probe_answer = probe_answer_obj["answer"]
-        probe_cited_fact_ids = probe_answer_obj["cited_fact_ids"]
-
-        # ---- Compute sufficiency s = s_conf * s_target * s_align ----
+        # ---- Compute sufficiency for the probe ----
+        probe_answer = ""
+        probe_cited_fact_ids: list[int] = []
+        probe_answer_tokens = 0
         s_conf = (
             float(probe_capsule.fact.confidence)
             if probe_capsule.fact and probe_capsule.fact.text.strip()
             else 0.0
         )
-        s_align = self._compute_alignment_score(probe_capsule, probe_answer)
 
-        if self.ablation_sufficiency_random_route:
-            # Replace the calibrated signal with a Bernoulli draw at the
-            # configured mix rate p. Demonstrates that the learned signal
-            # is load-bearing.
-            rng = random.Random(
-                hash((self.ablation_sufficiency_random_route_seed, question_id)) & 0xFFFFFFFF
+        if is_compositional:
+            probe_answer = str(probe_capsule.fact.answer_span or "").strip() if probe_capsule.fact else ""
+            probe_cited_fact_ids = [1] if probe_answer else []
+            s_align = 1.0 if probe_answer and probe_capsule.fact.support_ids else 0.0
+            raw_probe_score = max(0.0, min(s_conf * s_align, 1.0))
+            sufficiency = min(raw_probe_score, max(tau - 1e-6, 0.0))
+            sufficiency_components = {
+                "s_conf": s_conf,
+                "s_align": s_align,
+                "s_target": 0.0,
+                "source": "compositional_first_hop_probe",
+            }
+            assess_tokens = 0
+            assess_reason = (
+                "Compositional question: probe only resolves the first missing slot; final answer requires recursion."
             )
-            sample = 1.0 if rng.random() < self.ablation_sufficiency_random_route_p else 0.0
-            s_target = sample
-            sufficiency_components = {
-                "s_conf": s_conf,
-                "s_align": s_align,
-                "s_target": s_target,
-                "source": "ablation_random_route",
-                "p": self.ablation_sufficiency_random_route_p,
-            }
-            sufficiency = sample
-            assess_tokens = 0
-            assess_reason = "random_route"
-        elif self.ablation_sufficiency_oracle_route:
-            # Oracle: route based on a pre-computed per-question signal
-            # (typically S0 correctness). Upper bound on the controller.
-            oracle_easy = bool(self._oracle_route_table.get(str(question_id), False))
-            sufficiency = 1.0 if oracle_easy else 0.0
-            sufficiency_components = {
-                "s_conf": s_conf,
-                "s_align": s_align,
-                "s_target": sufficiency,
-                "source": "ablation_oracle_route",
-            }
-            assess_tokens = 0
-            assess_reason = "oracle_route"
         else:
-            assess_result, assess_tokens = (
-                await self.orchestrator.assess_probe_sufficiency_with_usage(
+            probe_answer_obj, probe_answer_tokens = (
+                await self.orchestrator.generate_answer_object_with_usage(
                     question=question,
                     facts=memory.get_all(),
-                    proposed_answer=probe_answer,
                     target_profile=target_profile,
+                    pending_slots=[],
                     trace=step_trace,
                 )
             )
-            total_tokens += assess_tokens
-            orchestrator_tokens += assess_tokens
-            s_target = float(assess_result["sufficient"])
-            sufficiency = max(0.0, min(s_conf * s_target * s_align, 1.0))
-            sufficiency_components = {
-                "s_conf": s_conf,
-                "s_align": s_align,
-                "s_target": s_target,
-                "source": "calibrated_probe_gate",
-            }
-            assess_reason = assess_result["reason"]
+            probe_answer_obj = self._apply_answer_object_fallback(
+                probe_answer_obj,
+                memory.get_all(),
+                "",
+            )
+            total_tokens += probe_answer_tokens
+            orchestrator_tokens += probe_answer_tokens
+            probe_answer = probe_answer_obj["answer"]
+            probe_cited_fact_ids = probe_answer_obj["cited_fact_ids"]
+            s_align = self._compute_alignment_score(probe_capsule, probe_answer)
+
+            if self.ablation_sufficiency_random_route:
+                rng = random.Random(
+                    hash((self.ablation_sufficiency_random_route_seed, question_id)) & 0xFFFFFFFF
+                )
+                sample = 1.0 if rng.random() < self.ablation_sufficiency_random_route_p else 0.0
+                s_target = sample
+                sufficiency_components = {
+                    "s_conf": s_conf,
+                    "s_align": s_align,
+                    "s_target": s_target,
+                    "source": "ablation_random_route",
+                    "p": self.ablation_sufficiency_random_route_p,
+                }
+                sufficiency = sample
+                assess_tokens = 0
+                assess_reason = "random_route"
+            elif self.ablation_sufficiency_oracle_route:
+                oracle_easy = bool(self._oracle_route_table.get(str(question_id), False))
+                sufficiency = 1.0 if oracle_easy else 0.0
+                sufficiency_components = {
+                    "s_conf": s_conf,
+                    "s_align": s_align,
+                    "s_target": sufficiency,
+                    "source": "ablation_oracle_route",
+                }
+                assess_tokens = 0
+                assess_reason = "oracle_route"
+            else:
+                assess_result, assess_tokens = (
+                    await self.orchestrator.assess_probe_sufficiency_with_usage(
+                        question=question,
+                        facts=memory.get_all(),
+                        proposed_answer=probe_answer,
+                        target_profile=target_profile,
+                        trace=step_trace,
+                    )
+                )
+                total_tokens += assess_tokens
+                orchestrator_tokens += assess_tokens
+                s_target = float(assess_result["sufficient"])
+                sufficiency = max(0.0, min(s_conf * s_target * s_align, 1.0))
+                sufficiency_components = {
+                    "s_conf": s_conf,
+                    "s_align": s_align,
+                    "s_target": s_target,
+                    "source": "calibrated_probe_gate",
+                }
+                assess_reason = assess_result["reason"]
 
         step_trace.append(
             StepTrace(
@@ -509,7 +543,7 @@ class AdaptiveRecursivePipeline:
             )
 
         # Sufficient: answer from the probe.
-        if sufficiency >= tau and probe_answer.strip():
+        if (not is_compositional) and sufficiency >= tau and probe_answer.strip():
             answer = probe_answer
             step_trace.append(
                 StepTrace(
@@ -2550,6 +2584,19 @@ class AdaptiveRecursivePipeline:
             if not slot.get("resolved", False):
                 return str(slot.get("slot_name", "")).strip()
         return str(slot_state[0].get("slot_name", "final_answer")).strip() if slot_state else "final_answer"
+
+    @staticmethod
+    def _slot_probe_question(question: str, slot: dict[str, Any]) -> str:
+        """Build a focused probe question for the first unresolved slot."""
+        hint = str(slot.get("hint", "")).strip()
+        slot_name = str(slot.get("slot_name", "")).strip().replace("_", " ")
+        if hint.endswith("?"):
+            return hint
+        if hint and slot_name:
+            return f"Identify the {slot_name}: {hint}"
+        if hint:
+            return hint
+        return question
 
     @staticmethod
     def _update_slot_resolution(

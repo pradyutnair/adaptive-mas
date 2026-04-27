@@ -1,0 +1,33 @@
+adaptive:
+  bootstrap_max_read: 10
+  bootstrap_search_top_k: 10
+  sufficiency_controller: true
+  sufficiency_max_recurse_steps: 6
+  sufficiency_min_recurse_steps: 1
+  sufficiency_threshold: 0.7
+data:
+  retriever_url: http://node408:8003/retrieve
+fact_memory:
+  capacity: 4
+  strategy: salience
+investigator:
+  evidence_capsule_limit: 4
+  max_passage_chars: 1400
+  max_query_variants: 3
+  min_fact_confidence: 0.5
+  search_top_k: 10
+  use_strict_distill: true
+llm:
+  base_url: http://localhost:8001/v1
+  chat_template_kwargs:
+    enable_thinking: true
+  max_tokens: 8192
+  model: Qwen/Qwen3-8B
+  temperature: 0.0
+orchestrator:
+  max_steps: 6
+  max_verify_calls: 0
+runner:
+  checkpoint: true
+  concurrency: 6
+variant: m1_2_sufficiency_node408_qwen3_think_top10

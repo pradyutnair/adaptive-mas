@@ -1,0 +1,20 @@
+2026-04-26 22:00:11 [INFO] __main__: Loaded 1000 questions from /local/yzheng/pnair/workspace/tmp/adaptive-mas-old/data/musique/opera_matched/questions_1000.json
+2026-04-26 22:00:11 [INFO] __main__: Checkpoint: 0 completed, 1000 remaining
+Processing questions:   0%|          | 0/1000 [00:00<?, ?q/s]2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__13548_13529, max_steps=6
+2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__9285_5188_23307, max_steps=6
+2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__766973_770570, max_steps=6
+2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__170823_120171, max_steps=6
+2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__511454_120259, max_steps=6
+2026-04-26 22:00:11 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop2__71753_648517_70784_79935, max_steps=6
+2026-04-26 22:01:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__13548_13529, answer='4 February 2004', subagents=1, verify=0, tokens=10849
+Processing questions:   0%|          | 1/1000 [01:37<27:01:20, 97.38s/q]2026-04-26 22:01:49 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__94201_642284_131926_89261, max_steps=6
+2026-04-26 22:02:27 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__9285_5188_23307, answer='August', subagents=1, verify=0, tokens=13109
+Processing questions:   0%|          | 2/1000 [02:15<17:21:02, 62.59s/q]2026-04-26 22:02:27 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop1__152562_5274_458768_33633, max_steps=6
+2026-04-26 22:02:55 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_4hop1__94201_642284_131926_89261, answer='Gulf of Mexico', subagents=1, verify=0, tokens=8965
+Processing questions:   0%|          | 3/1000 [02:44<13:01:43, 47.04s/q]2026-04-26 22:02:55 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__305282_282081_73772, max_steps=6
+2026-04-26 22:04:56 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__766973_770570, answer='Montebello, New York', subagents=5, verify=0, tokens=40315
+Processing questions:   0%|          | 4/1000 [04:44<21:03:11, 76.10s/q]2026-04-26 22:04:56 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__655505_110949, max_steps=6
+2026-04-26 22:05:21 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__511454_120259, answer='1842', subagents=6, verify=0, tokens=39408
+Processing questions:   0%|          | 5/1000 [05:09<15:53:57, 57.53s/q]2026-04-26 22:05:21 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__619265_45326, max_steps=6
+2026-04-26 22:06:09 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__170823_120171, answer='New Directions Publishing', subagents=7, verify=0, tokens=55567
+Processing questions:   1%|          | 6/1000 [05:57<15:00:13, 54.34s/q]2026-04-26 22:06:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_4hop3__754156_88460_30152_20999, max_steps=6

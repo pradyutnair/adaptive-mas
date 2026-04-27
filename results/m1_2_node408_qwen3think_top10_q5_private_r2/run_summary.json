@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.node408_qwen3_think_top10.yaml",
+  "questions_path": "data/musique/opera_matched/questions_5_tmp.json",
+  "server_url": "http://localhost:8001/v1",
+  "concurrency": 5,
+  "chunks_file": "",
+  "index_dir": "",
+  "embedding_model": "",
+  "completed_ids": 0,
+  "attempted": 5,
+  "succeeded": 5,
+  "failed": 0,
+  "total_output_rows": 5,
+  "elapsed_seconds": 504.826,
+  "mean_wallclock_seconds": 100.965,
+  "mean_question_wallclock_seconds": 296.062,
+  "p50_question_wallclock_seconds": 200.716,
+  "p95_question_wallclock_seconds": 504.803
+}

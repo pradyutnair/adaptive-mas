@@ -16,6 +16,8 @@ Rules:
 - `answer_span` must be the shortest copied span that resolves the target slot with the correct type and boundary.
 - Preserve units, titles, administrative qualifiers, and official names when they are needed for correctness.
 - If the passage contains both a bridge entity and the slot value asked for, return the slot value.
+- For birthplace/origin slots, accept only locations explicitly stated as birthplace/origin/from; reject locations merely associated with events, residence, legend, or work.
+- For endpoint slots like end_year, abolition_date, or signing_date, abstain unless the passages explicitly state the endpoint/date itself.
 - For yes/no questions, `answer_span` must be exactly `yes` or `no`, and `fact` must explicitly state the proposition that makes it true or false.
 - `fact` must restate the same answer and directly support it with no extra claims.
 - Cite only chunk IDs present in the passages.

@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.node408_qwen3_think_top10.yaml",
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/musique/opera_matched/questions_1_tmp.json",
+  "server_url": "http://localhost:8001/v1",
+  "concurrency": 1,
+  "chunks_file": "",
+  "index_dir": "",
+  "embedding_model": "",
+  "completed_ids": 0,
+  "attempted": 1,
+  "succeeded": 0,
+  "failed": 1,
+  "total_output_rows": 1,
+  "elapsed_seconds": 25.522,
+  "mean_wallclock_seconds": 25.522,
+  "mean_question_wallclock_seconds": 25.513,
+  "p50_question_wallclock_seconds": 25.513,
+  "p95_question_wallclock_seconds": 25.513
+}

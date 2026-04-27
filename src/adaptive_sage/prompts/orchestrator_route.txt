@@ -32,7 +32,39 @@ Rules:
 - `retrieval_query` must be a short search-style query, not a sentence-length explanation.
 - All slot names must be concise semantic labels; never use placeholders like `target_slot`, `final_answer`, `answer`, or `slot`.
 - `dependency_group` is an integer; slots in the same group can be retrieved in parallel.
+- If the question asks for an attribute of another unresolved attribute or entity, choose `recurse` and make that inner attribute/entity the first slot.
 - Do not include any text outside the JSON object.
+
+Examples:
+- Question: "What county is a person's birthplace part of?"
+  - action: `recurse`
+  - target_slot: `county`
+  - required_hops:
+    - `birthplace` -> the person's birthplace
+    - `county` -> the county containing that birthplace
+  - first sub_question: target `birthplace`, not `county`
+
+- Question: "What year did the publisher of a work end?"
+  - action: `recurse`
+  - target_slot: `end_year`
+  - required_hops:
+    - `publisher` -> the publisher of the work
+    - `end_year` -> the year that publisher ended
+  - first sub_question: target `publisher`
+
+- Question: "When was a person's birthplace abolished?"
+  - action: `recurse`
+  - target_slot: `abolition_date`
+  - required_hops:
+    - `birthplace` -> the person's birthplace
+    - `abolition_date` -> when that birthplace was abolished
+  - first sub_question: target `birthplace`
+
+- Question: "What is the person's birth date?"
+  - action: `single_probe`
+  - target_slot: `birth_date`
+  - required_hops:
+    - `birth_date` -> the person's birth date
 
 Question: {question}
 

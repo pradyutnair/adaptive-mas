@@ -72,6 +72,9 @@ class Investigator:
         self.max_query_variants: int = int(
             config.get("investigator.max_query_variants", 2)
         )
+        self.max_search_rounds: int = int(
+            config.get("investigator.max_search_rounds", 3)
+        )
 
         # Load distillation prompt template
         prompt_name = str(config.get("investigator.prompt_file", "")).strip()
@@ -141,6 +144,17 @@ class Investigator:
         max_read_override: int | None = None,
     ) -> tuple[EvidenceCapsule, int]:
         """Like :meth:`investigate`, but also returns token usage."""
+        return await self._investigate_private_search_loop(
+            sub_question=sub_question,
+            goal=goal,
+            prior_facts=prior_facts,
+            retrieval_query=retrieval_query,
+            slot_name=slot_name,
+            slot_hint=slot_hint,
+            search_top_k_override=search_top_k_override,
+            max_read_override=max_read_override,
+        )
+
         total_tokens = 0
         if self.blind_subagent:
             goal = ""
@@ -185,9 +199,9 @@ class Investigator:
         }
         all_chunk_ids = [str(doc["chunk_id"]) for doc in retrieved_docs]
         if retrieved_docs:
-            chunk_result = self._format_retrieved_passages(retrieved_docs)
+            retrieval_candidates = self._format_retrieval_candidates(query_candidates=query_candidates, docs=retrieved_docs)
         else:
-            chunk_result = "No relevant passages found."
+            retrieval_candidates = "No relevant retrieval candidates found."
             logger.warning("No chunks found for sub-question: %s", sub_question)
 
         support_ids = all_chunk_ids[: self.evidence_capsule_limit]
@@ -197,10 +211,10 @@ class Investigator:
             capsule = EvidenceCapsule(
                 answer="",
                 fact=Fact(
-                    text=chunk_result if ids_to_read else "",
-                    confidence=0.5 if ids_to_read else 0.0,
+                    text=retrieval_candidates if retrieved_docs else "",
+                    confidence=0.5 if retrieved_docs else 0.0,
                     confidence_self=0.0,
-                    confidence_retrieval=0.5 if ids_to_read else 0.0,
+                    confidence_retrieval=0.5 if retrieved_docs else 0.0,
                     slot_filled=False,
                     support_ids=support_ids,
                     source_step=0,
@@ -223,7 +237,7 @@ class Investigator:
             target_slot=slot_name or "final_answer",
             target_slot_hint=slot_hint or "No extra slot hint available.",
             prior_facts=prior_facts_text,
-            retrieved_passages=chunk_result,
+            retrieval_candidates=retrieval_candidates,
             capsule_limit=self.evidence_capsule_limit,
         )
 
@@ -358,6 +372,311 @@ class Investigator:
         )
 
         return capsule, total_tokens
+
+    async def _investigate_private_search_loop(
+        self,
+        *,
+        sub_question: str,
+        goal: str,
+        prior_facts: list[Fact],
+        retrieval_query: str | None = None,
+        slot_name: str = "",
+        slot_hint: str = "",
+        search_top_k_override: int | None = None,
+        max_read_override: int | None = None,
+    ) -> tuple[EvidenceCapsule, int]:
+        total_tokens = 0
+        if self.blind_subagent:
+            goal = ""
+            prior_facts = []
+        effective_top_k = (
+            int(search_top_k_override)
+            if search_top_k_override is not None
+            else self.search_top_k
+        )
+        max_read = (
+            int(max_read_override)
+            if max_read_override is not None
+            else effective_top_k * 2
+        )
+        effective_query = retrieval_query.strip() if retrieval_query and retrieval_query.strip() else sub_question
+        semantic_query = self._build_semantic_query(
+            effective_query,
+            goal,
+            prior_facts,
+            slot_name=slot_name,
+            slot_hint=slot_hint,
+        )
+        query_history = self._build_query_candidates(
+            effective_query=effective_query,
+            semantic_query=semantic_query,
+            sub_question=sub_question,
+            goal=goal,
+        )[:1]
+        current_query = query_history[0] if query_history else sub_question.strip()
+        merged_docs: list[dict[str, Any]] = []
+        seen_ids: set[str] = set()
+        parsed: Optional[dict] = None
+
+        for round_idx in range(max(1, self.max_search_rounds)):
+            docs = await asyncio.to_thread(self._retrieve_once, current_query, effective_top_k)
+            for doc in docs:
+                cid = str(doc.get("chunk_id", "")).strip()
+                text = str(doc.get("text", "")).strip()
+                if not cid or not text or cid in seen_ids:
+                    continue
+                seen_ids.add(cid)
+                merged_docs.append(doc)
+                if len(merged_docs) >= max_read:
+                    break
+
+            docs_by_id = {
+                str(doc["chunk_id"]): str(doc["text"])
+                for doc in merged_docs
+                if str(doc.get("chunk_id", "")).strip() and str(doc.get("text", "")).strip()
+            }
+            all_chunk_ids = [str(doc["chunk_id"]) for doc in merged_docs]
+            chunk_result = self._format_retrieved_passages(merged_docs)
+            retrieval_candidates = self._format_retrieval_candidates(
+                query_candidates=query_history,
+                docs=merged_docs,
+            ) if merged_docs else "No relevant retrieval candidates found."
+
+            if self.raw_snippets:
+                capsule = EvidenceCapsule(
+                    answer="",
+                    fact=Fact(
+                        text=chunk_result if merged_docs else "",
+                        confidence=0.5 if merged_docs else 0.0,
+                        confidence_self=0.0,
+                        confidence_retrieval=0.5 if merged_docs else 0.0,
+                        slot_filled=False,
+                        support_ids=all_chunk_ids[: self.evidence_capsule_limit],
+                        source_step=0,
+                    ),
+                    support_snippets=[],
+                    retrieved_doc_ids=all_chunk_ids,
+                    retrieved_docs_total=len(all_chunk_ids),
+                )
+                return capsule, total_tokens
+
+            prior_facts_text = (
+                "\n".join(f"- {f.text}" for f in prior_facts)
+                if prior_facts
+                else "None"
+            )
+            user_prompt = self._distill_template.format(
+                sub_question=sub_question,
+                goal=goal,
+                target_slot=slot_name or "final_answer",
+                target_slot_hint=slot_hint or "No extra slot hint available.",
+                prior_facts=prior_facts_text,
+                retrieved_passages=chunk_result,
+                capsule_limit=self.evidence_capsule_limit,
+            )
+            parsed, prompt_tokens = await self._call_and_parse_json([
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a precise fact extraction assistant. "
+                        "Always respond with valid JSON."
+                    ),
+                },
+                {"role": "user", "content": user_prompt},
+            ])
+            total_tokens += prompt_tokens
+
+            if parsed is not None:
+                raw_ids = parsed.get("support_ids", [])[: self.evidence_capsule_limit]
+                support_ids = [self._normalise_chunk_id(str(sid)) for sid in raw_ids]
+                answer = str(parsed.get("answer_span", parsed.get("answer", ""))).strip()
+                fact_text = str(parsed.get("fact", "")).strip()
+                confidence_self = float(parsed.get("confidence", 0.0) or 0.0)
+                if answer and fact_text and support_ids and confidence_self >= self.min_fact_confidence:
+                    confidence_retrieval = self._compute_retrieval_confidence(
+                        support_ids=support_ids,
+                        fallback_ids=all_chunk_ids,
+                        retrieved_docs=merged_docs,
+                    )
+                    confidence = (
+                        0.4 * confidence_retrieval
+                        + 0.4 * max(min(confidence_self, 1.0), 0.0)
+                        + 0.2
+                    )
+                    fact = Fact(
+                        text=fact_text,
+                        confidence=confidence,
+                        confidence_self=confidence_self,
+                        confidence_retrieval=confidence_retrieval,
+                        slot_filled=True,
+                        answer_span=answer,
+                        support_ids=support_ids,
+                        source_step=0,
+                    )
+                    return EvidenceCapsule(
+                        answer=answer,
+                        fact=fact,
+                        support_snippets=[],
+                        retrieved_doc_ids=all_chunk_ids,
+                        retrieved_docs_total=len(all_chunk_ids),
+                    ), total_tokens
+
+            if round_idx >= max(1, self.max_search_rounds) - 1:
+                break
+
+            refined_query, refine_tokens = await self._propose_followup_query(
+                sub_question=sub_question,
+                goal=goal,
+                prior_facts=prior_facts,
+                slot_name=slot_name,
+                slot_hint=slot_hint,
+                retrieval_candidates=retrieval_candidates,
+                weak_answer="" if parsed is None else str(parsed.get("answer_span", parsed.get("answer", ""))).strip(),
+                weak_fact="" if parsed is None else str(parsed.get("fact", "")).strip(),
+            )
+            total_tokens += refine_tokens
+            refined_query = refined_query.strip()
+            if not refined_query or refined_query in query_history:
+                break
+            query_history.append(refined_query)
+            current_query = refined_query
+
+        docs_by_id = {
+            str(doc["chunk_id"]): str(doc["text"])
+            for doc in merged_docs
+            if str(doc.get("chunk_id", "")).strip() and str(doc.get("text", "")).strip()
+        }
+        all_chunk_ids = [str(doc["chunk_id"]) for doc in merged_docs]
+        if parsed is not None:
+            raw_ids = parsed.get("support_ids", [])[: self.evidence_capsule_limit]
+            support_ids = [self._normalise_chunk_id(str(sid)) for sid in raw_ids]
+            answer = str(parsed.get("answer_span", parsed.get("answer", ""))).strip()
+            fact_text = str(parsed.get("fact", "")).strip()
+            confidence_self = float(parsed.get("confidence", 0.0) or 0.0)
+            slot_filled = bool(answer and fact_text and support_ids)
+            confidence_retrieval = self._compute_retrieval_confidence(
+                support_ids=support_ids,
+                fallback_ids=all_chunk_ids,
+                retrieved_docs=merged_docs,
+            )
+            confidence = (
+                0.4 * confidence_retrieval
+                + 0.4 * max(min(confidence_self, 1.0), 0.0)
+                + 0.2 * float(slot_filled)
+            )
+            if not answer or not fact_text or not support_ids:
+                answer = ""
+                fact_text = ""
+                confidence = 0.0
+                confidence_self = 0.0
+                confidence_retrieval = 0.0
+                slot_filled = False
+                support_ids = []
+            elif confidence < self.min_fact_confidence:
+                slot_filled = False
+            fact = Fact(
+                text=fact_text,
+                confidence=confidence,
+                confidence_self=confidence_self,
+                confidence_retrieval=confidence_retrieval,
+                slot_filled=slot_filled,
+                answer_span=answer,
+                support_ids=support_ids,
+                source_step=0,
+            )
+            return EvidenceCapsule(
+                answer=answer,
+                fact=fact,
+                support_snippets=[],
+                retrieved_doc_ids=all_chunk_ids,
+                retrieved_docs_total=len(all_chunk_ids),
+            ), total_tokens
+
+        return EvidenceCapsule(
+            answer="",
+            fact=Fact(
+                text="",
+                confidence=0.0,
+                confidence_self=0.0,
+                confidence_retrieval=0.0,
+                slot_filled=False,
+                answer_span="",
+                support_ids=[],
+                source_step=0,
+            ),
+            support_snippets=[],
+            retrieved_doc_ids=all_chunk_ids,
+            retrieved_docs_total=len(all_chunk_ids),
+        ), total_tokens
+
+    async def _call_and_parse_json(self, messages: list[dict[str, str]]) -> tuple[Optional[dict], int]:
+        total_tokens = 0
+        parsed: Optional[dict] = None
+        current_messages = list(messages)
+        for attempt in range(_MAX_JSON_RETRIES + 1):
+            try:
+                response = await self.llm_client.async_chat(current_messages)
+                total_tokens += self._extract_total_tokens(response)
+                content = self._strip_thinking(response["message"].get("content", ""))
+                parsed = self._parse_json_response(content)
+                if parsed is not None:
+                    break
+                if attempt < _MAX_JSON_RETRIES:
+                    current_messages = [
+                        current_messages[0],
+                        current_messages[1],
+                        {"role": "assistant", "content": content},
+                        {"role": "user", "content": _REPAIR_PROMPT},
+                    ]
+            except Exception as exc:
+                logger.warning(
+                    "LLM call failed (attempt %d/%d): %s",
+                    attempt + 1,
+                    _MAX_JSON_RETRIES + 1,
+                    exc,
+                )
+        return parsed, total_tokens
+
+    async def _propose_followup_query(
+        self,
+        *,
+        sub_question: str,
+        goal: str,
+        prior_facts: list[Fact],
+        slot_name: str,
+        slot_hint: str,
+        retrieval_candidates: str,
+        weak_answer: str,
+        weak_fact: str,
+    ) -> tuple[str, int]:
+        prior_facts_text = "\n".join(f"- {f.text}" for f in prior_facts) if prior_facts else "None"
+        prompt = f"""You are refining a private retrieval query for a sub-question.
+Return only JSON: {{"query": "..."}}
+
+Sub-question: {sub_question}
+Goal: {goal}
+Target slot: {slot_name or 'final_answer'}
+Target slot hint: {slot_hint or 'none'}
+Prior facts:
+{prior_facts_text}
+Weak answer: {weak_answer or '(none)'}
+Weak fact: {weak_fact or '(none)'}
+Retrieval candidates:
+{retrieval_candidates}
+
+Rules:
+- Propose one sharper search query that resolves the missing bridge or target relation.
+- Use entities already uncovered when helpful.
+- Keep it short.
+- If no better query exists, return {{"query": ""}}."""
+        parsed, tokens = await self._call_and_parse_json([
+            {"role": "system", "content": "You refine retrieval queries. Return only JSON."},
+            {"role": "user", "content": prompt},
+        ])
+        if not parsed:
+            return "", tokens
+        return str(parsed.get("query", "")).strip(), tokens
+
 
     # ------------------------------------------------------------------
     # Private helpers
@@ -517,6 +836,29 @@ class Investigator:
             })
         return normalised
 
+    def _format_retrieval_candidates(
+        self,
+        *,
+        query_candidates: list[str],
+        docs: list[dict[str, Any]],
+    ) -> str:
+        parts: list[str] = []
+        if query_candidates:
+            parts.append(
+                "Queries used:\n" + "\n".join(f"- {query}" for query in query_candidates)
+            )
+        for doc in docs:
+            cid = str(doc.get("chunk_id", "")).strip()
+            text = str(doc.get("text", "")).strip()
+            score = float(doc.get("score", 0.0) or 0.0)
+            title = self._extract_doc_title(text)
+            candidate_spans = self._extract_candidate_spans(text)[:6]
+            span_text = ", ".join(candidate_spans) if candidate_spans else "(none)"
+            parts.append(
+                f"Chunk {cid} | score={score:.3f} | title={title} | candidates={span_text}"
+            )
+        return "\n".join(parts)
+
     def _format_retrieved_passages(self, docs: list[dict[str, Any]]) -> str:
         parts: list[str] = []
         for doc in docs:
@@ -525,6 +867,32 @@ class Investigator:
             clipped = text[: self.max_passage_chars]
             parts.append(f"Chunk {cid}:\n{clipped}")
         return "\n\n".join(parts)
+
+    @staticmethod
+    def _extract_doc_title(text: str) -> str:
+        first_line = text.splitlines()[0].strip().strip('"').strip()
+        return first_line[:120] if first_line else "unknown"
+
+    @staticmethod
+    def _extract_candidate_spans(text: str) -> list[str]:
+        patterns = [
+            r"\b(?:[0-3]?\d\s+)?(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{4}\b",
+            r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+[0-3]?\d,\s+\d{4}\b",
+            r"\b(?:January|February|March|April|May|June|July|August|September|October|November|December)\b",
+            r"\b(?:1[0-9]{3}|20[0-9]{2}|[0-9]{1,4})\b",
+            r"\b[A-Z][A-Za-z0-9.'-]+(?:\s+[A-Z][A-Za-z0-9.'-]+){0,3}\b",
+        ]
+        seen: list[str] = []
+        for pattern in patterns:
+            for match in re.findall(pattern, text):
+                value = str(match).strip().strip(",.;:")
+                if len(value) < 2 or len(value) > 80:
+                    continue
+                if value not in seen:
+                    seen.append(value)
+                if len(seen) >= 8:
+                    return seen
+        return seen
 
 
     @staticmethod
