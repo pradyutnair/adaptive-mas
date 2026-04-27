@@ -10,21 +10,21 @@ Top-level structure::
       enable_thinking: false
 
     agents:
-      orchestrator:        # inherits from llm_defaults, overrides allowed
+      planner:        # inherits from llm_defaults, overrides allowed
         enable_thinking: true
         max_tokens: 2048
       investigator:
         max_tokens: 768
-      synthesizer: {}      # use defaults
 
     retriever:
-      base_url: http://node408:8003
+      base_url: http://127.0.0.1:9110
       top_k: 10
 
     pipeline:
-      max_steps: 6
-      sufficiency_threshold: 0.6
-      max_total_tokens: 0     # 0 = no cap
+      max_subgoals: 6
+      max_searches_per_subagent: 5
+      max_evidence_hits: 6
+      max_excerpt_chars: 600
 """
 
 from __future__ import annotations

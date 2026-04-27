@@ -1,7 +1,3 @@
-# AMAS - planner DAG + isolated investigator evidence capsules.
-# Planner creates slots; investigators retrieve and return compact evidence.
-# The final answer is the answer from the final planned slot.
-
 llm_defaults:
   model: gpt-4o-mini
   base_url: https://api.openai.com/v1
@@ -10,28 +6,30 @@ llm_defaults:
   max_tokens: 1024
   enable_thinking: false
   timeout_seconds: 600
-
 agents:
   planner:
-    model: gpt-4o
     max_tokens: 2048
   investigator:
     max_tokens: 1024
-
+  synthesizer:
+    max_tokens: 1024
 retriever:
   base_url: http://127.0.0.1:9110
-  request_format: adaptive_rag
-  top_k: 10
+  top_k: 8
   timeout_seconds: 30
-
+  request_format: batch
 pipeline:
   max_subgoals: 6
-  max_hop_attempts: 2
   max_searches_per_subagent: 1
   min_fact_confidence: 0.3
-  max_answer_words: 8
-  max_evidence_hits: 10
-  max_excerpt_chars: 600
-
+  max_answer_words: 64
+  direct_probe_top_k: 8
+  direct_probe_max_searches: 4
+  direct_probe_confidence: 0.65
+  max_hop_attempts: 3
+  max_evidence_hits: 8
+  max_excerpt_chars: 450
+  final_recovery_attempts: 3
+  final_recovery_top_k: 12
 runner:
   concurrency: 8

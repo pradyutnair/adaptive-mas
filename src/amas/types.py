@@ -78,7 +78,6 @@ StepAction = Literal[
     "route",
     "investigate",
     "direct",
-    "synthesize",
     "rewrite",
     "retrieve",
     "answer_rejected_escalate",
@@ -194,8 +193,8 @@ class ExecutionPlan:
 class EvidenceCapsule:
     """Bounded evidence returned by an investigator subagent.
 
-    Contains only distilled outputs. Raw passage text is intentionally
-    NOT exposed back to the orchestrator.
+    Contains only distilled outputs and compact evidence excerpts. Raw passage
+    text is intentionally NOT exposed back to the orchestrator.
     """
 
     answer: str
@@ -203,9 +202,12 @@ class EvidenceCapsule:
     subgoal_id: int = 0
     sub_question: str = ""
     answer_type: AnswerType = AnswerType.ENTITY
+    evidence_snippets: list[dict[str, str]] = field(default_factory=list)
     retrieved_doc_ids: list[str] = field(default_factory=list)
     retrieved_docs_total: int = 0
     chunk_tokens: int = 0
+    failure_reason: str = ""
+    search_queries: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -214,9 +216,12 @@ class EvidenceCapsule:
             "subgoal_id": self.subgoal_id,
             "sub_question": self.sub_question,
             "answer_type": self.answer_type.value,
+            "evidence_snippets": self.evidence_snippets,
             "retrieved_doc_ids": self.retrieved_doc_ids,
             "retrieved_docs_total": self.retrieved_docs_total,
             "chunk_tokens": self.chunk_tokens,
+            "failure_reason": self.failure_reason,
+            "search_queries": self.search_queries,
         }
 
     @classmethod
@@ -229,9 +234,12 @@ class EvidenceCapsule:
             subgoal_id=int(data.get("subgoal_id", 0)),
             sub_question=str(data.get("sub_question", "")),
             answer_type=AnswerType.coerce(data.get("answer_type", "entity")),
+            evidence_snippets=data.get("evidence_snippets", []),
             retrieved_doc_ids=data.get("retrieved_doc_ids", []),
             retrieved_docs_total=data.get("retrieved_docs_total", 0),
             chunk_tokens=int(data.get("chunk_tokens", 0)),
+            failure_reason=str(data.get("failure_reason", "")),
+            search_queries=data.get("search_queries", []),
         )
 
 

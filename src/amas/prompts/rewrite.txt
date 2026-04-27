@@ -16,6 +16,7 @@ Rules:
 - Prefer entity names, titles, roles, dates, and relation words over natural-language filler.
 - If the previous answer was the wrong level of specificity, rewrite toward the exact target level.
 - Use the rejection reason directly. If the failure was ambiguity, add the best disambiguating anchor. If the failure was wrong granularity, target the exact requested granularity.
+- Do not ask to inspect raw passages. Your only job is to produce the next retrieval query.
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}
@@ -23,6 +24,3 @@ Dependency hint: {hint}
 Previous query: {previous_query}
 Previous answer attempt: {previous_answer}
 Previous justification: {previous_justification}
-
-Previous chunks:
-{chunks}

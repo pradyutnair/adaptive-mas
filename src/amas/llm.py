@@ -1,7 +1,7 @@
 """Modular LLM client supporting OpenAI-compatible APIs and vLLM.
 
 Design:
-- One client per agent role (orchestrator, investigator, synthesizer).
+- One client per agent role (planner and investigator).
 - Each role can use a different model/provider/temperature/thinking setting.
 - Token counts come directly from the API `usage` field, never estimated.
 

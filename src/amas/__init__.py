@@ -7,7 +7,6 @@ from .llm import LLMClient, LLMResponse, parse_json_object, strip_thinking
 from .pipeline import AMASPipeline
 from .planner import Planner
 from .retriever import Retriever, RetrievalHit
-from .synthesizer import Synthesizer
 from .types import (
     AnswerType,
     EvidenceCapsule,
@@ -37,7 +36,6 @@ __all__ = [
     "StepAction",
     "StepTrace",
     "SubgoalNode",
-    "Synthesizer",
     "parse_json_object",
     "strip_thinking",
 ]

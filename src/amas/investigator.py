@@ -1,25 +1,21 @@
-"""Deterministic investigator with bounded stateless retrieval rounds."""
+"""Deterministic investigator with private retrieval-reading rounds."""
 
 from __future__ import annotations
 
 import json
 import logging
-import re
 from pathlib import Path
 from typing import Any
-
-import tiktoken
 
 from .llm import LLMClient, parse_json_object
 from .retriever import RetrievalHit, Retriever
 from .types import AnswerType, EvidenceCapsule, Fact, SubgoalNode
 
-_TOKENIZER = tiktoken.get_encoding("cl100k_base")
 logger = logging.getLogger(__name__)
 
 
 class Investigator:
-    """Resolve one subgoal with a deterministic 1-2 round pipeline."""
+    """Resolve one subgoal and return only a compact evidence capsule."""
 
     def __init__(
         self,
@@ -29,6 +25,8 @@ class Investigator:
         min_confidence: float = 0.3,
         max_searches: int = 2,
         max_answer_words: int = 8,
+        max_evidence_hits: int = 6,
+        max_excerpt_chars: int = 600,
     ) -> None:
         self.llm = llm
         self.retriever = retriever
@@ -36,8 +34,10 @@ class Investigator:
         self.min_confidence = float(min_confidence)
         self.max_searches = max(1, int(max_searches))
         self.max_answer_words = int(max_answer_words)
+        self.max_evidence_hits = max(1, int(max_evidence_hits))
+        self.max_excerpt_chars = max(120, int(max_excerpt_chars))
         prompt_dir = Path(__file__).parent / "prompts"
-        self._analyze_template = (prompt_dir / "analyze.txt").read_text(encoding="utf-8")
+        self._read_template = (prompt_dir / "analyze.txt").read_text(encoding="utf-8")
         self._rewrite_template = (prompt_dir / "rewrite.txt").read_text(encoding="utf-8")
         self.last_searches_used = 0
 
@@ -68,79 +68,67 @@ class Investigator:
         hint: str = "",
         slot_name: str = "",
         top_k_override: int | None = None,
+        query_override: str | None = None,
     ) -> tuple[EvidenceCapsule, int]:
-        total_tokens = 0
-        chunk_tokens = 0
         top_k = int(top_k_override or self.top_k)
 
-        query_1 = node.question.strip()
-        hits_1 = await self.retriever.retrieve(query_1, top_k=top_k)
-        retrieved_ids = [hit.chunk_id for hit in hits_1]
+        query = str(query_override or node.question).strip()
+        retrieved_ids: list[str] = []
+        rejection_reason = "initial search"
 
-        analyze_1, tokens_1, used_chunk_tokens_1 = await self._analyze(node, hint, hits_1)
-        total_tokens += tokens_1
-        chunk_tokens += used_chunk_tokens_1
-        capsule_1, rejection_1 = self._build_capsule(
-            analyze_1,
-            node,
-            retrieved_ids,
-            slot_name,
-        )
-        if capsule_1.fact.slot_filled or self.max_searches <= 1:
-            self.last_searches_used = 1 if hits_1 else 0
-            capsule_1.chunk_tokens = chunk_tokens
-            return capsule_1, total_tokens
-
-        rewrite_obj, rewrite_tokens, rewrite_chunk_tokens = await self._rewrite(
-            node=node,
-            hint=hint,
-            previous_query=query_1,
-            previous_answer=str(analyze_1.get("answer_span", "")).strip(),
-            previous_justification=str(analyze_1.get("justification", "")).strip(),
-            hits=hits_1,
-            rejection_reason=rejection_1,
-        )
-        total_tokens += rewrite_tokens
-        chunk_tokens += rewrite_chunk_tokens
-
-        query_2 = str(rewrite_obj.get("query", "")).strip()
-        if not query_2 or query_2 == query_1:
-            query_2 = query_1
-
-        hits_2 = await self.retriever.retrieve(query_2, top_k=top_k)
-        merged_hits = self._merge_hits([*hits_1, *hits_2])
-        for hit in hits_2:
+        hits = await self.retriever.retrieve(query, top_k=top_k)
+        for hit in hits:
             if hit.chunk_id not in retrieved_ids:
                 retrieved_ids.append(hit.chunk_id)
 
-        analyze_2, tokens_2, used_chunk_tokens_2 = await self._analyze(node, hint, merged_hits)
-        total_tokens += tokens_2
-        chunk_tokens += used_chunk_tokens_2
-        capsule_2, _ = self._build_capsule(
-            analyze_2,
+        read_obj, read_tokens = await self._read_evidence(node, hint, hits)
+        capsule, _ = self._build_capsule(
+            read_obj,
             node,
             retrieved_ids,
+            hits,
             slot_name,
+            failure_reason=rejection_reason,
+            search_queries=[query],
         )
-        self.last_searches_used = 2 if hits_2 else 1
-        capsule_2.chunk_tokens = chunk_tokens
-        return capsule_2, total_tokens
+        self.last_searches_used = 1 if hits else 0
+        return capsule, read_tokens
 
-    async def _analyze(
+    async def rewrite_query(
+        self,
+        node: SubgoalNode,
+        hint: str,
+        previous_query: str,
+        previous_answer: str = "",
+        previous_justification: str = "",
+        rejection_reason: str = "",
+    ) -> tuple[str, int]:
+        rewrite_obj, tokens = await self._rewrite(
+            node=node,
+            hint=hint,
+            previous_query=previous_query,
+            previous_answer=previous_answer,
+            previous_justification=previous_justification,
+            rejection_reason=rejection_reason or "evidence was insufficient",
+        )
+        query = str(rewrite_obj.get("query", "")).strip() or previous_query
+        return query, tokens
+
+    async def _read_evidence(
         self,
         node: SubgoalNode,
         hint: str,
         hits: list[RetrievalHit],
-    ) -> tuple[dict[str, Any], int, int]:
-        chunk_blob = self._format_chunks(hits)
-        prompt = self._analyze_template.format(
+    ) -> tuple[dict[str, Any], int]:
+        evidence_blob = self._format_evidence(hits)
+        prompt = self._read_template.format(
             sub_question=node.question.strip(),
             expected_answer_type=node.answer_type.value,
             hint=hint.strip() or "(none)",
-            chunks=chunk_blob,
+            evidence=evidence_blob,
         )
         resp = await self.llm.chat(messages=[{"role": "user", "content": prompt}])
-        return parse_json_object(resp.content), resp.total_tokens, self._estimate_tokens(chunk_blob)
+        return parse_json_object(resp.content), resp.total_tokens
 
     async def _rewrite(
         self,
@@ -149,10 +137,8 @@ class Investigator:
         previous_query: str,
         previous_answer: str,
         previous_justification: str,
-        hits: list[RetrievalHit],
         rejection_reason: str,
-    ) -> tuple[dict[str, Any], int, int]:
-        chunk_blob = self._format_chunks(hits)
+    ) -> tuple[dict[str, Any], int]:
         prompt = self._rewrite_template.format(
             sub_question=node.question.strip(),
             expected_answer_type=node.answer_type.value,
@@ -160,60 +146,49 @@ class Investigator:
             previous_query=previous_query.strip(),
             previous_answer=previous_answer,
             previous_justification=previous_justification,
-            chunks=chunk_blob,
         )
         resp = await self.llm.chat(messages=[{"role": "user", "content": prompt}])
         parsed = parse_json_object(resp.content)
         if "query" not in parsed:
             parsed = {"query": previous_query}
-        return parsed, resp.total_tokens, self._estimate_tokens(chunk_blob)
+        return parsed, resp.total_tokens
 
     def _build_capsule(
         self,
         parsed: dict[str, Any],
         node: SubgoalNode,
         retrieved_ids: list[str],
+        evidence_hits: list[RetrievalHit],
         slot_name: str,
+        failure_reason: str,
+        search_queries: list[str],
     ) -> tuple[EvidenceCapsule, str]:
         status = str(parsed.get("status", "")).strip().lower()
         answer = self._normalize_answer(node.question, str(parsed.get("answer_span", "")).strip())
         justification = str(parsed.get("justification", "")).strip()
-        failure_reason = str(parsed.get("failure_reason", "")).strip()
+        parsed_failure_reason = str(parsed.get("failure_reason", "")).strip()
         support_ids_raw = parsed.get("support_ids") or []
         support_ids = [str(s).strip() for s in support_ids_raw if str(s).strip()]
         support_ids = [s for s in support_ids if s in set(retrieved_ids)]
         confidence_self = self._bounded_float(parsed.get("confidence", 0.0))
 
-        explicitly_sufficient = status == "sufficient"
         explicitly_insufficient = status == "insufficient"
-
-        too_long = len(answer.split()) > self.max_answer_words
-        if too_long:
-            confidence_self *= 0.4
-
-        type_ok = bool(answer) and node.answer_type.validate_span(answer)
-        if not type_ok:
-            confidence_self *= 0.5
 
         if not answer:
             confidence_self = 0.0
             support_ids = []
 
-        if explicitly_insufficient:
-            answer = ""
-            justification = ""
-            support_ids = []
-            confidence_self = 0.0
-
+        # Keep this gate deliberately simple. The investigator may reason over
+        # ambiguous evidence; we only require a non-empty answer, a grounded
+        # justification, and a cited retrieved id. Do not reject by answer type
+        # or span length here.
         confidence_retrieval = 1.0 if support_ids else 0.0
-        slot_filled = bool(
-            answer and justification and support_ids and type_ok and not too_long
-        )
-        if not explicitly_sufficient:
-            slot_filled = False
-        confidence = 0.4 * confidence_retrieval + 0.4 * confidence_self + 0.2 * float(slot_filled)
-        if confidence < self.min_confidence:
-            slot_filled = False
+        slot_filled = bool(answer and justification and support_ids)
+        if explicitly_insufficient and not slot_filled:
+            confidence_self = 0.0
+        confidence = 0.5 * confidence_retrieval + 0.4 * confidence_self + 0.1 * float(slot_filled)
+        if not slot_filled:
+            confidence = 0.0
 
         fact = Fact(
             text=justification if slot_filled else "",
@@ -225,33 +200,68 @@ class Investigator:
             answer_span=answer if slot_filled else "",
             support_ids=support_ids if slot_filled else [],
         )
-        rejection_reason = failure_reason or self._rejection_reason(
+        rejection_reason = parsed_failure_reason or failure_reason or self._rejection_reason(
             answer=answer,
             support_ids=support_ids,
-            type_ok=type_ok,
-            too_long=too_long,
+            type_ok=True,
+            too_long=False,
         )
+        capsule_failure_reason = "" if slot_filled else rejection_reason
         return EvidenceCapsule(
             answer=answer if slot_filled else "",
             fact=fact,
             subgoal_id=node.id,
             sub_question=node.question,
             answer_type=node.answer_type,
+            evidence_snippets=self._support_snippets(support_ids, evidence_hits) if slot_filled else [],
             retrieved_doc_ids=retrieved_ids,
             retrieved_docs_total=len(retrieved_ids),
+            failure_reason=capsule_failure_reason,
+            search_queries=list(search_queries),
         ), rejection_reason
 
-    @staticmethod
-    def _format_chunks(hits: list[RetrievalHit]) -> str:
-        rows = [
-            {
+    def _format_evidence(self, hits: list[RetrievalHit]) -> str:
+        rows = []
+        for hit in hits[: self.max_evidence_hits]:
+            snippets = [s for s in (hit.snippets or []) if str(s).strip()]
+            if snippets:
+                evidence_text = " ".join(snippets[:3])
+            else:
+                evidence_text = self._hit_excerpt(hit)
+            rows.append({
                 "chunk_id": hit.chunk_id,
                 "score": round(hit.score, 4),
-                "text": hit.text,
-            }
-            for hit in hits
-        ]
+                "evidence": self._excerpt(evidence_text),
+            })
         return json.dumps(rows, ensure_ascii=False)
+
+    def _support_snippets(
+        self,
+        support_ids: list[str],
+        hits: list[RetrievalHit],
+    ) -> list[dict[str, str]]:
+        by_id = {hit.chunk_id: hit for hit in hits}
+        snippets: list[dict[str, str]] = []
+        for support_id in support_ids:
+            hit = by_id.get(support_id)
+            if hit is None:
+                continue
+            snippets.append({
+                "chunk_id": support_id,
+                "excerpt": self._hit_excerpt(hit),
+            })
+        return snippets
+
+    def _hit_excerpt(self, hit: RetrievalHit) -> str:
+        if hit.snippets:
+            return self._excerpt(" ".join(hit.snippets))
+        return self._excerpt(hit.text)
+
+    def _excerpt(self, text: str) -> str:
+        cleaned = " ".join(str(text or "").split())
+        if len(cleaned) <= self.max_excerpt_chars:
+            return cleaned
+        return cleaned[: self.max_excerpt_chars].rstrip() + "..."
 
     @staticmethod
     def _normalize_answer(question: str, answer: str) -> str:
@@ -268,7 +278,7 @@ class Investigator:
         if not answer:
             reasons.append("no answer span was grounded")
         if not support_ids:
-            reasons.append("no cited support chunk was retained")
+            reasons.append("no cited support id was retained")
         if not type_ok:
             reasons.append("the answer type did not match the sub-question")
         if too_long:
@@ -283,10 +293,6 @@ class Investigator:
             if existing is None or hit.score > existing.score:
                 by_id[hit.chunk_id] = hit
         return sorted(by_id.values(), key=lambda h: h.score, reverse=True)
-
-    @staticmethod
-    def _estimate_tokens(text: str) -> int:
-        return len(_TOKENIZER.encode(text or ""))
 
     @staticmethod
     def _bounded_float(value: Any) -> float:
