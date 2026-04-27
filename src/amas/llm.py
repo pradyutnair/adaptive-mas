@@ -17,6 +17,7 @@ Orchestrator on Qwen3 with thinking, investigator on GPT-4o-mini::
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -113,13 +114,26 @@ class LLMClient:
             )
         else:
             sess = session
+        result = None
         try:
-            async with sess.post(url, headers=headers, json=payload) as resp:
-                resp.raise_for_status()
-                result = await resp.json()
+            for attempt in range(4):
+                try:
+                    async with sess.post(url, headers=headers, json=payload) as resp:
+                        resp.raise_for_status()
+                        result = await resp.json()
+                        break
+                except (aiohttp.ClientResponseError, aiohttp.ClientConnectionError, asyncio.TimeoutError) as exc:
+                    retryable = isinstance(exc, (aiohttp.ClientConnectionError, asyncio.TimeoutError))
+                    if isinstance(exc, aiohttp.ClientResponseError):
+                        retryable = exc.status in {408, 409, 425, 429, 500, 502, 503, 504, 520, 522, 524}
+                    if not retryable or attempt >= 3:
+                        raise
+                    await asyncio.sleep(1.5 * (2 ** attempt))
         finally:
             if own:
                 await sess.close()
+        if result is None:
+            raise RuntimeError("LLM request failed without a response")
 
         usage = result.get("usage", {}) or {}
         message = result["choices"][0]["message"] or {}

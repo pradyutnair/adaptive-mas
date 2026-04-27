@@ -1,0 +1,248 @@
+19:11:32 [INFO] amas.runner: Loaded 50 questions; 0 done; 50 to run.
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__13548_13529
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__9285_5188_23307
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__766973_770570
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__170823_120171
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511454_120259
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__71753_648517_70784_79935
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__94201_642284_131926_89261
+19:11:32 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152562_5274_458768_33633
+19:11:39 [ERROR] amas.runner: FAILED musique_2hop__766973_770570: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:39 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__305282_282081_73772
+19:11:43 [ERROR] amas.runner: FAILED musique_2hop__511454_120259: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:43 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__655505_110949
+19:11:43 [ERROR] amas.runner: FAILED musique_4hop2__71753_648517_70784_79935: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:43 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__619265_45326
+19:11:43 [ERROR] amas.runner: FAILED musique_4hop1__94201_642284_131926_89261: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:43 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__754156_88460_30152_20999
+19:11:49 [ERROR] amas.runner: FAILED musique_4hop1__152562_5274_458768_33633: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:49 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__199513_801817
+19:11:50 [ERROR] amas.runner: FAILED musique_2hop__619265_45326: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:50 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__820301_720914_41132
+19:11:55 [ERROR] amas.runner: FAILED musique_3hop1__9285_5188_23307: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:55 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__136129_87694_124169
+19:11:58 [ERROR] amas.runner: FAILED musique_3hop1__305282_282081_73772: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:58 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__354635_174222
+19:11:59 [ERROR] amas.runner: FAILED musique_2hop__170823_120171: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:11:59 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__849312_503371_21711
+19:12:00 [ERROR] amas.runner: FAILED musique_4hop3__754156_88460_30152_20999: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:00 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511296_577502
+19:12:00 [ERROR] amas.runner: FAILED musique_2hop__199513_801817: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:00 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__731956_126089
+19:12:03 [ERROR] amas.runner: FAILED musique_2hop__655505_110949: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:03 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__123545_47134
+19:12:04 [ERROR] amas.runner: FAILED musique_2hop__354635_174222: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:04 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__786632_831637_91775
+19:12:06 [ERROR] amas.runner: FAILED musique_2hop__13548_13529: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:06 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__124412_402641
+19:12:09 [ERROR] amas.runner: FAILED musique_2hop__731956_126089: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:09 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__159215_779396
+19:12:10 [ERROR] amas.runner: FAILED musique_2hop__511296_577502: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:10 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__59048_827343
+19:12:12 [ERROR] amas.runner: FAILED musique_3hop1__786632_831637_91775: 'EvidenceCapsule' object has no attribute 'sub_question'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 384, in solve
+    check, check_tokens = await self._check_final_answer(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 537, in _check_final_answer
+    f"Evidence capsules: {self._compact_capsules(capsules)}",
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 556, in _compact_capsules
+    "sub_question": c.sub_question,
+AttributeError: 'EvidenceCapsule' object has no attribute 'sub_question'
+19:12:12 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__726675_508773_85832_745702
+19:12:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__693444_220151

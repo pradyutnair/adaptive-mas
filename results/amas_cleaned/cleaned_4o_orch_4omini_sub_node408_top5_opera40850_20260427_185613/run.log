@@ -1,0 +1,65 @@
+18:56:14 [INFO] amas.runner: Loaded 50 questions; 0 done; 50 to run.
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__13548_13529
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__9285_5188_23307
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__766973_770570
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__170823_120171
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511454_120259
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__71753_648517_70784_79935
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__94201_642284_131926_89261
+18:56:14 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152562_5274_458768_33633
+18:56:33 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__305282_282081_73772
+18:56:34 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__655505_110949
+18:56:37 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__619265_45326
+18:56:46 [ERROR] amas.runner: FAILED musique_2hop__13548_13529: 520, message='<none>', url='https://api.openai.com/v1/chat/completions'
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 84, in _process_one
+    result = await pipeline.run(question=qtext, question_id=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/pipeline.py", line 59, in run
+    result = await self.orchestrator.solve(question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/orchestrator.py", line 149, in solve
+    resp = await self.llm.chat(messages=messages)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas/llm.py", line 118, in chat
+    resp.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/aiohttp/client_reqrep.py", line 636, in raise_for_status
+    raise ClientResponseError(
+aiohttp.client_exceptions.ClientResponseError: 520, message='<none>', url='https://api.openai.com/v1/chat/completions'
+18:56:46 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__754156_88460_30152_20999
+18:56:50 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__199513_801817
+18:56:51 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__820301_720914_41132
+18:57:11 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__136129_87694_124169
+18:57:15 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__354635_174222
+18:57:23 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__849312_503371_21711
+18:57:55 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__511296_577502
+18:57:58 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__731956_126089
+18:58:07 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__123545_47134
+18:58:12 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__786632_831637_91775
+18:58:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__124412_402641
+18:58:14 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__159215_779396
+18:58:19 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__59048_827343
+18:58:21 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__726675_508773_85832_745702
+18:58:23 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__693444_220151
+18:58:26 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__108833_720914_41132
+18:58:31 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__347686_127399
+18:58:35 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__33845_42197_18397
+18:58:47 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__645448_77615
+18:58:50 [INFO] amas.pipeline: AMAS start: qid=musique_4hop3__524186_219173_638950_72134
+18:59:03 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__734582_71302
+18:59:05 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__639955_834494_34099
+18:59:05 [INFO] amas.pipeline: AMAS start: qid=musique_4hop2__9988_261673_70784_79935
+18:59:10 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__77233_33207
+18:59:11 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__84847_148696
+18:59:13 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__90327_83076_319330
+18:59:15 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__998_25855
+18:59:18 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__81659_52835
+18:59:19 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__88342_75218_128008_48717
+18:59:19 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__144678_443779_52195
+18:59:20 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__865961_159109
+18:59:21 [INFO] amas.pipeline: AMAS start: qid=musique_3hop2__127483_60649_10557
+18:59:24 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__46862_68042
+18:59:25 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__78401_158262
+18:59:26 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__95970_152907
+18:59:28 [INFO] amas.pipeline: AMAS start: qid=musique_3hop1__105837_160713_77246
+18:59:28 [INFO] amas.pipeline: AMAS start: qid=musique_2hop__179322_83289
+18:59:31 [INFO] amas.pipeline: AMAS start: qid=musique_3hop2__87184_90327_76291
+18:59:33 [INFO] amas.pipeline: AMAS start: qid=musique_4hop1__152146_5274_458768_33637
+Done: 50 processed in 240.9s (answered=49/50)

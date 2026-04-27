@@ -1,0 +1,10 @@
+run=results/amas_cleaned/cleaned_finalcheck2_node408_top5_opera40850_20260427_191254
+branch=cleaned-up-solution
+config=configs/_runtime/amas_4o_orch_4omini_sub_node408_top5.yaml
+questions=data/musique/opera408_50.json
+retriever=http://node408:8003
+top_k=5
+orchestrator=gpt-4o
+investigator=gpt-4o-mini
+patches=llm_5xx_retry final_target_checker no_loop_bridge_salvage stricter_prompts
+started=2026-04-27T19:12:54+02:00

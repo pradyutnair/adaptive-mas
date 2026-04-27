@@ -1,0 +1,9 @@
+run=results/amas_cleaned/cleaned_4o_orch_4omini_sub_e5_9110_top5_opera40850_20260427_185056
+branch=cleaned-up-solution
+config=configs/_runtime/amas_4o_orch_4omini_sub_e5_9110_top5.yaml
+questions=data/musique/opera408_50.json
+retriever=http://127.0.0.1:9110
+top_k=5
+orchestrator=gpt-4o
+investigator=gpt-4o-mini
+started=2026-04-27T18:50:56+02:00

@@ -84,12 +84,17 @@ class Investigator:
                 for cid in ids:
                     if cid not in retrieved_ids:
                         retrieved_ids.append(cid)
-                search_payload = json.dumps({"search_result": [
+                full_payload = json.dumps({"search_result": [
                     {"chunk_id": h.chunk_id, "score": round(h.score, 4), "text": h.text}
                     for h in hits
                 ]})
-                chunk_tokens += self._estimate_chunk_tokens(search_payload)
-                messages.append({"role": "user", "content": search_payload})
+                chunk_tokens += self._estimate_chunk_tokens(full_payload)
+                trimmed_payload = json.dumps({"search_result": [
+                    {"chunk_id": h.chunk_id, "score": round(h.score, 4),
+                     "text": h.text[:700]}
+                    for h in hits
+                ]})
+                messages.append({"role": "user", "content": trimmed_payload})
                 searches_used += 1
                 continue
 
