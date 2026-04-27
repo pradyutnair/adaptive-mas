@@ -155,6 +155,34 @@ class Orchestrator:
             action = str(parsed.get("action", "")).strip().lower()
 
             if action == "search" and turn < self.max_turns:
+                if n_searches >= 2 and n_spawn_turns == 0:
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({"role": "user", "content": json.dumps({
+                        "system_note": (
+                            "Stop issuing more direct searches. The question is not resolving in search-only mode. "
+                            "Your next action must be spawn, with one focused bridge sub-question or two dependent sub-questions."
+                        ),
+                    })})
+                    trace.append(StepTrace(
+                        step=len(trace), action="route", tokens=resp.total_tokens,
+                        route_decision="force_spawn_after_failed_searches",
+                        metadata={"turn": turn, "n_searches": n_searches},
+                    ))
+                    continue
+                if any((not c.fact.slot_filled) for c in capsules):
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({"role": "user", "content": json.dumps({
+                        "system_note": (
+                            "Do not continue blind searching after a failed spawned slot. "
+                            "Your next action must be spawn to either retry the failed slot or re-check the upstream bridge entity."
+                        ),
+                    })})
+                    trace.append(StepTrace(
+                        step=len(trace), action="route", tokens=resp.total_tokens,
+                        route_decision="force_spawn_after_failed_slot",
+                        metadata={"turn": turn},
+                    ))
+                    continue
                 hits, ids = await self._run_search(parsed)
                 for cid in ids:
                     if cid not in retrieved_ids:
@@ -275,6 +303,44 @@ class Orchestrator:
             if action == "final":
                 ans = str(parsed.get("answer_span", parsed.get("answer", ""))).strip()
                 ans_type = AnswerType.coerce(parsed.get("answer_type", "entity"))
+                support_raw = parsed.get("support_ids") or []
+                allowed = set(retrieved_ids) | {
+                    sid for c in capsules for sid in c.fact.support_ids
+                }
+                support_ids = [str(s).strip() for s in support_raw
+                               if str(s).strip() and str(s).strip() in allowed]
+
+                if turn < self.max_turns and (not ans or ans.lower() in {"unknown", "n/a"}):
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({"role": "user", "content": json.dumps({
+                        "system_note": (
+                            "Do not finalize with an empty or unknown answer. "
+                            "If direct search is insufficient, continue with a narrower search or spawn focused subagents."
+                        ),
+                    })})
+                    trace.append(StepTrace(
+                        step=len(trace), action="route",
+                        tokens=resp.total_tokens,
+                        route_decision="reject_unknown_final",
+                        metadata={"turn": turn, "draft_answer": ans},
+                    ))
+                    continue
+
+                if turn < self.max_turns and ans and not support_ids:
+                    messages.append({"role": "assistant", "content": content})
+                    messages.append({"role": "user", "content": json.dumps({
+                        "system_note": (
+                            "Do not finalize without grounded support_ids from retrieved evidence or subagent capsules. "
+                            "Search again or spawn subagents for the missing bridge or final attribute."
+                        ),
+                    })})
+                    trace.append(StepTrace(
+                        step=len(trace), action="route",
+                        tokens=resp.total_tokens,
+                        route_decision="reject_unsupported_final",
+                        metadata={"turn": turn, "draft_answer": ans},
+                    ))
+                    continue
 
                 # Guardrail: catch "answered the bridge entity" failures.
                 total_actions = n_searches + n_spawn_turns
@@ -314,14 +380,6 @@ class Orchestrator:
                     ))
                     continue
 
-                support_raw = parsed.get("support_ids") or []
-                # support_ids must come from things the orchestrator has actually seen
-                # (its own searches OR capsules returned by spawned investigators).
-                allowed = set(retrieved_ids) | {
-                    sid for c in capsules for sid in c.fact.support_ids
-                }
-                support_ids = [str(s).strip() for s in support_raw
-                               if str(s).strip() and str(s).strip() in allowed]
                 conf = self._bounded_float(parsed.get("confidence", 0.0))
                 trace.append(StepTrace(
                     step=len(trace), action="answer",
