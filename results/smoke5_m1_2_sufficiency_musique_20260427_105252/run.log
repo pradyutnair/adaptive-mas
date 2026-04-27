@@ -1,0 +1,20 @@
+2026-04-27 10:53:08 [INFO] __main__: Loaded 5 questions from results/smoke5_m1_2_sufficiency_musique_20260427_105252/questions_5.json
+2026-04-27 10:53:08 [INFO] __main__: Checkpoint: 0 completed, 5 remaining
+Processing questions:   0%|          | 0/5 [00:00<?, ?q/s]2026-04-27 10:53:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__13548_13529, max_steps=4
+2026-04-27 10:53:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_3hop1__9285_5188_23307, max_steps=4
+2026-04-27 10:53:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__766973_770570, max_steps=4
+2026-04-27 10:53:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__170823_120171, max_steps=4
+2026-04-27 10:53:09 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=musique_2hop__511454_120259, max_steps=4
+2026-04-27 10:54:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__766973_770570, answer='Rockland County', subagents=2, verify=0, tokens=7707
+Processing questions:  20%|██        | 1/5 [01:05<04:20, 65.14s/q]2026-04-27 10:55:49 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_3hop1__9285_5188_23307, answer='mid-August', subagents=2, verify=0, tokens=17651
+Processing questions:  40%|████      | 2/5 [02:39<04:07, 82.60s/q]2026-04-27 10:56:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__170823_120171, answer='New Directions Publishing', subagents=3, verify=0, tokens=22772
+Processing questions:  60%|██████    | 3/5 [03:05<01:52, 56.38s/q]2026-04-27 10:57:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__13548_13529, answer='Iker Muniain', subagents=3, verify=0, tokens=28472
+Processing questions:  80%|████████  | 4/5 [04:17<01:02, 62.63s/q]2026-04-27 11:02:36 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=musique_2hop__511454_120259, answer='', subagents=5, verify=0, tokens=59599
+Processing questions: 100%|██████████| 5/5 [09:26<00:00, 151.67s/q]Processing questions: 100%|██████████| 5/5 [09:26<00:00, 113.38s/q]
+
+============================================================
+Run complete: 5/5 succeeded, 0 failed
+Checkpoint had 0 previously completed
+Total in output: 5
+Elapsed: 566.9s (9.4min)
+============================================================
