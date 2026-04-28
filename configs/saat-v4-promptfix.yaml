@@ -1,0 +1,42 @@
+# SAAT v4: improved planner/investigator prompts, no synthesis.
+# Identical to best v2 config except prompts and slightly more evidence.
+
+llm_defaults:
+  model: gpt-4o-mini
+  base_url: https://api.openai.com/v1
+  api_key_env: OPENAI_API_KEY
+  temperature: 0.0
+  max_tokens: 1024
+  enable_thinking: false
+  timeout_seconds: 600
+
+agents:
+  planner:
+    model: gpt-4o
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    max_tokens: 2048
+  investigator:
+    model: gpt-4o-mini
+    max_tokens: 1024
+
+retriever:
+  base_url: http://node408:8003
+  top_k: 5
+  timeout_seconds: 30
+
+pipeline:
+  max_subgoals: 4
+  max_searches_per_subagent: 3
+  max_hop_attempts: 3
+  final_recovery_attempts: 4
+  final_recovery_top_k: 10
+  min_fact_confidence: 0.3
+  max_answer_words: 10
+  max_evidence_hits: 6
+  max_excerpt_chars: 800
+  synthesis_enabled: false
+  router_enabled: false
+
+runner:
+  concurrency: 8

@@ -13,7 +13,7 @@ Return exactly one JSON object, no prose, no code fences:
       "question": "first sub-question",
       "depends_on": [],
       "answer_type": "person|place|date|number|yes_no|entity|other",
-      "rationale": "why this subgoal is needed"
+      "rationale": "why this subgoal is needed AND what the downstream step will do with its answer"
     }},
     {{
       "id": 2,
@@ -39,6 +39,14 @@ Requirements:
 - Do not create more than {max_subgoals} subgoals.
 - Do not answer the question.
 
+Rationale requirements (critical):
+- Each rationale MUST state what the NEXT subgoal will do with this answer.
+- Match the bridge entity granularity to the downstream operation:
+  - If the next step asks when something was "abolished/dissolved/founded", this step must return a POLITICAL ENTITY (kingdom, earldom, colony, state), NOT a city or geographic location.
+  - If the next step asks where something "empties/flows/drains", this step should identify the specific geographic feature (river, delta, estuary), not the surrounding region.
+  - If the next step asks about a "performer/author/creator", include the WORK TITLE to disambiguate.
+  - If the bridge is a person with a common name, include a disambiguating context (era, role, nationality).
+
 Good pattern:
 - bridge entity -> final attribute
 - independent fact A + independent fact B -> comparison
@@ -49,27 +57,27 @@ Bad pattern:
 - repeating the original question as multiple subgoals
 
 Example:
-Question: What year did the publisher of a novel end?
+Question: When was Lady Godiva's birthplace abolished?
 Output:
 {{
   "complexity": "compositional",
-  "final_answer_type": "number",
+  "final_answer_type": "date",
   "confidence": 0.8,
-  "reasoning": "The publisher must be identified before its end year can be answered.",
+  "reasoning": "The birthplace (a political entity that can be abolished) must be identified before its abolition date.",
   "subgoals": [
     {{
       "id": 1,
-      "question": "Which publisher published the novel?",
+      "question": "What political entity (kingdom, earldom, or polity) was Lady Godiva's birthplace?",
       "depends_on": [],
       "answer_type": "entity",
-      "rationale": "This resolves the bridge entity needed by the final question."
+      "rationale": "Resolves the political entity. The next step will ask when it was abolished, so the answer must be something that CAN be abolished (not a city)."
     }},
     {{
       "id": 2,
-      "question": "What year did [result_1] end?",
+      "question": "When was [result_1] abolished?",
       "depends_on": [1],
-      "answer_type": "number",
-      "rationale": "This asks for the final target."
+      "answer_type": "date",
+      "rationale": "Asks for the final target: the abolition date."
     }}
   ]
 }}

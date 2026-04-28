@@ -72,21 +72,44 @@ class DAGExecutor:
         self.investigator = investigator
         self.max_hop_attempts = max(1, int(max_hop_attempts))
 
-    async def execute(self, plan: ExecutionPlan) -> DAGExecutionResult:
+    async def execute(
+        self,
+        plan: ExecutionPlan,
+        prior_capsules: dict[int, EvidenceCapsule] | None = None,
+        original_question: str = "",
+    ) -> DAGExecutionResult:
         levels = self._levels(plan.subgoals)
         capsules_by_id: dict[int, EvidenceCapsule] = {}
         result = DAGExecutionResult(levels=levels, terminal_ids=self._terminal_ids(plan.subgoals))
-        hop_states = {
-            node.id: HopState(
-                id=node.id,
-                question=node.question,
-                depends_on=list(node.depends_on),
-                answer_type=node.answer_type.value,
-                rationale=node.rationale,
-                max_attempts=self.max_hop_attempts,
-            )
-            for node in plan.subgoals
-        }
+        hop_states: dict[int, HopState] = {}
+        for node in plan.subgoals:
+            if prior_capsules and node.id in prior_capsules:
+                cap = prior_capsules[node.id]
+                hop_states[node.id] = HopState(
+                    id=node.id,
+                    question=node.question,
+                    depends_on=list(node.depends_on),
+                    answer_type=node.answer_type.value,
+                    rationale=node.rationale,
+                    max_attempts=self.max_hop_attempts,
+                    status="resolved",
+                    answer=cap.answer,
+                    confidence=cap.fact.confidence,
+                    support_ids=list(cap.fact.support_ids),
+                    attempt_count=1,
+                )
+                capsules_by_id[node.id] = cap
+                result.capsules.append(cap)
+                result.node_statuses[node.id] = "verified"
+            else:
+                hop_states[node.id] = HopState(
+                    id=node.id,
+                    question=node.question,
+                    depends_on=list(node.depends_on),
+                    answer_type=node.answer_type.value,
+                    rationale=node.rationale,
+                    max_attempts=self.max_hop_attempts,
+                )
         step = 0
 
         while True:
@@ -99,7 +122,7 @@ class DAGExecutor:
                 break
 
             tasks = [
-                self._run_node(node, capsules_by_id, hop_states[node.id])
+                self._run_node(node, capsules_by_id, hop_states[node.id], original_question)
                 for node in ready_nodes
             ]
             outputs = await asyncio.gather(*tasks)
@@ -214,6 +237,7 @@ class DAGExecutor:
         node: SubgoalNode,
         capsules_by_id: dict[int, EvidenceCapsule],
         hop: HopState,
+        original_question: str = "",
     ) -> tuple[EvidenceCapsule, int, int, str]:
         unresolved = [
             dep_id for dep_id in node.depends_on
@@ -246,7 +270,10 @@ class DAGExecutor:
         hop.attempt_count += 1
         hop.resolved_question = resolved
         dependency_hint = self._dependency_hint(node, capsules_by_id, hop)
-        hint = " ".join(part for part in [node.rationale.strip(), dependency_hint] if part).strip()
+        original_hint = f"Original question: {original_question.strip()}" if original_question.strip() else ""
+        hint = " ".join(
+            part for part in [original_hint, node.rationale.strip(), dependency_hint] if part
+        ).strip()
         run_node = SubgoalNode(
             id=node.id,
             question=resolved,
@@ -259,6 +286,7 @@ class DAGExecutor:
             hint=hint,
             slot_name=f"subgoal_{node.id}",
             query_override=hop.query_override or None,
+            parent_question=original_question,
         )
         status = "verified" if capsule.fact.slot_filled and capsule.answer else "failed"
         return capsule, tokens, self.investigator.last_searches_used, status

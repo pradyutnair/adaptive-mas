@@ -17,6 +17,7 @@ Orchestrator on Qwen3 with thinking, investigator on GPT-4o-mini::
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 import os
@@ -103,23 +104,42 @@ class LLMClient:
             "Content-Type": "application/json",
         }
 
-        own = session is None
-        if own:
-            ssl_ctx = ssl.create_default_context(cafile=certifi.where())
-            connector = aiohttp.TCPConnector(ssl=ssl_ctx)
-            sess = aiohttp.ClientSession(
-                timeout=aiohttp.ClientTimeout(total=self.timeout_seconds),
-                connector=connector,
-            )
-        else:
-            sess = session
-        try:
-            async with sess.post(url, headers=headers, json=payload) as resp:
-                resp.raise_for_status()
-                result = await resp.json()
-        finally:
+        max_retries = 3
+        last_exc: Exception | None = None
+        for attempt in range(max_retries):
+            own = session is None
             if own:
-                await sess.close()
+                ssl_ctx = ssl.create_default_context(cafile=certifi.where())
+                connector = aiohttp.TCPConnector(ssl=ssl_ctx)
+                sess = aiohttp.ClientSession(
+                    timeout=aiohttp.ClientTimeout(total=self.timeout_seconds),
+                    connector=connector,
+                )
+            else:
+                sess = session
+            try:
+                async with sess.post(url, headers=headers, json=payload) as resp:
+                    resp.raise_for_status()
+                    result = await resp.json()
+                break
+            except (aiohttp.ClientResponseError, aiohttp.ClientError, asyncio.TimeoutError) as exc:
+                last_exc = exc
+                if own:
+                    await sess.close()
+                    own = False
+                status = getattr(exc, 'status', 0)
+                if status in (429, 500, 502, 503) or isinstance(exc, asyncio.TimeoutError):
+                    wait = 2 ** attempt
+                    logger.warning("LLM request attempt %d/%d failed (status=%s), retrying in %ds",
+                                   attempt + 1, max_retries, status, wait)
+                    await asyncio.sleep(wait)
+                    continue
+                raise
+            finally:
+                if own:
+                    await sess.close()
+        else:
+            raise last_exc  # type: ignore[misc]
 
         usage = result.get("usage", {}) or {}
         message = result["choices"][0]["message"] or {}

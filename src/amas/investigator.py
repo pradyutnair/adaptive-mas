@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +50,7 @@ class Investigator:
         slot_name: str = "",
         top_k_override: int | None = None,
         subgoal_id: int = 0,
+        parent_question: str = "",
     ) -> tuple[EvidenceCapsule, int]:
         node = SubgoalNode(
             id=subgoal_id,
@@ -60,6 +62,7 @@ class Investigator:
             hint=hint,
             slot_name=slot_name,
             top_k_override=top_k_override,
+            parent_question=parent_question,
         )
 
     async def investigate_node(
@@ -69,6 +72,7 @@ class Investigator:
         slot_name: str = "",
         top_k_override: int | None = None,
         query_override: str | None = None,
+        parent_question: str = "",
     ) -> tuple[EvidenceCapsule, int]:
         top_k = int(top_k_override or self.top_k)
 
@@ -76,11 +80,21 @@ class Investigator:
         retrieved_ids: list[str] = []
         rejection_reason = "initial search"
 
-        hits = await self.retriever.retrieve(query, top_k=top_k)
-        for hit in hits:
-            if hit.chunk_id not in retrieved_ids:
-                retrieved_ids.append(hit.chunk_id)
+        queries = self._query_variants(
+            query=query,
+            node_question=node.question,
+            hint=hint,
+            parent_question=parent_question,
+        )[: self.max_searches]
+        all_hits: list[RetrievalHit] = []
+        for search_query in queries:
+            query_hits = await self.retriever.retrieve(search_query, top_k=top_k)
+            all_hits.extend(query_hits)
+            for hit in query_hits:
+                if hit.chunk_id not in retrieved_ids:
+                    retrieved_ids.append(hit.chunk_id)
 
+        hits = self._merge_hits(all_hits)[:top_k]
         read_obj, read_tokens = await self._read_evidence(node, hint, hits)
         capsule, _ = self._build_capsule(
             read_obj,
@@ -89,9 +103,9 @@ class Investigator:
             hits,
             slot_name,
             failure_reason=rejection_reason,
-            search_queries=[query],
+            search_queries=queries,
         )
-        self.last_searches_used = 1 if hits else 0
+        self.last_searches_used = len(queries)
         return capsule, read_tokens
 
     async def rewrite_query(
@@ -284,6 +298,102 @@ class Investigator:
         if too_long:
             reasons.append("the answer span was too long")
         return "; ".join(reasons) if reasons else "the evidence was insufficient"
+
+    @classmethod
+    def _query_variants(
+        cls,
+        query: str,
+        node_question: str,
+        hint: str,
+        parent_question: str,
+    ) -> list[str]:
+        base = " ".join(str(query or node_question or "").split())
+        variants: list[str] = []
+        cls._append_unique_query(variants, base)
+
+        context_terms = cls._context_terms(parent_question or hint, limit=10)
+        entity_query = cls._entity_focused_query(base, context_terms)
+        cls._append_unique_query(variants, entity_query)
+
+        dense_query = cls._keyword_dense_query(base, context_terms)
+        cls._append_unique_query(variants, dense_query)
+        return variants or [base]
+
+    @staticmethod
+    def _append_unique_query(queries: list[str], query: str) -> None:
+        cleaned = " ".join(str(query or "").split()).strip(" ?")
+        if cleaned and cleaned.lower() not in {q.lower() for q in queries}:
+            queries.append(cleaned[:240])
+
+    @classmethod
+    def _entity_focused_query(cls, query: str, context_terms: str) -> str:
+        quoted = re.findall(r"['\"]([^'\"]{2,80})['\"]", query)
+        proper = cls._proper_terms(query)
+        relation = cls._content_terms(query, limit=6, keep_case=False)
+        parts = quoted + proper + relation
+        if context_terms:
+            parts.append(context_terms)
+        return " ".join(cls._dedupe_terms(parts))
+
+    @classmethod
+    def _keyword_dense_query(cls, query: str, context_terms: str) -> str:
+        parts = cls._content_terms(query, limit=12, keep_case=True)
+        if context_terms:
+            parts.append(context_terms)
+        return " ".join(cls._dedupe_terms(parts))
+
+    @classmethod
+    def _context_terms(cls, text: str, limit: int = 10) -> str:
+        proper = cls._proper_terms(text or "")
+        dates = re.findall(r"\b(?:1[0-9]|20)\d{2}\b", text or "")
+        terms = proper + dates + cls._content_terms(text, limit=limit, keep_case=True)
+        return " ".join(cls._dedupe_terms(terms)[:limit])
+
+    @staticmethod
+    def _proper_terms(text: str) -> list[str]:
+        skip = {
+            "what", "which", "who", "whom", "whose", "when", "where",
+            "why", "how", "the", "a", "an", "if", "hint", "original",
+            "subgoal", "question", "answer", "next", "step",
+        }
+        out: list[str] = []
+        for phrase in re.findall(r"\b[A-Z][\w'-]*(?:\s+[A-Z][\w'-]*)*", text or ""):
+            first = phrase.split()[0].lower()
+            if first not in skip:
+                out.append(phrase)
+        return out
+
+    @staticmethod
+    def _content_terms(text: str, limit: int = 10, keep_case: bool = True) -> list[str]:
+        stop = {
+            "the", "a", "an", "and", "or", "of", "in", "on", "to", "for", "from",
+            "with", "by", "as", "at", "is", "are", "was", "were", "be", "been",
+            "what", "which", "who", "whom", "whose", "when", "where", "why", "how",
+            "did", "does", "do", "this", "that", "these", "those", "it", "its", "their",
+            "his", "her", "he", "she", "they", "them", "there", "then", "next", "step",
+            "asks", "answer", "subgoal", "result", "question", "original",
+        }
+        terms: list[str] = []
+        for raw in re.findall(r"[A-Za-z0-9][A-Za-z0-9'_-]*", text or ""):
+            low = raw.lower().strip("_-")
+            if len(low) < 3 or low in stop:
+                continue
+            terms.append(raw if keep_case else low)
+            if len(terms) >= limit:
+                break
+        return terms
+
+    @staticmethod
+    def _dedupe_terms(terms: list[str]) -> list[str]:
+        out: list[str] = []
+        seen: set[str] = set()
+        for term in terms:
+            cleaned = " ".join(str(term or "").split()).strip(" ,.;:()[]")
+            key = cleaned.lower()
+            if cleaned and key not in seen:
+                seen.add(key)
+                out.append(cleaned)
+        return out
 
     @staticmethod
     def _merge_hits(hits: list[RetrievalHit]) -> list[RetrievalHit]:
