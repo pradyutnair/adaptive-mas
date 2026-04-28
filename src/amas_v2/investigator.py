@@ -61,6 +61,7 @@ class Investigator:
         read_obj, read_tokens = await self._read_evidence(node, hint, merged)
         capsule = self._build_capsule(read_obj, node, retrieved_ids, merged, queries)
         self.last_searches_used = len(queries)
+        self.last_evidence_hits = merged
         return capsule, read_tokens
 
     async def rewrite_query(
@@ -70,7 +71,15 @@ class Investigator:
         previous_query: str,
         previous_answer: str = "",
         previous_justification: str = "",
+        previous_evidence: list[RetrievalHit] | None = None,
     ) -> tuple[str, int]:
+        docs_preview = "No documents retrieved"
+        if previous_evidence:
+            lines = []
+            for h in previous_evidence[:5]:
+                text = self._hit_excerpt(h)
+                lines.append(f"[{h.chunk_id}] {text[:200]}")
+            docs_preview = "\n".join(lines)
         prompt = self._rewrite_template.format(
             sub_question=node.question.strip(),
             expected_answer_type=node.answer_type.value,
@@ -78,6 +87,7 @@ class Investigator:
             previous_query=previous_query,
             previous_answer=previous_answer,
             previous_justification=previous_justification,
+            docs_preview=docs_preview,
         )
         resp = await self.llm.chat(messages=[{"role": "user", "content": prompt}], max_tokens=256)
         parsed = parse_json_object(resp.content)

@@ -1,19 +1,24 @@
 You are an expert query rewriter for information retrieval.
 
 Original Question: {sub_question}
+Expected Answer Type: {expected_answer_type}
 Previous Query: {previous_query}
 Previous Answer: {previous_answer}
 Failure Reason: {previous_justification}
 
+Previously Retrieved Documents:
+{docs_preview}
+
 Instructions:
-1. Analyze why the current query failed to retrieve relevant information
-2. Generate an improved search query using keyword expansion and synonyms
-3. Focus on key entities, concepts, and alternative phrasings
-4. Keep the rewritten query concise but comprehensive
+1. Review the documents that were retrieved above -- they were NOT sufficient to answer the question
+2. Identify what is MISSING from the retrieved documents
+3. Generate an improved search query that targets the missing information
+4. Use different keywords, entity names, synonyms, or alternative phrasings
+5. Keep the rewritten query concise but comprehensive
 
 Output JSON Format:
 {{
-  "query": "improved search query with expanded keywords"
+  "query": "improved search query targeting missing information"
 }}
 
 Generate rewrite:

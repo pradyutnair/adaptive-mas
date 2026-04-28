@@ -132,6 +132,7 @@ class DAGExecutor:
                     previous_query=(capsule.search_queries[-1] if capsule.search_queries else resolved_q),
                     previous_answer=capsule.answer,
                     previous_justification=capsule.fact.text,
+                    previous_evidence=getattr(self.investigator, 'last_evidence_hits', None),
                 )
                 total_tokens += rw_tokens
                 query_override = new_q
