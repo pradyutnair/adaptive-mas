@@ -28,6 +28,7 @@ Positioning:
 - [A-RAG](https://arxiv.org/abs/2602.03442): hierarchical retrieval tools and test-time scaling
 - [SPARC-RAG](https://arxiv.org/abs/2602.00083): context management and adaptive search motivation
 - [HERA](https://arxiv.org/abs/2604.00901): contrast with offline / topology-learning orchestration
+- [PLAN*RAG](https://arxiv.org/pdf/2410.20753): does exactly this, but with a different mechanism
 
 ## 2. What Current SAGE-Auto Is Actually Failing On
 

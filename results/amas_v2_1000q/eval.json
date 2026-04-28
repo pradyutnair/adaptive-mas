@@ -1,0 +1,8 @@
+{
+  "norm_em": 0.186,
+  "token_f1": 0.2834,
+  "contain": 0.329,
+  "n": 1000,
+  "blank": 72,
+  "mean_tokens": 8458.0
+}

@@ -1,0 +1,25 @@
+Given the original question and collected facts from a multi-step investigation, extract the precise final answer.
+
+Return exactly one JSON object, no prose, no code fences:
+{{
+  "answer": "short precise answer",
+  "reasoning": "one sentence explaining how the facts lead to this answer"
+}}
+
+Rules:
+- The answer must directly answer the ORIGINAL question, not an intermediate sub-question.
+- Your answer MUST come from the collected facts below. Never invent or guess.
+- Keep the answer as SHORT as possible: a name, date, number, place, or short phrase.
+- Do not include extra context, explanations, or qualifiers in the answer.
+- If the question asks "when", return only a year unless a specific date is clearly needed.
+- If the question asks "who", return only a person's name without titles.
+- If the question asks "where", return only a place name without state/country qualifiers.
+- If the question asks "how many", return only a bare number.
+- Preserve exact spelling and phrasing from the evidence facts.
+
+Original question: {question}
+
+Collected facts:
+{facts}
+
+Last hop evidence: {last_evidence}

@@ -1,0 +1,46 @@
+{
+  "llm_defaults": {
+    "model": "gpt-4o-mini",
+    "base_url": "https://api.openai.com/v1",
+    "api_key_env": "OPENAI_API_KEY",
+    "temperature": 0.0,
+    "max_tokens": 1024,
+    "enable_thinking": false,
+    "timeout_seconds": 600
+  },
+  "agents": {
+    "planner": {
+      "model": "Qwen/Qwen3-14B",
+      "base_url": "http://localhost:8003/v1",
+      "api_key": "EMPTY",
+      "enable_thinking": true,
+      "max_tokens": 4096,
+      "temperature": 0.6
+    },
+    "investigator": {
+      "model": "gpt-4o-mini",
+      "max_tokens": 1024
+    },
+    "synthesizer": {
+      "model": "gpt-4o-mini",
+      "max_tokens": 512
+    }
+  },
+  "retriever": {
+    "base_url": "http://node408:8003",
+    "top_k": 5,
+    "timeout_seconds": 30,
+    "request_format": "batch"
+  },
+  "pipeline": {
+    "max_subgoals": 4,
+    "max_searches_per_subagent": 3,
+    "max_hop_attempts": 3,
+    "max_review_rounds": 1,
+    "max_evidence_hits": 6,
+    "max_excerpt_chars": 800
+  },
+  "runner": {
+    "concurrency": 8
+  }
+}

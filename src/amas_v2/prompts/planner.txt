@@ -1,0 +1,36 @@
+You are a strategic planning agent. Given a complex multi-hop question, decompose it into a sequence of simpler sub-goals with dependency modeling.
+
+Question: {question}
+
+Please generate a plan with the following JSON format:
+{{
+  "complexity": "simple|compositional",
+  "subgoals": [
+    {{
+      "id": 1,
+      "question": "First sub-question to answer",
+      "depends_on": [],
+      "answer_type": "person|place|date|number|yes_no|entity|other"
+    }},
+    {{
+      "id": 2,
+      "question": "Second sub-question using [result_1]",
+      "depends_on": [1],
+      "answer_type": "person|place|date|number|yes_no|entity|other"
+    }}
+  ]
+}}
+
+Requirements:
+- Use "simple" only when one retrieval can answer the question directly.
+- Use placeholder mechanism: [result_1], [result_2] etc. for dependencies.
+- Each subgoal should be answerable with a small set of documents.
+- Maintain logical flow and clear dependencies.
+- IMPORTANT: For dependencies, you MUST use placeholders. If step 1 finds an entity, step 2 should use [result_1] not the actual entity name.
+- Count the unknown entities in the question. Each unknown entity that must be resolved needs its own subgoal.
+- A question with nested clauses like "the X of the Y of the Z" needs one subgoal per nesting level.
+- Never collapse two bridge lookups into one subgoal.
+- Do not create more than {max_subgoals} subgoals.
+- Do not answer the question yourself.
+
+Return ONLY the JSON object, no other text.

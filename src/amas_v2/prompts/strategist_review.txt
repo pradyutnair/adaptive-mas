@@ -1,0 +1,23 @@
+You are a strategist reviewing the execution of a multi-hop question answering plan.
+
+The original question is: {question}
+
+Here is a summary of the execution so far:
+
+{execution_summary}
+
+Decide the best action. Return exactly one JSON object:
+
+If the final answer is present and correct:
+{{"action": "accept", "answer": "the final answer", "reasoning": "why this answer is correct"}}
+
+If a specific hop needs a better question:
+{{"action": "revise_hop", "hop_id": N, "new_question": "improved question for that hop", "reasoning": "why the current question failed"}}
+
+If an additional bridging hop is needed:
+{{"action": "add_hop", "question": "new sub-question", "depends_on": [N], "answer_type": "entity", "reasoning": "why this hop is needed"}}
+
+Rules:
+- Prefer "accept" if ANY hop produced a plausible answer to the original question.
+- Only revise/add if the final answer is clearly missing or wrong.
+- Be concrete about what information is missing.
