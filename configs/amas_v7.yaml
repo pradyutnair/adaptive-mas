@@ -1,0 +1,46 @@
+# AMAS v7: Simplified analyze prompt + tuned config
+# Best combo: simplified evidence reading + focused retrieval
+
+llm_defaults:
+  model: gpt-4o-mini
+  base_url: https://api.openai.com/v1
+  api_key_env: OPENAI_API_KEY
+  temperature: 0.0
+  max_tokens: 1024
+  enable_thinking: false
+  timeout_seconds: 600
+
+agents:
+  planner:
+    model: Qwen/Qwen3-14B
+    base_url: http://localhost:8003/v1
+    api_key: EMPTY
+    enable_thinking: true
+    max_tokens: 4096
+    temperature: 0.0
+  investigator:
+    model: gpt-4o-mini
+    base_url: https://api.openai.com/v1
+    api_key_env: OPENAI_API_KEY
+    enable_thinking: false
+    max_tokens: 1024
+    temperature: 0.0
+
+retriever:
+  base_url: http://node408:8003
+  top_k: 7
+  timeout_seconds: 30
+
+pipeline:
+  max_subgoals: 4
+  max_hop_attempts: 2
+  max_searches_per_subagent: 2
+  max_review_rounds: 1
+  min_fact_confidence: 0.1
+  max_answer_words: 10
+  max_evidence_hits: 7
+  max_excerpt_chars: 800
+  router_enabled: false
+
+runner:
+  concurrency: 12

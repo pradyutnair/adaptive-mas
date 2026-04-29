@@ -13,6 +13,7 @@ from .llm import LLMClient, parse_json_object
 from .planner import Planner
 from .router import DifficultyRouter, RouterDecision
 from .retriever import Retriever
+from .answer_norm import postprocess_answer
 from .types import AnswerType, EvidenceCapsule, ExecutionPlan, PipelineResult, StepTrace, SubgoalNode
 
 logger = logging.getLogger(__name__)
@@ -134,6 +135,7 @@ class AMASPipeline:
             if action == "accept":
                 answer = str(review_action.get("answer", "")).strip()
                 if answer:
+                    answer = postprocess_answer(question, answer)
                     return self._build_result(
                         question_id=question_id,
                         question=question,
@@ -232,6 +234,48 @@ class AMASPipeline:
                     plan=plan,
                     answer_type=plan.final_answer_type,
                     justification=best.fact.text,
+                )
+
+            # Last resort: try direct investigator on original question
+            logger.info("All DAG hops failed for qid=%s, trying direct fallback", question_id)
+            fallback_capsule, fallback_tokens = await self.investigator.investigate(
+                sub_question=question,
+                expected_answer_type=plan.final_answer_type.value,
+                slot_name="direct_fallback",
+                parent_question=question,
+            )
+            planner_tokens += fallback_tokens
+            exec_result.subagent_tokens += fallback_tokens
+            if fallback_capsule.answer:
+                trace.append(
+                    StepTrace(
+                        step=len(trace) + 1,
+                        action="direct",
+                        sub_question=question,
+                        fact_added=fallback_capsule.fact.slot_filled,
+                        tokens=fallback_tokens,
+                        slot_name="direct_fallback",
+                        route_decision="fallback_direct",
+                        justification_confidence=fallback_capsule.fact.confidence,
+                        metadata={
+                            "answer": fallback_capsule.answer,
+                            "support_ids": fallback_capsule.fact.support_ids,
+                            "node_statuses": exec_result.node_statuses,
+                        },
+                    )
+                )
+                return self._build_result(
+                    question_id=question_id,
+                    question=question,
+                    answer=fallback_capsule.answer,
+                    trace=trace,
+                    planner_tokens=planner_tokens,
+                    exec_result=exec_result,
+                    route_decision="fallback_direct",
+                    route_confidence=plan.confidence,
+                    plan=plan,
+                    answer_type=plan.final_answer_type,
+                    justification=fallback_capsule.fact.text,
                 )
 
             trace.append(
@@ -358,7 +402,7 @@ class AMASPipeline:
         )
         total_tokens = planner_tokens + subagent_tokens
         reasoning_tokens = max(0, total_tokens - capsule.chunk_tokens)
-        answer = capsule.answer or capsule.fact.answer_span
+        answer = postprocess_answer(question, capsule.answer or capsule.fact.answer_span)
         return PipelineResult(
             question_id=question_id,
             question=question,
@@ -431,7 +475,7 @@ class AMASPipeline:
                 },
             ),
         ]
-        answer = capsule.answer or capsule.fact.answer_span
+        answer = postprocess_answer(question, capsule.answer or capsule.fact.answer_span)
         return PipelineResult(
             question_id=question_id,
             question=question,
@@ -481,6 +525,7 @@ class AMASPipeline:
     ) -> PipelineResult:
         total_tokens = planner_tokens + exec_result.subagent_tokens
         reasoning_tokens = max(0, total_tokens - exec_result.chunk_tokens)
+        answer = postprocess_answer(question, answer)
         return PipelineResult(
             question_id=question_id,
             question=question,
@@ -562,8 +607,27 @@ def _best_verified_capsule(
     exec_result: DAGExecutionResult,
     plan: ExecutionPlan,
 ) -> EvidenceCapsule | None:
-    """Find the best verified capsule, preferring later subgoals."""
-    for node in reversed(plan.subgoals):
+    """Find the best verified capsule, strongly preferring the final subgoal.
+    
+    If only intermediate (bridge) capsules are verified but the final hop failed,
+    return None to trigger the direct fallback instead. Bridge entities are usually
+    not the answer to the original question.
+    """
+    # First priority: the final subgoal
+    final_node = plan.subgoals[-1] if plan.subgoals else None
+    if final_node and exec_result.node_statuses.get(final_node.id) == "verified":
+        cap = _capsule_by_subgoal_id(exec_result.capsules, final_node.id)
+        if cap and cap.answer:
+            return cap
+    
+    # If there are only 2 subgoals (bridge + final) and only the bridge is verified,
+    # do NOT return the bridge - it is almost certainly not the final answer.
+    # Let the direct fallback handle it instead.
+    if len(plan.subgoals) == 2:
+        return None
+    
+    # For 3+ subgoals, try the second-to-last (which may be closer to the answer)
+    for node in reversed(plan.subgoals[:-1]):
         if exec_result.node_statuses.get(node.id) == "verified":
             cap = _capsule_by_subgoal_id(exec_result.capsules, node.id)
             if cap and cap.answer:

@@ -66,6 +66,8 @@ class Planner:
                 )
             ]
 
+
+
         valid_ids = {node.id for node in subgoals}
         for node in subgoals:
             node.depends_on = [dep for dep in node.depends_on if dep in valid_ids and dep != node.id]

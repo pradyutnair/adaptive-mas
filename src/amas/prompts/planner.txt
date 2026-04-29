@@ -38,6 +38,7 @@ Requirements:
 - Maintain logical flow and explicit dependencies.
 - Do not create more than {max_subgoals} subgoals.
 - Do not answer the question.
+- Use the MINIMUM number of subgoals needed. Do not add extra subgoals for "verification" or "context".
 
 Rationale requirements (critical):
 - Each rationale MUST state what the NEXT subgoal will do with this answer.
@@ -55,31 +56,5 @@ Bad pattern:
 - asking for background that does not fill a later slot
 - asking for the final date/number before the bridge entity is known
 - repeating the original question as multiple subgoals
-
-Example:
-Question: When was Lady Godiva's birthplace abolished?
-Output:
-{{
-  "complexity": "compositional",
-  "final_answer_type": "date",
-  "confidence": 0.8,
-  "reasoning": "The birthplace (a political entity that can be abolished) must be identified before its abolition date.",
-  "subgoals": [
-    {{
-      "id": 1,
-      "question": "What political entity (kingdom, earldom, or polity) was Lady Godiva's birthplace?",
-      "depends_on": [],
-      "answer_type": "entity",
-      "rationale": "Resolves the political entity. The next step will ask when it was abolished, so the answer must be something that CAN be abolished (not a city)."
-    }},
-    {{
-      "id": 2,
-      "question": "When was [result_1] abolished?",
-      "depends_on": [1],
-      "answer_type": "date",
-      "rationale": "Asks for the final target: the abolition date."
-    }}
-  ]
-}}
 
 Question: {question}

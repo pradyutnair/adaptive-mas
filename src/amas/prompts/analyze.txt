@@ -5,7 +5,7 @@ Return exactly one JSON object, no prose, no code fences:
 {{
   "status": "sufficient|insufficient",
   "answer_span": "minimal exact span",
-  "justification": "one short sentence grounded in the cited retrieval evidence",
+  "justification": "one short sentence grounded in the cited evidence",
   "confidence": 0.0,
   "support_ids": ["chunk_id"],
   "failure_reason": "short reason when evidence is insufficient"
@@ -13,33 +13,15 @@ Return exactly one JSON object, no prose, no code fences:
 
 Rules:
 - Use ONLY the provided retrieval evidence.
-- `answer_span` must be a short exact span copied from the retrieval evidence.
-- Use the FULL span needed by the question. Preserve exact dates, acronyms, and full names.
-- Answer the sub-question exactly, not a bridge entity unless the sub-question itself asks for that bridge.
-- Cite only retrieved IDs that directly support the answer.
-- If the evidence supports only a related entity, a broader place, a narrower place, or an adjacent fact, return empty `answer_span`.
-- Enforce answer granularity. If expected_answer_type is `place` and the question or dependency hint specifies state, peak, city, country, river delta, political entity, or mountain range, `answer_span` MUST match that exact granularity. Return insufficient rather than a wrong-granularity place.
-- If the question asks for a state, do not return a city; if it asks for a peak, do not return a mountain range; if it asks for a political entity, do not return only a settlement inside it.
-- If multiple plausible answers appear, use the dependency hint to disambiguate: the hint tells you what the NEXT step will do with your answer. Pick the entity that makes sense for that downstream operation.
-- If the question asks for a date or number, return only the date or number span, not surrounding words.
-- The justification must state why the cited documents support this exact answer, not just why they are relevant.
-- If evidence is insufficient, set `status` to `insufficient`, return empty `answer_span`, confidence 0.0, empty `support_ids`, and a concrete `failure_reason`.
-- If evidence is sufficient, set `status` to `sufficient`.
+- `answer_span` must be a short exact span (1-8 words) copied from or directly supported by the evidence.
+- Answer the sub-question exactly. If it asks for a year, give just the year. If it asks for a person, give just the name.
+- Cite the chunk_id(s) that support your answer in support_ids.
+- Use the dependency hint to disambiguate: if the hint says what the next step will do with your answer, pick the entity that makes sense for that downstream operation.
+- If the question asks for a political entity that can be "abolished", return the polity (kingdom, earldom), not a city.
+- If the question asks for a geographic feature, return the specific feature, not the surrounding region.
+- If the evidence contains the answer but not with perfect certainty, STILL return it with lower confidence. Only return "insufficient" when the evidence truly does not address the question at all.
 - Never output multiple candidate answers.
-
-Disambiguation examples:
-- Hint says "next step asks when it was abolished": prefer a political entity (earldom, kingdom) over a city.
-- Hint says "next step asks where it empties": prefer a specific geographic feature (river delta, estuary) over a general body of water.
-- Hint says "next step asks about their spouse": prefer the person, not their work or title.
-- Question asks for a state: return `Arizona`, not `Nogales, Arizona`.
-- Question asks for a peak: return `Thaba Putsoa`, not `Drakensberg mountains in Lesotho`.
-- Hint says "political entity" or "when it was abolished": return the polity, not a modern city inside it.
-
-Format examples:
-- Good: question asks for a year, answer_span is `1986`
-- Bad: question asks for a year, answer_span is `published by New Directions Publishing in 1986`
-- Good: question asks for a county, answer_span is `Rockland County`
-- Bad: question asks for a county, answer_span is `Montebello, New York`
+- If evidence is truly insufficient, set status to "insufficient", empty answer_span, confidence 0.0, empty support_ids, and a concrete failure_reason.
 
 Sub-question: {sub_question}
 Expected answer type: {expected_answer_type}

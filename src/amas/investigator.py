@@ -192,13 +192,13 @@ class Investigator:
             confidence_self = 0.0
             support_ids = []
 
-        # Keep this gate deliberately simple. The investigator may reason over
-        # ambiguous evidence; we only require a non-empty answer, a grounded
-        # justification, and a cited retrieved id. Do not reject by answer type
-        # or span length here.
-        confidence_retrieval = 1.0 if support_ids else 0.0
-        slot_filled = bool(answer and justification and support_ids)
-        if explicitly_insufficient and not slot_filled:
+        # Gate: accept answer if we have non-empty answer + justification.
+        # Support IDs boost confidence but are not strictly required -
+        # the LLM may cite evidence that helps but with slightly different IDs.
+        confidence_retrieval = 1.0 if support_ids else 0.3
+        slot_filled = bool(answer and justification)
+        if explicitly_insufficient and not answer:
+            slot_filled = False
             confidence_self = 0.0
         confidence = 0.5 * confidence_retrieval + 0.4 * confidence_self + 0.1 * float(slot_filled)
         if not slot_filled:
@@ -311,11 +311,22 @@ class Investigator:
         variants: list[str] = []
         cls._append_unique_query(variants, base)
 
-        context_terms = cls._context_terms(parent_question or hint, limit=10)
-        entity_query = cls._entity_focused_query(base, context_terms)
+        # Extract only proper nouns and key entities from the sub-question itself
+        # Do NOT inject parent_question context into queries - it adds noise
+        entity_query = cls._entity_focused_query(base, "")
         cls._append_unique_query(variants, entity_query)
 
-        dense_query = cls._keyword_dense_query(base, context_terms)
+        # For the third variant, use a minimal keyword-dense version
+        # Only add hint entities if they are concrete resolved answers (short strings)
+        hint_entities = ""
+        if hint:
+            # Extract only short resolved answer strings from hint
+            # e.g. "Subgoal 1 answer: New Directions Publishing. ..." -> "New Directions Publishing"
+            import re as _re
+            answers = _re.findall(r"answer:\s*([^.]{2,40})\.", hint)
+            if answers:
+                hint_entities = " ".join(answers[:2])
+        dense_query = cls._keyword_dense_query(base, hint_entities)
         cls._append_unique_query(variants, dense_query)
         return variants or [base]
 
