@@ -1,1 +1,0 @@
-scripts/opera_baseline_monitor.py --hours 12 --interval-minutes 15 --stall-minutes 45

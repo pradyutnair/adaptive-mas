@@ -1,0 +1,2099 @@
+2026-04-29 12:57:20,695 - INFO - 
+==================================================
+Processing question: What city is located in the county containing Qiantong?
+==================================================
+2026-04-29 12:57:20,695 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 12:57:32,968 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:57:32,982 - INFO - Generated plan: 2 sub-questions
+2026-04-29 12:57:32,983 - INFO - 
+Processing sub-question 1: What county is Qiantong located in?
+2026-04-29 12:57:33,061 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 12:57:40,018 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:57:40,020 - INFO - Analysis result: status=yes
+2026-04-29 12:57:40,020 - INFO - ✅ Sub-question 1 succeeded: Ninghai County
+2026-04-29 12:57:40,020 - INFO - 
+Processing sub-question 2: What cities are located in Ninghai County?
+2026-04-29 12:57:40,095 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 12:58:04,987 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:58:04,988 - INFO - Analysis result: status=no
+2026-04-29 12:58:04,988 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 12:58:04,988 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 12:58:15,046 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:58:15,047 - INFO - Rewrite strategy: Expanded search terms to include administrative divisions synonymous with 'cities' (towns, municipalities, urban areas) while retaining the key entity 'Ninghai County' for precision.
+2026-04-29 12:58:15,118 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 12:58:39,031 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:58:39,032 - INFO - Analysis result: status=no
+2026-04-29 12:58:39,033 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 12:58:39,033 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 12:58:56,784 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:58:56,785 - INFO - Rewrite strategy: Expanded 'cities' to include synonyms like towns, municipalities, and urban areas to account for administrative division terminology variations. Retained 'Ninghai County' as the key entity.
+2026-04-29 12:58:56,861 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 12:59:19,779 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:59:19,780 - INFO - Analysis result: status=no
+2026-04-29 12:59:19,781 - WARNING - ❌ Sub-question 2 failed: The retrieved documents mention Qiantong as a town in Ninghai County (chunk_272), but the question specifically asks about 'cities.' The documents do not provide information about any cities within Ninghai County, only a town. Since 'town' and 'city' are distinct administrative classifications, the documents lack sufficient information to answer the question about cities.
+2026-04-29 12:59:19,781 - INFO - 
+==================================================
+2026-04-29 12:59:19,781 - INFO - Final answer: Ninghai County
+2026-04-29 12:59:19,781 - INFO - Total time: 119.09 seconds
+2026-04-29 12:59:19,781 - INFO - Retrieval rounds: 4
+2026-04-29 12:59:19,781 - INFO - Execution traces: 7
+2026-04-29 12:59:19,781 - INFO - ==================================================
+
+2026-04-29 12:59:19,781 - INFO - 
+==================================================
+Processing question: A country's military branch, the equivalent of which in the US contains the Air Defense Artillery, was unprepared for the invasion of the country occupied by the Nazi's. When was the word "Slavs" used in the national anthem of the unprepared country?
+==================================================
+2026-04-29 12:59:19,781 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 12:59:38,763 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 12:59:38,765 - INFO - Generated plan: 2 sub-questions
+2026-04-29 12:59:38,765 - INFO - 
+Processing sub-question 1: Identify the country whose military branch equivalent to the US Air Defense Artillery was unprepared for the Nazi invasion
+2026-04-29 12:59:38,839 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:00:01,000 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:00:01,001 - INFO - Analysis result: status=no
+2026-04-29 13:00:01,001 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:00:01,001 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:00:18,564 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:00:18,565 - INFO - Rewrite strategy: Expanded temporal context (WWII) and conflict specifics (Nazi invasion) while incorporating synonyms for 'military branch' (air defense artillery, anti-aircraft units) and 'unprepared' (inadequate, unready).
+2026-04-29 13:00:18,640 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:00:44,260 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:00:44,261 - INFO - Analysis result: status=yes
+2026-04-29 13:00:44,261 - INFO - ✅ Sub-question 1 succeeded: South Korea (Republic of Korea)
+2026-04-29 13:00:44,262 - INFO - 
+Processing sub-question 2: When was the word 'Slavs' used in the national anthem of South Korea (Republic of Korea)?
+2026-04-29 13:00:44,333 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:01:00,705 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:01:00,707 - INFO - Analysis result: status=no
+2026-04-29 13:01:00,707 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:01:00,707 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:01:14,108 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:01:14,109 - INFO - Rewrite strategy: Expanded keywords to include the anthem's name ('Aegukga'), related concepts (Pan-Slavism, Slavic terms), and alternative phrasings while maintaining focus on the core entities
+2026-04-29 13:01:14,191 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:01:27,803 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:01:27,805 - INFO - Analysis result: status=no
+2026-04-29 13:01:27,805 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:01:27,805 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:01:41,457 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:01:41,458 - INFO - Rewrite strategy: Expanded keywords to include related terms (Slavic, Pan-Slavism) and alternative phrasings (Aegukga, Korean anthem) while maintaining focus on the national anthem's historical context and lyrics
+2026-04-29 13:01:41,534 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:01:55,757 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:01:55,758 - INFO - Analysis result: status=no
+2026-04-29 13:01:55,758 - WARNING - ❌ Sub-question 2 failed: The retrieved documents do not mention the national anthem of South Korea (Republic of Korea) or its lyrics. While the documents discuss the national anthems of other countries (e.g., India, Greece, Trinidad and Tobago), there is no information about South Korea's anthem or the use of the word 'Slavs' in it. Thus, the question cannot be answered with the provided data.
+2026-04-29 13:01:55,758 - INFO - 
+==================================================
+2026-04-29 13:01:55,758 - INFO - Final answer: South Korea (Republic of Korea)
+2026-04-29 13:01:55,758 - INFO - Total time: 155.98 seconds
+2026-04-29 13:01:55,758 - INFO - Retrieval rounds: 5
+2026-04-29 13:01:55,758 - INFO - Execution traces: 9
+2026-04-29 13:01:55,758 - INFO - ==================================================
+
+2026-04-29 13:01:55,759 - INFO - 
+==================================================
+Processing question: What award was received by the person who authored Missing Person?
+==================================================
+2026-04-29 13:01:55,759 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:02:06,467 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:02:06,469 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:02:06,469 - INFO - 
+Processing sub-question 1: Who authored Missing Person?
+2026-04-29 13:02:06,535 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:02:16,790 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:02:16,791 - INFO - Analysis result: status=yes
+2026-04-29 13:02:16,791 - INFO - ✅ Sub-question 1 succeeded: Patrick Modiano
+2026-04-29 13:02:16,791 - INFO - 
+Processing sub-question 2: What award did Patrick Modiano receive?
+2026-04-29 13:02:16,864 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:02:31,512 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:02:31,513 - INFO - Analysis result: status=yes
+2026-04-29 13:02:31,513 - INFO - ✅ Sub-question 2 succeeded: Patrick Modiano received the 2014 Nobel Prize in Literature, the 2012 Austrian State Prize for European Literature, the 2010 Prix Mondial Cino del Duca from the Institut de France for lifetime achievement, the 1978 Prix Goncourt for 'Rue des Boutiques Obscures,' and the 1972 Grand Prix du Roman de l'Académie Française for 'Les Boulevards de Ceinture.'
+2026-04-29 13:02:31,513 - INFO - 
+==================================================
+2026-04-29 13:02:31,513 - INFO - Final answer: Patrick Modiano received the 2014 Nobel Prize in Literature, the 2012 Austrian State Prize for European Literature, the 2010 Prix Mondial Cino del Duca from the Institut de France for lifetime achievement, the 1978 Prix Goncourt for 'Rue des Boutiques Obscures,' and the 1972 Grand Prix du Roman de l'Académie Française for 'Les Boulevards de Ceinture.'
+2026-04-29 13:02:31,513 - INFO - Total time: 35.75 seconds
+2026-04-29 13:02:31,513 - INFO - Retrieval rounds: 2
+2026-04-29 13:02:31,514 - INFO - Execution traces: 3
+2026-04-29 13:02:31,514 - INFO - ==================================================
+
+2026-04-29 13:02:31,514 - INFO - 
+==================================================
+Processing question: What does the abbreviated name of the organization that includes the Scottish Football Association as a member, stand for?
+==================================================
+2026-04-29 13:02:31,514 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:02:42,146 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:02:42,148 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:02:42,148 - INFO - 
+Processing sub-question 1: What is the name of the organization that includes the Scottish Football Association as a member?
+2026-04-29 13:02:42,233 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:02:57,698 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:02:57,700 - INFO - Analysis result: status=yes
+2026-04-29 13:02:57,700 - INFO - ✅ Sub-question 1 succeeded: FIFA
+2026-04-29 13:02:57,700 - INFO - 
+Processing sub-question 2: What does the abbreviation of FIFA stand for?
+2026-04-29 13:02:57,771 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:03:06,084 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:03:06,085 - INFO - Analysis result: status=yes
+2026-04-29 13:03:06,085 - INFO - ✅ Sub-question 2 succeeded: FIFA stands for the International Federation of Association Football.
+2026-04-29 13:03:06,085 - INFO - 
+==================================================
+2026-04-29 13:03:06,085 - INFO - Final answer: FIFA stands for the International Federation of Association Football.
+2026-04-29 13:03:06,085 - INFO - Total time: 34.57 seconds
+2026-04-29 13:03:06,085 - INFO - Retrieval rounds: 2
+2026-04-29 13:03:06,085 - INFO - Execution traces: 3
+2026-04-29 13:03:06,085 - INFO - ==================================================
+
+2026-04-29 13:03:06,085 - INFO - 
+==================================================
+Processing question: How many students attend the school that employs Roberto Andorno?
+==================================================
+2026-04-29 13:03:06,085 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:03:16,313 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:03:16,314 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:03:16,315 - INFO - 
+Processing sub-question 1: Who is Roberto Andorno employed by?
+2026-04-29 13:03:16,380 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:03:28,074 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:03:28,075 - INFO - Analysis result: status=yes
+2026-04-29 13:03:28,075 - INFO - ✅ Sub-question 1 succeeded: Roberto Andorno is employed by the University of Zurich (Switzerland) as an associate professor at the Faculty of Law and a research fellow at the university's Institute of Biomedical Ethics and Medical History.
+2026-04-29 13:03:28,076 - INFO - 
+Processing sub-question 2: How many students attend Roberto Andorno is employed by the University of Zurich (Switzerland) as an associate professor at the Faculty of Law and a research fellow at the university's Institute of Biomedical Ethics and Medical History.?
+2026-04-29 13:03:28,179 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:03:43,337 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:03:43,338 - INFO - Analysis result: status=yes
+2026-04-29 13:03:43,338 - INFO - ✅ Sub-question 2 succeeded: 25,000
+2026-04-29 13:03:43,338 - INFO - 
+==================================================
+2026-04-29 13:03:43,338 - INFO - Final answer: 25,000
+2026-04-29 13:03:43,338 - INFO - Total time: 37.25 seconds
+2026-04-29 13:03:43,338 - INFO - Retrieval rounds: 2
+2026-04-29 13:03:43,338 - INFO - Execution traces: 3
+2026-04-29 13:03:43,338 - INFO - ==================================================
+
+2026-04-29 13:03:43,338 - INFO - 
+==================================================
+Processing question: The person whom Sikyona is named after is part of what?
+==================================================
+2026-04-29 13:03:43,339 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:03:58,057 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:03:58,058 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:03:58,058 - INFO - 
+Processing sub-question 1: Who is the person that Sikyona is named after?
+2026-04-29 13:03:58,142 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:04:10,302 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:04:10,303 - INFO - Analysis result: status=yes
+2026-04-29 13:04:10,303 - INFO - ✅ Sub-question 1 succeeded: Sikyona is named after the ancient city of Sicyon.
+2026-04-29 13:04:10,303 - INFO - 
+Processing sub-question 2: What group or entity is Sikyona is named after the ancient city of Sicyon. part of?
+2026-04-29 13:04:10,387 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:04:26,612 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:04:26,613 - INFO - Analysis result: status=yes
+2026-04-29 13:04:26,613 - INFO - ✅ Sub-question 2 succeeded: Sikyona is part of the Corinthia region in Greece.
+2026-04-29 13:04:26,613 - INFO - 
+==================================================
+2026-04-29 13:04:26,613 - INFO - Final answer: Sikyona is part of the Corinthia region in Greece.
+2026-04-29 13:04:26,613 - INFO - Total time: 43.27 seconds
+2026-04-29 13:04:26,613 - INFO - Retrieval rounds: 2
+2026-04-29 13:04:26,613 - INFO - Execution traces: 3
+2026-04-29 13:04:26,613 - INFO - ==================================================
+
+2026-04-29 13:04:26,614 - INFO - 
+==================================================
+Processing question: Who wrote the fictional work Doctor Fate exists in?
+==================================================
+2026-04-29 13:04:26,614 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:04:39,981 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:04:39,982 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:04:39,982 - INFO - 
+Processing sub-question 1: What fictional work does Doctor Fate exist in?
+2026-04-29 13:04:40,050 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:04:51,928 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:04:51,929 - INFO - Analysis result: status=yes
+2026-04-29 13:04:51,929 - INFO - ✅ Sub-question 1 succeeded: Smallville
+2026-04-29 13:04:51,929 - INFO - 
+Processing sub-question 2: Who wrote Smallville?
+2026-04-29 13:04:52,021 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:05:03,742 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:05:03,743 - INFO - Analysis result: status=yes
+2026-04-29 13:05:03,743 - INFO - ✅ Sub-question 2 succeeded: Alfred Gough and Miles Millar
+2026-04-29 13:05:03,743 - INFO - 
+==================================================
+2026-04-29 13:05:03,743 - INFO - Final answer: Alfred Gough and Miles Millar
+2026-04-29 13:05:03,743 - INFO - Total time: 37.13 seconds
+2026-04-29 13:05:03,743 - INFO - Retrieval rounds: 2
+2026-04-29 13:05:03,743 - INFO - Execution traces: 3
+2026-04-29 13:05:03,743 - INFO - ==================================================
+
+2026-04-29 13:05:03,744 - INFO - 
+==================================================
+Processing question: The 2010 study found that what modern population is most closely related to the group that represents at least 70% of Jews worldwide?
+==================================================
+2026-04-29 13:05:03,744 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:05:14,866 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:05:14,867 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:05:14,867 - INFO - 
+Processing sub-question 1: What group constitutes at least 70% of the global Jewish population?
+2026-04-29 13:05:14,944 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:05:31,977 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:05:31,978 - INFO - Analysis result: status=yes
+2026-04-29 13:05:31,979 - INFO - ✅ Sub-question 1 succeeded: Ashkenazi Jews
+2026-04-29 13:05:31,979 - INFO - 
+Processing sub-question 2: Which modern population is most closely related to Ashkenazi Jews based on the 2010 study?
+2026-04-29 13:05:32,056 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:05:45,294 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:05:45,295 - INFO - Analysis result: status=yes
+2026-04-29 13:05:45,295 - INFO - ✅ Sub-question 2 succeeded: Modern-day Italians
+2026-04-29 13:05:45,295 - INFO - 
+==================================================
+2026-04-29 13:05:45,296 - INFO - Final answer: Modern-day Italians
+2026-04-29 13:05:45,296 - INFO - Total time: 41.55 seconds
+2026-04-29 13:05:45,296 - INFO - Retrieval rounds: 2
+2026-04-29 13:05:45,296 - INFO - Execution traces: 3
+2026-04-29 13:05:45,296 - INFO - ==================================================
+
+2026-04-29 13:05:45,296 - INFO - 
+==================================================
+Processing question: When did the party who holds the majority in the House of Representatives, take control of the political body that the President calls on for support in his USAF appointments?
+==================================================
+2026-04-29 13:05:45,296 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:06:36,458 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:06:36,460 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:06:36,460 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:06:36,523 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:06:44,903 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:06:44,904 - INFO - Analysis result: status=no
+2026-04-29 13:06:44,904 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:06:44,904 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:07:10,444 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:07:10,445 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:07:10,517 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:07:19,464 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:07:19,465 - INFO - Analysis result: status=no
+2026-04-29 13:07:19,465 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:07:19,465 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:07:45,000 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:07:45,002 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:07:45,080 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:07:52,694 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:07:52,695 - INFO - Analysis result: status=no
+2026-04-29 13:07:52,695 - WARNING - ❌ Sub-question 1 failed: The sub-question is missing or not properly specified. The retrieved documents contain diverse information across multiple topics (e.g., USB specifications, historical events, fictional characters), but without a clear, specific question, it is impossible to determine which information to extract or analyze. A well-defined question is required to proceed.
+2026-04-29 13:07:52,696 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:07:52,696 - INFO - 
+==================================================
+2026-04-29 13:07:52,696 - INFO - Final answer: Unable to find answer
+2026-04-29 13:07:52,696 - INFO - Total time: 127.40 seconds
+2026-04-29 13:07:52,696 - INFO - Retrieval rounds: 3
+2026-04-29 13:07:52,696 - INFO - Execution traces: 6
+2026-04-29 13:07:52,696 - INFO - ==================================================
+
+2026-04-29 13:07:52,696 - INFO - 
+==================================================
+Processing question: Kiwil's birth country participated in a Commission of Truth and Friendship. Who is the president of the other country that participated?
+==================================================
+2026-04-29 13:07:52,696 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:08:43,860 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:08:43,861 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:08:43,861 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:08:43,939 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:08:51,486 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:08:51,487 - INFO - Analysis result: status=no
+2026-04-29 13:08:51,487 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:08:51,487 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:09:15,718 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:09:15,719 - INFO - Rewrite strategy: Expanded keywords with synonyms (e.g., 'causes' → 'factors', 'events' → 'developments') and focused on key entities (French Revolution, social/political/economic aspects) to narrow scope.
+2026-04-29 13:09:15,794 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:09:29,650 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:09:29,651 - INFO - Analysis result: status=no
+2026-04-29 13:09:29,651 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:09:29,651 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:09:43,325 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:09:43,326 - INFO - Rewrite strategy: Expanded the query by incorporating core constitutional law concepts, historical context terms, and specific amendments while maintaining focus on legal analysis
+2026-04-29 13:09:43,407 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:09:53,839 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:09:53,840 - INFO - Analysis result: status=no
+2026-04-29 13:09:53,840 - WARNING - ❌ Sub-question 1 failed: The sub-question 'First sub-question to answer' is not specified or provided, making it impossible to determine what information is required. Without knowing the actual question, analysis of the retrieved documents cannot be performed.
+2026-04-29 13:09:53,840 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:09:53,840 - INFO - 
+==================================================
+2026-04-29 13:09:53,841 - INFO - Final answer: Unable to find answer
+2026-04-29 13:09:53,841 - INFO - Total time: 121.14 seconds
+2026-04-29 13:09:53,841 - INFO - Retrieval rounds: 3
+2026-04-29 13:09:53,841 - INFO - Execution traces: 6
+2026-04-29 13:09:53,841 - INFO - ==================================================
+
+2026-04-29 13:09:53,841 - INFO - 
+==================================================
+Processing question: Who was the mother of the person who found the sacred writings that became the Book of Mormon?
+==================================================
+2026-04-29 13:09:53,841 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:10:03,866 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:10:03,867 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:10:03,867 - INFO - 
+Processing sub-question 1: Who found the sacred writings that became the Book of Mormon?
+2026-04-29 13:10:03,943 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:10:24,281 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:10:24,282 - INFO - Analysis result: status=yes
+2026-04-29 13:10:24,282 - INFO - ✅ Sub-question 1 succeeded: Joseph Smith
+2026-04-29 13:10:24,282 - INFO - 
+Processing sub-question 2: Who was the mother of Joseph Smith?
+2026-04-29 13:10:24,354 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:10:36,184 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:10:36,185 - INFO - Analysis result: status=yes
+2026-04-29 13:10:36,185 - INFO - ✅ Sub-question 2 succeeded: Lucy Mack Smith
+2026-04-29 13:10:36,185 - INFO - 
+==================================================
+2026-04-29 13:10:36,185 - INFO - Final answer: Lucy Mack Smith
+2026-04-29 13:10:36,185 - INFO - Total time: 42.34 seconds
+2026-04-29 13:10:36,185 - INFO - Retrieval rounds: 2
+2026-04-29 13:10:36,186 - INFO - Execution traces: 3
+2026-04-29 13:10:36,186 - INFO - ==================================================
+
+2026-04-29 13:10:36,186 - INFO - 
+==================================================
+Processing question: Between which years was the war with the person who suffered a great amount of losses battling the Roman army?
+==================================================
+2026-04-29 13:10:36,186 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:10:48,392 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:10:48,393 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:10:48,393 - INFO - 
+Processing sub-question 1: Who was the person who suffered a great amount of losses battling the Roman army?
+2026-04-29 13:10:48,459 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:11:19,949 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:11:19,950 - INFO - Analysis result: status=yes
+2026-04-29 13:11:19,950 - INFO - ✅ Sub-question 1 succeeded: King Pyrrhus of Epirus
+2026-04-29 13:11:19,950 - INFO - 
+Processing sub-question 2: Between which years was the war involving King Pyrrhus of Epirus?
+2026-04-29 13:11:20,025 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:11:35,244 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:11:35,245 - INFO - Analysis result: status=yes
+2026-04-29 13:11:35,245 - INFO - ✅ Sub-question 2 succeeded: 280–279 BC
+2026-04-29 13:11:35,245 - INFO - 
+==================================================
+2026-04-29 13:11:35,245 - INFO - Final answer: 280–279 BC
+2026-04-29 13:11:35,245 - INFO - Total time: 59.06 seconds
+2026-04-29 13:11:35,245 - INFO - Retrieval rounds: 2
+2026-04-29 13:11:35,245 - INFO - Execution traces: 3
+2026-04-29 13:11:35,245 - INFO - ==================================================
+
+2026-04-29 13:11:35,246 - INFO - 
+==================================================
+Processing question: What was the percentage that the Dow Jones fell when the US had the highest unemployment rate?
+==================================================
+2026-04-29 13:11:35,246 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:12:06,626 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:12:06,627 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:12:06,627 - INFO - 
+Processing sub-question 1: What was the highest unemployment rate in the United States history?
+2026-04-29 13:12:06,697 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:12:26,825 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:12:26,826 - INFO - Analysis result: status=yes
+2026-04-29 13:12:26,826 - INFO - ✅ Sub-question 1 succeeded: 25%
+2026-04-29 13:12:26,826 - INFO - 
+Processing sub-question 2: What was the percentage that the Dow Jones fell during the period when the US had 25% unemployment rate?
+2026-04-29 13:12:26,896 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:12:44,841 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:12:44,842 - INFO - Analysis result: status=no
+2026-04-29 13:12:44,842 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:12:44,842 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:13:01,221 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:13:01,222 - INFO - Rewrite strategy: Expanded keywords to include synonyms (e.g., 'decline' instead of 'fell'), historical context ('Great Depression'), and related concepts ('correlation') to better match documents discussing economic crises and unemployment impacts
+2026-04-29 13:13:01,304 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:13:18,145 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:13:18,146 - INFO - Analysis result: status=no
+2026-04-29 13:13:18,146 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:13:18,146 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:13:33,012 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:13:33,013 - INFO - Rewrite strategy: Expanded temporal context (Great Depression era) and added economic crisis terminology to bridge unemployment and stock market data, while explicitly linking the 25% unemployment benchmark
+2026-04-29 13:13:33,086 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:13:49,693 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:13:49,695 - INFO - Analysis result: status=no
+2026-04-29 13:13:49,695 - WARNING - ❌ Sub-question 2 failed: The documents mention that the U.S. unemployment rate reached 25% during the Great Depression but do not specify the Dow Jones Industrial Average's percentage drop during that exact period. While the 1987 'Black Monday' crash is cited with a 22.61% decline, this is unrelated to the 25% unemployment rate. The retrieved texts lack direct correlation between the 25% unemployment period and Dow Jones跌幅, making it impossible to answer the question with the provided data.
+2026-04-29 13:13:49,695 - INFO - 
+==================================================
+2026-04-29 13:13:49,695 - INFO - Final answer: 25%
+2026-04-29 13:13:49,695 - INFO - Total time: 134.45 seconds
+2026-04-29 13:13:49,695 - INFO - Retrieval rounds: 4
+2026-04-29 13:13:49,695 - INFO - Execution traces: 7
+2026-04-29 13:13:49,695 - INFO - ==================================================
+
+2026-04-29 13:13:49,695 - INFO - 
+==================================================
+Processing question: What is the highest city in the state where Dell ranks sixth by revenue?
+==================================================
+2026-04-29 13:13:49,695 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:14:40,954 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:14:40,955 - INFO - Generated plan: 1 sub-questions
+2026-04-29 13:14:40,955 - INFO - 
+Processing sub-question 1: What is the highest city in the state where Dell ranks sixth by revenue?
+2026-04-29 13:14:41,043 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:14:56,249 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:14:56,250 - INFO - Analysis result: status=yes
+2026-04-29 13:14:56,250 - INFO - ✅ Sub-question 1 succeeded: Fort Davis
+2026-04-29 13:14:56,250 - INFO - 
+==================================================
+2026-04-29 13:14:56,250 - INFO - Final answer: Fort Davis
+2026-04-29 13:14:56,250 - INFO - Total time: 66.55 seconds
+2026-04-29 13:14:56,250 - INFO - Retrieval rounds: 1
+2026-04-29 13:14:56,250 - INFO - Execution traces: 2
+2026-04-29 13:14:56,250 - INFO - ==================================================
+
+2026-04-29 13:14:56,250 - INFO - 
+==================================================
+Processing question: When was the most recent Bicycle Friendly Community Award given to the city where the company Study in Brown's record label is part of is headquartered?
+==================================================
+2026-04-29 13:14:56,250 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:15:47,434 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:15:47,436 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:15:47,436 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:15:47,495 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:15:55,075 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:15:55,076 - INFO - Analysis result: status=no
+2026-04-29 13:15:55,076 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:15:55,076 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:16:14,026 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:16:14,028 - INFO - Rewrite strategy: Expanded the vague query by adding specific aspects (causes, consequences) and related concepts (factors, effects, context, implications) to create targeted search parameters
+2026-04-29 13:16:14,107 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:16:24,738 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:16:24,739 - INFO - Analysis result: status=no
+2026-04-29 13:16:24,739 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:16:24,739 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:16:50,190 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:16:50,192 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:16:50,266 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:16:57,959 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:16:57,960 - INFO - Analysis result: status=no
+2026-04-29 13:16:57,960 - WARNING - ❌ Sub-question 1 failed: The sub-question is missing or not properly specified. Without knowing the exact question to answer, it is impossible to determine which information from the retrieved documents is relevant. The documents contain diverse topics (e.g., USB specifications, historical events, fictional characters), but without a clear query, analysis cannot proceed.
+2026-04-29 13:16:57,960 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:16:57,960 - INFO - 
+==================================================
+2026-04-29 13:16:57,960 - INFO - Final answer: Unable to find answer
+2026-04-29 13:16:57,960 - INFO - Total time: 121.71 seconds
+2026-04-29 13:16:57,960 - INFO - Retrieval rounds: 3
+2026-04-29 13:16:57,960 - INFO - Execution traces: 6
+2026-04-29 13:16:57,960 - INFO - ==================================================
+
+2026-04-29 13:16:57,961 - INFO - 
+==================================================
+Processing question: What is the dynasty the oldest wooden buildings in China be dated to an example of?
+==================================================
+2026-04-29 13:16:57,961 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:17:43,315 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:17:43,316 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:17:43,317 - INFO - 
+Processing sub-question 1: What are the oldest wooden buildings in China?
+2026-04-29 13:17:43,406 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:17:57,318 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:17:57,319 - INFO - Analysis result: status=yes
+2026-04-29 13:17:57,319 - INFO - ✅ Sub-question 1 succeeded: The oldest surviving wooden halls in China date to the Tang Dynasty (618–907 AD). During the Han Dynasty (202 BC–220 AD), timber was the chief building material, but due to rapid decay, only scattered ceramic roof tiles remain from that era. The Tang Dynasty structures are the earliest surviving examples of wooden architecture in China.
+2026-04-29 13:17:57,319 - INFO - 
+Processing sub-question 2: What dynasty are The oldest surviving wooden halls in China date to the Tang Dynasty (618–907 AD). During the Han Dynasty (202 BC–220 AD), timber was the chief building material, but due to rapid decay, only scattered ceramic roof tiles remain from that era. The Tang Dynasty structures are the earliest surviving examples of wooden architecture in China. dated to?
+2026-04-29 13:17:57,416 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:18:10,200 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:18:10,201 - INFO - Analysis result: status=yes
+2026-04-29 13:18:10,202 - INFO - ✅ Sub-question 2 succeeded: The Tang Dynasty
+2026-04-29 13:18:10,202 - INFO - 
+==================================================
+2026-04-29 13:18:10,202 - INFO - Final answer: The Tang Dynasty
+2026-04-29 13:18:10,202 - INFO - Total time: 72.24 seconds
+2026-04-29 13:18:10,202 - INFO - Retrieval rounds: 2
+2026-04-29 13:18:10,202 - INFO - Execution traces: 3
+2026-04-29 13:18:10,202 - INFO - ==================================================
+
+2026-04-29 13:18:10,202 - INFO - 
+==================================================
+Processing question: Along with the Closer performer, what notable pop artist started out his career on adult contemporary radio?
+==================================================
+2026-04-29 13:18:10,202 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:19:01,459 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:19:01,461 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:19:01,461 - INFO - 
+Processing sub-question 1: Who is the Closer performer?
+2026-04-29 13:19:01,529 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:19:15,772 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:19:15,773 - INFO - Analysis result: status=yes
+2026-04-29 13:19:15,773 - INFO - ✅ Sub-question 1 succeeded: Josh Groban
+2026-04-29 13:19:15,773 - INFO - 
+Processing sub-question 2: What notable pop artist started out his career on adult contemporary radio, along with Josh Groban?
+2026-04-29 13:19:15,853 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:19:28,620 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:19:28,621 - INFO - Analysis result: status=yes
+2026-04-29 13:19:28,621 - INFO - ✅ Sub-question 2 succeeded: Michael Buble
+2026-04-29 13:19:28,621 - INFO - 
+==================================================
+2026-04-29 13:19:28,621 - INFO - Final answer: Michael Buble
+2026-04-29 13:19:28,622 - INFO - Total time: 78.42 seconds
+2026-04-29 13:19:28,622 - INFO - Retrieval rounds: 2
+2026-04-29 13:19:28,622 - INFO - Execution traces: 3
+2026-04-29 13:19:28,622 - INFO - ==================================================
+
+2026-04-29 13:19:28,622 - INFO - 
+==================================================
+Processing question: What is the meaning of the word that is also a majority religion in India when the country where Banna is located was created in the Arabic dictionary?
+==================================================
+2026-04-29 13:19:28,622 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:20:19,552 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:20:19,554 - INFO - Generated plan: 3 sub-questions
+2026-04-29 13:20:19,554 - INFO - 
+Processing sub-question 1: What is the majority religion in India?
+2026-04-29 13:20:19,632 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:20:29,365 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:20:29,366 - INFO - Analysis result: status=yes
+2026-04-29 13:20:29,367 - INFO - ✅ Sub-question 1 succeeded: Hinduism
+2026-04-29 13:20:29,367 - INFO - 
+Processing sub-question 2: What is the country where Banna is located?
+2026-04-29 13:20:29,433 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:20:38,006 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:20:38,007 - INFO - Analysis result: status=yes
+2026-04-29 13:20:38,007 - INFO - ✅ Sub-question 2 succeeded: Pakistan
+2026-04-29 13:20:38,008 - INFO - 
+Processing sub-question 3: What is the meaning of Hinduism in the Arabic dictionary when Pakistan was created?
+2026-04-29 13:20:38,078 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:21:02,572 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:21:02,574 - INFO - Analysis result: status=no
+2026-04-29 13:21:02,574 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:21:02,574 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:21:20,926 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:21:20,927 - INFO - Rewrite strategy: Expanded search to include Arabic terms ('al-Hind'), historical context (Partition of India), and time period (1947/post-colonial era) while retaining core concepts like dictionary definitions and etymology
+2026-04-29 13:21:21,009 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:21:40,188 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:21:40,189 - INFO - Analysis result: status=yes
+2026-04-29 13:21:40,189 - INFO - ✅ Sub-question 3 succeeded: In the Arabic dictionary during the time of Pakistan's creation (1947), the term 'Hinduism' (derived from the Arabic 'al-Hind') referred to the people and region beyond the Indus River. It was an ethno-geographical term describing the inhabitants of the Indian subcontinent, not specifically a religion. The Arabic term 'al-Hind' denoted the country of India, while 'Hindu' originally meant 'people of the Indus' and was used to describe the region's inhabitants, not their religious practices.
+2026-04-29 13:21:40,189 - INFO - 
+==================================================
+2026-04-29 13:21:40,189 - INFO - Final answer: In the Arabic dictionary during the time of Pakistan's creation (1947), the term 'Hinduism' (derived from the Arabic 'al-Hind') referred to the people and region beyond the Indus River. It was an ethno-geographical term describing the inhabitants of the Indian subcontinent, not specifically a religion. The Arabic term 'al-Hind' denoted the country of India, while 'Hindu' originally meant 'people of the Indus' and was used to describe the region's inhabitants, not their religious practices.
+2026-04-29 13:21:40,189 - INFO - Total time: 131.57 seconds
+2026-04-29 13:21:40,189 - INFO - Retrieval rounds: 4
+2026-04-29 13:21:40,189 - INFO - Execution traces: 6
+2026-04-29 13:21:40,189 - INFO - ==================================================
+
+2026-04-29 13:21:40,190 - INFO - 
+==================================================
+Processing question: Normalization occurred in Country A that invaded Country B because the military branch was unprepared. Country B was the only communist country to have an embassy where?
+==================================================
+2026-04-29 13:21:40,190 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:22:31,222 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:22:31,223 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:22:31,223 - INFO - 
+Processing sub-question 1: What is the name of Country B, which was invaded by Country A due to normalization caused by military unpreparedness?
+2026-04-29 13:22:31,302 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:23:13,801 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:23:13,802 - INFO - Analysis result: status=yes
+2026-04-29 13:23:13,802 - INFO - ✅ Sub-question 1 succeeded: Czechoslovakia
+2026-04-29 13:23:13,803 - INFO - 
+Processing sub-question 2: Where was the embassy of Czechoslovakia located, making it the only communist country to have an embassy there?
+2026-04-29 13:23:13,876 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:23:46,604 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:23:46,605 - INFO - Analysis result: status=no
+2026-04-29 13:23:46,605 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:23:46,605 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:24:04,880 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:24:04,882 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'embassy' (diplomatic mission, consulate) and terms emphasizing uniqueness ('unique', 'only'). Added context about communist countries to align with document mentions of Yugoslavia's diplomatic relations.
+2026-04-29 13:24:04,970 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:24:34,377 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:24:34,378 - INFO - Analysis result: status=no
+2026-04-29 13:24:34,378 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:24:34,378 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:24:47,718 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:24:47,719 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'embassy' (diplomatic mission, consulate, headquarters) and alternative terms for 'communist country' (socialist state, former communist country). Incorporated the successor state 'Czech Republic' instead of 'Czechoslovakia' to align with modern terminology.
+2026-04-29 13:24:47,799 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:25:07,087 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:25:07,088 - INFO - Analysis result: status=no
+2026-04-29 13:25:07,088 - WARNING - ❌ Sub-question 2 failed: The retrieved documents do not mention the location of the Czechoslovakia embassy or any specific country where Czechoslovakia had an embassy as the only communist country. While the documents discuss Yugoslav embassies (e.g., in Paraguay) and other geopolitical contexts, there is no information about Czechoslovakia's embassy locations or unique diplomatic status in this regard.
+2026-04-29 13:25:07,088 - INFO - 
+==================================================
+2026-04-29 13:25:07,088 - INFO - Final answer: Czechoslovakia
+2026-04-29 13:25:07,088 - INFO - Total time: 206.90 seconds
+2026-04-29 13:25:07,088 - INFO - Retrieval rounds: 4
+2026-04-29 13:25:07,088 - INFO - Execution traces: 7
+2026-04-29 13:25:07,088 - INFO - ==================================================
+
+2026-04-29 13:25:07,088 - INFO - 
+==================================================
+Processing question: Who owns the record label of the Another Page performer?
+==================================================
+2026-04-29 13:25:07,088 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:25:58,209 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:25:58,211 - INFO - Generated plan: 1 sub-questions
+2026-04-29 13:25:58,211 - INFO - 
+Processing sub-question 1: Who owns the record label of the Another Page performer?
+2026-04-29 13:25:58,281 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:26:17,911 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:26:17,913 - INFO - Analysis result: status=yes
+2026-04-29 13:26:17,913 - INFO - ✅ Sub-question 1 succeeded: Warner Music Group
+2026-04-29 13:26:17,913 - INFO - 
+==================================================
+2026-04-29 13:26:17,913 - INFO - Final answer: Warner Music Group
+2026-04-29 13:26:17,913 - INFO - Total time: 70.82 seconds
+2026-04-29 13:26:17,913 - INFO - Retrieval rounds: 1
+2026-04-29 13:26:17,913 - INFO - Execution traces: 2
+2026-04-29 13:26:17,913 - INFO - ==================================================
+
+2026-04-29 13:26:17,913 - INFO - 
+==================================================
+Processing question: When was the region that lies to the north of where Israel is located and the location of Operation Earnest Will established?
+==================================================
+2026-04-29 13:26:17,913 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:27:09,007 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:27:09,008 - INFO - Generated plan: 1 sub-questions
+2026-04-29 13:27:09,008 - INFO - 
+Processing sub-question 1: When was the region that lies to the north of where Israel is located and the location of Operation Earnest Will established?
+2026-04-29 13:27:09,087 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:27:28,290 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:27:28,291 - INFO - Analysis result: status=no
+2026-04-29 13:27:28,291 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:27:28,292 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:27:46,359 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:27:46,361 - INFO - Rewrite strategy: Separated the two distinct geographical elements (northern regions of Israel vs. Operation Earnest Will's location) and included specific timeframes and alternative phrasings for the operation's location
+2026-04-29 13:27:46,437 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:28:07,895 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:28:07,896 - INFO - Analysis result: status=no
+2026-04-29 13:28:07,896 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:28:07,896 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:28:33,401 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:28:33,402 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:28:33,484 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:28:50,100 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:28:50,101 - INFO - Analysis result: status=no
+2026-04-29 13:28:50,101 - WARNING - ❌ Sub-question 1 failed: The documents mention regions adjacent to Israel (e.g., Jordan, Saudi Arabia) and historical conflicts in the Persian Gulf (e.g., Gulf War), but none explicitly reference 'Operation Earnest Will' or its geographical context. The operation's location and establishment date are not directly addressed in the retrieved texts, making it impossible to answer based on the provided information.
+2026-04-29 13:28:50,101 - INFO - 
+==================================================
+2026-04-29 13:28:50,101 - INFO - Final answer: Unable to find answer
+2026-04-29 13:28:50,101 - INFO - Total time: 152.19 seconds
+2026-04-29 13:28:50,101 - INFO - Retrieval rounds: 3
+2026-04-29 13:28:50,101 - INFO - Execution traces: 6
+2026-04-29 13:28:50,101 - INFO - ==================================================
+
+2026-04-29 13:28:50,102 - INFO - 
+==================================================
+Processing question: What day is the feast held, in the city that holds the headquarters of the only music company that is larger than the record label of Vilaiyaadu Mankatha?
+==================================================
+2026-04-29 13:28:50,102 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:29:41,365 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:29:41,366 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:29:41,366 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:29:41,433 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:29:51,347 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:29:51,349 - INFO - Analysis result: status=no
+2026-04-29 13:29:51,349 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:29:51,349 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:30:16,681 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:30:16,683 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:30:16,747 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:30:24,888 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:30:24,889 - INFO - Analysis result: status=no
+2026-04-29 13:30:24,889 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:30:24,889 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:30:43,204 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:30:43,206 - INFO - Rewrite strategy: Expanded core concepts ('answer' → 'response/solution', 'question' → 'inquiry/topic') and added common query patterns (how to, steps to) to capture diverse phrasings
+2026-04-29 13:30:43,271 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:30:52,312 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:30:52,313 - INFO - Analysis result: status=no
+2026-04-29 13:30:52,313 - WARNING - ❌ Sub-question 1 failed: The sub-question is missing or not properly specified. The retrieved documents contain information about Mickey Mouse, historical events, sports, and other topics, but without a clear and specific question, it is impossible to determine which information to extract or analyze. The user must provide the actual sub-question for a valid response.
+2026-04-29 13:30:52,313 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:30:52,313 - INFO - 
+==================================================
+2026-04-29 13:30:52,313 - INFO - Final answer: Unable to find answer
+2026-04-29 13:30:52,313 - INFO - Total time: 122.21 seconds
+2026-04-29 13:30:52,314 - INFO - Retrieval rounds: 3
+2026-04-29 13:30:52,314 - INFO - Execution traces: 6
+2026-04-29 13:30:52,314 - INFO - ==================================================
+
+2026-04-29 13:30:52,314 - INFO - 
+==================================================
+Processing question: What company is the record label of Magic Christian Music part of?
+==================================================
+2026-04-29 13:30:52,314 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:31:03,939 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:31:03,940 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:31:03,940 - INFO - 
+Processing sub-question 1: What is the record label of Magic Christian Music?
+2026-04-29 13:31:04,019 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:31:15,178 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:31:15,179 - INFO - Analysis result: status=yes
+2026-04-29 13:31:15,179 - INFO - ✅ Sub-question 1 succeeded: Apple Records
+2026-04-29 13:31:15,179 - INFO - 
+Processing sub-question 2: What company is Apple Records part of?
+2026-04-29 13:31:15,250 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:31:29,347 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:31:29,349 - INFO - Analysis result: status=yes
+2026-04-29 13:31:29,349 - INFO - ✅ Sub-question 2 succeeded: Apple Corps Ltd
+2026-04-29 13:31:29,349 - INFO - 
+==================================================
+2026-04-29 13:31:29,349 - INFO - Final answer: Apple Corps Ltd
+2026-04-29 13:31:29,349 - INFO - Total time: 37.03 seconds
+2026-04-29 13:31:29,349 - INFO - Retrieval rounds: 2
+2026-04-29 13:31:29,349 - INFO - Execution traces: 3
+2026-04-29 13:31:29,349 - INFO - ==================================================
+
+2026-04-29 13:31:29,349 - INFO - 
+==================================================
+Processing question: What is the competition the 1972 Federation Cup is part of named after?
+==================================================
+2026-04-29 13:31:29,349 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:31:40,669 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:31:40,670 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:31:40,670 - INFO - 
+Processing sub-question 1: What competition did the 1972 Federation Cup belong to?
+2026-04-29 13:31:40,746 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:31:56,310 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:31:56,311 - INFO - Analysis result: status=yes
+2026-04-29 13:31:56,311 - INFO - ✅ Sub-question 1 succeeded: The 1972 Federation Cup belonged to the Fed Cup, which is the premier international team competition in women's tennis. The 1972 edition was the tenth edition of this competition, featuring 31 nations and held in South Africa.
+2026-04-29 13:31:56,311 - INFO - 
+Processing sub-question 2: What is The 1972 Federation Cup belonged to the Fed Cup, which is the premier international team competition in women's tennis. The 1972 edition was the tenth edition of this competition, featuring 31 nations and held in South Africa. named after?
+2026-04-29 13:31:56,403 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:32:10,656 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:32:10,658 - INFO - Analysis result: status=yes
+2026-04-29 13:32:10,658 - INFO - ✅ Sub-question 2 succeeded: The Federation Cup is named after the International Tennis Federation (ITF).
+2026-04-29 13:32:10,658 - INFO - 
+==================================================
+2026-04-29 13:32:10,658 - INFO - Final answer: The Federation Cup is named after the International Tennis Federation (ITF).
+2026-04-29 13:32:10,658 - INFO - Total time: 41.31 seconds
+2026-04-29 13:32:10,658 - INFO - Retrieval rounds: 2
+2026-04-29 13:32:10,658 - INFO - Execution traces: 3
+2026-04-29 13:32:10,658 - INFO - ==================================================
+
+2026-04-29 13:32:10,658 - INFO - 
+==================================================
+Processing question: When was the last time Tony Richard's team beat the 1894-95 FA Cup Winner?
+==================================================
+2026-04-29 13:32:10,658 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:33:01,674 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:33:01,676 - INFO - Generated plan: 1 sub-questions
+2026-04-29 13:33:01,676 - INFO - 
+Processing sub-question 1: When was the last time Tony Richard's team beat the 1894-95 FA Cup Winner?
+2026-04-29 13:33:01,743 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:33:25,693 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:33:25,694 - INFO - Analysis result: status=no
+2026-04-29 13:33:25,694 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:33:25,694 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:33:51,105 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:33:51,106 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:33:51,187 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:34:08,085 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:34:08,086 - INFO - Analysis result: status=no
+2026-04-29 13:34:08,087 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:34:08,087 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:34:33,574 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:34:33,575 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:34:33,653 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:35:14,078 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:35:14,079 - INFO - Analysis result: status=no
+2026-04-29 13:35:14,079 - WARNING - ❌ Sub-question 1 failed: The documents do not mention Tony Richard or his team. The 1894 FA Cup winner was Notts County, but there is no information about any team's match against them in the context of Tony Richard. The retrieved texts focus on other clubs, players, and historical FA Cup details but lack specific references to Tony Richard's team or relevant matches.
+2026-04-29 13:35:14,079 - INFO - 
+==================================================
+2026-04-29 13:35:14,079 - INFO - Final answer: Unable to find answer
+2026-04-29 13:35:14,079 - INFO - Total time: 183.42 seconds
+2026-04-29 13:35:14,079 - INFO - Retrieval rounds: 3
+2026-04-29 13:35:14,079 - INFO - Execution traces: 6
+2026-04-29 13:35:14,079 - INFO - ==================================================
+
+2026-04-29 13:35:14,080 - INFO - 
+==================================================
+Processing question: When did the city where the headquarters of Barton Premium Blend's manufacturer is located elect its first black mayor?
+==================================================
+2026-04-29 13:35:14,080 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:36:05,160 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:36:05,161 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:36:05,161 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:36:05,238 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:36:11,499 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:36:11,500 - INFO - Analysis result: status=no
+2026-04-29 13:36:11,500 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:36:11,500 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:36:37,023 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:36:37,024 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:36:37,096 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:36:44,542 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:36:44,544 - INFO - Analysis result: status=no
+2026-04-29 13:36:44,544 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:36:44,544 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:37:03,885 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:37:03,886 - INFO - Rewrite strategy: Expanded the vague placeholder with specific terms related to structured queries, adding synonyms like 'initial question' and contextual terms like 'multi-part query' to target relevant topics.
+2026-04-29 13:37:03,954 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:37:12,521 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:37:12,523 - INFO - Analysis result: status=no
+2026-04-29 13:37:12,523 - WARNING - ❌ Sub-question 1 failed: The sub-question is incomplete or missing, making it impossible to determine the specific topic or requirement for answering. Without knowing the exact question, it is not feasible to assess whether the provided documents contain sufficient information to formulate a response.
+2026-04-29 13:37:12,523 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:37:12,523 - INFO - 
+==================================================
+2026-04-29 13:37:12,523 - INFO - Final answer: Unable to find answer
+2026-04-29 13:37:12,523 - INFO - Total time: 118.44 seconds
+2026-04-29 13:37:12,523 - INFO - Retrieval rounds: 3
+2026-04-29 13:37:12,523 - INFO - Execution traces: 6
+2026-04-29 13:37:12,523 - INFO - ==================================================
+
+2026-04-29 13:37:12,523 - INFO - 
+==================================================
+Processing question: When did the majority party in the body which determines the rules of the US House and US Senate gain control of the House?
+==================================================
+2026-04-29 13:37:12,523 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:38:03,722 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:38:03,724 - INFO - Generated plan: 1 sub-questions
+2026-04-29 13:38:03,724 - INFO - 
+Processing sub-question 1: When did the majority party in the body which determines the rules of the US House and US Senate gain control of the House?
+2026-04-29 13:38:03,802 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:39:02,321 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:39:02,322 - INFO - Analysis result: status=no
+2026-04-29 13:39:02,322 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:39:02,322 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:39:21,442 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:39:21,443 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'majority party' (ruling party, governing party) and clarified the entity ('House Rules Committee') to specify the procedural authority. Added 'House of Representatives' for clarity and included terms like 'control' and 'gaining majority' to capture different phrasings of power shifts.
+2026-04-29 13:39:21,519 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:40:20,029 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:40:20,030 - INFO - Analysis result: status=no
+2026-04-29 13:40:20,031 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:40:20,031 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:40:35,895 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:40:35,896 - INFO - Rewrite strategy: Expanded keywords to include specific congressional entities (House Rules Committee), alternative phrasings for 'control' (e.g., 'congressional majority control'), and clarified focus on House-specific governance structures
+2026-04-29 13:40:35,980 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:41:20,246 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:41:20,247 - INFO - Analysis result: status=yes
+2026-04-29 13:41:20,247 - INFO - ✅ Sub-question 1 succeeded: 2010
+2026-04-29 13:41:20,248 - INFO - 
+==================================================
+2026-04-29 13:41:20,248 - INFO - Final answer: 2010
+2026-04-29 13:41:20,248 - INFO - Total time: 247.72 seconds
+2026-04-29 13:41:20,248 - INFO - Retrieval rounds: 3
+2026-04-29 13:41:20,248 - INFO - Execution traces: 6
+2026-04-29 13:41:20,248 - INFO - ==================================================
+
+2026-04-29 13:41:20,248 - INFO - 
+==================================================
+Processing question: Where did the arguer that Dmitry Okhotsimsky's country of citizenship had become an imperialist power declare he would intervene in the Korean conflict?
+==================================================
+2026-04-29 13:41:20,248 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:42:11,349 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:42:11,351 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:42:11,351 - INFO - 
+Processing sub-question 1: Identify the country of citizenship associated with Dmitry Okhotsimsky.
+2026-04-29 13:42:11,427 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:42:33,548 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:42:33,549 - INFO - Analysis result: status=yes
+2026-04-29 13:42:33,549 - INFO - ✅ Sub-question 1 succeeded: Soviet Union
+2026-04-29 13:42:33,549 - INFO - 
+Processing sub-question 2: Where did Soviet Union declare intervention in the Korean conflict?
+2026-04-29 13:42:33,623 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:42:56,912 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:42:56,913 - INFO - Analysis result: status=no
+2026-04-29 13:42:56,913 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:42:56,913 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:43:22,376 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:43:22,377 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:43:22,458 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:43:42,014 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:43:42,015 - INFO - Analysis result: status=yes
+2026-04-29 13:43:42,016 - INFO - ✅ Sub-question 2 succeeded: The Soviet Union declared intervention in the Korean conflict by liberating North Korea from Japanese control in August 1945, as part of their agreement with the United States to divide Korea along the 38th parallel. This action established the Soviet Union's influence in the North Korean zone of occupation, leading to the eventual formation of the communist government led by Kim Il-sung.
+2026-04-29 13:43:42,016 - INFO - 
+==================================================
+2026-04-29 13:43:42,016 - INFO - Final answer: The Soviet Union declared intervention in the Korean conflict by liberating North Korea from Japanese control in August 1945, as part of their agreement with the United States to divide Korea along the 38th parallel. This action established the Soviet Union's influence in the North Korean zone of occupation, leading to the eventual formation of the communist government led by Kim Il-sung.
+2026-04-29 13:43:42,016 - INFO - Total time: 141.77 seconds
+2026-04-29 13:43:42,016 - INFO - Retrieval rounds: 3
+2026-04-29 13:43:42,016 - INFO - Execution traces: 5
+2026-04-29 13:43:42,016 - INFO - ==================================================
+
+2026-04-29 13:43:42,016 - INFO - 
+==================================================
+Processing question: Who did the person Sarah married to in the bible marry after the death of Sarah?
+==================================================
+2026-04-29 13:43:42,016 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:43:55,462 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:43:55,463 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:43:55,464 - INFO - 
+Processing sub-question 1: Who did Sarah marry in the Bible?
+2026-04-29 13:43:55,530 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:44:06,912 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:44:06,914 - INFO - Analysis result: status=yes
+2026-04-29 13:44:06,914 - INFO - ✅ Sub-question 1 succeeded: Abraham
+2026-04-29 13:44:06,914 - INFO - 
+Processing sub-question 2: Who did Abraham marry after the death of Sarah?
+2026-04-29 13:44:06,979 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:44:20,001 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:44:20,002 - INFO - Analysis result: status=yes
+2026-04-29 13:44:20,002 - INFO - ✅ Sub-question 2 succeeded: Keturah
+2026-04-29 13:44:20,002 - INFO - 
+==================================================
+2026-04-29 13:44:20,002 - INFO - Final answer: Keturah
+2026-04-29 13:44:20,002 - INFO - Total time: 37.99 seconds
+2026-04-29 13:44:20,002 - INFO - Retrieval rounds: 2
+2026-04-29 13:44:20,002 - INFO - Execution traces: 3
+2026-04-29 13:44:20,002 - INFO - ==================================================
+
+2026-04-29 13:44:20,002 - INFO - 
+==================================================
+Processing question: Where is the origin of the river that Kraai River is a tributary of?
+==================================================
+2026-04-29 13:44:20,002 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:44:31,219 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:44:31,220 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:44:31,220 - INFO - 
+Processing sub-question 1: What is the main river that the Kraai River is a tributary of?
+2026-04-29 13:44:31,287 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:44:43,321 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:44:43,322 - INFO - Analysis result: status=yes
+2026-04-29 13:44:43,322 - INFO - ✅ Sub-question 1 succeeded: Orange River
+2026-04-29 13:44:43,322 - INFO - 
+Processing sub-question 2: Where is the origin of Orange River?
+2026-04-29 13:44:43,393 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:45:20,404 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:45:20,406 - INFO - Analysis result: status=yes
+2026-04-29 13:45:20,406 - INFO - ✅ Sub-question 2 succeeded: The Orange River originates in the Maloti Mountains (Drakensberg) in Lesotho, specifically at Thaba Putsoa, with an elevation of 3,350 meters (10,991 feet).
+2026-04-29 13:45:20,406 - INFO - 
+==================================================
+2026-04-29 13:45:20,406 - INFO - Final answer: The Orange River originates in the Maloti Mountains (Drakensberg) in Lesotho, specifically at Thaba Putsoa, with an elevation of 3,350 meters (10,991 feet).
+2026-04-29 13:45:20,406 - INFO - Total time: 60.40 seconds
+2026-04-29 13:45:20,406 - INFO - Retrieval rounds: 2
+2026-04-29 13:45:20,406 - INFO - Execution traces: 3
+2026-04-29 13:45:20,406 - INFO - ==================================================
+
+2026-04-29 13:45:20,406 - INFO - 
+==================================================
+Processing question: Who created the work that features the appearance of Cosmic Boy?
+==================================================
+2026-04-29 13:45:20,406 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:45:31,341 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:45:31,342 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:45:31,342 - INFO - 
+Processing sub-question 1: What work features the appearance of Cosmic Boy?
+2026-04-29 13:45:31,411 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:46:04,391 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:46:04,393 - INFO - Analysis result: status=yes
+2026-04-29 13:46:04,393 - INFO - ✅ Sub-question 1 succeeded: The works that feature the appearance of Cosmic Boy are the CW series 'Smallville' and the animated series 'Legion of Super Heroes'.
+2026-04-29 13:46:04,393 - INFO - 
+Processing sub-question 2: Who created The works that feature the appearance of Cosmic Boy are the CW series 'Smallville' and the animated series 'Legion of Super Heroes'.?
+2026-04-29 13:46:04,464 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:46:57,586 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:46:57,587 - INFO - Analysis result: status=no
+2026-04-29 13:46:57,587 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:46:57,588 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:47:17,458 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:47:17,459 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'created' (developed, created) and specified 'animated series' explicitly. Added 'DC Comics-related works' to contextualize the character and potential creators.
+2026-04-29 13:47:17,533 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:48:07,434 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:48:07,436 - INFO - Analysis result: status=no
+2026-04-29 13:48:07,436 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:48:07,436 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:48:28,585 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:48:28,586 - INFO - Rewrite strategy: Expanded verbs related to creation ('developed', 'produced') and included synonyms for 'series' (animated series, CW series). Added explicit mention of the character 'Cosmic Boy' to improve relevance.
+2026-04-29 13:48:28,673 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:49:26,847 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:49:26,848 - INFO - Analysis result: status=no
+2026-04-29 13:49:26,848 - WARNING - ❌ Sub-question 2 failed: Failed to parse response, information may be insufficient
+2026-04-29 13:49:26,848 - INFO - 
+==================================================
+2026-04-29 13:49:26,848 - INFO - Final answer: The works that feature the appearance of Cosmic Boy are the CW series 'Smallville' and the animated series 'Legion of Super Heroes'.
+2026-04-29 13:49:26,848 - INFO - Total time: 246.44 seconds
+2026-04-29 13:49:26,848 - INFO - Retrieval rounds: 4
+2026-04-29 13:49:26,848 - INFO - Execution traces: 7
+2026-04-29 13:49:26,848 - INFO - ==================================================
+
+2026-04-29 13:49:26,849 - INFO - 
+==================================================
+Processing question: What is the league of the Carolina Panthers an example of?
+==================================================
+2026-04-29 13:49:26,849 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:49:45,204 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:49:45,206 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:49:45,206 - INFO - 
+Processing sub-question 1: What league is the Carolina Panthers part of?
+2026-04-29 13:49:45,277 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:49:55,618 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:49:55,619 - INFO - Analysis result: status=yes
+2026-04-29 13:49:55,619 - INFO - ✅ Sub-question 1 succeeded: National Football League (NFL)
+2026-04-29 13:49:55,619 - INFO - 
+Processing sub-question 2: What is National Football League (NFL) an example of?
+2026-04-29 13:49:55,689 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:50:10,377 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:50:10,379 - INFO - Analysis result: status=yes
+2026-04-29 13:50:10,379 - INFO - ✅ Sub-question 2 succeeded: The National Football League (NFL) is an example of a major professional sports league in the United States.
+2026-04-29 13:50:10,379 - INFO - 
+==================================================
+2026-04-29 13:50:10,379 - INFO - Final answer: The National Football League (NFL) is an example of a major professional sports league in the United States.
+2026-04-29 13:50:10,379 - INFO - Total time: 43.53 seconds
+2026-04-29 13:50:10,379 - INFO - Retrieval rounds: 2
+2026-04-29 13:50:10,379 - INFO - Execution traces: 3
+2026-04-29 13:50:10,379 - INFO - ==================================================
+
+2026-04-29 13:50:10,379 - INFO - 
+==================================================
+Processing question: When was the region that lies to the north of the region where Strangers No More took place and the Persian Gulf created?
+==================================================
+2026-04-29 13:50:10,379 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:51:01,745 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:51:01,747 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:51:01,747 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:51:01,807 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:51:11,303 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:51:11,304 - INFO - Analysis result: status=no
+2026-04-29 13:51:11,304 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:51:11,304 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:51:32,859 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:51:32,860 - INFO - Rewrite strategy: Expanded keywords to focus on historical events and their political implications while maintaining specificity
+2026-04-29 13:51:32,946 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:51:51,989 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:51:51,990 - INFO - Analysis result: status=no
+2026-04-29 13:51:51,991 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:51:51,991 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:52:17,305 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:52:17,307 - INFO - Rewrite strategy: Expanded the vague query into a specific historical question by adding context (Black Death) and focusing on causal relationships, using synonyms like 'plague' and related terms.
+2026-04-29 13:52:17,385 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:52:36,286 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:52:36,287 - INFO - Analysis result: status=yes
+2026-04-29 13:52:36,287 - INFO - ✅ Sub-question 1 succeeded: The Black Death, also known as the Great Plague, was one of the most devastating pandemics in human history, peaking in Europe between 1347 and 1350. It is estimated to have killed 30-65% of Europe's population, reducing the world population from approximately 450 million to between 350-375 million. The disease, caused by the bacterium Yersinia pestis, led to profound religious, social, and economic upheavals in Europe. Mortality rates were exceptionally high, with some cities experiencing up to 50% population loss, and it took 80-150 years for Europe's population to recover. The term 'Black Death' originated in the 17th century, and the plague recurred in Europe until the 19th century.
+2026-04-29 13:52:36,287 - INFO - 
+Processing sub-question 2: Second sub-question using The Black Death, also known as the Great Plague, was one of the most devastating pandemics in human history, peaking in Europe between 1347 and 1350. It is estimated to have killed 30-65% of Europe's population, reducing the world population from approximately 450 million to between 350-375 million. The disease, caused by the bacterium Yersinia pestis, led to profound religious, social, and economic upheavals in Europe. Mortality rates were exceptionally high, with some cities experiencing up to 50% population loss, and it took 80-150 years for Europe's population to recover. The term 'Black Death' originated in the 17th century, and the plague recurred in Europe until the 19th century.
+2026-04-29 13:52:36,412 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:52:57,427 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:52:57,428 - INFO - Analysis result: status=yes
+2026-04-29 13:52:57,428 - INFO - ✅ Sub-question 2 succeeded: The Black Death, peaking in Europe between 1347 and 1350, killed 30-65% of Europe's population, reducing the world population from 450 million to 350-375 million. Caused by Yersinia pestis, it led to profound religious, social, and economic upheavals. The term 'Black Death' originated in the 17th century, and the plague recurred in Europe until the 19th century. Mortality rates were exceptionally high, with some cities experiencing up to 50% population loss, and recovery took 80-150 years.
+2026-04-29 13:52:57,429 - INFO - 
+==================================================
+2026-04-29 13:52:57,429 - INFO - Final answer: The Black Death, peaking in Europe between 1347 and 1350, killed 30-65% of Europe's population, reducing the world population from 450 million to 350-375 million. Caused by Yersinia pestis, it led to profound religious, social, and economic upheavals. The term 'Black Death' originated in the 17th century, and the plague recurred in Europe until the 19th century. Mortality rates were exceptionally high, with some cities experiencing up to 50% population loss, and recovery took 80-150 years.
+2026-04-29 13:52:57,429 - INFO - Total time: 167.05 seconds
+2026-04-29 13:52:57,429 - INFO - Retrieval rounds: 4
+2026-04-29 13:52:57,429 - INFO - Execution traces: 7
+2026-04-29 13:52:57,429 - INFO - ==================================================
+
+2026-04-29 13:52:57,429 - INFO - 
+==================================================
+Processing question: What is the date of birth for the performer of Hits?
+==================================================
+2026-04-29 13:52:57,429 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:53:09,233 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:53:09,234 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:53:09,234 - INFO - 
+Processing sub-question 1: Who is the performer of Hits?
+2026-04-29 13:53:09,305 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:53:22,661 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:53:22,663 - INFO - Analysis result: status=yes
+2026-04-29 13:53:22,663 - INFO - ✅ Sub-question 1 succeeded: Mauro Scocco
+2026-04-29 13:53:22,663 - INFO - 
+Processing sub-question 2: What is the date of birth for Mauro Scocco?
+2026-04-29 13:53:22,747 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:53:31,444 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:53:31,445 - INFO - Analysis result: status=yes
+2026-04-29 13:53:31,446 - INFO - ✅ Sub-question 2 succeeded: 11 september 1962
+2026-04-29 13:53:31,446 - INFO - 
+==================================================
+2026-04-29 13:53:31,446 - INFO - Final answer: 11 september 1962
+2026-04-29 13:53:31,446 - INFO - Total time: 34.02 seconds
+2026-04-29 13:53:31,446 - INFO - Retrieval rounds: 2
+2026-04-29 13:53:31,446 - INFO - Execution traces: 3
+2026-04-29 13:53:31,446 - INFO - ==================================================
+
+2026-04-29 13:53:31,446 - INFO - 
+==================================================
+Processing question: When did the city where the author of Sacerdotii Nostri Primordia died become its own country?
+==================================================
+2026-04-29 13:53:31,446 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:54:22,621 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:54:22,623 - INFO - Generated plan: 3 sub-questions
+2026-04-29 13:54:22,623 - INFO - 
+Processing sub-question 1: Who is the author of Sacerdotii Nostri Primordia?
+2026-04-29 13:54:22,697 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:54:35,946 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:54:35,947 - INFO - Analysis result: status=yes
+2026-04-29 13:54:35,947 - INFO - ✅ Sub-question 1 succeeded: Pope John XXIII
+2026-04-29 13:54:35,947 - INFO - 
+Processing sub-question 2: Where did Pope John XXIII die?
+2026-04-29 13:54:36,017 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:54:49,051 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:54:49,053 - INFO - Analysis result: status=yes
+2026-04-29 13:54:49,053 - INFO - ✅ Sub-question 2 succeeded: Pope John XXIII died in the Vatican grottoes beneath Saint Peter's Basilica.
+2026-04-29 13:54:49,053 - INFO - 
+Processing sub-question 3: When did Pope John XXIII died in the Vatican grottoes beneath Saint Peter's Basilica. become its own country?
+2026-04-29 13:54:49,129 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:55:08,039 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:55:08,040 - INFO - Analysis result: status=no
+2026-04-29 13:55:08,041 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:55:08,041 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:55:19,775 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:55:19,776 - INFO - Rewrite strategy: Clarified the conflated concepts by separating Pope John XXIII's death date from Vatican City's statehood status, using precise historical terminology to align with document references.
+2026-04-29 13:55:19,852 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:55:39,516 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:55:39,517 - INFO - Analysis result: status=yes
+2026-04-29 13:55:39,518 - INFO - ✅ Sub-question 3 succeeded: Pope John XXIII died on 3 June 1963 and was buried in the Vatican grottoes beneath Saint Peter's Basilica on 6 June 1963. The Vatican became its own country in 1929 following the Lateran Treaty signed on 11 February 1929, which established Vatican City as an independent state.
+2026-04-29 13:55:39,518 - INFO - 
+==================================================
+2026-04-29 13:55:39,518 - INFO - Final answer: Pope John XXIII died on 3 June 1963 and was buried in the Vatican grottoes beneath Saint Peter's Basilica on 6 June 1963. The Vatican became its own country in 1929 following the Lateran Treaty signed on 11 February 1929, which established Vatican City as an independent state.
+2026-04-29 13:55:39,518 - INFO - Total time: 128.07 seconds
+2026-04-29 13:55:39,518 - INFO - Retrieval rounds: 4
+2026-04-29 13:55:39,518 - INFO - Execution traces: 6
+2026-04-29 13:55:39,518 - INFO - ==================================================
+
+2026-04-29 13:55:39,518 - INFO - 
+==================================================
+Processing question: In which state is Póvoa de Santa Iria's municipality located?
+==================================================
+2026-04-29 13:55:39,518 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:55:58,811 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:55:58,812 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:55:58,812 - INFO - 
+Processing sub-question 1: In which country is Póvoa de Santa Iria located?
+2026-04-29 13:55:58,895 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:56:10,010 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:56:10,012 - INFO - Analysis result: status=yes
+2026-04-29 13:56:10,012 - INFO - ✅ Sub-question 1 succeeded: Portugal
+2026-04-29 13:56:10,012 - INFO - 
+Processing sub-question 2: In which Portugal is Póvoa de Santa Iria's municipality located?
+2026-04-29 13:56:10,086 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:56:26,600 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:56:26,601 - INFO - Analysis result: status=yes
+2026-04-29 13:56:26,601 - INFO - ✅ Sub-question 2 succeeded: The municipality of Póvoa de Santa Iria is located in the Lisbon district of Portugal, specifically within the municipality of Vila Franca de Xira.
+2026-04-29 13:56:26,602 - INFO - 
+==================================================
+2026-04-29 13:56:26,602 - INFO - Final answer: The municipality of Póvoa de Santa Iria is located in the Lisbon district of Portugal, specifically within the municipality of Vila Franca de Xira.
+2026-04-29 13:56:26,602 - INFO - Total time: 47.08 seconds
+2026-04-29 13:56:26,602 - INFO - Retrieval rounds: 2
+2026-04-29 13:56:26,602 - INFO - Execution traces: 3
+2026-04-29 13:56:26,602 - INFO - ==================================================
+
+2026-04-29 13:56:26,602 - INFO - 
+==================================================
+Processing question: When was the company that makes Skyflash abolished?
+==================================================
+2026-04-29 13:56:26,602 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:56:34,577 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:56:34,578 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:56:34,578 - INFO - 
+Processing sub-question 1: What company manufactures Skyflash?
+2026-04-29 13:56:34,652 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:57:02,488 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:57:02,489 - INFO - Analysis result: status=yes
+2026-04-29 13:57:02,489 - INFO - ✅ Sub-question 1 succeeded: British Aerospace
+2026-04-29 13:57:02,489 - INFO - 
+Processing sub-question 2: When was British Aerospace abolished?
+2026-04-29 13:57:02,562 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:57:18,912 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:57:18,913 - INFO - Analysis result: status=yes
+2026-04-29 13:57:18,913 - INFO - ✅ Sub-question 2 succeeded: 1999
+2026-04-29 13:57:18,913 - INFO - 
+==================================================
+2026-04-29 13:57:18,913 - INFO - Final answer: 1999
+2026-04-29 13:57:18,913 - INFO - Total time: 52.31 seconds
+2026-04-29 13:57:18,913 - INFO - Retrieval rounds: 2
+2026-04-29 13:57:18,913 - INFO - Execution traces: 3
+2026-04-29 13:57:18,913 - INFO - ==================================================
+
+2026-04-29 13:57:18,914 - INFO - 
+==================================================
+Processing question: Where was the founder of the National Women's Party born?
+==================================================
+2026-04-29 13:57:18,914 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:57:29,467 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:57:29,468 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:57:29,468 - INFO - 
+Processing sub-question 1: Who is the founder of the National Women's Party?
+2026-04-29 13:57:29,547 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:57:39,221 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:57:39,222 - INFO - Analysis result: status=yes
+2026-04-29 13:57:39,222 - INFO - ✅ Sub-question 1 succeeded: Alice Paul
+2026-04-29 13:57:39,222 - INFO - 
+Processing sub-question 2: Where was Alice Paul born?
+2026-04-29 13:57:39,292 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:57:46,816 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:57:46,817 - INFO - Analysis result: status=yes
+2026-04-29 13:57:46,817 - INFO - ✅ Sub-question 2 succeeded: Paulsdale, in Mount Laurel Township, New Jersey
+2026-04-29 13:57:46,818 - INFO - 
+==================================================
+2026-04-29 13:57:46,818 - INFO - Final answer: Paulsdale, in Mount Laurel Township, New Jersey
+2026-04-29 13:57:46,818 - INFO - Total time: 27.90 seconds
+2026-04-29 13:57:46,818 - INFO - Retrieval rounds: 2
+2026-04-29 13:57:46,818 - INFO - Execution traces: 3
+2026-04-29 13:57:46,818 - INFO - ==================================================
+
+2026-04-29 13:57:46,818 - INFO - 
+==================================================
+Processing question: How many times did plague occur in the place where Bajazet's composer was born?
+==================================================
+2026-04-29 13:57:46,818 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 13:58:37,867 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:58:37,869 - INFO - Generated plan: 2 sub-questions
+2026-04-29 13:58:37,869 - INFO - 
+Processing sub-question 1: First sub-question to answer
+2026-04-29 13:58:37,932 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:58:47,483 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:58:47,484 - INFO - Analysis result: status=no
+2026-04-29 13:58:47,484 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 13:58:47,485 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:59:05,035 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:59:05,036 - INFO - Rewrite strategy: Expanded the vague query by incorporating synonyms (e.g., 'impact' for 'effects', 'developments' for 'changes') and focused on key entities (political movements, cultural developments, historical contexts) to create a targeted research question.
+2026-04-29 13:59:05,106 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:59:16,554 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:59:16,555 - INFO - Analysis result: status=no
+2026-04-29 13:59:16,555 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 13:59:16,555 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 13:59:42,024 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:59:42,026 - INFO - Rewrite strategy: default expansion
+2026-04-29 13:59:42,099 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 13:59:51,043 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 13:59:51,044 - INFO - Analysis result: status=no
+2026-04-29 13:59:51,044 - WARNING - ❌ Sub-question 1 failed: The sub-question is missing or not properly specified. The retrieved documents contain unrelated snippets about topics like the Addams Family, USB specifications, historical events, and others, but without a clear, defined question, it is impossible to determine which information is relevant or how to formulate an answer.
+2026-04-29 13:59:51,044 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 13:59:51,044 - INFO - 
+==================================================
+2026-04-29 13:59:51,044 - INFO - Final answer: Unable to find answer
+2026-04-29 13:59:51,044 - INFO - Total time: 124.23 seconds
+2026-04-29 13:59:51,044 - INFO - Retrieval rounds: 3
+2026-04-29 13:59:51,044 - INFO - Execution traces: 6
+2026-04-29 13:59:51,045 - INFO - ==================================================
+
+2026-04-29 13:59:51,045 - INFO - 
+==================================================
+Processing question: In Batman Under the Red Hood, who does the actor of Barney Stinson from How I Met Your Mother play?
+==================================================
+2026-04-29 13:59:51,045 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:00:00,643 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:00:00,645 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:00:00,645 - INFO - 
+Processing sub-question 1: Who is the actor that played Barney Stinson in How I Met Your Mother?
+2026-04-29 14:00:00,721 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:00:21,879 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:00:21,880 - INFO - Analysis result: status=yes
+2026-04-29 14:00:21,880 - INFO - ✅ Sub-question 1 succeeded: Neil Patrick Harris
+2026-04-29 14:00:21,880 - INFO - 
+Processing sub-question 2: In Batman Under the Red Hood, what role does Neil Patrick Harris play?
+2026-04-29 14:00:21,959 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:00:31,811 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:00:31,812 - INFO - Analysis result: status=yes
+2026-04-29 14:00:31,812 - INFO - ✅ Sub-question 2 succeeded: Neil Patrick Harris plays the role of Nightwing (Dick Grayson) in Batman: Under the Red Hood.
+2026-04-29 14:00:31,813 - INFO - 
+==================================================
+2026-04-29 14:00:31,813 - INFO - Final answer: Neil Patrick Harris plays the role of Nightwing (Dick Grayson) in Batman: Under the Red Hood.
+2026-04-29 14:00:31,813 - INFO - Total time: 40.77 seconds
+2026-04-29 14:00:31,813 - INFO - Retrieval rounds: 2
+2026-04-29 14:00:31,813 - INFO - Execution traces: 3
+2026-04-29 14:00:31,813 - INFO - ==================================================
+
+2026-04-29 14:00:31,813 - INFO - 
+==================================================
+Processing question: Who is the city where Lesnoye Sanatorium is located named after?
+==================================================
+2026-04-29 14:00:31,813 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:00:42,291 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:00:42,292 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:00:42,292 - INFO - 
+Processing sub-question 1: What city is Lesnoye Sanatorium located in?
+2026-04-29 14:00:42,364 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:00:52,348 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:00:52,350 - INFO - Analysis result: status=yes
+2026-04-29 14:00:52,350 - INFO - ✅ Sub-question 1 succeeded: Tolyatti, Russia
+2026-04-29 14:00:52,350 - INFO - 
+Processing sub-question 2: Who is Tolyatti, Russia named after?
+2026-04-29 14:00:52,426 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:01:05,696 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:01:05,697 - INFO - Analysis result: status=yes
+2026-04-29 14:01:05,697 - INFO - ✅ Sub-question 2 succeeded: Tolyatti, Russia is named after Palmiro Togliatti, the longest-serving secretary of the Italian Communist Party.
+2026-04-29 14:01:05,697 - INFO - 
+==================================================
+2026-04-29 14:01:05,697 - INFO - Final answer: Tolyatti, Russia is named after Palmiro Togliatti, the longest-serving secretary of the Italian Communist Party.
+2026-04-29 14:01:05,697 - INFO - Total time: 33.88 seconds
+2026-04-29 14:01:05,697 - INFO - Retrieval rounds: 2
+2026-04-29 14:01:05,697 - INFO - Execution traces: 3
+2026-04-29 14:01:05,697 - INFO - ==================================================
+
+2026-04-29 14:01:05,697 - INFO - 
+==================================================
+Processing question: When was one internet browser's version of Windows 8 made accessible?
+==================================================
+2026-04-29 14:01:05,697 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:01:36,091 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:01:36,092 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:01:36,092 - INFO - 
+Processing sub-question 1: What is the name of the internet browser included in Windows 8?
+2026-04-29 14:01:36,166 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:01:49,371 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:01:49,372 - INFO - Analysis result: status=yes
+2026-04-29 14:01:49,372 - INFO - ✅ Sub-question 1 succeeded: Internet Explorer
+2026-04-29 14:01:49,372 - INFO - 
+Processing sub-question 2: When was Internet Explorer made accessible?
+2026-04-29 14:01:49,438 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:02:19,352 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:02:19,354 - INFO - Analysis result: status=yes
+2026-04-29 14:02:19,354 - INFO - ✅ Sub-question 2 succeeded: 2000
+2026-04-29 14:02:19,354 - INFO - 
+==================================================
+2026-04-29 14:02:19,354 - INFO - Final answer: 2000
+2026-04-29 14:02:19,354 - INFO - Total time: 73.66 seconds
+2026-04-29 14:02:19,354 - INFO - Retrieval rounds: 2
+2026-04-29 14:02:19,354 - INFO - Execution traces: 3
+2026-04-29 14:02:19,354 - INFO - ==================================================
+
+2026-04-29 14:02:19,354 - INFO - 
+==================================================
+Processing question: When was the Palau de la Generalitat constructed in the city where Martin of the region of Pedrola died?
+==================================================
+2026-04-29 14:02:19,354 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:02:52,535 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:02:52,536 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:02:52,537 - INFO - 
+Processing sub-question 1: Where did Martin of the region of Pedrola die?
+2026-04-29 14:02:52,610 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:03:07,827 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:03:07,828 - INFO - Analysis result: status=no
+2026-04-29 14:03:07,828 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:03:07,828 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:03:21,807 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:03:21,809 - INFO - Rewrite strategy: Expanded keywords with alternative spellings (Martín), titles (the Humane), location variations (Pedrola Zaragoza), and related concepts (burial site, death place) to capture potential historical records or biographical data
+2026-04-29 14:03:21,902 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:03:35,030 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:03:35,031 - INFO - Analysis result: status=no
+2026-04-29 14:03:35,031 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:03:35,031 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:03:48,467 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:03:48,468 - INFO - Rewrite strategy: Expanded keywords to account for name variations (Martin/Martín), geographic context (Zaragoza, Spain), alternative death-related terms (buried, died), and potential entity types (historical figure, local historian) to capture relevant documents.
+2026-04-29 14:03:48,539 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:04:16,461 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:04:16,462 - INFO - Analysis result: status=no
+2026-04-29 14:04:16,462 - WARNING - ❌ Sub-question 1 failed: The retrieved documents mention Pedrola as a municipality in Zaragoza, Spain, but there is no information about a person named 'Martin of the region of Pedrola' or their place of death. While some documents reference deaths (e.g., Ferdinand Daucik in Alcalá de Henares), these are unrelated to the query. The lack of specific details about Martin from Pedrola prevents a definitive answer.
+2026-04-29 14:04:16,462 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 14:04:16,462 - INFO - 
+==================================================
+2026-04-29 14:04:16,462 - INFO - Final answer: Unable to find answer
+2026-04-29 14:04:16,462 - INFO - Total time: 117.11 seconds
+2026-04-29 14:04:16,462 - INFO - Retrieval rounds: 3
+2026-04-29 14:04:16,462 - INFO - Execution traces: 6
+2026-04-29 14:04:16,462 - INFO - ==================================================
+
+2026-04-29 14:04:16,463 - INFO - 
+==================================================
+Processing question: Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?
+==================================================
+2026-04-29 14:04:16,463 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:05:07,444 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:05:07,445 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:05:07,445 - INFO - 
+Processing sub-question 1: Who won the indy car race in the largest populated city in the state that the performer of Changes Two is from?
+2026-04-29 14:05:07,528 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:06:06,207 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:06:06,209 - INFO - Analysis result: status=no
+2026-04-29 14:06:06,209 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:06:06,209 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:06:26,586 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:06:26,587 - INFO - Rewrite strategy: Expanded keywords for 'performer' (artist), clarified 'largest populated city' as 'largest city' and added 'state' for precision. Included synonyms for 'Changes Two' (song title) and alternative phrasings for geographic entities.
+2026-04-29 14:06:26,663 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:07:20,476 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:07:20,477 - INFO - Analysis result: status=yes
+2026-04-29 14:07:20,477 - INFO - ✅ Sub-question 1 succeeded: Will Power
+2026-04-29 14:07:20,477 - INFO - 
+==================================================
+2026-04-29 14:07:20,477 - INFO - Final answer: Will Power
+2026-04-29 14:07:20,477 - INFO - Total time: 184.01 seconds
+2026-04-29 14:07:20,478 - INFO - Retrieval rounds: 2
+2026-04-29 14:07:20,478 - INFO - Execution traces: 4
+2026-04-29 14:07:20,478 - INFO - ==================================================
+
+2026-04-29 14:07:20,478 - INFO - 
+==================================================
+Processing question: When did the city that contains the basilica named after the saint who is holding a knife in the last supper become a country?
+==================================================
+2026-04-29 14:07:20,478 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:08:11,802 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:08:11,803 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:08:11,803 - INFO - 
+Processing sub-question 1: When did the city that contains the basilica named after the saint who is holding a knife in the last supper become a country?
+2026-04-29 14:08:11,878 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:09:10,550 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:09:10,551 - INFO - Analysis result: status=no
+2026-04-29 14:09:10,551 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:09:10,551 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:09:35,969 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:09:35,970 - INFO - Rewrite strategy: default expansion
+2026-04-29 14:09:36,058 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:10:34,782 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:10:34,783 - INFO - Analysis result: status=no
+2026-04-29 14:10:34,783 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:10:34,783 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:11:00,184 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:11:00,186 - INFO - Rewrite strategy: default expansion
+2026-04-29 14:11:00,273 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:11:56,826 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:11:56,827 - INFO - Analysis result: status=no
+2026-04-29 14:11:56,827 - WARNING - ❌ Sub-question 1 failed: Failed to parse response, information may be insufficient
+2026-04-29 14:11:56,827 - INFO - 
+==================================================
+2026-04-29 14:11:56,828 - INFO - Final answer: Unable to find answer
+2026-04-29 14:11:56,828 - INFO - Total time: 276.35 seconds
+2026-04-29 14:11:56,828 - INFO - Retrieval rounds: 3
+2026-04-29 14:11:56,828 - INFO - Execution traces: 6
+2026-04-29 14:11:56,828 - INFO - ==================================================
+
+2026-04-29 14:11:56,828 - INFO - 
+==================================================
+Processing question: What was the role of God in the Biblical crossing of the sea where herbivorous fishes have been seen feeding on gelatinous zooplankton?
+==================================================
+2026-04-29 14:11:56,828 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:12:47,935 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:12:47,936 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:12:47,936 - INFO - 
+Processing sub-question 1: What was the role of God in the Biblical crossing of the sea where herbivorous fishes have been seen feeding on gelatinous zooplankton?
+2026-04-29 14:12:48,021 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:13:04,595 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:13:04,596 - INFO - Analysis result: status=yes
+2026-04-29 14:13:04,596 - INFO - ✅ Sub-question 1 succeeded: In the Biblical account of the Exodus, God's role was to part the Red Sea through Moses' staff, enabling the Israelites to cross on dry ground while the Egyptian army was drowned when the sea closed. The mention of herbivorous fishes feeding on gelatinous zooplankton in the Red Sea refers to ecological observations during blooms, which are unrelated to the divine event but are noted in the same document.
+2026-04-29 14:13:04,596 - INFO - 
+==================================================
+2026-04-29 14:13:04,596 - INFO - Final answer: In the Biblical account of the Exodus, God's role was to part the Red Sea through Moses' staff, enabling the Israelites to cross on dry ground while the Egyptian army was drowned when the sea closed. The mention of herbivorous fishes feeding on gelatinous zooplankton in the Red Sea refers to ecological observations during blooms, which are unrelated to the divine event but are noted in the same document.
+2026-04-29 14:13:04,596 - INFO - Total time: 67.77 seconds
+2026-04-29 14:13:04,596 - INFO - Retrieval rounds: 1
+2026-04-29 14:13:04,596 - INFO - Execution traces: 2
+2026-04-29 14:13:04,596 - INFO - ==================================================
+
+2026-04-29 14:13:04,597 - INFO - 
+==================================================
+Processing question: Who wrote Turn Me On by the performer of Live from Austin, TX?
+==================================================
+2026-04-29 14:13:04,597 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:13:18,126 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:13:18,127 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:13:18,128 - INFO - 
+Processing sub-question 1: Who is the performer of Live from Austin, TX?
+2026-04-29 14:13:18,198 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:14:09,942 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:14:09,944 - INFO - Analysis result: status=yes
+2026-04-29 14:14:09,944 - INFO - ✅ Sub-question 1 succeeded: Norah Jones
+2026-04-29 14:14:09,944 - INFO - 
+Processing sub-question 2: Who wrote [song] by Norah Jones?
+2026-04-29 14:14:10,013 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:15:08,430 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:15:08,431 - INFO - Analysis result: status=no
+2026-04-29 14:15:08,432 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:15:08,432 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:15:29,217 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:15:29,218 - INFO - Rewrite strategy: Expanded query with synonyms for 'wrote' (composed, songwriter) and added related concepts (lyrics, song lyrics) to improve search coverage while retaining key entities
+2026-04-29 14:15:29,302 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:16:14,586 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:16:14,588 - INFO - Analysis result: status=yes
+2026-04-29 14:16:14,588 - INFO - ✅ Sub-question 2 succeeded: John D. Loudermilk
+2026-04-29 14:16:14,588 - INFO - 
+==================================================
+2026-04-29 14:16:14,588 - INFO - Final answer: John D. Loudermilk
+2026-04-29 14:16:14,588 - INFO - Total time: 189.99 seconds
+2026-04-29 14:16:14,588 - INFO - Retrieval rounds: 3
+2026-04-29 14:16:14,588 - INFO - Execution traces: 5
+2026-04-29 14:16:14,588 - INFO - ==================================================
+
+2026-04-29 14:16:14,588 - INFO - 
+==================================================
+Processing question: What county is the city that shares a border with the state capital of the state where Andrew Deveaux was born located in?
+==================================================
+2026-04-29 14:16:14,588 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:17:05,750 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:17:05,752 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:17:05,752 - INFO - 
+Processing sub-question 1: What county is the city that shares a border with the state capital of the state where Andrew Deveaux was born located in?
+2026-04-29 14:17:05,826 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:17:38,803 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:17:38,805 - INFO - Analysis result: status=no
+2026-04-29 14:17:38,805 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:17:38,805 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:17:51,937 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:17:51,939 - INFO - Rewrite strategy: Expanded keywords to include geographic relationships (bordering/adjacent), specified state capital explicitly, and incorporated alternative phrasing for 'county' and 'city' to capture different document formulations
+2026-04-29 14:17:52,013 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:18:50,563 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:18:50,564 - INFO - Analysis result: status=no
+2026-04-29 14:18:50,564 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:18:50,564 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:19:01,487 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:19:01,489 - INFO - Rewrite strategy: Simplified sentence structure while retaining key entities (Andrew Deveaux's birth state, state capital, bordering city, county). Used synonyms like 'bordering' for 'shares a border' and maintained precise geographic relationships.
+2026-04-29 14:19:01,565 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:19:46,293 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:19:46,295 - INFO - Analysis result: status=no
+2026-04-29 14:19:46,295 - WARNING - ❌ Sub-question 1 failed: The documents mention Andrew Deveaux was born in South Carolina (chunk_352). The state capital of South Carolina is Columbia. However, none of the retrieved documents specify which city shares a border with Columbia or identify the county of that city. While some documents reference other cities and counties, they do not provide the necessary information to determine the city bordering Columbia or its corresponding county.
+2026-04-29 14:19:46,295 - INFO - 
+==================================================
+2026-04-29 14:19:46,295 - INFO - Final answer: Unable to find answer
+2026-04-29 14:19:46,295 - INFO - Total time: 211.71 seconds
+2026-04-29 14:19:46,295 - INFO - Retrieval rounds: 3
+2026-04-29 14:19:46,295 - INFO - Execution traces: 6
+2026-04-29 14:19:46,295 - INFO - ==================================================
+
+2026-04-29 14:19:46,295 - INFO - 
+==================================================
+Processing question: There is a video game named after the sports association that chooses where the super bowl is held. What was Nintendo's limit on games per developer per year on that game's platform?
+==================================================
+2026-04-29 14:19:46,295 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:20:37,465 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:20:37,467 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:20:37,467 - INFO - 
+Processing sub-question 1: There is a video game named after the sports association that chooses where the super bowl is held. What was Nintendo's limit on games per developer per year on that game's platform?
+2026-04-29 14:20:37,558 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:20:53,704 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:20:53,705 - INFO - Analysis result: status=yes
+2026-04-29 14:20:53,705 - INFO - ✅ Sub-question 1 succeeded: Nintendo's limit was five games per developer per year on the NES platform.
+2026-04-29 14:20:53,705 - INFO - 
+==================================================
+2026-04-29 14:20:53,705 - INFO - Final answer: Nintendo's limit was five games per developer per year on the NES platform.
+2026-04-29 14:20:53,706 - INFO - Total time: 67.41 seconds
+2026-04-29 14:20:53,706 - INFO - Retrieval rounds: 1
+2026-04-29 14:20:53,706 - INFO - Execution traces: 2
+2026-04-29 14:20:53,706 - INFO - ==================================================
+
+2026-04-29 14:20:53,706 - INFO - 
+==================================================
+Processing question: What century did the author of A Treatise Concerning the Principles of Human Knowledge live in?
+==================================================
+2026-04-29 14:20:53,706 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:21:21,168 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:21:21,169 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:21:21,169 - INFO - 
+Processing sub-question 1: Who is the author of A Treatise Concerning the Principles of Human Knowledge?
+2026-04-29 14:21:21,251 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:21:32,145 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:21:32,146 - INFO - Analysis result: status=yes
+2026-04-29 14:21:32,146 - INFO - ✅ Sub-question 1 succeeded: George Berkeley
+2026-04-29 14:21:32,146 - INFO - 
+Processing sub-question 2: What century did George Berkeley live in?
+2026-04-29 14:21:32,214 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:21:44,011 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:21:44,012 - INFO - Analysis result: status=yes
+2026-04-29 14:21:44,012 - INFO - ✅ Sub-question 2 succeeded: 18th century
+2026-04-29 14:21:44,012 - INFO - 
+==================================================
+2026-04-29 14:21:44,012 - INFO - Final answer: 18th century
+2026-04-29 14:21:44,012 - INFO - Total time: 50.31 seconds
+2026-04-29 14:21:44,012 - INFO - Retrieval rounds: 2
+2026-04-29 14:21:44,012 - INFO - Execution traces: 3
+2026-04-29 14:21:44,012 - INFO - ==================================================
+
+2026-04-29 14:21:44,013 - INFO - 
+==================================================
+Processing question: Which county shares a border with the county where the most populous city in the state where armed robbery is a capital crime is located?
+==================================================
+2026-04-29 14:21:44,013 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:22:35,281 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:22:35,283 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:22:35,283 - INFO - 
+Processing sub-question 1: Which county shares a border with the county where the most populous city in the state where armed robbery is a capital crime is located?
+2026-04-29 14:22:35,369 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:22:55,550 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:22:55,551 - INFO - Analysis result: status=no
+2026-04-29 14:22:55,551 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:22:55,551 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:23:12,155 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:23:12,157 - INFO - Rewrite strategy: Expanded legal terminology (capital punishment, death penalty, penal code) and added related concepts (jurisdictions, state laws) to improve chances of finding states with armed robbery as a capital crime. Included population-related terms and geographic terms for subsequent steps.
+2026-04-29 14:23:12,252 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:24:11,052 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:24:11,053 - INFO - Analysis result: status=no
+2026-04-29 14:24:11,053 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:24:11,054 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:24:27,850 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:24:27,851 - INFO - Rewrite strategy: Simplified nested logic by prioritizing state-level capital punishment for armed robbery, then identifying the largest city and its county, finally finding adjacent counties. Used more direct phrasing for clarity.
+2026-04-29 14:24:27,933 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:24:48,707 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:24:48,708 - INFO - Analysis result: status=no
+2026-04-29 14:24:48,708 - WARNING - ❌ Sub-question 1 failed: The documents do not provide information about which states have armed robbery as a capital crime. While they mention various cities and counties (e.g., Detroit in Michigan, Yuma County in Arizona), there is no explicit connection between any state's capital punishment laws for armed robbery and the corresponding counties. Without knowing the specific state where armed robbery is a capital crime, the chain of reasoning cannot be completed.
+2026-04-29 14:24:48,708 - INFO - 
+==================================================
+2026-04-29 14:24:48,708 - INFO - Final answer: Unable to find answer
+2026-04-29 14:24:48,708 - INFO - Total time: 184.70 seconds
+2026-04-29 14:24:48,708 - INFO - Retrieval rounds: 3
+2026-04-29 14:24:48,708 - INFO - Execution traces: 6
+2026-04-29 14:24:48,708 - INFO - ==================================================
+
+2026-04-29 14:24:48,709 - INFO - 
+==================================================
+Processing question: What region is directly north of where Israel and the final destination of export crops is?
+==================================================
+2026-04-29 14:24:48,709 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:25:39,669 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:25:39,670 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:25:39,670 - INFO - 
+Processing sub-question 1: What region is directly north of where Israel and the final destination of export crops is?
+2026-04-29 14:25:39,737 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:26:34,646 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:26:34,648 - INFO - Analysis result: status=no
+2026-04-29 14:26:34,648 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:26:34,648 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:26:51,055 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:26:51,057 - INFO - Rewrite strategy: Separate the dual requirements into distinct components while maintaining logical connection, using geographic and economic terminology to clarify the relationship between proximity and trade routes
+2026-04-29 14:26:51,126 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:27:49,381 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:27:49,383 - INFO - Analysis result: status=no
+2026-04-29 14:27:49,383 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:27:49,383 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:28:11,214 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:28:11,215 - INFO - Rewrite strategy: Clarified the ambiguous structure by separating geographical location (north of Israel) from export destination, while expanding 'export crops' to 'agricultural exports' for specificity.
+2026-04-29 14:28:11,284 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:29:05,682 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:29:05,684 - INFO - Analysis result: status=no
+2026-04-29 14:29:05,684 - WARNING - ❌ Sub-question 1 failed: The documents mention Israel's geographical location and some export crop destinations (e.g., the Persian Gulf via Shiraz, Iran), but they do not explicitly state a region that is both directly north of Israel and the final destination of export crops. While the Persian Gulf is noted as a destination for Iranian export crops, it is south of Israel, not north. The region directly north of Israel (e.g., Lebanon, Syria) is not linked to export crop destinations in the provided texts. Thus, the necessary information to answer the question is insufficient.
+2026-04-29 14:29:05,684 - INFO - 
+==================================================
+2026-04-29 14:29:05,684 - INFO - Final answer: Unable to find answer
+2026-04-29 14:29:05,684 - INFO - Total time: 256.97 seconds
+2026-04-29 14:29:05,684 - INFO - Retrieval rounds: 3
+2026-04-29 14:29:05,684 - INFO - Execution traces: 6
+2026-04-29 14:29:05,684 - INFO - ==================================================
+
+2026-04-29 14:29:05,684 - INFO - 
+==================================================
+Processing question: Where is the Bridge of Sighs located in the place of death of Sonata pian'e forte's composer?
+==================================================
+2026-04-29 14:29:05,684 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:29:56,789 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:29:56,791 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:29:56,791 - INFO - 
+Processing sub-question 1: Where is the Bridge of Sighs located in the place of death of Sonata pian'e forte's composer?
+2026-04-29 14:29:56,869 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:30:14,862 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:30:14,863 - INFO - Analysis result: status=no
+2026-04-29 14:30:14,863 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:30:14,863 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:30:28,689 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:30:28,691 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'death place' (burial site, final resting place) and explicitly mentioned Venice as the bridge's location, while maintaining core entities (composer name, work title)
+2026-04-29 14:30:28,767 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:30:47,380 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:30:47,382 - INFO - Analysis result: status=no
+2026-04-29 14:30:47,382 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:30:47,382 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:31:06,163 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:31:06,164 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'location' (Venice, Italy) and 'death place' (death location, place of death). Added alternative names for the bridge (Ponte dei Sospiri) and explicitly linked the composer's death details to the bridge's location.
+2026-04-29 14:31:06,243 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:31:41,224 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:31:41,226 - INFO - Analysis result: status=no
+2026-04-29 14:31:41,226 - WARNING - ❌ Sub-question 1 failed: The documents confirm that the Bridge of Sighs is located in Venice, Italy. However, they do not explicitly state the place of death of Giovanni Gabrieli, the composer of Sonata pian'e forte. While Gabrieli is associated with Venice (as he studied there), the documents lack direct information about his death location. Thus, the necessary connection between the bridge's location and the composer's death place cannot be definitively established from the provided texts.
+2026-04-29 14:31:41,226 - INFO - 
+==================================================
+2026-04-29 14:31:41,226 - INFO - Final answer: Unable to find answer
+2026-04-29 14:31:41,226 - INFO - Total time: 155.54 seconds
+2026-04-29 14:31:41,226 - INFO - Retrieval rounds: 3
+2026-04-29 14:31:41,226 - INFO - Execution traces: 6
+2026-04-29 14:31:41,226 - INFO - ==================================================
+
+2026-04-29 14:31:41,226 - INFO - 
+==================================================
+Processing question: Who owns the record label of the Lovin' All Night performer?
+==================================================
+2026-04-29 14:31:41,226 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:32:32,206 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:32:32,207 - ERROR - Failed to parse PLAN: Invalid \escape: line 4 column 49 (char 75)
+2026-04-29 14:32:32,207 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:32:32,207 - INFO - 
+Processing sub-question 1: Who owns the record label of the Lovin' All Night performer?
+2026-04-29 14:32:32,288 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:32:58,795 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:32:58,797 - INFO - Analysis result: status=yes
+2026-04-29 14:32:58,797 - INFO - ✅ Sub-question 1 succeeded: Columbia Records
+2026-04-29 14:32:58,797 - INFO - 
+==================================================
+2026-04-29 14:32:58,797 - INFO - Final answer: Columbia Records
+2026-04-29 14:32:58,797 - INFO - Total time: 77.57 seconds
+2026-04-29 14:32:58,797 - INFO - Retrieval rounds: 1
+2026-04-29 14:32:58,797 - INFO - Execution traces: 2
+2026-04-29 14:32:58,797 - INFO - ==================================================
+
+2026-04-29 14:32:58,797 - INFO - 
+==================================================
+Processing question: Who many major sports centers are located in where the Yongle Emporer did great who the edict was addressed to?
+==================================================
+2026-04-29 14:32:58,797 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:33:49,992 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:33:49,993 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:33:49,994 - INFO - 
+Processing sub-question 1: Who many major sports centers are located in where the Yongle Emporer did great who the edict was addressed to?
+2026-04-29 14:33:50,070 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:34:07,190 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:34:07,191 - INFO - Analysis result: status=yes
+2026-04-29 14:34:07,191 - INFO - ✅ Sub-question 1 succeeded: Two
+2026-04-29 14:34:07,191 - INFO - 
+==================================================
+2026-04-29 14:34:07,191 - INFO - Final answer: Two
+2026-04-29 14:34:07,191 - INFO - Total time: 68.39 seconds
+2026-04-29 14:34:07,191 - INFO - Retrieval rounds: 1
+2026-04-29 14:34:07,191 - INFO - Execution traces: 2
+2026-04-29 14:34:07,191 - INFO - ==================================================
+
+2026-04-29 14:34:07,191 - INFO - 
+==================================================
+Processing question: What worldwide ranking does the university where Manuel Isaías López was educated hold?
+==================================================
+2026-04-29 14:34:07,191 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:34:17,495 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:34:17,496 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:34:17,496 - INFO - 
+Processing sub-question 1: Which university was Manuel Isaías López educated at?
+2026-04-29 14:34:17,568 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:34:34,963 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:34:34,964 - INFO - Analysis result: status=no
+2026-04-29 14:34:34,964 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:34:34,964 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:34:55,733 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:34:55,734 - INFO - Rewrite strategy: Expanded keywords to include synonyms for education (studied, attended, graduated, trained) and related terms (medical school, academic background). Incorporated his professional roles and associated institutions (UNAM) to identify potential indirect references to his educational history.
+2026-04-29 14:34:55,812 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:35:16,751 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:35:16,752 - INFO - Analysis result: status=no
+2026-04-29 14:35:16,752 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:35:16,752 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:35:32,852 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:35:32,853 - INFO - Rewrite strategy: Expanded keywords to include synonyms for education (studied, attended, graduated) and related terms (academic background, medical school, degrees). Incorporated his full name with alternative spelling variations and professional context (UNAM) to capture indirect references.
+2026-04-29 14:35:32,927 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:35:50,205 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:35:50,206 - INFO - Analysis result: status=no
+2026-04-29 14:35:50,206 - WARNING - ❌ Sub-question 1 failed: The retrieved documents mention Manuel Isaias López's professional roles, such as his position as director of child and adolescent psychiatry at UNAM (National Autonomous University of Mexico), but they do not explicitly state which university he was educated at. The documents focus on his career and contributions rather than his educational background. Therefore, there is insufficient information to answer the question.
+2026-04-29 14:35:50,206 - WARNING - ⏭️ Skipping sub-question 2 due to missing dependencies: [1]
+2026-04-29 14:35:50,206 - INFO - 
+==================================================
+2026-04-29 14:35:50,207 - INFO - Final answer: Unable to find answer
+2026-04-29 14:35:50,207 - INFO - Total time: 103.02 seconds
+2026-04-29 14:35:50,207 - INFO - Retrieval rounds: 3
+2026-04-29 14:35:50,207 - INFO - Execution traces: 6
+2026-04-29 14:35:50,207 - INFO - ==================================================
+
+2026-04-29 14:35:50,207 - INFO - 
+==================================================
+Processing question: What is the Arabic dictionary meaning of the word referring to the majority religion in the area of British India, that became India when the country containing Barawal was formed?
+==================================================
+2026-04-29 14:35:50,207 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:36:41,403 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:36:41,404 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:36:41,404 - INFO - 
+Processing sub-question 1: What is the majority religion in the area of British India?
+2026-04-29 14:36:41,475 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:36:59,213 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:36:59,214 - INFO - Analysis result: status=yes
+2026-04-29 14:36:59,214 - INFO - ✅ Sub-question 1 succeeded: Hinduism
+2026-04-29 14:36:59,215 - INFO - 
+Processing sub-question 2: What is the Arabic dictionary meaning of the word referring to Hinduism?
+2026-04-29 14:36:59,313 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:37:20,458 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:37:20,459 - INFO - Analysis result: status=no
+2026-04-29 14:37:20,459 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:37:20,459 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:37:35,723 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:37:35,724 - INFO - Rewrite strategy: Expanded keywords to include Arabic terminology, etymological connections, and contextual references while maintaining focus on dictionary definitions and religious concepts
+2026-04-29 14:37:35,813 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:37:52,912 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:37:52,913 - INFO - Analysis result: status=yes
+2026-04-29 14:37:52,913 - INFO - ✅ Sub-question 2 succeeded: The Arabic dictionary meaning of the word referring to Hinduism is 'al-Hind' or 'al-Hindu,' which originally denoted the region of India (from the Sanskrit 'Sindhu' meaning 'river' or 'ocean') and later came to refer to the people and, by extension, the religion of Hinduism. The term 'al-Hind' was used in ancient Persian and Arabic texts to describe the Indian subcontinent, while 'Hindu' (al-Hindu) specifically referred to its inhabitants and their cultural/religious practices.
+2026-04-29 14:37:52,913 - INFO - 
+==================================================
+2026-04-29 14:37:52,913 - INFO - Final answer: The Arabic dictionary meaning of the word referring to Hinduism is 'al-Hind' or 'al-Hindu,' which originally denoted the region of India (from the Sanskrit 'Sindhu' meaning 'river' or 'ocean') and later came to refer to the people and, by extension, the religion of Hinduism. The term 'al-Hind' was used in ancient Persian and Arabic texts to describe the Indian subcontinent, while 'Hindu' (al-Hindu) specifically referred to its inhabitants and their cultural/religious practices.
+2026-04-29 14:37:52,913 - INFO - Total time: 122.71 seconds
+2026-04-29 14:37:52,913 - INFO - Retrieval rounds: 3
+2026-04-29 14:37:52,913 - INFO - Execution traces: 5
+2026-04-29 14:37:52,913 - INFO - ==================================================
+
+2026-04-29 14:37:52,914 - INFO - 
+==================================================
+Processing question: What river does the system containing Umchabezi River serve as the mouth of?
+==================================================
+2026-04-29 14:37:52,914 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:38:44,041 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:38:44,043 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:38:44,043 - INFO - 
+Processing sub-question 1: What river does the system containing Umchabezi River serve as the mouth of?
+2026-04-29 14:38:44,109 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:39:00,967 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:00,968 - INFO - Analysis result: status=yes
+2026-04-29 14:39:00,968 - INFO - ✅ Sub-question 1 succeeded: Limpopo River
+2026-04-29 14:39:00,968 - INFO - 
+==================================================
+2026-04-29 14:39:00,968 - INFO - Final answer: Limpopo River
+2026-04-29 14:39:00,968 - INFO - Total time: 68.05 seconds
+2026-04-29 14:39:00,968 - INFO - Retrieval rounds: 1
+2026-04-29 14:39:00,968 - INFO - Execution traces: 2
+2026-04-29 14:39:00,968 - INFO - ==================================================
+
+2026-04-29 14:39:00,969 - INFO - 
+==================================================
+Processing question: What was the original name of the bank that bought FleetBoston Financial?
+==================================================
+2026-04-29 14:39:00,969 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:39:10,214 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:10,215 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:39:10,215 - INFO - 
+Processing sub-question 1: Which bank acquired FleetBoston Financial?
+2026-04-29 14:39:10,290 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:39:19,646 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:19,647 - INFO - Analysis result: status=yes
+2026-04-29 14:39:19,647 - INFO - ✅ Sub-question 1 succeeded: Bank of America
+2026-04-29 14:39:19,647 - INFO - 
+Processing sub-question 2: What was the original name of Bank of America?
+2026-04-29 14:39:19,718 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:39:39,097 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:39,098 - INFO - Analysis result: status=yes
+2026-04-29 14:39:39,098 - INFO - ✅ Sub-question 2 succeeded: Bank of Italy
+2026-04-29 14:39:39,098 - INFO - 
+==================================================
+2026-04-29 14:39:39,098 - INFO - Final answer: Bank of Italy
+2026-04-29 14:39:39,098 - INFO - Total time: 38.13 seconds
+2026-04-29 14:39:39,098 - INFO - Retrieval rounds: 2
+2026-04-29 14:39:39,098 - INFO - Execution traces: 3
+2026-04-29 14:39:39,098 - INFO - ==================================================
+
+2026-04-29 14:39:39,098 - INFO - 
+==================================================
+Processing question: The actor who played Thelma in "Thelma and Louise" also played which character in "A League of Their Own"?
+==================================================
+2026-04-29 14:39:39,098 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:39:49,208 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:49,209 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:39:49,209 - INFO - 
+Processing sub-question 1: Who played Thelma in 'Thelma and Louise'?
+2026-04-29 14:39:49,290 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:39:57,470 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:39:57,471 - INFO - Analysis result: status=yes
+2026-04-29 14:39:57,472 - INFO - ✅ Sub-question 1 succeeded: Geena Davis
+2026-04-29 14:39:57,472 - INFO - 
+Processing sub-question 2: Which character in 'A League of Their Own' did Geena Davis play?
+2026-04-29 14:39:57,543 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:40:10,360 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:40:10,361 - INFO - Analysis result: status=yes
+2026-04-29 14:40:10,361 - INFO - ✅ Sub-question 2 succeeded: Dottie Hinson
+2026-04-29 14:40:10,361 - INFO - 
+==================================================
+2026-04-29 14:40:10,361 - INFO - Final answer: Dottie Hinson
+2026-04-29 14:40:10,362 - INFO - Total time: 31.26 seconds
+2026-04-29 14:40:10,362 - INFO - Retrieval rounds: 2
+2026-04-29 14:40:10,362 - INFO - Execution traces: 3
+2026-04-29 14:40:10,362 - INFO - ==================================================
+
+2026-04-29 14:40:10,362 - INFO - 
+==================================================
+Processing question: What were the Genesis's advantages over the platform of the game Nightshade?
+==================================================
+2026-04-29 14:40:10,362 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:40:19,439 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:40:19,441 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:40:19,441 - INFO - 
+Processing sub-question 1: What platform was the game Nightshade developed for?
+2026-04-29 14:40:19,520 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:40:28,219 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:40:28,220 - INFO - Analysis result: status=yes
+2026-04-29 14:40:28,220 - INFO - ✅ Sub-question 1 succeeded: Nintendo Entertainment System (NES)
+2026-04-29 14:40:28,220 - INFO - 
+Processing sub-question 2: What were the Genesis's advantages over Nintendo Entertainment System (NES)?
+2026-04-29 14:40:28,295 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:40:45,245 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:40:45,246 - INFO - Analysis result: status=yes
+2026-04-29 14:40:45,247 - INFO - ✅ Sub-question 2 succeeded: The Sega Genesis (Mega Drive) had several advantages over the Nintendo Entertainment System (NES): 1) It was a 16-bit console, offering superior graphics and processing power compared to the NES's 8-bit architecture. 2) It featured a larger game library and lower price point. 3) Sega positioned it as a 'cool' console with mature titles and edgy marketing, targeting older gamers. 4) It had a head start in the market and competitive pricing, though the NES initially dominated due to its earlier release and stronger third-party support.
+2026-04-29 14:40:45,247 - INFO - 
+==================================================
+2026-04-29 14:40:45,247 - INFO - Final answer: The Sega Genesis (Mega Drive) had several advantages over the Nintendo Entertainment System (NES): 1) It was a 16-bit console, offering superior graphics and processing power compared to the NES's 8-bit architecture. 2) It featured a larger game library and lower price point. 3) Sega positioned it as a 'cool' console with mature titles and edgy marketing, targeting older gamers. 4) It had a head start in the market and competitive pricing, though the NES initially dominated due to its earlier release and stronger third-party support.
+2026-04-29 14:40:45,247 - INFO - Total time: 34.88 seconds
+2026-04-29 14:40:45,247 - INFO - Retrieval rounds: 2
+2026-04-29 14:40:45,247 - INFO - Execution traces: 3
+2026-04-29 14:40:45,247 - INFO - ==================================================
+
+2026-04-29 14:40:45,247 - INFO - 
+==================================================
+Processing question: Which season was the runner up of the third season of American Idol on?
+==================================================
+2026-04-29 14:40:45,247 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:41:32,715 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:41:32,716 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:41:32,716 - INFO - 
+Processing sub-question 1: Who was the runner-up of the third season of American Idol?
+2026-04-29 14:41:32,792 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:41:43,719 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:41:43,720 - INFO - Analysis result: status=yes
+2026-04-29 14:41:43,721 - INFO - ✅ Sub-question 1 succeeded: Diana Degarmo
+2026-04-29 14:41:43,721 - INFO - 
+Processing sub-question 2: In which season was Diana Degarmo the runner-up?
+2026-04-29 14:41:43,795 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:41:55,171 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:41:55,172 - INFO - Analysis result: status=yes
+2026-04-29 14:41:55,172 - INFO - ✅ Sub-question 2 succeeded: third season
+2026-04-29 14:41:55,172 - INFO - 
+==================================================
+2026-04-29 14:41:55,172 - INFO - Final answer: third season
+2026-04-29 14:41:55,172 - INFO - Total time: 69.92 seconds
+2026-04-29 14:41:55,172 - INFO - Retrieval rounds: 2
+2026-04-29 14:41:55,172 - INFO - Execution traces: 3
+2026-04-29 14:41:55,172 - INFO - ==================================================
+
+2026-04-29 14:41:55,172 - INFO - 
+==================================================
+Processing question: Where did the person who sponsored the resolution to reopen trade with Vietnam along with Kerry go to college?
+==================================================
+2026-04-29 14:41:55,172 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:42:08,069 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:42:08,070 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:42:08,070 - INFO - 
+Processing sub-question 1: Who sponsored the resolution to reopen trade with Vietnam along with Kerry?
+2026-04-29 14:42:08,154 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:42:18,953 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:42:18,954 - INFO - Analysis result: status=yes
+2026-04-29 14:42:18,954 - INFO - ✅ Sub-question 1 succeeded: John McCain
+2026-04-29 14:42:18,955 - INFO - 
+Processing sub-question 2: Where did John McCain go to college?
+2026-04-29 14:42:19,018 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:42:40,067 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:42:40,068 - INFO - Analysis result: status=no
+2026-04-29 14:42:40,068 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:42:40,068 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:42:58,397 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:42:58,398 - INFO - Rewrite strategy: Expanded keywords to include synonyms for 'college' (university, school), terms related to educational attendance (attended, studied at), and specific military institution references (Naval Academy) to capture both undergraduate and graduate education contexts.
+2026-04-29 14:42:58,479 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:43:13,210 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:43:13,211 - INFO - Analysis result: status=no
+2026-04-29 14:43:13,211 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:43:13,211 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:43:24,891 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:43:24,893 - INFO - Rewrite strategy: Expanded keywords to include synonyms (university, education, degrees) and related concepts (Naval Academy, attended, graduated from) while maintaining focus on the key entity 'John McCain'.
+2026-04-29 14:43:24,974 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:44:17,081 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:44:17,082 - INFO - Analysis result: status=no
+2026-04-29 14:44:17,082 - WARNING - ❌ Sub-question 2 failed: The retrieved documents do not mention John McCain's educational background. While the documents discuss other individuals' college attendance (e.g., John Walfrid Nyquist attended the United States Naval Academy), there is no information provided about John McCain's college education. The query cannot be answered based on the given documents.
+2026-04-29 14:44:17,082 - INFO - 
+==================================================
+2026-04-29 14:44:17,082 - INFO - Final answer: John McCain
+2026-04-29 14:44:17,082 - INFO - Total time: 141.91 seconds
+2026-04-29 14:44:17,082 - INFO - Retrieval rounds: 4
+2026-04-29 14:44:17,082 - INFO - Execution traces: 7
+2026-04-29 14:44:17,082 - INFO - ==================================================
+
+2026-04-29 14:44:17,082 - INFO - 
+==================================================
+Processing question: When was the last time the team Matthew Webb was a member of beat the winner of the 1894-95 FA Cup?
+==================================================
+2026-04-29 14:44:17,083 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:45:08,025 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:45:08,027 - INFO - Generated plan: 1 sub-questions
+2026-04-29 14:45:08,027 - INFO - 
+Processing sub-question 1: When was the last time the team Matthew Webb was a member of beat the winner of the 1894-95 FA Cup?
+2026-04-29 14:45:08,108 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:45:57,815 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:45:57,816 - INFO - Analysis result: status=no
+2026-04-29 14:45:57,816 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:45:57,816 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:46:14,909 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:46:14,910 - INFO - Rewrite strategy: Explicitly include the team name 'Birmingham City' and the specific FA Cup year (1894-95) to target relevant matches. Added 'Match results' to focus on game outcomes and 'champions' as an alternative phrasing for 'winner'.
+2026-04-29 14:46:14,982 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:47:07,697 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:47:07,699 - INFO - Analysis result: status=no
+2026-04-29 14:47:07,699 - INFO - Insufficient information, attempting query rewrite (attempt 2/2)
+2026-04-29 14:47:07,699 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:47:21,428 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:47:21,429 - INFO - Rewrite strategy: Expanded keywords to include team names, FA Cup references, and synonyms for 'beat' (e.g., 'defeated'). Added specific years and match-related terms to target relevant historical sports data.
+2026-04-29 14:47:21,500 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:48:10,419 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:48:10,420 - INFO - Analysis result: status=no
+2026-04-29 14:48:10,420 - WARNING - ❌ Sub-question 1 failed: The documents mention Matthew Webb was a member of Birmingham City (chunk_378) and identify Notts County as the 1894 FA Cup winner (chunk_167). However, there is no information about matches between Birmingham City and Notts County, nor any record of Birmingham City defeating Notts County in any competition. The documents lack the necessary details to determine when (if ever) Birmingham City beat the 1894 FA Cup winner.
+2026-04-29 14:48:10,420 - INFO - 
+==================================================
+2026-04-29 14:48:10,420 - INFO - Final answer: Unable to find answer
+2026-04-29 14:48:10,420 - INFO - Total time: 233.34 seconds
+2026-04-29 14:48:10,420 - INFO - Retrieval rounds: 3
+2026-04-29 14:48:10,420 - INFO - Execution traces: 6
+2026-04-29 14:48:10,420 - INFO - ==================================================
+
+2026-04-29 14:48:10,421 - INFO - 
+==================================================
+Processing question: Who is the president of the newly declared independent country that formed the Timor Leste Commission of Truth and Friendship with the country where Pantar is found?
+==================================================
+2026-04-29 14:48:10,421 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:49:01,690 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:49:01,692 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:49:01,692 - INFO - 
+Processing sub-question 1: What is the country where Pantar is found?
+2026-04-29 14:49:01,759 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:49:11,964 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:49:11,965 - INFO - Analysis result: status=yes
+2026-04-29 14:49:11,965 - INFO - ✅ Sub-question 1 succeeded: Indonesia
+2026-04-29 14:49:11,965 - INFO - 
+Processing sub-question 2: Who is the president of the newly declared independent country that formed the Timor Leste Commission of Truth and Friendship with Indonesia?
+2026-04-29 14:49:12,049 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:49:43,812 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:49:43,813 - INFO - Analysis result: status=yes
+2026-04-29 14:49:43,813 - INFO - ✅ Sub-question 2 succeeded: Francisco Guterres
+2026-04-29 14:49:43,813 - INFO - 
+==================================================
+2026-04-29 14:49:43,813 - INFO - Final answer: Francisco Guterres
+2026-04-29 14:49:43,814 - INFO - Total time: 93.39 seconds
+2026-04-29 14:49:43,814 - INFO - Retrieval rounds: 2
+2026-04-29 14:49:43,814 - INFO - Execution traces: 3
+2026-04-29 14:49:43,814 - INFO - ==================================================
+
+2026-04-29 14:49:43,814 - INFO - 
+==================================================
+Processing question: Who plays the legendary figure featured in Historia Regum Britanniae in the show Once Upon a Time?
+==================================================
+2026-04-29 14:49:43,814 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:49:54,883 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:49:54,884 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:49:54,884 - INFO - 
+Processing sub-question 1: Which legendary figure from Historia Regum Britanniae is featured in the show Once Upon a Time?
+2026-04-29 14:49:54,951 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:50:12,589 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:50:12,590 - INFO - Analysis result: status=yes
+2026-04-29 14:50:12,590 - INFO - ✅ Sub-question 1 succeeded: King Arthur
+2026-04-29 14:50:12,590 - INFO - 
+Processing sub-question 2: Who plays King Arthur in the show Once Upon a Time?
+2026-04-29 14:50:12,675 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:50:22,800 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:50:22,802 - INFO - Analysis result: status=yes
+2026-04-29 14:50:22,802 - INFO - ✅ Sub-question 2 succeeded: Liam Thomas Garrigan
+2026-04-29 14:50:22,802 - INFO - 
+==================================================
+2026-04-29 14:50:22,802 - INFO - Final answer: Liam Thomas Garrigan
+2026-04-29 14:50:22,802 - INFO - Total time: 38.99 seconds
+2026-04-29 14:50:22,802 - INFO - Retrieval rounds: 2
+2026-04-29 14:50:22,802 - INFO - Execution traces: 3
+2026-04-29 14:50:22,802 - INFO - ==================================================
+
+2026-04-29 14:50:22,802 - INFO - 
+==================================================
+Processing question: After the period which limited the supply of shellac; Białystok, Przemyśl were returned to what country along with the region they had been given in the Treaty of Schönbrunn?
+==================================================
+2026-04-29 14:50:22,802 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:51:13,962 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:51:13,963 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:51:13,963 - INFO - 
+Processing sub-question 1: What historical period limited the supply of shellac?
+2026-04-29 14:51:14,034 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:51:28,222 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:51:28,223 - INFO - Analysis result: status=yes
+2026-04-29 14:51:28,223 - INFO - ✅ Sub-question 1 succeeded: World War II
+2026-04-29 14:51:28,223 - INFO - 
+Processing sub-question 2: Which country was given Białystok and Przemyśl in the Treaty of Schönbrunn?
+2026-04-29 14:51:28,297 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:51:49,955 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:51:49,956 - INFO - Analysis result: status=no
+2026-04-29 14:51:49,956 - INFO - Insufficient information, attempting query rewrite (attempt 1/2)
+2026-04-29 14:51:49,956 - INFO - ✏️ Rewrite Agent: Starting query rewrite
+2026-04-29 14:52:08,632 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:52:08,633 - INFO - Rewrite strategy: Expanded keywords to include alternative phrasings (e.g., 'territorial allocation' instead of 'given'), related regions (Galicia), and contextual terms (Napoleonic Wars) to capture broader historical context while maintaining specificity about the cities and treaty.
+2026-04-29 14:52:08,716 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:52:46,644 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:52:46,645 - INFO - Analysis result: status=yes
+2026-04-29 14:52:46,645 - INFO - ✅ Sub-question 2 succeeded: Poland
+2026-04-29 14:52:46,646 - INFO - 
+==================================================
+2026-04-29 14:52:46,646 - INFO - Final answer: Poland
+2026-04-29 14:52:46,646 - INFO - Total time: 143.84 seconds
+2026-04-29 14:52:46,646 - INFO - Retrieval rounds: 3
+2026-04-29 14:52:46,646 - INFO - Execution traces: 5
+2026-04-29 14:52:46,646 - INFO - ==================================================
+
+2026-04-29 14:52:46,646 - INFO - 
+==================================================
+Processing question: What team is the highest goal scorer in the EPL a member of?
+==================================================
+2026-04-29 14:52:46,646 - INFO - 🎯 PLAN Agent: Starting question decomposition
+2026-04-29 14:52:58,205 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:52:58,207 - INFO - Generated plan: 2 sub-questions
+2026-04-29 14:52:58,207 - INFO - 
+Processing sub-question 1: Who is the highest goal scorer in the EPL?
+2026-04-29 14:52:58,279 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:53:09,429 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:53:09,430 - INFO - Analysis result: status=yes
+2026-04-29 14:53:09,430 - INFO - ✅ Sub-question 1 succeeded: Alan Shearer
+2026-04-29 14:53:09,430 - INFO - 
+Processing sub-question 2: What team is Alan Shearer a member of?
+2026-04-29 14:53:09,501 - INFO - 🔍 Analysis-Answer Agent: Starting information analysis
+2026-04-29 14:53:35,121 - INFO - HTTP Request: POST http://127.0.0.1:8003/v1/chat/completions "HTTP/1.1 200 OK"
+2026-04-29 14:53:35,122 - INFO - Analysis result: status=yes
+2026-04-29 14:53:35,122 - INFO - ✅ Sub-question 2 succeeded: Alan Shearer was a member of Blackburn Rovers and Newcastle United.
+2026-04-29 14:53:35,122 - INFO - 
+==================================================
+2026-04-29 14:53:35,122 - INFO - Final answer: Alan Shearer was a member of Blackburn Rovers and Newcastle United.
+2026-04-29 14:53:35,122 - INFO - Total time: 48.48 seconds
+2026-04-29 14:53:35,122 - INFO - Retrieval rounds: 2
+2026-04-29 14:53:35,122 - INFO - Execution traces: 3
+2026-04-29 14:53:35,122 - INFO - ==================================================
+

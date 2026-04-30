@@ -1,0 +1,39 @@
+{
+  "tau": 0.7,
+  "overall": {
+    "n": 1000,
+    "contain": 0.673,
+    "norm_em": 0.529,
+    "token_f1": 0.6877420610071331,
+    "mean_total_tokens": 19113.183,
+    "mean_subagent_calls": 1.272,
+    "mean_wallclock_seconds": 92.495415
+  },
+  "probe_sufficient": {
+    "n": 803,
+    "contain": 0.7048567870485679,
+    "norm_em": 0.5504358655043586,
+    "token_f1": 0.7194996973803418,
+    "mean_total_tokens": 13304.382316313824,
+    "mean_subagent_calls": 1.0,
+    "mean_wallclock_seconds": 67.97410087173103
+  },
+  "probe_insufficient": {
+    "n": 197,
+    "contain": 0.5431472081218274,
+    "norm_em": 0.4416243654822335,
+    "token_f1": 0.5582934213742085,
+    "mean_total_tokens": 42790.68020304568,
+    "mean_subagent_calls": 2.3807106598984773,
+    "mean_wallclock_seconds": 192.44777664974615
+  },
+  "no_sufficiency_logged": {
+    "n": 0,
+    "contain": 0.0,
+    "norm_em": 0.0,
+    "token_f1": 0.0,
+    "mean_total_tokens": 0.0,
+    "mean_subagent_calls": 0.0,
+    "mean_wallclock_seconds": 0.0
+  }
+}

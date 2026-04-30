@@ -1,0 +1,11 @@
+{
+  "total_output_rows": 1000,
+  "mean_question_wallclock_seconds": 68.78,
+  "p50_question_wallclock_seconds": 60.904,
+  "p95_question_wallclock_seconds": 159.574,
+  "mean_total_tokens": 14995.78,
+  "mean_prompt_tokens": 12373.702,
+  "mean_completion_tokens": 2622.078,
+  "mean_llm_call_count": 3.55,
+  "mean_total_llm_latency_seconds": 68.622
+}

@@ -1,0 +1,19 @@
+{
+  "config_path": "configs/m1_2.sufficiency_snippet500.yaml",
+  "questions_path": "data/musique/questions_snippet50_shard1.json",
+  "server_url": "http://localhost:8002/v1",
+  "concurrency": 12,
+  "chunks_file": "data/musique/chunks.json",
+  "index_dir": "data/musique/index_e5_base_v2",
+  "embedding_model": "intfloat/e5-base-v2",
+  "completed_ids": 0,
+  "attempted": 25,
+  "succeeded": 25,
+  "failed": 0,
+  "total_output_rows": 25,
+  "elapsed_seconds": 558.759,
+  "mean_wallclock_seconds": 22.35,
+  "mean_question_wallclock_seconds": 206.883,
+  "p50_question_wallclock_seconds": 204.09,
+  "p95_question_wallclock_seconds": 339.809
+}
