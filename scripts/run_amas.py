@@ -32,7 +32,14 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--max-retrievals', type=int, default=3)
     ap.add_argument('--repair', dest='repair', action='store_true', default=True)
     ap.add_argument('--no-repair', dest='repair', action='store_false')
-    ap.add_argument('--worker', choices=['mini', 'qwen_nothink'], default='mini')
+    ap.add_argument('--worker', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
+    ap.add_argument('--synth-mode', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
+    ap.add_argument('--use-sas-collapse', action='store_true', default=False, help='enable probe-grounded SAS-collapse before MAS')
+    ap.add_argument('--tau-sas-g', type=float, default=0.55)
+    ap.add_argument('--tau-sas-conf', type=float, default=0.75)
+    ap.add_argument('--solver-budget', type=int, default=1024, help='max_tokens for qwen14b_think_small worker')
+    ap.add_argument('--synth-recursion-rounds', type=int, default=1, help='1=plain synth, 2+=synth-self-refine rounds')
+    ap.add_argument('--synth-budget', type=int, default=2048, help='max_tokens for synth (default 2048 to avoid thinking-budget exhaust)')
     ap.add_argument('--planner-replica', type=int, default=0)
     ap.add_argument('--planner-model', choices=['qwen3-8b', 'qwen3-14b'], default='qwen3-8b')
     ap.add_argument('--limit', type=int, default=0, help='if > 0, only run first N questions')
@@ -68,13 +75,29 @@ async def main() -> None:
         planner_lms = [make_qwen14b_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
     else:
         planner_lms = [make_qwen_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
-    if args.worker == 'mini':
-        worker_lms = [make_mini_lm(cfg) for _ in range(n_replicas)]
-        synth_lms = [make_mini_lm(cfg) for _ in range(n_replicas)]
-    else:
-        # All-Qwen: stagger replicas to avoid hammering one GPU.
-        worker_lms = [make_qwen_nothink_lm(cfg, replica_idx=(i + 1) % n_replicas) for i in range(n_replicas)]
-        synth_lms = [make_qwen_nothink_lm(cfg, replica_idx=(i + 2) % n_replicas) for i in range(n_replicas)]
+    from amas3.lm import make_qwen14b_think_small_lm, make_qwen14b_nothink_lm
+
+    def _make_lm(mode: str, replica_offset: int):
+        out = []
+        for i in range(n_replicas):
+            r = (i + replica_offset) % n_replicas
+            if mode == 'mini':
+                out.append(make_mini_lm(cfg))
+            elif mode == 'qwen_nothink':
+                out.append(make_qwen_nothink_lm(cfg, replica_idx=r))
+            elif mode == 'qwen14b_think_small':
+                budget = args.synth_budget if replica_offset == 2 else args.solver_budget
+                out.append(make_qwen14b_think_small_lm(cfg, replica_idx=r, max_tokens=budget))
+            elif mode == 'qwen14b_nothink':
+                budget = args.synth_budget if replica_offset == 2 else 512
+                out.append(make_qwen14b_nothink_lm(cfg, replica_idx=r, max_tokens=budget))
+            else:
+                raise ValueError(f'unknown mode {mode}')
+        return out
+
+    worker_lms = _make_lm(args.worker, replica_offset=1)
+    synth_lms = _make_lm(args.synth_mode, replica_offset=2)
+    sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=384) for i in range(n_replicas)] if args.use_sas_collapse else [None] * n_replicas
 
     retriever = Retriever(base_url=args.retriever_url)
     experience_text = ''
@@ -90,6 +113,7 @@ async def main() -> None:
             worker_lm=worker_lms[i],
             synth_lm=synth_lms[i],
             retriever=retriever,
+            sas_lm=sas_lms[i],
             config=AmasPipelineConfig(
                 max_retrievals_per_solver=args.max_retrievals,
                 repair_enabled=args.repair,
@@ -98,6 +122,10 @@ async def main() -> None:
                 K_plans=args.K_plans,
                 use_bridge_resolver=args.use_bridge_resolver,
                 bridge_g_threshold=args.bridge_g_threshold,
+                use_sas_collapse=args.use_sas_collapse,
+                tau_sas_g=args.tau_sas_g,
+                tau_sas_conf=args.tau_sas_conf,
+                synth_recursion_rounds=args.synth_recursion_rounds,
             ),
         )
         for i in range(n_replicas)
@@ -114,7 +142,12 @@ async def main() -> None:
         'n_questions': len(questions),
         'planner': args.planner_model + '+think',
         'worker': args.worker,
-        'synth': 'gpt-4o-mini',
+        'synth': args.synth_mode,
+        'use_sas_collapse': args.use_sas_collapse,
+        'tau_sas_g': args.tau_sas_g,
+        'tau_sas_conf': args.tau_sas_conf,
+        'solver_budget': args.solver_budget,
+        'synth_recursion_rounds': args.synth_recursion_rounds,
         'retriever_url': args.retriever_url,
         'max_retrievals_per_solver': args.max_retrievals,
         'repair_enabled': args.repair,
@@ -167,6 +200,10 @@ async def main() -> None:
                         'multi_plan_rewards': r.multi_plan_rewards,
                         'multi_plan_subgoal_counts': r.multi_plan_subgoal_counts,
                         'multi_plan_temperatures': r.multi_plan_temperatures,
+                        'sas_collapse': r.sas_collapse,
+                        'sas_attempt_tokens': r.sas_attempt_tokens,
+                        'sas_attempt_confidence': r.sas_attempt_confidence,
+                        'sas_attempt_grounded': r.sas_attempt_grounded,
                     },
                 }
             except Exception as e:

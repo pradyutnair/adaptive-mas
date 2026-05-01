@@ -64,6 +64,10 @@ class AmasResult:
     multi_plan_rewards: list = field(default_factory=list)
     multi_plan_subgoal_counts: list = field(default_factory=list)
     multi_plan_temperatures: list = field(default_factory=list)
+    sas_collapse: bool = False
+    sas_attempt_tokens: int = 0
+    sas_attempt_confidence: float = 0.0
+    sas_attempt_grounded: bool = False
 
 
 @dataclass
@@ -78,6 +82,10 @@ class AmasPipelineConfig:
     plan_temperatures: tuple = (0.4, 0.7, 0.9)
     use_bridge_resolver: bool = False
     bridge_g_threshold: float = 0.45
+    use_sas_collapse: bool = False
+    tau_sas_g: float = 0.55
+    tau_sas_conf: float = 0.75
+    synth_recursion_rounds: int = 1
 
 
 class AmasPipeline:
@@ -89,10 +97,12 @@ class AmasPipeline:
         synth_lm: dspy.LM,
         retriever: Retriever,
         config: AmasPipelineConfig | None = None,
+        sas_lm: dspy.LM | None = None,
     ) -> None:
         self.planner_lm = planner_lm
         self.worker_lm = worker_lm
         self.synth_lm = synth_lm
+        self.sas_lm = sas_lm or worker_lm
         self.retriever = retriever
         self.config = config or AmasPipelineConfig()
 
@@ -106,6 +116,35 @@ class AmasPipeline:
         original_chunks = await self.retriever.retrieve(question)
         result.n_retrieval_calls += 1
         g_original, comp_o = compute_groundedness(question, original_chunks)
+
+        # Step 0.5: SAS-collapse attempt (single-agent efficiency for easy questions)
+        if self.config.use_sas_collapse:
+            from .sas_attempt import try_sas_attempt
+            sas = await asyncio.to_thread(
+                try_sas_attempt,
+                sas_lm=self.sas_lm,
+                question=question,
+                chunks=original_chunks,
+                probe_groundedness=g_original,
+                tau_g=self.config.tau_sas_g,
+                tau_conf=self.config.tau_sas_conf,
+            )
+            result.sas_attempt_tokens = sas.extraction_tokens
+            result.sas_attempt_confidence = sas.confidence
+            result.sas_attempt_grounded = sas.grounded_in_chunks
+            if sas.accepted:
+                result.sas_collapse = True
+                result.topology = 'SAS_COLLAPSE'
+                result.topology_rationale = f'SAS-collapse accepted (g={g_original:.3f}, conf={sas.confidence:.2f})'
+                result.answer = sas.answer
+                result.answer_type = sas.answer_type
+                result.justification = sas.rationale
+                result.support_ids = [c.chunk_id for c in original_chunks[:5]]
+                result.probe_groundedness = [round(g_original, 4)]
+                result.total_tokens = result.sas_attempt_tokens
+                result.wallclock_seconds = round(time.time() - t0, 3)
+                result.n_solvers_invoked = 1
+                return result
 
         # Step 1: bridge resolution if probe-original groundedness is low
         bridge_hint = ""
@@ -211,14 +250,48 @@ class AmasPipeline:
         # Cap to 20 chunks max to keep synth context tight
         union_capped = union[:20]
 
-        synth_obj, synth_tokens = await asyncio.to_thread(
-            run_synthesizer,
-            synth_lm=self.synth_lm,
-            original_question=question,
-            bus=bus,
-            final_evidence=union_capped,
-            experience=self.config.experience_library,
-        )
+        try:
+            if self.config.synth_recursion_rounds > 1:
+                from .synth_refine import run_synth_recursion
+                synth_obj, synth_tokens = await asyncio.to_thread(
+                    run_synth_recursion,
+                    synth_lm=self.synth_lm,
+                    original_question=question,
+                    bus=bus,
+                    final_evidence=union_capped,
+                    experience=self.config.experience_library,
+                    rounds=self.config.synth_recursion_rounds,
+                )
+            else:
+                synth_obj, synth_tokens = await asyncio.to_thread(
+                    run_synthesizer,
+                    synth_lm=self.synth_lm,
+                    original_question=question,
+                    bus=bus,
+                    final_evidence=union_capped,
+                    experience=self.config.experience_library,
+                )
+        except Exception as e:
+            logger.warning('synth call failed (%s); falling back to best non-bridge finding', type(e).__name__)
+            # Pick the highest-confidence finding from the LAST topological level as fallback
+            final_node = self._find_final_node(plan)
+            best_finding = bus.findings_by_node.get(final_node.id) if final_node else None
+            if best_finding is None:
+                # any finding with answer
+                for f in reversed(bus.all()):
+                    if f.answer:
+                        best_finding = f
+                        break
+            if best_finding and best_finding.answer:
+                synth_obj = {
+                    'answer': best_finding.answer,
+                    'answer_type': 'other',
+                    'justification': f'synth_fallback (status={best_finding.status.value})',
+                    'support_ids': best_finding.evidence_ids or [],
+                }
+            else:
+                synth_obj = {'answer': '', 'answer_type': 'other', 'justification': 'synth_failed_no_findings', 'support_ids': []}
+            synth_tokens = 0
         result.synth_tokens = synth_tokens
         result.answer = str(synth_obj.get('answer', '')).strip()
         result.answer_type = str(synth_obj.get('answer_type', 'other'))

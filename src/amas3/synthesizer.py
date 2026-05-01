@@ -26,27 +26,45 @@ class WhTargetAlignedSynthesis(dspy.Signature):
 evidence chunks, emit the SHORT answer span (1-6 words) that DIRECTLY
 answers the original question's wh-target.
 
-GROUNDING RULES:
-1. Prefer answers that appear verbatim in either the final_evidence
-   chunks OR in the Findings (with their evidence already validated).
-2. The original question is multi-hop. Earlier sub-answers are bridge
-   entities; do NOT return them as the final answer unless the original
-   question explicitly asks for them.
-3. wh-target type matching:
-   - when / what year / what date / what month -> date or year span
-   - where / which city / which place / which county -> place name
-   - who -> person's full name
-   - how many / how much / number of -> a number
-   - which / what (entity) -> entity name
-4. If multiple Findings are inconsistent, prefer what the final_evidence
-   chunks state over what intermediate Findings claim.
-5. Use the FULL form as it appears in evidence (do not abbreviate names,
-   dates, or place identifiers).
+FINAL-ANSWER CONTRACT (read carefully, this is the most common failure mode):
 
-Output STRICT JSON: {"answer": <str>, "answer_type": <str>, "justification": <str>, "support_ids": [<chunk_id>, ...]}.
+Step 1: Identify the wh-target of the ORIGINAL question. The wh-target tells
+        you what TYPE the final answer must be:
+        - when / what year / what date / what month -> date or year
+        - where / which city / which place / which county -> place name
+        - who -> person's full name
+        - how many / how much / number of -> a number
+        - which X / what X -> a specific entity matching X
+
+Step 2: Identify FORBIDDEN BRIDGE ANSWERS. List the answers from intermediate
+        Findings (node_id < final_node). These are bridge entities that helped
+        you reach the final answer; they are NOT the final answer. Example:
+        if Q1 asks "who founded BAND" and Q2 asks "where was that founder
+        born", then BAND is a bridge and the Q1 answer is FORBIDDEN as final.
+
+Step 3: Identify the REQUIRED RELATION between the final entity and bridges.
+        Example: original Q "where was the founder of Steely Dan born",
+        required relation is "birthplace of <bridge_entity>".
+
+Step 4: Search the final_evidence chunks for a span that:
+        (a) matches the wh-target type from Step 1,
+        (b) is NOT in the forbidden-bridge list from Step 2 (unless the
+            original question explicitly asks for one of them),
+        (c) stands in the required relation from Step 3 with the bridge.
+
+Step 5: Output the FULL form as it appears in evidence. Do not abbreviate.
+
+GROUNDING RULES:
+- Prefer answers that appear verbatim in final_evidence chunks.
+- If multiple Findings are inconsistent, prefer what final_evidence states.
+- If no final_evidence span satisfies (a)(b)(c), return the best approximation
+  but lower confidence; do NOT default to a bridge answer.
+
+Output STRICT JSON on ONE LINE (no surrounding prose):
+{"answer": <str>, "answer_type": <str>, "justification": <str>, "support_ids": [<chunk_id>], "wh_target": <str>, "forbidden_bridges": [<str>]}.
 """
     original_question: str = dspy.InputField()
-    findings_summary: str = dspy.InputField(desc='List of {node_id, sub_question, answer, status, confidence}')
+    findings_summary: str = dspy.InputField(desc='List of {node_id, sub_question, answer, status, confidence}. Earlier nodes are bridges.')
     final_evidence_json: str = dspy.InputField(desc='Top-k chunks supporting the final hop, as JSON')
     final_json: str = dspy.OutputField()
 
@@ -71,16 +89,63 @@ def _format_evidence(chunks: list[RetrievedChunk], excerpt_chars: int = 700) -> 
     ], ensure_ascii=False)
 
 
+def _balanced_json_object(s: str) -> str | None:
+    """Find the first balanced top-level JSON object in s, ignoring braces inside strings.
+
+    Robust to extra braces in the rationale/preamble (the greedy regex
+    {.*} approach was failing on Qwen3-14B think outputs that include
+    braces in CoT before the final JSON line).
+    """
+    depth = 0
+    start = -1
+    in_str = False
+    esc = False
+    for i, ch in enumerate(s):
+        if in_str:
+            if esc:
+                esc = False
+            elif ch == '\\':
+                esc = True
+            elif ch == '"':
+                in_str = False
+            continue
+        if ch == '"':
+            in_str = True
+            continue
+        if ch == '{':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == '}':
+            if depth > 0:
+                depth -= 1
+                if depth == 0 and start >= 0:
+                    return s[start:i + 1]
+    return None
+
+
 def _parse_synth(raw: str) -> dict[str, Any]:
     text = raw.strip()
-    m = re.search(r'\{.*\}', text, re.DOTALL)
-    if m:
-        text = m.group(0)
-    try:
-        obj = json.loads(text)
-        return obj if isinstance(obj, dict) else {}
-    except Exception:
-        return {}
+    obj_str = _balanced_json_object(text)
+    if obj_str:
+        try:
+            obj = json.loads(obj_str)
+            return obj if isinstance(obj, dict) else {}
+        except Exception:
+            pass
+    # Try last balanced object (model may emit multiple)
+    matches = list(re.finditer(r'\{', text))
+    for m in reversed(matches):
+        candidate = _balanced_json_object(text[m.start():])
+        if not candidate:
+            continue
+        try:
+            obj = json.loads(candidate)
+            if isinstance(obj, dict):
+                return obj
+        except Exception:
+            continue
+    return {}
 
 
 def run_synthesizer(

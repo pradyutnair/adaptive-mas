@@ -1,0 +1,27 @@
+2026-04-30 16:53:56,637 INFO root | progress: 5/100 (50.9s, 10.2s/q)
+2026-04-30 16:54:19,975 INFO root | progress: 10/100 (74.2s, 7.4s/q)
+2026-04-30 16:54:32,497 INFO root | progress: 15/100 (86.7s, 5.8s/q)
+2026-04-30 16:55:12,829 INFO root | progress: 20/100 (127.1s, 6.4s/q)
+2026-04-30 16:55:35,798 INFO root | progress: 25/100 (150.0s, 6.0s/q)
+2026-04-30 16:56:00,551 INFO root | progress: 30/100 (174.8s, 5.8s/q)
+2026-04-30 16:56:18,740 INFO root | progress: 35/100 (193.0s, 5.5s/q)
+2026-04-30 16:56:44,669 INFO root | progress: 40/100 (218.9s, 5.5s/q)
+2026-04-30 16:57:04,605 INFO root | progress: 45/100 (238.8s, 5.3s/q)
+2026-04-30 16:57:45,847 INFO root | progress: 50/100 (280.1s, 5.6s/q)
+2026-04-30 16:57:54,620 INFO root | progress: 55/100 (288.9s, 5.3s/q)
+2026-04-30 16:58:34,194 INFO root | progress: 60/100 (328.4s, 5.5s/q)
+2026/04/30 16:59:58 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.9)  if the reason for truncation is repetition.
+2026-04-30 16:59:59,569 INFO root | progress: 65/100 (413.8s, 6.4s/q)
+2026-04-30 17:00:24,052 INFO root | progress: 70/100 (438.3s, 6.3s/q)
+2026/04/30 17:00:32 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.7)  if the reason for truncation is repetition.
+2026-04-30 17:01:00,607 INFO root | progress: 75/100 (474.9s, 6.3s/q)
+2026-04-30 17:01:49,118 INFO root | progress: 80/100 (523.4s, 6.5s/q)
+2026/04/30 17:01:51 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.7)  if the reason for truncation is repetition.
+2026/04/30 17:02:16 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.9)  if the reason for truncation is repetition.
+2026-04-30 17:02:27,009 INFO root | progress: 85/100 (561.3s, 6.6s/q)
+2026/04/30 17:03:28 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.7)  if the reason for truncation is repetition.
+2026-04-30 17:03:52,001 INFO root | progress: 90/100 (646.2s, 7.2s/q)
+2026-04-30 17:04:11,244 INFO root | progress: 95/100 (665.5s, 7.0s/q)
+2026/04/30 17:04:52 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.4)  if the reason for truncation is repetition.
+2026-04-30 17:05:29,548 INFO root | progress: 100/100 (743.8s, 7.4s/q)
+2026-04-30 17:05:29,548 INFO root | done: 100 predictions written to results/amas_pro_qwen3_8b_4omini_stratified100/predictions.jsonl

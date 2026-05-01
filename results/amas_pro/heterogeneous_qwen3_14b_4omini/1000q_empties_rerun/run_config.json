@@ -1,0 +1,17 @@
+{
+  "questions_path": "data/musique/musique_1000_empties_rerun.json",
+  "n_questions": 381,
+  "planner": "qwen3-14b+think",
+  "worker": "mini",
+  "synth": "gpt-4o-mini",
+  "retriever_url": "http://node408:8003",
+  "max_retrievals_per_solver": 3,
+  "repair_enabled": true,
+  "qwen_think_budget": 4096,
+  "concurrency": 16,
+  "experience_file": null,
+  "use_multi_plan": true,
+  "K_plans": 3,
+  "use_bridge_resolver": true,
+  "bridge_g_threshold": 0.6
+}
