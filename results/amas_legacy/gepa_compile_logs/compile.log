@@ -1,0 +1,374 @@
+2026/04/30 14:35:23 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 300 metric calls of the program. This amounts to 2.50 full evals on the train+val set.
+2026/04/30 14:35:23 INFO dspy.teleprompt.gepa.gepa: Using 40 examples for tracking Pareto scores. You can consider using a smaller sample of the valset to allow GEPA to explore more diverse solutions within the same budget. GEPA requires you to provide the smallest valset that is just large enough to match your downstream task distribution, while providing as large trainset as possible.
+train: 80  val: 40
+GEPA Optimization:   0%|          | 0/300 [00:00<?, ?rollouts/s]2026/04/30 14:38:23 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=4096. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.6)  if the reason for truncation is repetition.
+2026/04/30 14:39:58 INFO dspy.evaluate.evaluate: Average Metric: 3.5 / 40 (8.8%)
+2026/04/30 14:39:58 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.0875 over 40 / 40 examples
+GEPA Optimization:  13%|█▎        | 40/300 [04:35<29:50,  6.89s/rollouts]2026/04/30 14:39:58 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.0875
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:30<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:30<01:01, 30.68s/it]Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:31<01:01, 30.68s/it] Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:31<00:12, 12.97s/it]Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:36<00:12, 12.97s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:36<00:00,  9.23s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:36<00:00, 12.01s/it]2026/04/30 14:40:34 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 3 (33.3%)
+2026/04/30 14:40:42 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for planner_pred.predict: Decompose a complex multi-hop question into sequential, atomic single-hop sub-questions that can each be answered with ONE retrieval from Wikipedia followed by ONE short reading step. Each sub-question must build upon the information gathered in previous steps, clearly referencing any dependencies using <A.I> where I is the earlier subgoal id. 
+
+Output the results in a STRICT JSON format with the following keys:
+- subgoals: a list of individual sub-goals, each represented as an object containing:
+  - id: a sequential identifier starting from 1
+  - question: the specific sub-question to be answered
+  - depends_on: a list of earlier ids that this sub-question relies on (empty if independent)
+  - expected_answer_type: the type of expected answer, which can be one of the following: {person, place, date, number, yes_no, entity, other}
+  - is_final: a boolean indicating if this sub-goal yields the final answer (exactly one subgoal must have is_final=true)
+  - rationale: a brief explanation of why this sub-goal is necessary
+
+- final_id: the id of the subgoal that provides the final answer to the original question
+- reasoning: a concise narrative summarizing the overall plan to arrive at the final answer.
+
+When constructing the sub-questions, ensure that:
+1. Each sub-question is focused and clear, addressing a specific piece of information needed to answer the overall question.
+2. The dependency structure is logical and accurately reflects the relationships among the questions.
+3. The expected answer types are suitable for the nature of the questions posed and the information likely to be retrieved from Wikipedia.
+
+Utilize a generalizable strategy of breaking down complex queries by identifying key entities and their relationships, ensuring each step logically leads to the next. This may involve identifying relevant individuals, places, or historical contexts that tie back to the original question. Be mindful of the need to confirm facts through reliable sources while maintaining a clear path to the final answer.
+2026/04/30 14:41:41 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:41:41 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 0.0 is not better than old score 1.0, skipping
+GEPA Optimization:  15%|█▌        | 46/300 [06:18<36:48,  8.69s/rollouts]2026/04/30 14:41:41 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:28<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:28<00:56, 28.08s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:32<00:56, 28.08s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:32<00:14, 14.33s/it]Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:48<00:14, 14.33s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:48<00:00, 15.09s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:48<00:00, 16.26s/it]2026/04/30 14:42:30 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:42:39 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Proposed new text for extract_pred: You are tasked with extracting a short answer span, consisting of 1-6 contiguous words, from provided text chunks based on a given sub-question. Your response must adhere to the following detailed rules:
+
+1. **Answer Extraction**: 
+   - The answer span must be a verbatim substring taken from one of the provided text chunks. Do not paraphrase, summarize, or invent information.
+
+2. **Grounding Rules**:
+   - If no chunk directly supports the answer, output `{"answer_span": "", "evidence_chunk_id": "", "confidence": 0.0}`.
+   - Ensure that the answer matches the expected answer type, which could be:
+     - 'date': a specific year, month, or date span
+     - 'number': numeric values or words
+     - 'place': proper place names
+     - 'person': full names as they appear in the text
+     - 'yes_no': responses of yes or no
+   - The `evidence_chunk_id` must correspond to the `chunk_id` of the text chunk from which you derived the answer span.
+
+3. **Confidence Level**:
+   - Reflect the confidence in your answer based on the directness of support found in the text. Use the following scale:
+     - 0.7 to 1.0: when the chunk explicitly states the answer.
+     - 0.3 to 0.6: for partial support where the chunk may relate but does not directly state the answer.
+     - 0.0: if no evidence supports the answer.
+
+4. **Output Format**:
+   - Your output must be in strict JSON format as follows:
+     ```json
+     {"answer_span": <str>, "evidence_chunk_id": <str>, "confidence": <float>}
+     ```
+
+5. **Generalization**:
+   - Be meticulous in analyzing the chunks for both explicit and implicit mentions of the answer. Draw on contextual knowledge to validate your confidence level when the answer is less direct.
+
+6. **Domain Knowledge**: 
+   - Familiarize yourself with common historical entities, geographical locations, and notable individuals, as these often serve as the subject matter for the questions. Be especially aware of terms like "colony," "state," "city," and "date" within historical and geographical contexts.
+
+Your goal is to extract accurate and reliable information, ensuring that the output is grounded in the provided text and follows the stipulated structure and rules.
+2026/04/30 14:43:39 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:43:39 INFO dspy.teleprompt.gepa.gepa: Iteration 2: New subsample score 0.0 is not better than old score 0.0, skipping
+GEPA Optimization:  17%|█▋        | 52/300 [08:16<45:04, 10.90s/rollouts]2026/04/30 14:43:39 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:22<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:22<00:44, 22.45s/it]Average Metric: 0.50 / 2 (25.0%):  33%|███▎      | 1/3 [00:30<00:44, 22.45s/it]Average Metric: 0.50 / 2 (25.0%):  67%|██████▋   | 2/3 [00:30<00:13, 13.76s/it]Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:35<00:13, 13.76s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:35<00:00,  9.82s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:35<00:00, 11.75s/it]2026/04/30 14:44:14 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 3 (33.3%)
+2026/04/30 14:44:29 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Proposed new text for synth_pred.predict: Given an original question that requires a multi-hop reasoning process, along with prior atomic findings and final-hop evidence chunks, your task is to extract a SHORT answer span (1-6 words) that DIRECTLY addresses the wh-target of the original question.
+
+### Task Overview:
+1. Identify the specific wh-target (e.g., who, when, where, how many, which, what) from the original question.
+2. Utilize the findings and final evidence chunks to find the most relevant and accurate answer that matches the wh-target.
+
+### GROUNDING RULES:
+1. **Source Preference**: Prefer answers that appear verbatim in either the final evidence chunks or in the validated findings.
+2. **Bridge Entities**: Do not return earlier sub-answers (such as bridge entities) as the final answer unless specifically requested in the original question.
+3. **Wh-target Type Matching**: 
+   - For "when / what year / what date / what month", return a date or year span.
+   - For "where / which city / which place / which county", return a place name.
+   - For "who", return a person's full name.
+   - For "how many / how much / number of", return a number.
+   - For "which / what (entity)", return the relevant entity name.
+4. **Inconsistencies**: If multiple findings contradict each other, prefer the information provided in the final evidence chunks over earlier findings.
+5. **Full Form Usage**: Use the full form of names, dates, and place identifiers as they appear in the evidence; do not abbreviate.
+
+### Output Requirements:
+The output must be in strictly formatted JSON as follows:
+```json
+{"answer": <str>, "answer_type": <str>, "justification": <str>, "support_ids": [<chunk_id>, ...]}
+```
+
+### Additional Considerations:
+- Ensure that the justification clearly explains why the chosen answer fits the original question and how it is supported by the evidence.
+- Maintain a clear connection between the original question, the answer, and the evidence provided to justify the choice.
+2026/04/30 14:45:11 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 3 (33.3%)
+2026/04/30 14:45:11 INFO dspy.teleprompt.gepa.gepa: Iteration 3: New subsample score 1.0 is not better than old score 1.0, skipping
+GEPA Optimization:  19%|█▉        | 58/300 [09:47<47:55, 11.88s/rollouts]2026/04/30 14:45:11 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:46<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:46<01:32, 46.40s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [01:07<01:32, 46.40s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [01:07<00:31, 31.46s/it]Average Metric: 0.50 / 3 (16.7%):  67%|██████▋   | 2/3 [01:08<00:31, 31.46s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [01:08<00:00, 17.72s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [01:08<00:00, 22.92s/it]2026/04/30 14:46:20 INFO dspy.evaluate.evaluate: Average Metric: 0.5 / 3 (16.7%)
+2026/04/30 14:46:27 INFO dspy.teleprompt.gepa.gepa: Iteration 4: Proposed new text for planner_pred.predict: Decompose a complex multi-hop question into a sequence of atomic single-hop sub-questions that can be answered with one retrieval from Wikipedia followed by a brief reading step. 
+
+Each sub-question must:
+1. Be phrased clearly and concisely.
+2. Have an ID that starts at 1 and increments sequentially for each sub-question.
+3. Specify the answers that depend on previous sub-questions using the format <A.I> where I is the ID of the earlier subgoal.
+4. Include the expected answer type, which can be one of the following: {person, place, date, number, yes_no, entity, other}.
+5. Indicate whether the sub-question is the final answer with a boolean flag (is_final).
+6. Provide a rationale explaining why this sub-question is necessary for answering the overall question.
+
+Ensure the output is in strict JSON format with the following keys:
+- subgoals: a list of objects, each containing {id, question, depends_on, expected_answer_type, is_final, rationale}
+- final_id: the ID of the subgoal that provides the final answer.
+- reasoning: a one-paragraph summary of the reasoning process, clearly outlining the steps needed to arrive at the final answer.
+
+When generating the sub-questions, focus on breaking down the original question into logical, sequential steps that build upon each other. Each sub-question should be directly related to acquiring information that is necessary for the next step.
+
+In previous examples, it has been noted that:
+- Sub-questions should avoid ambiguity and ensure clarity to facilitate accurate retrieval of information.
+- The final answer often relies on historical context or specific events, so it is important to frame sub-questions that lead to these historical insights.
+- The flow from one sub-question to the next must be coherent, logically connecting each step to create a clear trajectory toward the final answer.
+
+Make sure to consider the underlying factual context relevant to the questions, such as historical events, geographical locations, and specific cultural references that may not be universally known or may require additional context for accurate interpretation. 
+
+Overall, your responses should aim for precision and clarity to effectively decompose and address the multi-hop questions provided.
+2026/04/30 14:47:18 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:47:18 INFO dspy.teleprompt.gepa.gepa: Iteration 4: New subsample score 0.0 is not better than old score 0.5, skipping
+GEPA Optimization:  21%|██▏       | 64/300 [11:55<55:39, 14.15s/rollouts]2026/04/30 14:47:18 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:21<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:21<00:42, 21.08s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:23<00:42, 21.08s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:23<00:10, 10.37s/it]Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:57<00:10, 10.37s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:57<00:00, 20.99s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:57<00:00, 19.20s/it]2026/04/30 14:48:16 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:48:24 INFO dspy.teleprompt.gepa.gepa: Iteration 5: Proposed new text for extract_pred: Extract a SHORT answer span (1-6 words) for the sub-question.
+
+GROUNDING RULES:
+1. The answer_span MUST be copied VERBATIM as a contiguous substring of ONE of the provided chunks. Do not paraphrase, do not invent.
+2. If NO chunk DIRECTLY supports the answer, return answer_span='' and confidence=0.0. A confidently wrong answer is a critical bug.
+3. The answer must MATCH the expected_answer_type:
+   - 'date': year, month, or specific date span
+   - 'number': numeric or number-word
+   - 'place': place name appearing in the chunk
+   - 'person': full name as written in the chunk
+   - 'yes_no': yes/no
+4. The answer must be derived from the text in the chunks provided. Ensure that the evidence for the answer is clear and directly related to the sub-question.
+5. evidence_chunk_id must be a chunk_id present in chunks_json.
+6. Confidence should reflect the strength of the evidence:
+   - Use 1.0 when the answer is explicitly stated in the chunk.
+   - Use 0.7 to 0.9 for strong implicit evidence that clearly supports the answer.
+   - Use 0.3 to 0.6 for partial support where the answer is not directly stated but can be reasonably inferred from the chunk.
+   - Use 0.0 when there is no support for the answer in any chunk.
+
+Output STRICT JSON: {"answer_span": <str>, "evidence_chunk_id": <str>, "confidence": <float>}.
+If you cannot ground the answer in the chunks, output {"answer_span": "", "evidence_chunk_id": "", "confidence": 0.0}.
+
+ADDITIONAL GUIDANCE:
+- Pay attention to the context of the question to ensure that the extracted answer is relevant and accurate.
+- Confirm that the extracted answer directly responds to the specific sub-question asked, maintaining focus on the required answer type.
+- Ensure clarity and precision in your extraction process to minimize ambiguity and increase the reliability of the answer provided.
+2026/04/30 14:49:11 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:49:11 INFO dspy.teleprompt.gepa.gepa: Iteration 5: New subsample score 0.0 is not better than old score 0.0, skipping
+GEPA Optimization:  23%|██▎       | 70/300 [13:48<58:51, 15.35s/rollouts]2026/04/30 14:49:11 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:35<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:35<01:10, 35.17s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [01:00<01:10, 35.17s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [01:00<00:29, 29.51s/it]Average Metric: 0.50 / 3 (16.7%):  67%|██████▋   | 2/3 [01:24<00:29, 29.51s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [01:24<00:00, 27.06s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [01:24<00:00, 28.29s/it]2026/04/30 14:50:36 INFO dspy.evaluate.evaluate: Average Metric: 0.5 / 3 (16.7%)
+2026/04/30 14:50:51 INFO dspy.teleprompt.gepa.gepa: Iteration 6: Proposed new text for synth_pred.predict: Given the original question, prior atomic Findings, and the final-hop evidence chunks, your task is to extract and present a concise answer that directly addresses the original question's wh-target. Follow these detailed instructions:
+
+1. **Output Format**: Your response must be in strict JSON format with the following structure:
+   ```json
+   {
+       "answer": <str>,
+       "answer_type": <str>,
+       "justification": <str>,
+       "support_ids": [<chunk_id>, ...]
+   }
+   ```
+
+2. **Answer Extraction**:
+   - Identify the wh-target of the original question (e.g., who, what, when, where, how many).
+   - Prefer answers that are verbatim matches from the final evidence chunks or from the validated Findings.
+   - The answer must directly respond to the original question without including any bridge entities unless explicitly asked.
+
+3. **Wh-target Specifics**:
+   - **When / What Year / What Date / What Month**: Provide a date or year span.
+   - **Where / Which City / Which Place / Which County**: Provide a place name.
+   - **Who**: Provide the person's full name.
+   - **How many / How much / Number of**: Provide a numerical value.
+   - **Which / What (Entity)**: Provide the entity name.
+
+4. **Prioritization**:
+   - If there are conflicting findings, rely on the final evidence chunks for the most accurate answer.
+   - Ensure that the full form of names, dates, and place identifiers is used as they appear in the evidence.
+
+5. **Justification**:
+   - Clearly explain how the answer was derived from the findings and final evidence. Reference specific chunks or findings that support your answer.
+
+6. **Support IDs**:
+   - Include the IDs of the chunks that provided evidence for your answer in the `support_ids` array.
+
+7. **General Strategy**:
+   - Analyze the original question and break it down into its components to identify necessary information from the findings and evidence.
+   - Use logical reasoning to ensure that the final answer is coherent and directly related to the question asked.
+
+Following these guidelines will ensure that the responses provided are accurate, comprehensive, and adhere to the required format.
+2026/04/30 14:52:04 INFO dspy.evaluate.evaluate: Average Metric: 0.5 / 3 (16.7%)
+2026/04/30 14:52:04 INFO dspy.teleprompt.gepa.gepa: Iteration 6: New subsample score 0.5 is not better than old score 0.5, skipping
+GEPA Optimization:  25%|██▌       | 76/300 [16:41<1:10:50, 18.98s/rollouts]2026/04/30 14:52:04 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:31<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:31<01:03, 31.75s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:34<01:03, 31.75s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:34<00:14, 14.93s/it]Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [00:52<00:14, 14.93s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:52<00:00, 16.06s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [00:52<00:00, 17.44s/it]2026/04/30 14:52:57 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:53:05 INFO dspy.teleprompt.gepa.gepa: Iteration 7: Proposed new text for planner_pred.predict: Your task is to decompose complex multi-hop questions into a series of atomic, single-hop sub-questions that can be answered with one retrieval from Wikipedia followed by a short reading step. Each sub-question should build on the previous ones where applicable, clearly indicating dependencies. Ensure to follow these specific guidelines:
+
+1. **Subgoal Structure**: Each subgoal must include:
+   - **id**: A unique sequential identifier starting from 1.
+   - **question**: A clearly phrased question that is answerable independently.
+   - **depends_on**: A list of earlier subgoal ids that this subgoal relies on (if any).
+   - **expected_answer_type**: The expected type of answer for the subgoal, which can be one of the following: {person, place, date, number, yes_no, entity, other}.
+   - **is_final**: A boolean value indicating whether this subgoal leads to the final answer (only one subgoal should have this as true).
+   - **rationale**: A brief explanation of why this subgoal is necessary for the overall task.
+
+2. **Final Subgoal**: Ensure that the last subgoal is the one that directly answers the original question posed.
+
+3. **Logical Flow**: Create a logical sequence where each subgoal builds upon the answer of the previous one. If a subgoal's answer is needed for a subsequent subgoal, reference it using the format <A.i>, where i is the id of the relevant subgoal.
+
+4. **Clarity and Precision**: Formulate questions in a way that they are specific and can be answered with clear factual information from a single Wikipedia entry. Avoid ambiguity and ensure that the expected answer type is appropriate for the question.
+
+5. **JSON Format**: Output the results in strict JSON format, with keys as specified above.
+
+6. **Reasoning Summary**: Provide a one-paragraph summary of the reasoning that connects the subgoals and how they lead to answering the original question.
+
+7. **Feedback Incorporation**: Be aware of the feedback provided in previous examples and ensure that subgoals are logically sound and directly contribute to the final answer. Aim for a clear and direct approach rather than convoluted dependencies.
+
+By adhering to these guidelines, you will help create a structured and efficient pathway to answer complex questions through simpler, manageable sub-questions.
+2026/04/30 14:53:57 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:53:57 INFO dspy.teleprompt.gepa.gepa: Iteration 7: New subsample score 0.0 is not better than old score 0.0, skipping
+GEPA Optimization:  27%|██▋       | 82/300 [18:34<1:08:44, 18.92s/rollouts]2026/04/30 14:53:57 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/3 [00:21<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):  33%|███▎      | 1/3 [00:21<00:42, 21.20s/it]Average Metric: 1.00 / 2 (50.0%):  33%|███▎      | 1/3 [00:25<00:42, 21.20s/it] Average Metric: 1.00 / 2 (50.0%):  67%|██████▋   | 2/3 [00:25<00:11, 11.41s/it]Average Metric: 1.00 / 3 (33.3%):  67%|██████▋   | 2/3 [00:43<00:11, 11.41s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:43<00:00, 14.29s/it]Average Metric: 1.00 / 3 (33.3%): 100%|██████████| 3/3 [00:43<00:00, 14.49s/it]2026/04/30 14:54:41 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 3 (33.3%)
+2026/04/30 14:54:48 INFO dspy.teleprompt.gepa.gepa: Iteration 8: Proposed new text for extract_pred: Extract a SHORT answer span (1-6 words) for the given sub-question based on the provided text chunks.
+
+TASK DESCRIPTION:
+1. You are required to extract an answer that is a contiguous substring from one of the text chunks provided.
+2. Ensure that the extracted answer matches the specified expected answer type: 
+   - 'date': Look for year, month, or specific date span.
+   - 'number': Look for numeric values or number-words.
+   - 'place': Look for place names explicitly mentioned in the text.
+   - 'person': Look for full names as they appear in the text.
+   - 'yes_no': Look for explicit yes or no responses.
+3. The answer span must be copied verbatim from the text and should not be paraphrased or invented.
+
+GROUNDING RULES:
+1. If the answer cannot be directly supported by any chunk, return an empty answer span and a confidence of 0.0. It's crucial to avoid confidently incorrect answers.
+2. Identify the chunk that directly supports your answer and include its chunk_id in the output.
+3. Assign confidence levels to the response based on the strength of the evidence:
+   - Use a confidence of 0.7 to 1.0 only when the text explicitly states the answer.
+   - Use a confidence of 0.3 to 0.6 for partial support.
+   - Use a confidence of 0.0 for unsupported answers.
+
+OUTPUT FORMAT:
+Your output must be in strict JSON format as follows:
+```json
+{"answer_span": <str>, "evidence_chunk_id": <str>, "confidence": <float>}
+```
+
+If you cannot ground the answer to any chunk, output:
+```json
+{"answer_span": "", "evidence_chunk_id": "", "confidence": 0.0}
+```
+
+Be mindful of the specific answer types and ensure that your extraction adheres strictly to the provided rules and formats.
+2026/04/30 14:55:16 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 3 (33.3%)
+2026/04/30 14:55:16 INFO dspy.teleprompt.gepa.gepa: Iteration 8: New subsample score 1.0 is not better than old score 1.0, skipping
+GEPA Optimization:  29%|██▉       | 88/300 [19:53<1:01:05, 17.29s/rollouts]2026/04/30 14:55:16 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:48<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:48<01:37, 48.81s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:51<01:37, 48.81s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:51<00:21, 21.51s/it]Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [01:39<00:21, 21.51s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [01:39<00:00, 33.69s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [01:39<00:00, 33.14s/it]2026/04/30 14:56:56 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:57:07 INFO dspy.teleprompt.gepa.gepa: Iteration 9: Proposed new text for synth_pred.predict: Given the original question, prior atomic Findings, and the final-hop evidence chunks, you are to extract a concise answer that directly responds to the original question's wh-target. The answer must be a specific span of text (1-6 words) that is accurate and substantiated by the provided evidence.
+
+### Detailed Task Description:
+1. **Input Format**:
+   - `original_question`: A specific query that often incorporates multiple layers of context requiring synthesis of information.
+   - `findings_summary`: A list of prior atomic findings that provide partial answers relevant to the original question, indicating their status (e.g., ok).
+   - `final_evidence_json`: A collection of evidence chunks that substantiate or provide additional context to the findings.
+
+2. **Answer Extraction Rules**:
+   - **Direct Match Preference**: Prefer answers that are verbatim matches from either the findings or the final evidence chunks.
+   - **Multi-hop Context**: Recognize that the original question may involve multiple hops of reasoning. Do not return intermediate sub-answers unless explicitly asked.
+   - **Wh-target Type Matching**:
+     - For questions asking about time (when, what year, date, month), return a date or year span.
+     - For locations (where, which city, place, county), return a place name.
+     - For people (who), return the full name of a person.
+     - For quantities (how many, how much, number of), return a numerical value.
+     - For specific entities (which, what), return the name of the entity.
+   - **Conflict Resolution**: If findings are inconsistent, prioritize the information stated in the final evidence chunks over earlier findings.
+   - **Full Form Usage**: Use the full form of names, dates, and identifiers as they appear in the evidence without abbreviating.
+
+3. **Output Format**: Return the response in strict JSON format as follows:
+   ```json
+   {
+     "answer": "<str>",
+     "answer_type": "<str>",
+     "justification": "<str>",
+     "support_ids": ["<chunk_id>", ...]
+   }
+   ```
+   - `answer`: The specific span of text that answers the original question.
+   - `answer_type`: The category of the answer (e.g., date, place name).
+   - `justification`: A brief explanation of why this answer was selected, referencing the evidence.
+   - `support_ids`: An array of chunk IDs from the final evidence that support the provided answer.
+
+### Important Notes:
+- Carefully assess the relevance of the findings and evidence in relation to the original question.
+- Ensure that the final answer is grounded in the context of the question and the extracted evidence.
+- Maintain clarity and precision in your output to avoid ambiguity in the answers provided.
+2026/04/30 14:58:47 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:58:47 INFO dspy.teleprompt.gepa.gepa: Iteration 9: New subsample score 0.0 is not better than old score 0.0, skipping
+GEPA Optimization:  31%|███▏      | 94/300 [23:24<1:17:04, 22.45s/rollouts]2026/04/30 14:58:47 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:23<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:23<00:47, 23.52s/it]Average Metric: 0.50 / 2 (25.0%):  33%|███▎      | 1/3 [00:25<00:47, 23.52s/it]Average Metric: 0.50 / 2 (25.0%):  67%|██████▋   | 2/3 [00:25<00:10, 10.98s/it]Average Metric: 0.50 / 3 (16.7%):  67%|██████▋   | 2/3 [00:26<00:10, 10.98s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [00:26<00:00,  6.42s/it]Average Metric: 0.50 / 3 (16.7%): 100%|██████████| 3/3 [00:26<00:00,  8.90s/it]2026/04/30 14:59:14 INFO dspy.evaluate.evaluate: Average Metric: 0.5 / 3 (16.7%)
+2026/04/30 14:59:20 INFO dspy.teleprompt.gepa.gepa: Iteration 10: Proposed new text for planner_pred.predict: Decompose a complex, multi-hop question into a series of atomic, single-hop sub-questions that can be answered through a direct retrieval from Wikipedia followed by a short reading step. Each sub-question must be structured to be straightforward and focus on a specific piece of information that builds towards answering the original question.
+
+**Requirements for each sub-question:**
+1. **ID**: Sequentially number each sub-question starting from 1.
+2. **Question**: Clearly state the sub-question, ensuring it is directly related to the previous or final goal.
+3. **Depends_on**: List any earlier sub-question IDs that this sub-question relies on for context or information.
+4. **Expected_answer_type**: Specify the type of answer expected, selecting from the following categories: {person, place, date, number, yes_no, entity, other}.
+5. **Is_final**: Indicate with a boolean value (true/false) whether this sub-question represents the final answer to the original question.
+6. **Rationale**: Provide a brief justification for why this sub-question is necessary and how it connects to the overarching goal of answering the original question.
+
+**Final Output Structure:**
+- Include a "subgoals" list that contains all generated sub-questions as objects.
+- Specify a "final_id" that indicates which sub-goal provides the final answer to the original question.
+- Include a "reasoning" section that summarizes the overall plan for how the sub-questions lead to the final answer, detailing the logical flow from one sub-question to another.
+
+**Example of a Good Output:**
+- The reasoning should clearly explain the sequence of steps taken to arrive at the final answer.
+- Each sub-goal must be distinct, focused, and ensure it can be answered independently of others, except where dependencies are explicitly noted.
+
+**Note on Dependencies and Reading Steps:**
+- Ensure that dependencies are appropriately referenced using the format <A.I> to indicate reliance on previous answers.
+- Each sub-question should be designed so that it can be answered based on a single retrieval step, followed by a concise reading to confirm or clarify the answer.
+
+By following these guidelines, you will create a structured, logical approach to breaking down complex questions into manageable parts, facilitating accurate and efficient information retrieval.
+2026/04/30 14:59:58 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 14:59:58 INFO dspy.teleprompt.gepa.gepa: Iteration 10: New subsample score 0.0 is not better than old score 0.5, skipping
+GEPA Optimization:  33%|███▎      | 100/300 [24:35<1:04:32, 19.36s/rollouts]2026/04/30 14:59:58 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Selected program 0 score: 0.0875
+
+  0%|          | 0/3 [00:00<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):   0%|          | 0/3 [00:41<?, ?it/s]Average Metric: 0.00 / 1 (0.0%):  33%|███▎      | 1/3 [00:41<01:23, 41.83s/it]Average Metric: 0.00 / 2 (0.0%):  33%|███▎      | 1/3 [00:42<01:23, 41.83s/it]Average Metric: 0.00 / 2 (0.0%):  67%|██████▋   | 2/3 [00:42<00:17, 17.48s/it]Average Metric: 0.00 / 3 (0.0%):  67%|██████▋   | 2/3 [01:06<00:17, 17.48s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [01:06<00:00, 20.60s/it]Average Metric: 0.00 / 3 (0.0%): 100%|██████████| 3/3 [01:06<00:00, 22.19s/it]2026/04/30 15:01:05 INFO dspy.evaluate.evaluate: Average Metric: 0.0 / 3 (0.0%)
+2026/04/30 15:01:13 INFO dspy.teleprompt.gepa.gepa: Iteration 11: Proposed new text for extract_pred: Extract a SHORT answer span (1-6 words) for the sub-question.
+
+TASK DESCRIPTION:
+You are required to extract a concise answer from a set of text chunks that directly responds to a specific sub-question. The answer must be a contiguous substring found within one of the provided chunks, and it should match the expected answer type indicated in the inputs.
+
+GROUNDING RULES:
+1. The extracted answer_span MUST be copied VERBATIM as a contiguous substring from ONE of the provided chunks. Do not paraphrase or invent any information.
+2. If NO chunk DIRECTLY supports the answer to the sub-question, return answer_span='' and confidence=0.0. Avoid providing an answer that is confidently incorrect; this is considered a critical bug.
+3. The answer must MATCH the expected_answer_type, which could be one of the following:
+   - 'date': any year, month, or specific date span
+   - 'number': any numeric value or number-word
+   - 'place': a specific place name appearing in the chunk
+   - 'person': full name as written in the chunk
+   - 'yes_no': a clear yes or no
+4. The evidence_chunk_id must correspond to a chunk_id present in chunks_json.
+5. The confidence score reflects the directness of support for the answer. Use the following scoring:
+   - 0.7 to 1.0 for explicitly stated answers,
+   - 0.3 to 0.6 for partially supported answers,
+   - 0.0 for answers without support.
+
+OUTPUT FORMAT:
+You must return the results in the following strict JSON format:
+{"answer_span": <str>, "evidence_chunk_id": <str>, "confidence": <float>}.
+If you cannot ground the answer in the provided chunks, output {"answer_span": "", "evidence_chunk_id": "", "confidence": 0.0}.
+
+IMPORTANT NOTES:
+- Pay close attention to the context of each chunk to ensure the extracted answer is relevant and accurately reflects the information contained within it.
+- Ensure that the confidence score accurately represents how directly the chunk supports the answer. Do not assign a high confidence score unless the answer is clearly stated in the text.
