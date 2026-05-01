@@ -1,0 +1,15 @@
+{
+  "root_lm": "qwen14b-nothink",
+  "sub_lm": "qwen14b-nothink",
+  "sub_max_tokens": 512,
+  "questions": "data/musique/opera_matched/questions_50.json",
+  "n": 10,
+  "out_dir": "results/recursive_rag_10q_concise_20260501_1104",
+  "experience_library": null,
+  "gepa_program": null,
+  "max_iters": 8,
+  "concurrency": 1,
+  "retriever_url": "http://node408:8003",
+  "no_citation_gate": false,
+  "overwrite": true
+}

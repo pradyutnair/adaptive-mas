@@ -1,0 +1,15 @@
+{
+  "root_lm": "qwen14b-nothink",
+  "sub_lm": "qwen14b-nothink",
+  "sub_max_tokens": 512,
+  "questions": "results/pam_question.json",
+  "n": 1,
+  "out_dir": "results/pam_expected_type_bridge_20260501_111517",
+  "experience_library": null,
+  "gepa_program": null,
+  "max_iters": 8,
+  "concurrency": 1,
+  "retriever_url": "http://node408:8003",
+  "no_citation_gate": false,
+  "overwrite": true
+}

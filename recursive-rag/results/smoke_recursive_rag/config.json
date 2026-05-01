@@ -1,0 +1,15 @@
+{
+  "root_lm": "qwen14b-nothink",
+  "sub_lm": "qwen14b-nothink",
+  "sub_max_tokens": 512,
+  "questions": "data/musique/opera50.json",
+  "n": 1,
+  "out_dir": "results/smoke_recursive_rag",
+  "experience_library": null,
+  "gepa_program": null,
+  "max_iters": 4,
+  "concurrency": 1,
+  "retriever_url": "http://node408:8003",
+  "no_citation_gate": false,
+  "overwrite": true
+}
