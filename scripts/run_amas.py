@@ -42,6 +42,8 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--synth-budget', type=int, default=2048, help='max_tokens for synth (default 2048 to avoid thinking-budget exhaust)')
     ap.add_argument('--planner-replica', type=int, default=0)
     ap.add_argument('--planner-model', choices=['qwen3-8b', 'qwen3-14b'], default='qwen3-8b')
+    ap.add_argument('--planner-mode', choices=['think', 'nothink'], default='think', help='thinking mode for planner and bridge resolver')
+    ap.add_argument('--planner-budget', type=int, default=1024, help='max_tokens for no-think planner')
     ap.add_argument('--limit', type=int, default=0, help='if > 0, only run first N questions')
     ap.add_argument('--qwen-think-budget', type=int, default=4096)
     ap.add_argument('--experience-file', default=None, help='path to GRPO-compiled experience library txt')
@@ -69,13 +71,17 @@ async def main() -> None:
     cfg = LMConfig(qwen_think_max_tokens=args.qwen_think_budget)
     # Round-robin across 3 vLLM replicas to use all 3 GPUs.
     n_replicas = 3
+    from amas3.lm import make_qwen14b_think_lm, make_qwen14b_think_small_lm, make_qwen14b_nothink_lm
     if args.planner_model == 'qwen3-14b':
-        from amas3.lm import make_qwen14b_think_lm
-        # Single 14B endpoint, replicate the LM reference for round-robin (all hit port 8003)
-        planner_lms = [make_qwen14b_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
+        if args.planner_mode == 'nothink':
+            planner_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=i, max_tokens=args.planner_budget) for i in range(n_replicas)]
+        else:
+            planner_lms = [make_qwen14b_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
     else:
-        planner_lms = [make_qwen_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
-    from amas3.lm import make_qwen14b_think_small_lm, make_qwen14b_nothink_lm
+        if args.planner_mode == 'nothink':
+            planner_lms = [make_qwen_nothink_lm(cfg, replica_idx=i) for i in range(n_replicas)]
+        else:
+            planner_lms = [make_qwen_think_lm(cfg, replica_idx=i) for i in range(n_replicas)]
 
     def _make_lm(mode: str, replica_offset: int):
         out = []
@@ -89,7 +95,7 @@ async def main() -> None:
                 budget = args.synth_budget if replica_offset == 2 else args.solver_budget
                 out.append(make_qwen14b_think_small_lm(cfg, replica_idx=r, max_tokens=budget))
             elif mode == 'qwen14b_nothink':
-                budget = args.synth_budget if replica_offset == 2 else 512
+                budget = args.synth_budget if replica_offset == 2 else args.solver_budget
                 out.append(make_qwen14b_nothink_lm(cfg, replica_idx=r, max_tokens=budget))
             else:
                 raise ValueError(f'unknown mode {mode}')
@@ -140,7 +146,9 @@ async def main() -> None:
     config_path.write_text(json.dumps({
         'questions_path': args.questions,
         'n_questions': len(questions),
-        'planner': args.planner_model + '+think',
+        'planner': args.planner_model + '+' + args.planner_mode,
+        'planner_mode': args.planner_mode,
+        'planner_budget': args.planner_budget,
         'worker': args.worker,
         'synth': args.synth_mode,
         'use_sas_collapse': args.use_sas_collapse,

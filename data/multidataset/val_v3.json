@@ -1,0 +1,272 @@
+[
+  {
+    "id": "2hop__386279_74309",
+    "dataset": "musique",
+    "question": "Who is the current prime minister of the country where Rio Cobre is located?",
+    "answer": "Andrew Holness",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 3328
+  },
+  {
+    "id": "4hop1__50578_84360_334118_41330",
+    "dataset": "musique",
+    "question": "What is the enrollment of undergraduates at the alma mater of the man who owns the gold spike in the home of the World Series of Poker?",
+    "answer": "7,200",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1693
+  },
+  {
+    "id": "2hop__502850_81633",
+    "dataset": "musique",
+    "question": "Who is We Belong Together by the composer of Forever about?",
+    "answer": "Tommy Mottola",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1740
+  },
+  {
+    "id": "4hop1__286131_77886_77268_37154",
+    "dataset": "musique",
+    "question": "How long are terms in the body that elects a speaker for the body presiding over impeachment trials of the president of Matthias W. Day's country of citizenship?",
+    "answer": "five-year terms",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1615
+  },
+  {
+    "id": "3hop1__252538_328280_87820",
+    "dataset": "musique",
+    "question": "what was the largest mass uprising in the history of the country where Sigbert Josef Maria Ganser's birthplace is located?",
+    "answer": "People's Uprising in East Germany",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 1623
+  },
+  {
+    "id": "2hop__2675_5345",
+    "dataset": "musique",
+    "question": "How many square miles is the city where Donda West's funeral was?",
+    "answer": "620.34 square miles",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 4630
+  },
+  {
+    "id": "3hop1__32903_103178_23008",
+    "dataset": "musique",
+    "question": "What were adopted for use in mainland of the country where the person who could describe the process of evaporation was from?",
+    "answer": "Chinese characters",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1601
+  },
+  {
+    "id": "2hop__105143_65274",
+    "dataset": "musique",
+    "question": "When was the last time that the country where Gyeongju bread originates was united?",
+    "answer": "in 1945",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 3236
+  },
+  {
+    "id": "2hop__808090_297038",
+    "dataset": "musique",
+    "question": "In what region of what is now the country containing Nancova did the Germans clash with the Portuguese?",
+    "answer": "Portuguese Angola",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1616
+  },
+  {
+    "id": "2hop__864_36842",
+    "dataset": "musique",
+    "question": "When did the region which traded horses with the Ming become part of Qing China?",
+    "answer": "mid-18th century",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4711
+  },
+  {
+    "id": "train_5918",
+    "dataset": "2wikimultihop",
+    "question": "Are the directors of films The House Of 72 Tenants and Yaşam Kavgası both from the same country?",
+    "answer": "no",
+    "profile": "yes_no",
+    "oracle_easy": true,
+    "naive_tokens": 5132
+  },
+  {
+    "id": "train_5928",
+    "dataset": "2wikimultihop",
+    "question": "Which country the director of film Bhadaas is from?",
+    "answer": "India",
+    "profile": "bridge_2hop",
+    "oracle_easy": true,
+    "naive_tokens": 1729
+  },
+  {
+    "id": "train_6950",
+    "dataset": "2wikimultihop",
+    "question": "Do both films Chin Chin Chinaman and Big B (Film) have the directors from the same country?",
+    "answer": "no",
+    "profile": "yes_no",
+    "oracle_easy": true,
+    "naive_tokens": 3433
+  },
+  {
+    "id": "train_12206",
+    "dataset": "2wikimultihop",
+    "question": "Which film has the director born first, The Fifth Element or Saint Janet?",
+    "answer": "The Fifth Element",
+    "profile": "one_hop",
+    "oracle_easy": true,
+    "naive_tokens": 1637
+  },
+  {
+    "id": "train_5980",
+    "dataset": "2wikimultihop",
+    "question": "What is the cause of death of director of film Dancing Co-Ed?",
+    "answer": "heart attack",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": true,
+    "naive_tokens": 1656
+  },
+  {
+    "id": "train_14152",
+    "dataset": "2wikimultihop",
+    "question": "What is the date of death of Teriimaevarua Ii's mother?",
+    "answer": "17 September 1877",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 2032
+  },
+  {
+    "id": "train_14175",
+    "dataset": "2wikimultihop",
+    "question": "Where was the director of film Young Sinners born?",
+    "answer": "Rice Lake, Wisconsin",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1736
+  },
+  {
+    "id": "train_5966",
+    "dataset": "2wikimultihop",
+    "question": "When was Princess Victoria Margaret Of Prussia's mother born?",
+    "answer": "8 April 1866",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1667
+  },
+  {
+    "id": "train_12288",
+    "dataset": "2wikimultihop",
+    "question": "Do both films Whoops, I'm an Indian! and Chasing Rainbows (1930 film) have the directors that share the same nationality?",
+    "answer": "no",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1719
+  },
+  {
+    "id": "train_3581",
+    "dataset": "2wikimultihop",
+    "question": "Are Audrey O'Brien and V. Gordon Childe of the same nationality?",
+    "answer": "no",
+    "profile": "yes_no",
+    "oracle_easy": true,
+    "naive_tokens": 4539
+  },
+  {
+    "id": "train_67124",
+    "dataset": "hotpotqa",
+    "question": "Are Hegang and Weihai in the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1724
+  },
+  {
+    "id": "train_80508",
+    "dataset": "hotpotqa",
+    "question": "which game played on January 1, 2007 did 2006 Boise State Broncos football team faced Oklahoma",
+    "answer": "The 2007 Tostitos",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1723
+  },
+  {
+    "id": "train_32461",
+    "dataset": "hotpotqa",
+    "question": "What is the subtitle of the opera conducted by Nikolai Rimsky-Korsakov at Novaya Opera?",
+    "answer": "A Spring Fairy Tale",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1778
+  },
+  {
+    "id": "train_77621",
+    "dataset": "hotpotqa",
+    "question": "Which scottish writer and Children's laureate wrote children's book illustrated by Axel Scheffler?",
+    "answer": "Julia Donaldson",
+    "profile": "bridge_2hop",
+    "oracle_easy": true,
+    "naive_tokens": 1697
+  },
+  {
+    "id": "train_67153",
+    "dataset": "hotpotqa",
+    "question": "Comedy of intrigue is a genre that includes what comedy by William Shakespeare that is thought to have been written in 1598?",
+    "answer": "Much Ado About Nothing",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": true,
+    "naive_tokens": 1708
+  },
+  {
+    "id": "train_77695",
+    "dataset": "hotpotqa",
+    "question": "Where did the celebrity who presented the prizes at the 1971 World Championship Tennis Finals earn his bachelor's degree ?",
+    "answer": "Purdue University",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1759
+  },
+  {
+    "id": "train_80568",
+    "dataset": "hotpotqa",
+    "question": "Are Joey Tempest and Aaron Lewis both considered American musicians?",
+    "answer": "no",
+    "profile": "yes_no",
+    "oracle_easy": true,
+    "naive_tokens": 1673
+  },
+  {
+    "id": "train_77471",
+    "dataset": "hotpotqa",
+    "question": "Which character does Alex O'Loughlin play in \"Hawaii Five-O\"?",
+    "answer": "Steve McGarrett",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1726
+  },
+  {
+    "id": "train_77402",
+    "dataset": "hotpotqa",
+    "question": "Which city in Kansas with a city population of 2,526 in 2010 has an airport with the ICAO of KHRU?",
+    "answer": "Herington",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1622
+  },
+  {
+    "id": "train_32483",
+    "dataset": "hotpotqa",
+    "question": "Garden City bus station serves the suburbs of Upper Mount Gravatt and this major shopping center previously operated by who",
+    "answer": "AMP Limited",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1603
+  }
+]

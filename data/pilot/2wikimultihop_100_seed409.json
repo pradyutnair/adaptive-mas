@@ -1,0 +1,3832 @@
+[
+  {
+    "id": "a1cdb240085811ebbd5bac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who is older, God'S Gift To Women or Aldri Annet Enn Bråk?",
+    "answer": "God'S Gift To Women",
+    "evidence": [
+      [
+        "God's Gift to Women",
+        "director",
+        "Michael Curtiz"
+      ],
+      [
+        "Aldri annet enn bråk",
+        "director",
+        "Edith Carlmar"
+      ],
+      [
+        "Michael Curtiz",
+        "date of birth",
+        "December 24, 1886"
+      ],
+      [
+        "Edith Carlmar",
+        "date of birth",
+        "15 November 1911"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "God's Gift to Women",
+        "director",
+        "Michael Curtiz"
+      ],
+      [
+        "Aldri annet enn bråk",
+        "director",
+        "Edith Carlmar"
+      ],
+      [
+        "Michael Curtiz",
+        "date of birth",
+        "December 24, 1886"
+      ],
+      [
+        "Edith Carlmar",
+        "date of birth",
+        "15 November 1911"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "551e024408a611ebbd7fac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Do both films Interview With A Hitman and The Last Coupon have the directors from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Interview with a Hitman",
+        "director",
+        "Perry Bhandal"
+      ],
+      [
+        "The Last Coupon",
+        "director",
+        "Frank Launder"
+      ],
+      [
+        "Perry Bhandal",
+        "country of citizenship",
+        "British"
+      ],
+      [
+        "Frank Launder",
+        "country of citizenship",
+        "British"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Interview with a Hitman",
+        "director",
+        "Perry Bhandal"
+      ],
+      [
+        "The Last Coupon",
+        "director",
+        "Frank Launder"
+      ],
+      [
+        "Perry Bhandal",
+        "country of citizenship",
+        "British"
+      ],
+      [
+        "Frank Launder",
+        "country of citizenship",
+        "British"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "d6898f78089511ebbd75ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are Vasilyevsky Island and Preobrazheniya Island located in the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Vasilyevsky Island",
+        "country",
+        "Russia"
+      ],
+      [
+        "Preobrazheniya Island",
+        "country",
+        "Russia"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Vasilyevsky Island",
+        "country",
+        "Russia"
+      ],
+      [
+        "Preobrazheniya Island",
+        "country",
+        "Russia"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "2d8f3ebe0bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the director of film The Private Life Of Cinema born?",
+    "answer": "Montreal, Quebec",
+    "evidence": [
+      [
+        "The Private Life of Cinema",
+        "director",
+        "Denys Desjardins"
+      ],
+      [
+        "Denys Desjardins",
+        "place of birth",
+        "Montreal, Quebec"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Private Life of Cinema",
+        "director",
+        "Denys Desjardins"
+      ],
+      [
+        "Denys Desjardins",
+        "place of birth",
+        "Montreal, Quebec"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "5cc01ab60bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is Mugain's mother-in-law?",
+    "answer": "Ness",
+    "evidence": [
+      [
+        "Mugain",
+        "spouse",
+        "Conchobar mac Nessa"
+      ],
+      [
+        "Conchobar mac Nessa",
+        "mother",
+        "Ness"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Mugain",
+        "spouse",
+        "Conchobar mac Nessa"
+      ],
+      [
+        "Conchobar mac Nessa",
+        "mother",
+        "Ness"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "02b62fce087211ebbd64ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film whose director is younger, Phalitamsha or Gladiators Seven?",
+    "answer": "Phalitamsha",
+    "evidence": [
+      [
+        "Phalitamsha",
+        "director",
+        "Puttanna Kanagal"
+      ],
+      [
+        "Gladiators Seven",
+        "director",
+        "Alberto De Martino"
+      ],
+      [
+        "Puttanna Kanagal",
+        "date of birth",
+        "1 December 1933"
+      ],
+      [
+        "Alberto De Martino",
+        "date of birth",
+        "12 June 1929"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Phalitamsha",
+        "director",
+        "Puttanna Kanagal"
+      ],
+      [
+        "Gladiators Seven",
+        "director",
+        "Alberto De Martino"
+      ],
+      [
+        "Puttanna Kanagal",
+        "date of birth",
+        "1 December 1933"
+      ],
+      [
+        "Alberto De Martino",
+        "date of birth",
+        "12 June 1929"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3f04140e08c311ebbd8dac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born first, Tombstone Rashomon or Waiting For The Clouds?",
+    "answer": "Tombstone Rashomon",
+    "evidence": [
+      [
+        "Tombstone Rashomon",
+        "director",
+        "Alex Cox"
+      ],
+      [
+        "Waiting for the Clouds",
+        "director",
+        "Yeşim Ustaoğlu"
+      ],
+      [
+        "Alex Cox",
+        "date of birth",
+        "15 December 1954"
+      ],
+      [
+        "Yeşim Ustaoğlu",
+        "date of birth",
+        "18 November 1960"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Tombstone Rashomon",
+        "director",
+        "Alex Cox"
+      ],
+      [
+        "Waiting for the Clouds",
+        "director",
+        "Yeşim Ustaoğlu"
+      ],
+      [
+        "Alex Cox",
+        "date of birth",
+        "15 December 1954"
+      ],
+      [
+        "Yeşim Ustaoğlu",
+        "date of birth",
+        "18 November 1960"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "f998c58c091b11ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are both movies, Naked Tango and Algiers (Film), from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Naked Tango",
+        "country of origin",
+        "American"
+      ],
+      [
+        "Algiers (film)",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Naked Tango",
+        "country of origin",
+        "American"
+      ],
+      [
+        "Algiers (film)",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "0dc9691b087911ebbd67ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born later, Arrête Ton Cinéma or Agni (2004 Film)?",
+    "answer": "Arrête Ton Cinéma",
+    "evidence": [
+      [
+        "Arrête ton cinéma",
+        "director",
+        "Diane Kurys"
+      ],
+      [
+        "Agni (2004 film)",
+        "director",
+        "Swapan Saha"
+      ],
+      [
+        "Diane Kurys",
+        "date of birth",
+        "3 December 1948"
+      ],
+      [
+        "Swapan Saha",
+        "date of birth",
+        "10 January 1930"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Arrête ton cinéma",
+        "director",
+        "Diane Kurys"
+      ],
+      [
+        "Agni (2004 film)",
+        "director",
+        "Swapan Saha"
+      ],
+      [
+        "Diane Kurys",
+        "date of birth",
+        "3 December 1948"
+      ],
+      [
+        "Swapan Saha",
+        "date of birth",
+        "10 January 1930"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "632fcc82085611ebbd59ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Was Angus Wagner or Juan Carlos Falcón born first?",
+    "answer": "Juan Carlos Falcón",
+    "evidence": [
+      [
+        "Angus Wagner",
+        "date of birth",
+        "30 October 1997"
+      ],
+      [
+        "Juan Carlos Falcón",
+        "date of birth",
+        "19 November 1979"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Angus Wagner",
+        "date of birth",
+        "30 October 1997"
+      ],
+      [
+        "Juan Carlos Falcón",
+        "date of birth",
+        "19 November 1979"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "81e0d683087c11ebbd6aac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born earlier, César And Rosalie or Beatrice (1987 Film)?",
+    "answer": "César And Rosalie",
+    "evidence": [
+      [
+        "César and Rosalie",
+        "director",
+        "Claude Sautet"
+      ],
+      [
+        "Beatrice (1987 film)",
+        "director",
+        "Bertrand Tavernier"
+      ],
+      [
+        "Claude Sautet",
+        "date of birth",
+        "23 February 1924"
+      ],
+      [
+        "Bertrand Tavernier",
+        "date of birth",
+        "25 April 1941"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "César and Rosalie",
+        "director",
+        "Claude Sautet"
+      ],
+      [
+        "Beatrice (1987 film)",
+        "director",
+        "Bertrand Tavernier"
+      ],
+      [
+        "Claude Sautet",
+        "date of birth",
+        "23 February 1924"
+      ],
+      [
+        "Bertrand Tavernier",
+        "date of birth",
+        "25 April 1941"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "0016373a0bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Hermann Ii, Landgrave Of Hesse's father?",
+    "answer": "2 February 1345",
+    "evidence": [
+      [
+        "Hermann II of Hesse",
+        "father",
+        "Louis the Junker"
+      ],
+      [
+        "Louis the Junker",
+        "date of death",
+        "2 February 1345"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Hermann II of Hesse",
+        "father",
+        "Louis the Junker"
+      ],
+      [
+        "Louis the Junker",
+        "date of death",
+        "2 February 1345"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "43eb7b380bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of the director of film Peter'S Friends?",
+    "answer": "Belfast",
+    "evidence": [
+      [
+        "Peter's Friends",
+        "director",
+        "Kenneth Branagh"
+      ],
+      [
+        "Kenneth Branagh",
+        "place of birth",
+        "Belfast"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Peter's Friends",
+        "director",
+        "Kenneth Branagh"
+      ],
+      [
+        "Kenneth Branagh",
+        "place of birth",
+        "Belfast"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "0ecb27fa0bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the performer of song Whispers (Corina Song) born?",
+    "answer": "Manhattan",
+    "evidence": [
+      [
+        "Whispers",
+        "performer",
+        "Corina"
+      ],
+      [
+        "Corina",
+        "place of birth",
+        "Manhattan"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Whispers",
+        "performer",
+        "Corina"
+      ],
+      [
+        "Corina",
+        "place of birth",
+        "Manhattan"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "6b6a5a7f092e11ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film came out earlier, La Marca De Satanás or Sofia'S Last Ambulance?",
+    "answer": "La Marca De Satanás",
+    "evidence": [
+      [
+        "La marca de Satanás",
+        "publication date",
+        "1957"
+      ],
+      [
+        "Sofia's Last Ambulance",
+        "publication date",
+        "2012"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "La marca de Satanás",
+        "publication date",
+        "1957"
+      ],
+      [
+        "Sofia's Last Ambulance",
+        "publication date",
+        "2012"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "4f8e349e08e111ebbda2ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who died later, Hotel Paradis or Devil'S Doorway?",
+    "answer": "Devil'S Doorway",
+    "evidence": [
+      [
+        "Hotel Paradis",
+        "director",
+        "George Schnéevoigt"
+      ],
+      [
+        "Devil's Doorway",
+        "director",
+        "Anthony Mann"
+      ],
+      [
+        "George Schnéevoigt",
+        "date of death",
+        "6 February 1961"
+      ],
+      [
+        "Anthony Mann",
+        "date of death",
+        "April 29, 1967"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Hotel Paradis",
+        "director",
+        "George Schnéevoigt"
+      ],
+      [
+        "Devil's Doorway",
+        "director",
+        "Anthony Mann"
+      ],
+      [
+        "George Schnéevoigt",
+        "date of death",
+        "6 February 1961"
+      ],
+      [
+        "Anthony Mann",
+        "date of death",
+        "April 29, 1967"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "6a4840d608dc11ebbd9cac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who is older, A Better Tomorrow Iii: Love & Death In Saigon or Har Dil Jo Pyar Karega?",
+    "answer": "A Better Tomorrow Iii: Love & Death In Saigon",
+    "evidence": [
+      [
+        "A Better Tomorrow III: Love & Death in Saigon",
+        "director",
+        "Tsui Hark"
+      ],
+      [
+        "Har Dil Jo Pyar Karega",
+        "director",
+        "Raj Kanwar"
+      ],
+      [
+        "Tsui Hark",
+        "date of birth",
+        "15 February 1950"
+      ],
+      [
+        "Raj Kanwar",
+        "date of birth",
+        "28 June 1961"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "A Better Tomorrow III: Love & Death in Saigon",
+        "director",
+        "Tsui Hark"
+      ],
+      [
+        "Har Dil Jo Pyar Karega",
+        "director",
+        "Raj Kanwar"
+      ],
+      [
+        "Tsui Hark",
+        "date of birth",
+        "15 February 1950"
+      ],
+      [
+        "Raj Kanwar",
+        "date of birth",
+        "28 June 1961"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3d2069fe0bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is Princess Margaret Of Connaught's father?",
+    "answer": "Prince Arthur, Duke of Connaught and Strathearn",
+    "evidence": [
+      [
+        "Princess Margaret of Connaught",
+        "mother",
+        "Princess Louise Margaret of Prussia"
+      ],
+      [
+        "Princess Louise Margaret of Prussia",
+        "spouse",
+        "Prince Arthur, Duke of Connaught and Strathearn"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Princess Margaret of Connaught",
+        "mother",
+        "Princess Louise Margaret of Prussia"
+      ],
+      [
+        "Princess Louise Margaret of Prussia",
+        "spouse",
+        "Prince Arthur, Duke of Connaught and Strathearn"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3b1002a40bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Edward Wingfield, 2Nd Viscount Powerscourt's father?",
+    "answer": "21 October 1751",
+    "evidence": [
+      [
+        "Edward Wingfield, 2nd Viscount Powerscourt",
+        "father",
+        "Richard Wingfield, 1st Viscount Powerscourt"
+      ],
+      [
+        "Richard Wingfield, 1st Viscount Powerscourt",
+        "date of death",
+        "21 October 1751"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Edward Wingfield, 2nd Viscount Powerscourt",
+        "father",
+        "Richard Wingfield, 1st Viscount Powerscourt"
+      ],
+      [
+        "Richard Wingfield, 1st Viscount Powerscourt",
+        "date of death",
+        "21 October 1751"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "eb3d62d608ad11ebbd83ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Do both films, The Wild Frontier (Film) and The Sundowners (1960 Film), have the directors who are from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "The Wild Frontier (film)",
+        "director",
+        "Philip Ford"
+      ],
+      [
+        "The Sundowners (1960 film)",
+        "director",
+        "Fred Zinnemann"
+      ],
+      [
+        "Philip Ford (film director)",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Fred Zinnemann",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Fred Zinnemann",
+        "country of citizenship",
+        "Austrian"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Wild Frontier (film)",
+        "director",
+        "Philip Ford"
+      ],
+      [
+        "The Sundowners (1960 film)",
+        "director",
+        "Fred Zinnemann"
+      ],
+      [
+        "Philip Ford (film director)",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Fred Zinnemann",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Fred Zinnemann",
+        "country of citizenship",
+        "Austrian"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "6138bd9c095411ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which one was established first, Shriro or Tj Ryan Foundation?",
+    "answer": "Shriro",
+    "evidence": [
+      [
+        "Shriro",
+        "inception",
+        "1906"
+      ],
+      [
+        "TJ Ryan Foundation",
+        "inception",
+        "27 February 2014"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Shriro",
+        "inception",
+        "1906"
+      ],
+      [
+        "TJ Ryan Foundation",
+        "inception",
+        "27 February 2014"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "64075230086811ebbd5eac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film whose director is younger, The Tiger Makes Out or La Vérité Sur Bébé Donge?",
+    "answer": "The Tiger Makes Out",
+    "evidence": [
+      [
+        "The Tiger Makes Out",
+        "director",
+        "Arthur Hiller"
+      ],
+      [
+        "La Vérité sur Bébé Donge",
+        "director",
+        "Henri Decoin"
+      ],
+      [
+        "Arthur Hiller",
+        "date of birth",
+        "November 22, 1923"
+      ],
+      [
+        "Henri Decoin",
+        "date of birth",
+        "18 March 1890"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Tiger Makes Out",
+        "director",
+        "Arthur Hiller"
+      ],
+      [
+        "La Vérité sur Bébé Donge",
+        "director",
+        "Henri Decoin"
+      ],
+      [
+        "Arthur Hiller",
+        "date of birth",
+        "November 22, 1923"
+      ],
+      [
+        "Henri Decoin",
+        "date of birth",
+        "18 March 1890"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "372d95020bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the performer of song Evolution (Ayumi Hamasaki Song) born?",
+    "answer": "Fukuoka",
+    "evidence": [
+      [
+        "Evolution",
+        "performer",
+        "Ayumi Hamasaki"
+      ],
+      [
+        "Ayumi Hamasaki",
+        "place of birth",
+        "Fukuoka"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Evolution",
+        "performer",
+        "Ayumi Hamasaki"
+      ],
+      [
+        "Ayumi Hamasaki",
+        "place of birth",
+        "Fukuoka"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a41c3c8808bc11ebbd89ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Who was born earlier, Ola Stunes Isene or Ruby Helder?",
+    "answer": "Ruby Helder",
+    "evidence": [
+      [
+        "Ola Stunes Isene",
+        "date of birth",
+        "29 January 1995"
+      ],
+      [
+        "Ruby Helder",
+        "date of birth",
+        "March 3, 1890"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Ola Stunes Isene",
+        "date of birth",
+        "29 January 1995"
+      ],
+      [
+        "Ruby Helder",
+        "date of birth",
+        "March 3, 1890"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "b6e4474808a311ebbd7bac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born later, Tell It To The Bees or House Of The Black Death?",
+    "answer": "Tell It To The Bees",
+    "evidence": [
+      [
+        "Tell It to the Bees",
+        "director",
+        "Annabel Jankel"
+      ],
+      [
+        "House of the Black Death",
+        "director",
+        "Jerry Warren"
+      ],
+      [
+        "Annabel Jankel",
+        "date of birth",
+        "1 June 1955"
+      ],
+      [
+        "Jerry Warren",
+        "date of birth",
+        "March 10, 1925"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Tell It to the Bees",
+        "director",
+        "Annabel Jankel"
+      ],
+      [
+        "House of the Black Death",
+        "director",
+        "Jerry Warren"
+      ],
+      [
+        "Annabel Jankel",
+        "date of birth",
+        "1 June 1955"
+      ],
+      [
+        "Jerry Warren",
+        "date of birth",
+        "March 10, 1925"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3733d61a0bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality is the director of film 3096 Days?",
+    "answer": "American",
+    "evidence": [
+      [
+        "3096 Days",
+        "director",
+        "Sherry Horman"
+      ],
+      [
+        "Sherry Horman",
+        "country of citizenship",
+        "American"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "3096 Days",
+        "director",
+        "Sherry Horman"
+      ],
+      [
+        "Sherry Horman",
+        "country of citizenship",
+        "American"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "f814a4520bdb11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the father of Victor Amadeus, Prince Of Anhalt-Bernburg born?",
+    "answer": "Amberg",
+    "evidence": [
+      [
+        "Victor Amadeus of Anhalt-Bernburg",
+        "father",
+        "Christian II, Prince of Anhalt-Bernburg"
+      ],
+      [
+        "Christian II, Prince of Anhalt-Bernburg",
+        "place of birth",
+        "Amberg"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Victor Amadeus of Anhalt-Bernburg",
+        "father",
+        "Christian II, Prince of Anhalt-Bernburg"
+      ],
+      [
+        "Christian II, Prince of Anhalt-Bernburg",
+        "place of birth",
+        "Amberg"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "048f56a80bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of birth of the director of film Moguds Pellams?",
+    "answer": "1949",
+    "evidence": [
+      [
+        "Moguds Pellams",
+        "director",
+        "Ranganath"
+      ],
+      [
+        "Ranganath",
+        "date of birth",
+        "1949"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Moguds Pellams",
+        "director",
+        "Ranganath"
+      ],
+      [
+        "Ranganath",
+        "date of birth",
+        "1949"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "63b35a580bd911eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the director of film The Iron Man (Serial) born?",
+    "answer": "Tripp County, South Dakota",
+    "evidence": [
+      [
+        "The Iron Man",
+        "director",
+        "Jay Marchant"
+      ],
+      [
+        "Jay Marchant",
+        "place of birth",
+        "Tripp County, South Dakota"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Iron Man",
+        "director",
+        "Jay Marchant"
+      ],
+      [
+        "Jay Marchant",
+        "place of birth",
+        "Tripp County, South Dakota"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "e88629000bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Alexander Baring, 4Th Baron Ashburton's father?",
+    "answer": "6 September 1868",
+    "evidence": [
+      [
+        "Alexander Hugh Baring, 4th Baron Ashburton",
+        "father",
+        "Francis Baring, 3rd Baron Ashburton"
+      ],
+      [
+        "Francis Baring, 3rd Baron Ashburton",
+        "date of death",
+        "6 September 1868"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Alexander Hugh Baring, 4th Baron Ashburton",
+        "father",
+        "Francis Baring, 3rd Baron Ashburton"
+      ],
+      [
+        "Francis Baring, 3rd Baron Ashburton",
+        "date of death",
+        "6 September 1868"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "53ff36f60baf11ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is Robert Iii, Count Of Dreux's paternal grandfather?",
+    "answer": "Robert I, Count of Dreux",
+    "evidence": [
+      [
+        "Robert III of Dreux",
+        "father",
+        "Robert II, Count of Dreux"
+      ],
+      [
+        "Robert II, Count of Dreux",
+        "father",
+        "Robert I, Count of Dreux"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Robert III of Dreux",
+        "father",
+        "Robert II, Count of Dreux"
+      ],
+      [
+        "Robert II, Count of Dreux",
+        "father",
+        "Robert I, Count of Dreux"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "497156a60bdc11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Which country Henry Cavendish, Earl Of Ogle's father is from?",
+    "answer": "English",
+    "evidence": [
+      [
+        "Henry Cavendish, Earl of Ogle",
+        "father",
+        "Henry Cavendish, 2nd Duke of Newcastle"
+      ],
+      [
+        "Henry Cavendish, 2nd Duke of Newcastle",
+        "country of citizenship",
+        "English"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Henry Cavendish, Earl of Ogle",
+        "father",
+        "Henry Cavendish, 2nd Duke of Newcastle"
+      ],
+      [
+        "Henry Cavendish, 2nd Duke of Newcastle",
+        "country of citizenship",
+        "English"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "337da5aa098111ebbdb0ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film was released more recently, Gola Barood or Babette Bomberling?",
+    "answer": "Gola Barood",
+    "evidence": [
+      [
+        "Gola Barood",
+        "publication date",
+        "1989"
+      ],
+      [
+        "Babette Bomberling",
+        "publication date",
+        "1927"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Gola Barood",
+        "publication date",
+        "1989"
+      ],
+      [
+        "Babette Bomberling",
+        "publication date",
+        "1927"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "810be29808b211ebbd85ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Who lived longer, Guido Lauri or Joris Van Severen?",
+    "answer": "Guido Lauri",
+    "evidence": [
+      [
+        "Guido Lauri",
+        "date of birth",
+        "23 November 1922"
+      ],
+      [
+        "Guido Lauri",
+        "date of death",
+        "27 October 2019"
+      ],
+      [
+        "Joris Van Severen",
+        "date of birth",
+        "19 July 1894"
+      ],
+      [
+        "Joris Van Severen",
+        "date of death",
+        "20 May 1940"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Guido Lauri",
+        "date of birth",
+        "23 November 1922"
+      ],
+      [
+        "Guido Lauri",
+        "date of death",
+        "27 October 2019"
+      ],
+      [
+        "Joris Van Severen",
+        "date of birth",
+        "19 July 1894"
+      ],
+      [
+        "Joris Van Severen",
+        "date of death",
+        "20 May 1940"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "9d06ec120bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Which country the director of film Our Emden is from?",
+    "answer": "Austria",
+    "evidence": [
+      [
+        "Our Emden",
+        "director",
+        "Louis Ralph"
+      ],
+      [
+        "Louis Ralph",
+        "country of citizenship",
+        "Austria"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Our Emden",
+        "director",
+        "Louis Ralph"
+      ],
+      [
+        "Louis Ralph",
+        "country of citizenship",
+        "Austria"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "ba015944086611ebbd5eac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Do both films: A Slave Of Vanity and Grace Of My Heart have the directors from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "A Slave of Vanity",
+        "director",
+        "Henry Otto"
+      ],
+      [
+        "Grace of My Heart",
+        "director",
+        "Allison Anders"
+      ],
+      [
+        "Henry Otto",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Allison Anders",
+        "country of citizenship",
+        "American"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "A Slave of Vanity",
+        "director",
+        "Henry Otto"
+      ],
+      [
+        "Grace of My Heart",
+        "director",
+        "Allison Anders"
+      ],
+      [
+        "Henry Otto",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Allison Anders",
+        "country of citizenship",
+        "American"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "fc631640089711ebbd77ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Who was born later, Burhan Atak or Pepe Hern?",
+    "answer": "Pepe Hern",
+    "evidence": [
+      [
+        "Burhan Atak",
+        "date of birth",
+        "27 January 1905"
+      ],
+      [
+        "Pepe Hern",
+        "date of birth",
+        "June 6, 1927"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Burhan Atak",
+        "date of birth",
+        "27 January 1905"
+      ],
+      [
+        "Pepe Hern",
+        "date of birth",
+        "June 6, 1927"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "6abaf116089c11ebbd78ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film whose director was born first, Shadow Of The Earth or Wolves Of The Range?",
+    "answer": "Wolves Of The Range",
+    "evidence": [
+      [
+        "Shadow of the Earth",
+        "director",
+        "Taieb Louhichi"
+      ],
+      [
+        "Wolves of the Range",
+        "director",
+        "Sam Newfield"
+      ],
+      [
+        "Taïeb Louhichi",
+        "date of birth",
+        "June 16, 1948"
+      ],
+      [
+        "Sam Newfield",
+        "date of birth",
+        "December 6, 1899"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Shadow of the Earth",
+        "director",
+        "Taieb Louhichi"
+      ],
+      [
+        "Wolves of the Range",
+        "director",
+        "Sam Newfield"
+      ],
+      [
+        "Taïeb Louhichi",
+        "date of birth",
+        "June 16, 1948"
+      ],
+      [
+        "Sam Newfield",
+        "date of birth",
+        "December 6, 1899"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "e5d895ee0bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the composer of film Love Story 1999 born?",
+    "answer": "Tamil",
+    "evidence": [
+      [
+        "Love Story 1999",
+        "composer",
+        "Deva"
+      ],
+      [
+        "Deva",
+        "place of birth",
+        "Tamil"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Love Story 1999",
+        "composer",
+        "Deva"
+      ],
+      [
+        "Deva",
+        "place of birth",
+        "Tamil"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "896795760bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is Tlilpotoncatzin's uncle?",
+    "answer": "Chimalpopoca",
+    "evidence": [
+      [
+        "Tlilpotoncatzin",
+        "father",
+        "Tlacaelel"
+      ],
+      [
+        "Tlacaelel",
+        "sibling",
+        "Chimalpopoca"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Tlilpotoncatzin",
+        "father",
+        "Tlacaelel"
+      ],
+      [
+        "Tlacaelel",
+        "sibling",
+        "Chimalpopoca"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "88cc034008c211ebbd8cac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Are the directors of both films The Knockout Kid and One Nine Nine Four from the same country?",
+    "answer": "no",
+    "evidence": [
+      [
+        "The Knockout Kid",
+        "director",
+        "Albert S. Rogell"
+      ],
+      [
+        "One Nine Nine Four",
+        "director",
+        "Jai Al-Attas"
+      ],
+      [
+        "Albert S. Rogell",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Jai Al-Attas",
+        "country of citizenship",
+        "Australian"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Knockout Kid",
+        "director",
+        "Albert S. Rogell"
+      ],
+      [
+        "One Nine Nine Four",
+        "director",
+        "Jai Al-Attas"
+      ],
+      [
+        "Albert S. Rogell",
+        "country of citizenship",
+        "American"
+      ],
+      [
+        "Jai Al-Attas",
+        "country of citizenship",
+        "Australian"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "63a0ba880bd911eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where did the director of film Hurricane At Pilgrim Hill die?",
+    "answer": "Newport Beach",
+    "evidence": [
+      [
+        "Hurricane at Pilgrim Hill",
+        "director",
+        "Richard L. Bare"
+      ],
+      [
+        "Richard L. Bare",
+        "place of death",
+        "Newport Beach"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Hurricane at Pilgrim Hill",
+        "director",
+        "Richard L. Bare"
+      ],
+      [
+        "Richard L. Bare",
+        "place of death",
+        "Newport Beach"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "26351014096711ebbdafac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film was released more recently, Moscow Pride '06 or My Favourite Fabric?",
+    "answer": "My Favourite Fabric",
+    "evidence": [
+      [
+        "Moscow Pride '06",
+        "publication date",
+        "2006"
+      ],
+      [
+        "My Favourite Fabric",
+        "publication date",
+        "2018"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Moscow Pride '06",
+        "publication date",
+        "2006"
+      ],
+      [
+        "My Favourite Fabric",
+        "publication date",
+        "2018"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "ef9dd4360bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality is Heather Jansch's husband?",
+    "answer": "Scottish",
+    "evidence": [
+      [
+        "Heather Jansch",
+        "spouse",
+        "Bert Jansch"
+      ],
+      [
+        "Bert Jansch",
+        "country of citizenship",
+        "Scottish"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Heather Jansch",
+        "spouse",
+        "Bert Jansch"
+      ],
+      [
+        "Bert Jansch",
+        "country of citizenship",
+        "Scottish"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "fd848f860bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality is Margaretha Van Mechelen's husband?",
+    "answer": "Dutch Republic",
+    "evidence": [
+      [
+        "Margaretha van Mechelen",
+        "spouse",
+        "Maurice of Nassau"
+      ],
+      [
+        "Maurice of Nassau",
+        "country of citizenship",
+        "Dutch Republic"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Margaretha van Mechelen",
+        "spouse",
+        "Maurice of Nassau"
+      ],
+      [
+        "Maurice of Nassau",
+        "country of citizenship",
+        "Dutch Republic"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "7a6381980bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where did the director of film Yamata die?",
+    "answer": "London",
+    "evidence": [
+      [
+        "Yamata",
+        "director",
+        "Alexander Korda"
+      ],
+      [
+        "Alexander Korda",
+        "place of death",
+        "London"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Yamata",
+        "director",
+        "Alexander Korda"
+      ],
+      [
+        "Alexander Korda",
+        "place of death",
+        "London"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "68a9e3c60bdc11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Which country the composer of film Brecha (2009 Film) is from?",
+    "answer": "Argentine",
+    "evidence": [
+      [
+        "Brecha",
+        "composer",
+        "Iván Noel"
+      ],
+      [
+        "Iván Noel",
+        "country of citizenship",
+        "Argentine"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Brecha",
+        "composer",
+        "Iván Noel"
+      ],
+      [
+        "Iván Noel",
+        "country of citizenship",
+        "Argentine"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "7247b1320bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is the maternal grandmother of Marie De Namur?",
+    "answer": "Blanche of Brittany",
+    "evidence": [
+      [
+        "Marie of Namur",
+        "mother",
+        "Marie of Artois"
+      ],
+      [
+        "Marie of Artois",
+        "mother",
+        "Blanche of Brittany"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Marie of Namur",
+        "mother",
+        "Marie of Artois"
+      ],
+      [
+        "Marie of Artois",
+        "mother",
+        "Blanche of Brittany"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "f88912f008da11ebbd9cac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died earlier, John Jaffer Janardhanan or Kamakalawa?",
+    "answer": "Kamakalawa",
+    "evidence": [
+      [
+        "John Jaffer Janardhanan",
+        "director",
+        "I. V. Sasi"
+      ],
+      [
+        "Kamakalawa",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "I. V. Sasi",
+        "date of death",
+        "24 October 2017"
+      ],
+      [
+        "Eddie Romero",
+        "date of death",
+        "May 28, 2013"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "John Jaffer Janardhanan",
+        "director",
+        "I. V. Sasi"
+      ],
+      [
+        "Kamakalawa",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "I. V. Sasi",
+        "date of death",
+        "24 October 2017"
+      ],
+      [
+        "Eddie Romero",
+        "date of death",
+        "May 28, 2013"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "f5bd6a3a093e11ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film came out earlier, Murder, She Said or Story Of Barbara?",
+    "answer": "Murder, She Said",
+    "evidence": [
+      [
+        "Murder, She Said",
+        "publication date",
+        "1961"
+      ],
+      [
+        "Story of Barbara",
+        "publication date",
+        "1967"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Murder, She Said",
+        "publication date",
+        "1961"
+      ],
+      [
+        "Story of Barbara",
+        "publication date",
+        "1967"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a7f886c5094d11ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are the movies Hellraiser: Revelations and Night Of Mystery, from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Hellraiser: Revelations",
+        "country of origin",
+        "American"
+      ],
+      [
+        "Night of Mystery",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Hellraiser: Revelations",
+        "country of origin",
+        "American"
+      ],
+      [
+        "Night of Mystery",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "2ea72c0c084d11ebbd56ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born later, House Of Blackmail or Taxi Zum Klo?",
+    "answer": "Taxi Zum Klo",
+    "evidence": [
+      [
+        "House of Blackmail",
+        "director",
+        "Maurice Elvey"
+      ],
+      [
+        "Taxi zum Klo",
+        "director",
+        "Frank Ripploh"
+      ],
+      [
+        "Maurice Elvey",
+        "date of birth",
+        "11 November 1887"
+      ],
+      [
+        "Frank Ripploh",
+        "date of birth",
+        "September 2, 1949"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "House of Blackmail",
+        "director",
+        "Maurice Elvey"
+      ],
+      [
+        "Taxi zum Klo",
+        "director",
+        "Frank Ripploh"
+      ],
+      [
+        "Maurice Elvey",
+        "date of birth",
+        "11 November 1887"
+      ],
+      [
+        "Frank Ripploh",
+        "date of birth",
+        "September 2, 1949"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "7a894f7c0bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "When did the composer of film Through A Glass Darkly (Film) die?",
+    "answer": "28 July 1750",
+    "evidence": [
+      [
+        "Through a Glass Darkly",
+        "composer",
+        "Johann Sebastian Bach"
+      ],
+      [
+        "Johann Sebastian Bach",
+        "date of death",
+        "28 July 1750"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Through a Glass Darkly",
+        "composer",
+        "Johann Sebastian Bach"
+      ],
+      [
+        "Johann Sebastian Bach",
+        "date of death",
+        "28 July 1750"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "4f95a4440bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of the director of film The Wanted 18?",
+    "answer": "Kuwait",
+    "evidence": [
+      [
+        "The Wanted 18",
+        "director",
+        "Amer Shomali"
+      ],
+      [
+        "Amer Shomali",
+        "place of birth",
+        "Kuwait"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Wanted 18",
+        "director",
+        "Amer Shomali"
+      ],
+      [
+        "Amer Shomali",
+        "place of birth",
+        "Kuwait"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a246875408d211ebbd96ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born first, Shah Jahan Regency or Fatma Bacı?",
+    "answer": "Fatma Bacı",
+    "evidence": [
+      [
+        "Shah Jahan Regency",
+        "director",
+        "Srijit Mukherji"
+      ],
+      [
+        "Fatma Bacı",
+        "director",
+        "Halit Refiğ"
+      ],
+      [
+        "Srijit Mukherji",
+        "date of birth",
+        "23 September 1977"
+      ],
+      [
+        "Halit Refiğ",
+        "date of birth",
+        "5 March 1934"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Shah Jahan Regency",
+        "director",
+        "Srijit Mukherji"
+      ],
+      [
+        "Fatma Bacı",
+        "director",
+        "Halit Refiğ"
+      ],
+      [
+        "Srijit Mukherji",
+        "date of birth",
+        "23 September 1977"
+      ],
+      [
+        "Halit Refiğ",
+        "date of birth",
+        "5 March 1934"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "ee3304c2087411ebbd67ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film came out earlier, Njan Gandharvan or Conny And Peter Make Music?",
+    "answer": "Conny And Peter Make Music",
+    "evidence": [
+      [
+        "Njan Gandharvan",
+        "publication date",
+        "1991"
+      ],
+      [
+        "Conny and Peter Make Music",
+        "publication date",
+        "1960"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Njan Gandharvan",
+        "publication date",
+        "1991"
+      ],
+      [
+        "Conny and Peter Make Music",
+        "publication date",
+        "1960"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "277abef40bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Vlatko Vuković's father?",
+    "answer": "1359",
+    "evidence": [
+      [
+        "Vlatko Vuković",
+        "father",
+        "Vuk Kosača"
+      ],
+      [
+        "Vuk Kosača",
+        "date of death",
+        "1359"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Vlatko Vuković",
+        "father",
+        "Vuk Kosača"
+      ],
+      [
+        "Vuk Kosača",
+        "date of death",
+        "1359"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "c5d5e525088811ebbd6eac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died later, Chad Hanna or The Avenging Shadow?",
+    "answer": "Chad Hanna",
+    "evidence": [
+      [
+        "Chad Hanna",
+        "director",
+        "Henry King"
+      ],
+      [
+        "The Avenging Shadow",
+        "director",
+        "Ray Taylor"
+      ],
+      [
+        "Henry King (director)",
+        "date of death",
+        "June 29, 1982"
+      ],
+      [
+        "Ray Taylor (director)",
+        "date of death",
+        "15 February 1952"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Chad Hanna",
+        "director",
+        "Henry King"
+      ],
+      [
+        "The Avenging Shadow",
+        "director",
+        "Ray Taylor"
+      ],
+      [
+        "Henry King (director)",
+        "date of death",
+        "June 29, 1982"
+      ],
+      [
+        "Ray Taylor (director)",
+        "date of death",
+        "15 February 1952"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "c97a9d3c08c411ebbd8eac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which university was established first, Universidad Autónoma De La Laguna or Penang Free School?",
+    "answer": "Penang Free School",
+    "evidence": [
+      [
+        "Universidad Autónoma de La Laguna",
+        "inception",
+        "1988"
+      ],
+      [
+        "Penang Free School",
+        "inception",
+        "1816"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Universidad Autónoma de La Laguna",
+        "inception",
+        "1988"
+      ],
+      [
+        "Penang Free School",
+        "inception",
+        "1816"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "9ddd446b089f11ebbd78ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born later, Il Diavolo In Convento or The Big Broadcast Of 1936?",
+    "answer": "The Big Broadcast Of 1936",
+    "evidence": [
+      [
+        "Il Diavolo in convento",
+        "director",
+        "Nunzio Malasomma"
+      ],
+      [
+        "The Big Broadcast of 1936",
+        "director",
+        "Norman Taurog"
+      ],
+      [
+        "Nunzio Malasomma",
+        "date of birth",
+        "4 February 1894"
+      ],
+      [
+        "Norman Taurog",
+        "date of birth",
+        "February 23, 1899"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Il Diavolo in convento",
+        "director",
+        "Nunzio Malasomma"
+      ],
+      [
+        "The Big Broadcast of 1936",
+        "director",
+        "Norman Taurog"
+      ],
+      [
+        "Nunzio Malasomma",
+        "date of birth",
+        "4 February 1894"
+      ],
+      [
+        "Norman Taurog",
+        "date of birth",
+        "February 23, 1899"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "bb72bde108a711ebbd7fac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Who was born earlier, Monica Roșu or Bruno Bizarro?",
+    "answer": "Bruno Bizarro",
+    "evidence": [
+      [
+        "Monica Roșu",
+        "date of birth",
+        "May 11, 1987"
+      ],
+      [
+        "Bruno Bizarro",
+        "date of birth",
+        "8 October 1979"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Monica Roșu",
+        "date of birth",
+        "May 11, 1987"
+      ],
+      [
+        "Bruno Bizarro",
+        "date of birth",
+        "8 October 1979"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "d6e0f7f00bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality is the director of film Yeh Gulistan Hamara?",
+    "answer": "Afghanistan",
+    "evidence": [
+      [
+        "Yeh Gulistan Hamara",
+        "director",
+        "Atma Ram"
+      ],
+      [
+        "Atma Ram",
+        "country of citizenship",
+        "Afghanistan"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Yeh Gulistan Hamara",
+        "director",
+        "Atma Ram"
+      ],
+      [
+        "Atma Ram",
+        "country of citizenship",
+        "Afghanistan"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "4ccfe12d08b811ebbd88ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director born earlier, Mummy & Me or Gideon And Samson: Great Leaders Of The Bible?",
+    "answer": "Gideon And Samson: Great Leaders Of The Bible",
+    "evidence": [
+      [
+        "Mummy & Me",
+        "director",
+        "Jeethu Joseph"
+      ],
+      [
+        "Gideon and Samson: Great Leaders of the Bible",
+        "director",
+        "Marcello Baldi"
+      ],
+      [
+        "Jeethu Joseph",
+        "date of birth",
+        "10 November 1972"
+      ],
+      [
+        "Marcello Baldi",
+        "date of birth",
+        "August 1, 1923"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Mummy & Me",
+        "director",
+        "Jeethu Joseph"
+      ],
+      [
+        "Gideon and Samson: Great Leaders of the Bible",
+        "director",
+        "Marcello Baldi"
+      ],
+      [
+        "Jeethu Joseph",
+        "date of birth",
+        "10 November 1972"
+      ],
+      [
+        "Marcello Baldi",
+        "date of birth",
+        "August 1, 1923"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a3e5f6e6086711ebbd5eac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died later, Tenth Avenue Angel or Brink Of Life?",
+    "answer": "Brink Of Life",
+    "evidence": [
+      [
+        "Tenth Avenue Angel",
+        "director",
+        "Roy Rowland"
+      ],
+      [
+        "Brink of Life",
+        "director",
+        "Ingmar Bergman"
+      ],
+      [
+        "Roy Rowland (film director)",
+        "date of death",
+        "June 29, 1995"
+      ],
+      [
+        "Ingmar Bergman",
+        "date of death",
+        "30 July 2007"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Tenth Avenue Angel",
+        "director",
+        "Roy Rowland"
+      ],
+      [
+        "Brink of Life",
+        "director",
+        "Ingmar Bergman"
+      ],
+      [
+        "Roy Rowland (film director)",
+        "date of death",
+        "June 29, 1995"
+      ],
+      [
+        "Ingmar Bergman",
+        "date of death",
+        "30 July 2007"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "dfaed4a408b211ebbd85ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born later, A Case Of Honor or The Raggedy Rawney?",
+    "answer": "The Raggedy Rawney",
+    "evidence": [
+      [
+        "A Case of Honor",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "The Raggedy Rawney",
+        "director",
+        "Bob Hoskins"
+      ],
+      [
+        "Eddie Romero",
+        "date of birth",
+        "July 7, 1924"
+      ],
+      [
+        "Bob Hoskins",
+        "date of birth",
+        "26 October 1942"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "A Case of Honor",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "The Raggedy Rawney",
+        "director",
+        "Bob Hoskins"
+      ],
+      [
+        "Eddie Romero",
+        "date of birth",
+        "July 7, 1924"
+      ],
+      [
+        "Bob Hoskins",
+        "date of birth",
+        "26 October 1942"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "b74ad1d208f511ebbdaaac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Was Jamie Curry or Alyaksey Vasilewski born first?",
+    "answer": "Alyaksey Vasilewski",
+    "evidence": [
+      [
+        "Jamie Curry",
+        "date of birth",
+        "26 July 1996"
+      ],
+      [
+        "Alyaksey Vasilewski",
+        "date of birth",
+        "2 June 1993"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Jamie Curry",
+        "date of birth",
+        "26 July 1996"
+      ],
+      [
+        "Alyaksey Vasilewski",
+        "date of birth",
+        "2 June 1993"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a42b97c80bdc11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality is the director of film The Mission (1983 Film)?",
+    "answer": "Iran",
+    "evidence": [
+      [
+        "The Mission",
+        "director",
+        "Parviz Sayyad"
+      ],
+      [
+        "Parviz Sayyad",
+        "country of citizenship",
+        "Iran"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Mission",
+        "director",
+        "Parviz Sayyad"
+      ],
+      [
+        "Parviz Sayyad",
+        "country of citizenship",
+        "Iran"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "9766cddc0bdc11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where did the composer of film The Merry Monahans die?",
+    "answer": "Studio City",
+    "evidence": [
+      [
+        "The Merry Monahans",
+        "composer",
+        "Hans J. Salter"
+      ],
+      [
+        "Hans J. Salter",
+        "place of death",
+        "Studio City"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Merry Monahans",
+        "composer",
+        "Hans J. Salter"
+      ],
+      [
+        "Hans J. Salter",
+        "place of death",
+        "Studio City"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "064edb0908cd11ebbd93ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Which film was released more recently, Woman Without A Past or Il Seduttore?",
+    "answer": "Il Seduttore",
+    "evidence": [
+      [
+        "Woman Without a Past",
+        "publication date",
+        "1939"
+      ],
+      [
+        "Il seduttore",
+        "publication date",
+        "1954"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Woman Without a Past",
+        "publication date",
+        "1939"
+      ],
+      [
+        "Il seduttore",
+        "publication date",
+        "1954"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "904d037508ab11ebbd82ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are both St. Mary'S School, Patiala and Apeejay Education Society located in the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "St. Mary's School, Patiala",
+        "country",
+        "India"
+      ],
+      [
+        "Apeejay Education Society",
+        "country",
+        "India"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "St. Mary's School, Patiala",
+        "country",
+        "India"
+      ],
+      [
+        "Apeejay Education Society",
+        "country",
+        "India"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "8ba63ce8098f11ebbdb0ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are both villages, Mavrolithari and Ampelakia, Evros, located in the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Mavrolithari",
+        "country",
+        "Greece"
+      ],
+      [
+        "Ampelakia, Evros",
+        "country",
+        "Greek"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Mavrolithari",
+        "country",
+        "Greece"
+      ],
+      [
+        "Ampelakia, Evros",
+        "country",
+        "Greek"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "899ecc9e0bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is the father-in-law of Lady Rose Mclaren?",
+    "answer": "Henry McLaren",
+    "evidence": [
+      [
+        "Lady Rose Mary Primrose McLaren",
+        "spouse",
+        "John Francis McLaren"
+      ],
+      [
+        "John Francis McLaren",
+        "father",
+        "Henry McLaren"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Lady Rose Mary Primrose McLaren",
+        "spouse",
+        "John Francis McLaren"
+      ],
+      [
+        "John Francis McLaren",
+        "father",
+        "Henry McLaren"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a56254760bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the wife of Alfred L. Copley born?",
+    "answer": "Seyðisfjörður",
+    "evidence": [
+      [
+        "Alfred Lewin Copley",
+        "spouse",
+        "Nína Tryggvadóttir"
+      ],
+      [
+        "Nína Tryggvadóttir",
+        "place of birth",
+        "Seyðisfjörður"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Alfred Lewin Copley",
+        "spouse",
+        "Nína Tryggvadóttir"
+      ],
+      [
+        "Nína Tryggvadóttir",
+        "place of birth",
+        "Seyðisfjörður"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3293d68c0bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "When was Prince Paul Of Thurn And Taxis's father born?",
+    "answer": "3 November 1802",
+    "evidence": [
+      [
+        "Paul Maximilian Lamoral, Prince of Thurn and Taxis",
+        "father",
+        "Maximilian Karl, 6th Prince of Thurn and Taxis"
+      ],
+      [
+        "Maximilian Karl, 6th Prince of Thurn and Taxis",
+        "date of birth",
+        "3 November 1802"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Paul Maximilian Lamoral, Prince of Thurn and Taxis",
+        "father",
+        "Maximilian Karl, 6th Prince of Thurn and Taxis"
+      ],
+      [
+        "Maximilian Karl, 6th Prince of Thurn and Taxis",
+        "date of birth",
+        "3 November 1802"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "4aa323fa0bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "When did Eduardo Frei Ruiz-Tagle's father die?",
+    "answer": "January 22, 1982",
+    "evidence": [
+      [
+        "Eduardo Alfredo Juan Bernardo Frei Ruiz-Tagle",
+        "father",
+        "Eduardo Frei Montalva"
+      ],
+      [
+        "Eduardo Frei Montalva",
+        "date of death",
+        "January 22, 1982"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Eduardo Alfredo Juan Bernardo Frei Ruiz-Tagle",
+        "father",
+        "Eduardo Frei Montalva"
+      ],
+      [
+        "Eduardo Frei Montalva",
+        "date of death",
+        "January 22, 1982"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "07f2140e0bdc11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where was the place of death of Flavia Domitilla (Saint)'s husband?",
+    "answer": "Roman",
+    "evidence": [
+      [
+        "Flavia Domitilla",
+        "spouse",
+        "Titus Flavius Clemens"
+      ],
+      [
+        "Titus Flavius Clemens",
+        "place of death",
+        "Roman"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Flavia Domitilla",
+        "spouse",
+        "Titus Flavius Clemens"
+      ],
+      [
+        "Titus Flavius Clemens",
+        "place of death",
+        "Roman"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "1ca95b8a084b11ebbd56ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Who was born earlier, Anthony Scott Burns or Oskar Drobne?",
+    "answer": "Oskar Drobne",
+    "evidence": [
+      [
+        "Anthony Scott Burns",
+        "date of birth",
+        "May 9, 1977"
+      ],
+      [
+        "Oskar Drobne",
+        "date of birth",
+        "6 February 1975"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Anthony Scott Burns",
+        "date of birth",
+        "May 9, 1977"
+      ],
+      [
+        "Oskar Drobne",
+        "date of birth",
+        "6 February 1975"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "607cb64a0bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where did Binyamin Ze'Ev Kahane's father die?",
+    "answer": "Manhattan",
+    "evidence": [
+      [
+        "Binyamin Ze'ev Kahane",
+        "father",
+        "Meir Kahane"
+      ],
+      [
+        "Meir Kahane",
+        "place of death",
+        "Manhattan"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Binyamin Ze'ev Kahane",
+        "father",
+        "Meir Kahane"
+      ],
+      [
+        "Meir Kahane",
+        "place of death",
+        "Manhattan"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "44268f9c0bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of the director of film Rufus Jones For President?",
+    "answer": "New Brunswick, New Jersey",
+    "evidence": [
+      [
+        "Rufus Jones for President",
+        "director",
+        "Roy Mack"
+      ],
+      [
+        "Roy Mack",
+        "place of birth",
+        "New Brunswick, New Jersey"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Rufus Jones for President",
+        "director",
+        "Roy Mack"
+      ],
+      [
+        "Roy Mack",
+        "place of birth",
+        "New Brunswick, New Jersey"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "eea5851e088c11ebbd70ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born later, It'S A Bikini World or A Moment Of Romance?",
+    "answer": "A Moment Of Romance",
+    "evidence": [
+      [
+        "It's a Bikini World",
+        "director",
+        "Stephanie Rothman"
+      ],
+      [
+        "A Moment of Romance",
+        "director",
+        "Benny Chan"
+      ],
+      [
+        "Stephanie Rothman",
+        "date of birth",
+        "November 9, 1936"
+      ],
+      [
+        "Benny Chan (film director)",
+        "date of birth",
+        "7 October 1961"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "It's a Bikini World",
+        "director",
+        "Stephanie Rothman"
+      ],
+      [
+        "A Moment of Romance",
+        "director",
+        "Benny Chan"
+      ],
+      [
+        "Stephanie Rothman",
+        "date of birth",
+        "November 9, 1936"
+      ],
+      [
+        "Benny Chan (film director)",
+        "date of birth",
+        "7 October 1961"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "7d638c340bd911eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of Richard Socarides's father?",
+    "answer": "Brockton, Massachusetts",
+    "evidence": [
+      [
+        "Richard Socarides",
+        "father",
+        "Charles Socarides"
+      ],
+      [
+        "Charles W. Socarides",
+        "place of birth",
+        "Brockton, Massachusetts"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Richard Socarides",
+        "father",
+        "Charles Socarides"
+      ],
+      [
+        "Charles W. Socarides",
+        "place of birth",
+        "Brockton, Massachusetts"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "73ec0f28091811ebbdaeac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are both Magnificent Brute and A Time Of Destiny from the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Magnificent Brute",
+        "country of origin",
+        "American"
+      ],
+      [
+        "A Time of Destiny",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Magnificent Brute",
+        "country of origin",
+        "American"
+      ],
+      [
+        "A Time of Destiny",
+        "country of origin",
+        "American"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "30170c900bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is the paternal grandfather of George Tupou V?",
+    "answer": "Viliami Tungī Mailefihi",
+    "evidence": [
+      [
+        "George Tupou V",
+        "father",
+        "Tāufaʻāhau Tupou IV"
+      ],
+      [
+        "Tāufaʻāhau Tupou IV",
+        "father",
+        "Viliami Tungī Mailefihi"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "George Tupou V",
+        "father",
+        "Tāufaʻāhau Tupou IV"
+      ],
+      [
+        "Tāufaʻāhau Tupou IV",
+        "father",
+        "Viliami Tungī Mailefihi"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "aa73a9fb08b611ebbd88ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who died later, Airport 1975 or The Mad Doctor Of Blood Island?",
+    "answer": "The Mad Doctor Of Blood Island",
+    "evidence": [
+      [
+        "Airport 1975",
+        "director",
+        "Jack Smight"
+      ],
+      [
+        "The Mad Doctor of Blood Island",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "Jack Smight",
+        "date of death",
+        "September 1, 2003"
+      ],
+      [
+        "Eddie Romero",
+        "date of death",
+        "May 28, 2013"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Airport 1975",
+        "director",
+        "Jack Smight"
+      ],
+      [
+        "The Mad Doctor of Blood Island",
+        "director",
+        "Eddie Romero"
+      ],
+      [
+        "Jack Smight",
+        "date of death",
+        "September 1, 2003"
+      ],
+      [
+        "Eddie Romero",
+        "date of death",
+        "May 28, 2013"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "642b190c0bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Who is the spouse of the director of film The Invisible Menace?",
+    "answer": "Maureen O'Sullivan",
+    "evidence": [
+      [
+        "The Invisible Menace",
+        "director",
+        "John Farrow"
+      ],
+      [
+        "John Farrow",
+        "spouse",
+        "Maureen O'Sullivan"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Invisible Menace",
+        "director",
+        "John Farrow"
+      ],
+      [
+        "John Farrow",
+        "spouse",
+        "Maureen O'Sullivan"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "d05cc8bf08c911ebbd92ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died earlier, The Mark Of The Renegade or Muchachas Que Estudian?",
+    "answer": "Muchachas Que Estudian",
+    "evidence": [
+      [
+        "The Mark of the Renegade",
+        "director",
+        "Hugo Fregonese"
+      ],
+      [
+        "Muchachas que estudian",
+        "director",
+        "Manuel Romero"
+      ],
+      [
+        "Hugo Fregonese",
+        "date of death",
+        "January 11, 1987"
+      ],
+      [
+        "Manuel Romero",
+        "date of death",
+        "October 3, 1954"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Mark of the Renegade",
+        "director",
+        "Hugo Fregonese"
+      ],
+      [
+        "Muchachas que estudian",
+        "director",
+        "Manuel Romero"
+      ],
+      [
+        "Hugo Fregonese",
+        "date of death",
+        "January 11, 1987"
+      ],
+      [
+        "Manuel Romero",
+        "date of death",
+        "October 3, 1954"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "aeeccb8e08d811ebbd9cac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film whose director is younger, Golmaal Again or Ma Femme S'Appelle Maurice?",
+    "answer": "Golmaal Again",
+    "evidence": [
+      [
+        "Golmaal Again",
+        "director",
+        "Rohit Shetty"
+      ],
+      [
+        "Ma femme s'appelle Maurice",
+        "director",
+        "Jean-Marie Poiré"
+      ],
+      [
+        "Rohit Shetty",
+        "date of birth",
+        "14 March 1973"
+      ],
+      [
+        "Jean-Marie Poiré",
+        "date of birth",
+        "10 July 1945"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Golmaal Again",
+        "director",
+        "Rohit Shetty"
+      ],
+      [
+        "Ma femme s'appelle Maurice",
+        "director",
+        "Jean-Marie Poiré"
+      ],
+      [
+        "Rohit Shetty",
+        "date of birth",
+        "14 March 1973"
+      ],
+      [
+        "Jean-Marie Poiré",
+        "date of birth",
+        "10 July 1945"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "29b6ef140bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of the director of film God Of War (Film)?",
+    "answer": "Hong Kong",
+    "evidence": [
+      [
+        "God of War",
+        "director",
+        "Gordon Chan"
+      ],
+      [
+        "Gordon Chan",
+        "place of birth",
+        "Hong Kong"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "God of War",
+        "director",
+        "Gordon Chan"
+      ],
+      [
+        "Gordon Chan",
+        "place of birth",
+        "Hong Kong"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "5a7b4936088d11ebbd70ac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Do director of film D'Annunzio (Film) and director of film Così Parlò Bellavista have the same nationality?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "D'Annunzio (film)",
+        "director",
+        "Sergio Nasca"
+      ],
+      [
+        "Così parlò Bellavista",
+        "director",
+        "Luciano De Crescenzo"
+      ],
+      [
+        "Sergio Nasca",
+        "country of citizenship",
+        "Italian"
+      ],
+      [
+        "Luciano De Crescenzo",
+        "country of citizenship",
+        "Italian"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "D'Annunzio (film)",
+        "director",
+        "Sergio Nasca"
+      ],
+      [
+        "Così parlò Bellavista",
+        "director",
+        "Luciano De Crescenzo"
+      ],
+      [
+        "Sergio Nasca",
+        "country of citizenship",
+        "Italian"
+      ],
+      [
+        "Luciano De Crescenzo",
+        "country of citizenship",
+        "Italian"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "241213420bdb11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where does the director of film Gal Young Un work at?",
+    "answer": "Florida State",
+    "evidence": [
+      [
+        "Gal Young ' Un",
+        "director",
+        "Victor Nuñez"
+      ],
+      [
+        "Victor Nuñez",
+        "employer",
+        "Florida State"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Gal Young ' Un",
+        "director",
+        "Victor Nuñez"
+      ],
+      [
+        "Victor Nuñez",
+        "employer",
+        "Florida State"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "367ea308088211ebbd6dac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director died later, Calling Philo Vance or The Witch'S Curse?",
+    "answer": "The Witch'S Curse",
+    "evidence": [
+      [
+        "Calling Philo Vance",
+        "director",
+        "William Clemens"
+      ],
+      [
+        "The Witch's Curse",
+        "director",
+        "Riccardo Freda"
+      ],
+      [
+        "William Clemens (film director)",
+        "date of death",
+        "April 29, 1980"
+      ],
+      [
+        "Riccardo Freda",
+        "date of death",
+        "20 December 1999"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Calling Philo Vance",
+        "director",
+        "William Clemens"
+      ],
+      [
+        "The Witch's Curse",
+        "director",
+        "Riccardo Freda"
+      ],
+      [
+        "William Clemens (film director)",
+        "date of death",
+        "April 29, 1980"
+      ],
+      [
+        "Riccardo Freda",
+        "date of death",
+        "20 December 1999"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "a8f8be800bdb11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the place of birth of Charles Eugène Gabriel De Sombreuil's father?",
+    "answer": "Ensisheim",
+    "evidence": [
+      [
+        "Charles Eugène Gabriel de Sombreuil",
+        "father",
+        "Charles François de Virot de Sombreuil"
+      ],
+      [
+        "Charles François de Virot de Sombreuil",
+        "place of birth",
+        "Ensisheim"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Charles Eugène Gabriel de Sombreuil",
+        "father",
+        "Charles François de Virot de Sombreuil"
+      ],
+      [
+        "Charles François de Virot de Sombreuil",
+        "place of birth",
+        "Ensisheim"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "31c340da0bde11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Julia Livia's father?",
+    "answer": "14 September 23",
+    "evidence": [
+      [
+        "Julia Livia",
+        "father",
+        "Drusus Julius Caesar"
+      ],
+      [
+        "Drusus Julius Caesar",
+        "date of death",
+        "14 September 23"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Julia Livia",
+        "father",
+        "Drusus Julius Caesar"
+      ],
+      [
+        "Drusus Julius Caesar",
+        "date of death",
+        "14 September 23"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "2bd4454c0bda11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "Where did the composer of film Before Sunset study?",
+    "answer": "Tisch",
+    "evidence": [
+      [
+        "Before Sunset",
+        "composer",
+        "Julie Delpy"
+      ],
+      [
+        "Julie Delpy",
+        "educated at",
+        "Tisch"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Before Sunset",
+        "composer",
+        "Julie Delpy"
+      ],
+      [
+        "Julie Delpy",
+        "educated at",
+        "Tisch"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "3314f9f708c311ebbd8dac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who was born first, Woman By Woman: New Hope For The Villages Of India or Windsor Drive (Film)?",
+    "answer": "Woman By Woman: New Hope For The Villages Of India",
+    "evidence": [
+      [
+        "Woman by Woman: New Hope for the Villages of India",
+        "director",
+        "Dorothy Fadiman"
+      ],
+      [
+        "Windsor Drive (film)",
+        "director",
+        "Natalie Bible'"
+      ],
+      [
+        "Dorothy Fadiman",
+        "date of birth",
+        "June 3, 1939"
+      ],
+      [
+        "Natalie Bible'",
+        "date of birth",
+        "November 9, 1983"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Woman by Woman: New Hope for the Villages of India",
+        "director",
+        "Dorothy Fadiman"
+      ],
+      [
+        "Windsor Drive (film)",
+        "director",
+        "Natalie Bible'"
+      ],
+      [
+        "Dorothy Fadiman",
+        "date of birth",
+        "June 3, 1939"
+      ],
+      [
+        "Natalie Bible'",
+        "date of birth",
+        "November 9, 1983"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "272062fc088c11ebbd6fac1f6bf848b6",
+    "question_type": "bridge_comparison",
+    "question": "Which film has the director who is older than the other, The Inside Man (Film) or Dog'S Heart? ",
+    "answer": "Dog'S Heart",
+    "evidence": [
+      [
+        "The Inside Man (film)",
+        "director",
+        "Tom Clegg"
+      ],
+      [
+        "Dog's Heart",
+        "director",
+        "Alberto Lattuada"
+      ],
+      [
+        "Tom Clegg (director)",
+        "date of birth",
+        "16 October 1934"
+      ],
+      [
+        "Alberto Lattuada",
+        "date of birth",
+        "13 November 1914"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "The Inside Man (film)",
+        "director",
+        "Tom Clegg"
+      ],
+      [
+        "Dog's Heart",
+        "director",
+        "Alberto Lattuada"
+      ],
+      [
+        "Tom Clegg (director)",
+        "date of birth",
+        "16 October 1934"
+      ],
+      [
+        "Alberto Lattuada",
+        "date of birth",
+        "13 November 1914"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "996b6cd60bdd11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What nationality of the company that published Safeguard (Magazine)?",
+    "answer": "Canadian",
+    "evidence": [
+      [
+        "Safeguard",
+        "publisher",
+        "Thomson Reuters"
+      ],
+      [
+        "Thomson Reuters",
+        "country",
+        "Canadian"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Safeguard",
+        "publisher",
+        "Thomson Reuters"
+      ],
+      [
+        "Thomson Reuters",
+        "country",
+        "Canadian"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "17874a43097411ebbdb0ac1f6bf848b6",
+    "question_type": "comparison",
+    "question": "Are both Selo Sanatoriya Imeni Chekhova and Volovo, Lipetsk Oblast located in the same country?",
+    "answer": "yes",
+    "evidence": [
+      [
+        "Selo sanatoriya imeni Chekhova",
+        "country",
+        "Russia"
+      ],
+      [
+        "Volovo, Lipetsk Oblast",
+        "country",
+        "Russia"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Selo sanatoriya imeni Chekhova",
+        "country",
+        "Russia"
+      ],
+      [
+        "Volovo, Lipetsk Oblast",
+        "country",
+        "Russia"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "89ee39de0bdb11eba7f7acde48001122",
+    "question_type": "compositional",
+    "question": "What is the date of death of Badi' Al-Zaman Mirza's father?",
+    "answer": "May 4, 1506",
+    "evidence": [
+      [
+        "Badi' al-Zaman Mirza",
+        "father",
+        "Husayn Bayqarah"
+      ],
+      [
+        "Sultan Husayn Bayqara",
+        "date of death",
+        "May 4, 1506"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Badi' al-Zaman Mirza",
+        "father",
+        "Husayn Bayqarah"
+      ],
+      [
+        "Sultan Husayn Bayqara",
+        "date of death",
+        "May 4, 1506"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  },
+  {
+    "id": "2ec36c440bb011ebab90acde48001122",
+    "question_type": "inference",
+    "question": "Who is the paternal grandfather of Richard Beauchamp, 1St Earl Of Worcester?",
+    "answer": "Thomas de Beauchamp",
+    "evidence": [
+      [
+        "Richard de Beauchamp, 1st Earl of Worcester",
+        "father",
+        "William de Beauchamp, 1st Baron Bergavenny"
+      ],
+      [
+        "William de Beauchamp, 1st Baron Bergavenny",
+        "father",
+        "Thomas de Beauchamp"
+      ]
+    ],
+    "evidence_relations": [
+      [
+        "Richard de Beauchamp, 1st Earl of Worcester",
+        "father",
+        "William de Beauchamp, 1st Baron Bergavenny"
+      ],
+      [
+        "William de Beauchamp, 1st Baron Bergavenny",
+        "father",
+        "Thomas de Beauchamp"
+      ]
+    ],
+    "source": "2wikimultihopqa",
+    "dataset": "2wikimultihop"
+  }
+]

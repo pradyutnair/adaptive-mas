@@ -1,0 +1,53 @@
+{
+  "train_path": "data/multidataset/train_v3.json",
+  "val_path": "data/multidataset/val_v3.json",
+  "n_train": 240,
+  "n_val": 30,
+  "stats_per_dataset": {
+    "musique": {
+      "train": 80,
+      "val": 10,
+      "easy_train": 7,
+      "easy_val": 0,
+      "profiles": {
+        "bridge_2hop": 32,
+        "numeric": 9,
+        "temporal": 22,
+        "bridge_3hop_plus": 17,
+        "one_hop": 8,
+        "parallel_compare": 1,
+        "yes_no": 1
+      }
+    },
+    "2wikimultihop": {
+      "train": 80,
+      "val": 10,
+      "easy_train": 25,
+      "easy_val": 6,
+      "profiles": {
+        "yes_no": 32,
+        "bridge_3hop_plus": 11,
+        "bridge_2hop": 22,
+        "temporal": 9,
+        "one_hop": 12,
+        "numeric": 1,
+        "parallel_compare": 3
+      }
+    },
+    "hotpotqa": {
+      "train": 80,
+      "val": 10,
+      "easy_train": 29,
+      "easy_val": 3,
+      "profiles": {
+        "one_hop": 17,
+        "bridge_2hop": 32,
+        "bridge_3hop_plus": 17,
+        "parallel_compare": 5,
+        "temporal": 11,
+        "numeric": 3,
+        "yes_no": 5
+      }
+    }
+  }
+}

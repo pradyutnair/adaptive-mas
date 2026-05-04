@@ -1,0 +1,32 @@
+{
+  "musique": {
+    "path": "data/multidataset/fresh_pool/musique.json",
+    "n": 500,
+    "test_ids": 1000,
+    "id_overlap": 0,
+    "question_overlap": 0,
+    "sources": [
+      "data/musique/musique_train_500.json"
+    ]
+  },
+  "2wikimultihop": {
+    "path": "data/multidataset/fresh_pool/2wikimultihop.json",
+    "n": 500,
+    "test_ids": 1000,
+    "id_overlap": 0,
+    "question_overlap": 0,
+    "sources": [
+      "hf:RUC-NLPIR/FlashRAG_datasets/2wikimultihopqa/train"
+    ]
+  },
+  "hotpotqa": {
+    "path": "data/multidataset/fresh_pool/hotpotqa.json",
+    "n": 500,
+    "test_ids": 1000,
+    "id_overlap": 0,
+    "question_overlap": 0,
+    "sources": [
+      "hf:RUC-NLPIR/FlashRAG_datasets/hotpotqa/train"
+    ]
+  }
+}
