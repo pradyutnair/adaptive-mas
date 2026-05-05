@@ -56,6 +56,9 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--use-bridge-resolver', action='store_true', default=False, help='enable bridge-resolution preprocessor')
     ap.add_argument('--bridge-g-threshold', type=float, default=0.45)
     ap.add_argument('--concurrency', type=int, default=4)
+    ap.add_argument("--use-verifier", action="store_true", default=False, help="enable per-hop LLM verification in DAG solver")
+    ap.add_argument("--use-llm-router", action="store_true", default=False, help="enable LLM-based SAS/DAG routing (replaces heuristic)")
+    ap.add_argument("--no-context-aware-retrieval", dest="context_aware_retrieval", action="store_false", default=True, help="disable parent Q/A in child retrieval queries")
     return ap.parse_args()
 
 
@@ -140,6 +143,9 @@ async def main() -> None:
                 min_retrievals_per_solver=args.min_retrievals_per_solver,
                 medium_retrievals_per_solver=args.medium_retrievals_per_solver,
                 max_repairs=args.max_repairs,
+                use_verifier=args.use_verifier,
+                use_llm_router=args.use_llm_router,
+                use_context_aware_retrieval=args.context_aware_retrieval,
             ),
         )
         for i in range(n_replicas)
