@@ -1,14 +1,14 @@
-"""Verifier-gated SAS attempt: try to answer with one retrieval+extraction.
+"""SAS-collapse attempt: try to answer the question with a single retrieval+extraction.
 
 Operationalizes Tran-Kiela DPI: SAS is optimal under clean (high-groundedness) context.
 We probe the original question, attempt extraction, and accept ONLY if:
   1. The probe groundedness is high (chunks look on-topic)
-  2. The extracted answer span appears in at least one retrieved chunk
-  3. The shape matches the expected answer type
-  4. A strict verifier judges that the cited evidence entails the answer
+  2. The extraction confidence is high
+  3. The extracted answer span appears in at least one retrieved chunk
+  4. The shape matches the expected answer type (date/number/yes_no)
 
 If accepted, the pipeline returns immediately without planning, decomposition,
-or multi-hop. Otherwise it abstains and the caller escalates to MAS.
+or multi-hop. Easy questions collapse to a single-agent call.
 """
 from __future__ import annotations
 import json
@@ -34,33 +34,6 @@ def _shape_ok(answer: str, expected_type: str) -> bool:
     if t == 'yes_no':
         return bool(_YESNO_RE.match(a))
     return True
-
-
-def _direct_type_safe(question: str, answer: str, answer_type: str) -> bool:
-    """High-precision runtime type gate for direct SAS.
-
-    SAS should abstain whenever the wh-target is ambiguous. Broad entity
-    questions like "what is X known for" are cheap to answer wrongly and costly
-    for EM, so they must escalate to MAS.
-    """
-    q = (question or '').lower().strip()
-    a = (answer or '').strip()
-    t = (answer_type or 'other').lower().strip()
-    if not a:
-        return False
-    if t == 'yes_no':
-        return bool(re.match(r'^(is|are|was|were|did|does|do|can|could|has|have|had|will|would|should)\b', q))
-    if t == 'date':
-        return any(x in q for x in ('when', 'what year', 'what date', 'what month'))
-    if t == 'number':
-        return any(x in q for x in ('how many', 'how much', 'number of', 'how old'))
-    if t == 'place':
-        return any(x in q for x in ('where', 'what county', 'which county', 'what country', 'which country', 'what city', 'which city', 'what state', 'which state'))
-    if t == 'person':
-        if ' and ' in a.lower() or ',' in a:
-            return False
-        return any(x in q for x in ('who', 'whom', 'which person', 'what person', 'which man', 'what man', 'which woman', 'what woman'))
-    return False
 
 
 def _norm(s: str) -> str:
@@ -133,9 +106,6 @@ class SasAttemptResult:
     extraction_tokens: int
     grounded_in_chunks: bool
     shape_ok: bool
-    verifier_passed: bool = False
-    verifier_verdict: str = ''
-    verifier_tokens: int = 0
 
 
 class SasExtract(dspy.Signature):
@@ -155,36 +125,6 @@ A confidently wrong answer is a critical bug. When in doubt, return empty.
     answer_type: str = dspy.OutputField(desc='Type label.')
     confidence: float = dspy.OutputField(desc='[0,1] confidence in answer_span.')
     rationale: str = dspy.OutputField(desc='Brief justification (one sentence).')
-
-
-class SasVerify(dspy.Signature):
-    """Strictly verify a proposed direct answer against retrieved evidence.
-
-Return JSON only:
-{"verdict": "PASS"|"FAIL"|"INSUFFICIENT_EVIDENCE", "reason": <short str>}
-
-PASS only if the evidence explicitly entails that answer_span directly answers
-the original question. FAIL for wrong type, bridge-entity answers, partial
-answers, or entity ambiguity. INSUFFICIENT_EVIDENCE when support is plausible
-but not explicit. Do not use model confidence; judge only evidence support.
-"""
-    question: str = dspy.InputField()
-    answer_span: str = dspy.InputField()
-    answer_type: str = dspy.InputField()
-    evidence_json: str = dspy.InputField(desc='Retrieved chunks containing candidate evidence.')
-    verdict_json: str = dspy.OutputField()
-
-
-def _parse_json_obj(raw: str) -> dict:
-    text = (raw or '').strip()
-    m = re.search(r'\{.*\}', text, re.DOTALL)
-    if m:
-        text = m.group(0)
-    try:
-        obj = json.loads(text)
-        return obj if isinstance(obj, dict) else {}
-    except Exception:
-        return {}
 
 
 def try_sas_attempt(
@@ -237,41 +177,15 @@ def try_sas_attempt(
     grounded = _answer_in_chunks(answer, chunks, expected_type=answer_type)
     shape = _shape_ok(answer, answer_type)
 
-    verifier_passed = False
-    verifier_verdict = ''
-    verifier_tokens = 0
-    if answer and grounded and shape:
-        evidence_repr = [
-            {'chunk_id': c.chunk_id, 'text': (c.text or '')[:1000]}
-            for c in chunks[:5]
-            if _norm(answer) in _norm(c.text or '')
-        ] or chunks_repr[:3]
-        try:
-            with dspy.context(lm=sas_lm):
-                verify = dspy.Predict(SasVerify)
-                vpred = verify(
-                    question=question,
-                    answer_span=answer,
-                    answer_type=answer_type,
-                    evidence_json=json.dumps(evidence_repr, ensure_ascii=False),
-                )
-            try:
-                verifier_tokens = sum(int(c.get('usage', {}).get('total_tokens', 0)) for c in (sas_lm.history[-1:] or []))
-            except Exception:
-                verifier_tokens = 0
-            vobj = _parse_json_obj(getattr(vpred, 'verdict_json', ''))
-            verifier_verdict = str(vobj.get('verdict', '')).strip().upper()
-            verifier_passed = verifier_verdict == 'PASS'
-            if not verifier_verdict:
-                verifier_verdict = 'PARSE_FAILED'
-        except Exception as e:
-            verifier_verdict = f'VERIFIER_ERROR:{type(e).__name__}'
+    # Empirical finding from stratified-100 v3: SAS on entity/person/place answer types
+    # has a 91% false-positive rate (confidently hallucinated bridge-or-cross-entity
+    # answers). Restrict SAS-collapse to date/number/yes_no answer types where the
+    # extraction is bridge-resistant. This matches the wh-target classification of
+    # questions that genuinely admit a single-agent answer.
+    sas_safe_types = {'date', 'number', 'yes_no'}
+    type_safe = answer_type in sas_safe_types
 
-    type_safe = _direct_type_safe(question, answer, answer_type)
-
-    # Confidence is logged for diagnostics but not used as the acceptance signal:
-    # direct evidence support plus strict verification is the gate.
-    accepted = bool(answer) and grounded and shape and verifier_passed and type_safe
+    accepted = bool(answer) and confidence >= tau_conf and grounded and shape and type_safe
 
     return SasAttemptResult(
         accepted=accepted,
@@ -279,10 +193,7 @@ def try_sas_attempt(
         confidence=confidence,
         answer_type=answer_type or 'other',
         rationale=rationale,
-        extraction_tokens=tokens + verifier_tokens,
+        extraction_tokens=tokens,
         grounded_in_chunks=grounded,
         shape_ok=shape,
-        verifier_passed=verifier_passed,
-        verifier_verdict=verifier_verdict,
-        verifier_tokens=verifier_tokens,
     )

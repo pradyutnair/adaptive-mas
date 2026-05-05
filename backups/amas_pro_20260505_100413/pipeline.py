@@ -65,13 +65,9 @@ class AmasResult:
     multi_plan_subgoal_counts: list = field(default_factory=list)
     multi_plan_temperatures: list = field(default_factory=list)
     sas_collapse: bool = False
-    sas_escalated: bool = False
     sas_attempt_tokens: int = 0
     sas_attempt_confidence: float = 0.0
     sas_attempt_grounded: bool = False
-    sas_verifier_passed: bool = False
-    sas_verifier_verdict: str = ''
-    sas_verifier_tokens: int = 0
 
 
 @dataclass
@@ -90,10 +86,6 @@ class AmasPipelineConfig:
     tau_sas_g: float = 0.55
     tau_sas_conf: float = 0.75
     synth_recursion_rounds: int = 1
-    adaptive_solver_budget: bool = False
-    min_retrievals_per_solver: int = 1
-    medium_retrievals_per_solver: int = 2
-    max_repairs: int = 2
 
 
 class AmasPipeline:
@@ -140,13 +132,10 @@ class AmasPipeline:
             result.sas_attempt_tokens = sas.extraction_tokens
             result.sas_attempt_confidence = sas.confidence
             result.sas_attempt_grounded = sas.grounded_in_chunks
-            result.sas_verifier_passed = sas.verifier_passed
-            result.sas_verifier_verdict = sas.verifier_verdict
-            result.sas_verifier_tokens = sas.verifier_tokens
             if sas.accepted:
                 result.sas_collapse = True
-                result.topology = 'verified_sas'
-                result.topology_rationale = f'verified SAS accepted (g={g_original:.3f}, verdict={sas.verifier_verdict})'
+                result.topology = 'SAS_COLLAPSE'
+                result.topology_rationale = f'SAS-collapse accepted (g={g_original:.3f}, conf={sas.confidence:.2f})'
                 result.answer = sas.answer
                 result.answer_type = sas.answer_type
                 result.justification = sas.rationale
@@ -156,7 +145,6 @@ class AmasPipeline:
                 result.wallclock_seconds = round(time.time() - t0, 3)
                 result.n_solvers_invoked = 1
                 return result
-            result.sas_escalated = True
 
         # Step 1: bridge resolution if probe-original groundedness is low
         bridge_hint = ""
@@ -322,14 +310,7 @@ class AmasPipeline:
                 'evidence_ids': f.evidence_ids,
             })
 
-        result.total_tokens = (
-            result.planner_tokens
-            + result.solver_tokens
-            + result.synth_tokens
-            + result.rewrite_tokens
-            + result.sas_attempt_tokens
-            + result.bridge_resolver_tokens
-        )
+        result.total_tokens = result.planner_tokens + result.solver_tokens + result.synth_tokens + result.rewrite_tokens
         result.wallclock_seconds = round(time.time() - t0, 3)
         return result
 
@@ -353,7 +334,7 @@ class AmasPipeline:
             starting_chunks=original.chunks,
             node_id=node.id if node else 1,
             hop_idx=0,
-            max_retrievals=self._retrieval_budget_for_node(node, plan, probes) if node else self.config.max_retrievals_per_solver,
+            max_retrievals=self.config.max_retrievals_per_solver,
             experience=self.config.experience_library,
         )
         result.solver_tokens += sr.extraction_tokens
@@ -392,7 +373,7 @@ class AmasPipeline:
                     starting_chunks=start_chunks,
                     node_id=node.id,
                     hop_idx=hop_idx,
-                    max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
+                    max_retrievals=self.config.max_retrievals_per_solver,
                     experience=self.config.experience_library,
                 ))
             results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -420,7 +401,7 @@ class AmasPipeline:
         result: AmasResult,
     ) -> None:
         repaired = 0
-        max_repairs = self.config.max_repairs
+        max_repairs = 2
         for node in plan.subgoals:
             if repaired >= max_repairs:
                 break
@@ -439,7 +420,7 @@ class AmasPipeline:
                 starting_chunks=None,
                 node_id=node.id,
                 hop_idx=self._depth_of(node, plan),
-                max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
+                max_retrievals=self.config.max_retrievals_per_solver,
                 experience=self.config.experience_library,
             )
             if sr.finding.status == FindingStatus.OK or sr.finding.confidence > f.confidence:
@@ -498,27 +479,6 @@ class AmasPipeline:
         if any(d for d in node.depends_on):
             return None
         return probes[probe_idx].chunks
-
-    def _retrieval_budget_for_node(
-        self,
-        node: SubgoalNode,
-        plan: Plan,
-        probes: list[ProbeResult],
-    ) -> int:
-        if not self.config.adaptive_solver_budget:
-            return self.config.max_retrievals_per_solver
-        try:
-            idx = next(i for i, n in enumerate(plan.subgoals) if n.id == node.id)
-            probe_idx = idx + 1
-            g = probes[probe_idx].groundedness if probe_idx < len(probes) else 0.0
-        except Exception:
-            g = 0.0
-        max_r = max(1, self.config.max_retrievals_per_solver)
-        if g >= 0.65:
-            return max(1, min(self.config.min_retrievals_per_solver, max_r))
-        if g >= 0.45:
-            return max(1, min(self.config.medium_retrievals_per_solver, max_r))
-        return max_r
 
     def _final_evidence_chunks(
         self,

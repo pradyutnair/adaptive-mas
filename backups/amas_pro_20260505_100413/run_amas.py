@@ -40,10 +40,6 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--solver-budget', type=int, default=1024, help='max_tokens for qwen14b_think_small worker')
     ap.add_argument('--synth-recursion-rounds', type=int, default=1, help='1=plain synth, 2+=synth-self-refine rounds')
     ap.add_argument('--synth-budget', type=int, default=2048, help='max_tokens for synth (default 2048 to avoid thinking-budget exhaust)')
-    ap.add_argument('--adaptive-solver-budget', action='store_true', default=False, help='allocate per-hop retrieval attempts from probe groundedness')
-    ap.add_argument('--min-retrievals-per-solver', type=int, default=1)
-    ap.add_argument('--medium-retrievals-per-solver', type=int, default=2)
-    ap.add_argument('--max-repairs', type=int, default=2)
     ap.add_argument('--planner-replica', type=int, default=0)
     ap.add_argument('--planner-model', choices=['qwen3-8b', 'qwen3-14b'], default='qwen3-8b')
     ap.add_argument('--planner-mode', choices=['think', 'nothink'], default='think', help='thinking mode for planner and bridge resolver')
@@ -136,10 +132,6 @@ async def main() -> None:
                 tau_sas_g=args.tau_sas_g,
                 tau_sas_conf=args.tau_sas_conf,
                 synth_recursion_rounds=args.synth_recursion_rounds,
-                adaptive_solver_budget=args.adaptive_solver_budget,
-                min_retrievals_per_solver=args.min_retrievals_per_solver,
-                medium_retrievals_per_solver=args.medium_retrievals_per_solver,
-                max_repairs=args.max_repairs,
             ),
         )
         for i in range(n_replicas)
@@ -164,10 +156,6 @@ async def main() -> None:
         'tau_sas_conf': args.tau_sas_conf,
         'solver_budget': args.solver_budget,
         'synth_recursion_rounds': args.synth_recursion_rounds,
-        'adaptive_solver_budget': args.adaptive_solver_budget,
-        'min_retrievals_per_solver': args.min_retrievals_per_solver,
-        'medium_retrievals_per_solver': args.medium_retrievals_per_solver,
-        'max_repairs': args.max_repairs,
         'retriever_url': args.retriever_url,
         'max_retrievals_per_solver': args.max_retrievals,
         'repair_enabled': args.repair,
@@ -221,13 +209,9 @@ async def main() -> None:
                         'multi_plan_subgoal_counts': r.multi_plan_subgoal_counts,
                         'multi_plan_temperatures': r.multi_plan_temperatures,
                         'sas_collapse': r.sas_collapse,
-                        'sas_escalated': r.sas_escalated,
                         'sas_attempt_tokens': r.sas_attempt_tokens,
                         'sas_attempt_confidence': r.sas_attempt_confidence,
                         'sas_attempt_grounded': r.sas_attempt_grounded,
-                        'sas_verifier_passed': r.sas_verifier_passed,
-                        'sas_verifier_verdict': r.sas_verifier_verdict,
-                        'sas_verifier_tokens': r.sas_verifier_tokens,
                     },
                 }
             except Exception as e:
