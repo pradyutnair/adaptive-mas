@@ -6,17 +6,17 @@ from typing import Any
 
 
 class FindingStatus(str, Enum):
-    OK = 'ok'
-    LOW_CONFIDENCE = 'low_confidence'
-    NO_EVIDENCE = 'no_evidence'
-    ERROR = 'error'
+    OK = "ok"
+    LOW_CONFIDENCE = "low_confidence"
+    NO_EVIDENCE = "no_evidence"
+    ERROR = "error"
 
 
 class Topology(str, Enum):
-    SAS = 'sas'
-    LINEAR = 'linear'
-    FAN_DAG = 'fan_dag'
-    BRIDGE_FIRST = 'bridge_first'
+    SAS = "sas"
+    LINEAR = "linear"
+    FAN_DAG = "fan_dag"
+    BRIDGE_FIRST = "bridge_first"
 
 
 @dataclass
@@ -44,9 +44,9 @@ class SubgoalNode:
     id: int
     question: str
     depends_on: list[int] = field(default_factory=list)
-    expected_answer_type: str = 'entity'
+    expected_answer_type: str = "entity"
     is_final: bool = False
-    rationale: str = ''
+    rationale: str = ""
 
 
 @dataclass
@@ -54,13 +54,13 @@ class Plan:
     subgoals: list[SubgoalNode] = field(default_factory=list)
     final_id: int = 0
     raw: dict[str, Any] = field(default_factory=dict)
-    reasoning: str = ''
+    reasoning: str = ""
     planner_tokens: int = 0
 
 
 @dataclass
 class Finding:
-    """Output of one Solver call. Pushed to the FindingsBus."""
+    """Output of one Solver call. Pushed to the WorkingMemory."""
     sub_question: str
     answer: str
     evidence_ids: list[str] = field(default_factory=list)
@@ -70,6 +70,41 @@ class Finding:
     node_id: int = 0
     rewrites_used: int = 0
     tokens: int = 0
+
+
+@dataclass
+class EvidenceCapsule:
+    """Enriched finding for structured working memory."""
+    node_id: int
+    sub_question: str
+    answer: str
+    confidence: float
+    status: str
+    evidence_ids: list[str] = field(default_factory=list)
+    evidence_excerpts: list[str] = field(default_factory=list)
+    query_rewrites: list[str] = field(default_factory=list)
+    verification: dict | None = None
+    parent_ids: list[int] = field(default_factory=list)
+    retrievals_used: int = 0
+    retrievals_budget: int = 0
+    latency_seconds: float = 0.0
+
+    def to_dict(self) -> dict:
+        return {
+            "node_id": self.node_id,
+            "sub_question": self.sub_question,
+            "answer": self.answer,
+            "confidence": self.confidence,
+            "status": self.status,
+            "evidence_ids": self.evidence_ids,
+            "evidence_excerpts": self.evidence_excerpts,
+            "query_rewrites": self.query_rewrites,
+            "verification": self.verification,
+            "parent_ids": self.parent_ids,
+            "retrievals_used": self.retrievals_used,
+            "retrievals_budget": self.retrievals_budget,
+            "latency_seconds": self.latency_seconds,
+        }
 
 
 @dataclass
