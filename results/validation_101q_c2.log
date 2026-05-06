@@ -1,0 +1,127 @@
+Failed to initialize disk cache, falling back to memory-only cache: [Errno 122] Cache directory "/home/yzheng/.dspy_cache/000" does not exist and could not be created
+2026-05-05 21:40:44,520 INFO root | progress: 5/101 (513.1s, 102.6s/q)
+2026-05-05 21:42:19,355 INFO root | progress: 10/101 (608.0s, 60.8s/q)
+2026-05-05 21:42:19,356 INFO root | progress: 15/101 (608.0s, 40.5s/q)
+2026-05-05 21:43:24,206 INFO root | progress: 20/101 (672.8s, 33.6s/q)
+2026-05-05 21:43:24,207 INFO root | progress: 25/101 (672.8s, 26.9s/q)
+2026-05-05 21:49:20,870 INFO root | progress: 30/101 (1029.5s, 34.3s/q)
+2026-05-05 21:52:43,657 INFO root | progress: 35/101 (1232.3s, 35.2s/q)
+2026-05-05 21:53:26,785 INFO root | progress: 40/101 (1275.4s, 31.9s/q)
+2026-05-05 21:53:52,618 INFO root | progress: 45/101 (1301.2s, 28.9s/q)
+2026-05-05 21:56:54,457 INFO root | progress: 50/101 (1483.1s, 29.7s/q)
+2026-05-05 22:03:38,578 INFO root | progress: 55/101 (1887.2s, 34.3s/q)
+2026-05-05 22:06:45,860 INFO root | progress: 60/101 (2074.5s, 34.6s/q)
+2026-05-05 22:09:11,794 INFO root | progress: 65/101 (2220.4s, 34.2s/q)
+2026-05-05 22:09:32,561 ERROR root | error on musique_4hop2__161324_14670_8987_8974
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 101, in handle_async_request
+    raise exc
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_backends/auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 199, in process_one
+    r = await pipelines[idx % n_replicas].run(question=question, qid=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/pipeline.py", line 296, in run
+    sub_probes_full = await probe_all(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/probe.py", line 25, in probe_all
+    chunk_lists = await retriever.retrieve_batch(queries)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/retriever.py", line 33, in retrieve_batch
+    resp = await client.post(url, json=payload)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1859, in post
+    return await self.request(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout
+2026-05-05 22:10:43,554 INFO root | progress: 70/101 (2312.2s, 33.0s/q)
+2026-05-05 22:11:57,480 ERROR root | error on musique_4hop2__71753_261673_70784_61381
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 101, in map_httpcore_exceptions
+    yield
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 394, in handle_async_request
+    resp = await self._pool.handle_async_request(req)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 256, in handle_async_request
+    raise exc from None
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection_pool.py", line 236, in handle_async_request
+    response = await connection.handle_async_request(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 101, in handle_async_request
+    raise exc
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 78, in handle_async_request
+    stream = await self._connect(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_async/connection.py", line 124, in _connect
+    stream = await self._network_backend.connect_tcp(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_backends/auto.py", line 31, in connect_tcp
+    return await self._backend.connect_tcp(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_backends/anyio.py", line 113, in connect_tcp
+    with map_exceptions(exc_map):
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpcore/_exceptions.py", line 14, in map_exceptions
+    raise to_exc(exc) from exc
+httpcore.ConnectTimeout
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_amas.py", line 199, in process_one
+    r = await pipelines[idx % n_replicas].run(question=question, qid=qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/pipeline.py", line 296, in run
+    sub_probes_full = await probe_all(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/probe.py", line 25, in probe_all
+    chunk_lists = await retriever.retrieve_batch(queries)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/retriever.py", line 33, in retrieve_batch
+    resp = await client.post(url, json=payload)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1859, in post
+    return await self.request(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1540, in request
+    return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1629, in send
+    response = await self._send_handling_auth(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1657, in _send_handling_auth
+    response = await self._send_handling_redirects(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1694, in _send_handling_redirects
+    response = await self._send_single_request(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_client.py", line 1730, in _send_single_request
+    response = await transport.handle_async_request(request)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 393, in handle_async_request
+    with map_httpcore_exceptions():
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/contextlib.py", line 153, in __exit__
+    self.gen.throw(typ, value, traceback)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 118, in map_httpcore_exceptions
+    raise mapped_exc(message) from exc
+httpx.ConnectTimeout

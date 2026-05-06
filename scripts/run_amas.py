@@ -234,6 +234,17 @@ async def main() -> None:
                         'sas_verifier_passed': r.sas_verifier_passed,
                         'sas_verifier_verdict': r.sas_verifier_verdict,
                         'sas_verifier_tokens': r.sas_verifier_tokens,
+                        'route': r.route,
+                        'router_reason': r.router_reason,
+                        'router_tokens': r.router_tokens,
+                        'verifier_calls': r.verifier_calls,
+                        'verifier_accepts': r.verifier_accepts,
+                        'verifier_rejects': r.verifier_rejects,
+                        'verifier_tokens': r.verifier_tokens,
+                        'working_memory_capsules': r.working_memory_capsules,
+                        'per_node_retrievals': r.per_node_retrievals,
+                        'per_node_latency': r.per_node_latency,
+                        'config_snapshot': r.config_snapshot,
                     },
                 }
             except Exception as e:
