@@ -22,7 +22,7 @@ import yaml
 from tqdm.asyncio import tqdm_asyncio
 
 from amas.agents import load_prompts
-from amas.config import HERAConfig, load_env
+from amas.config import HERAConfig, build_probe_client, load_env, validate_probe_config
 from amas.gates import make_gate
 from amas.library import ExperienceLibrary
 from amas.lm import OpenAIClient, VLLMClient
@@ -81,6 +81,10 @@ async def main(args: argparse.Namespace) -> None:
     retriever = RetrieverClient(
         url=rcfg["url"], topk=rcfg["topk"], concurrency=rcfg["concurrency"],
     )
+
+    # ---- Probe LM client (Stage 2: configurable; defaults to Qwen3-14B vLLM) ----
+    validate_probe_config(cfg)
+    probe_client, probe_owned = build_probe_client(cfg, vllm=vllm, openai_client=openai_client)
 
     # ---- Library + prompts ----
     paths = cfg["paths"]
@@ -151,6 +155,7 @@ async def main(args: argparse.Namespace) -> None:
                     orchestrator=orchestrator,
                     retriever=retriever,
                     openai_client=openai_client,
+                    probe_client=probe_client,
                     t_max=pcfg["t_max"],
                     probe_group_size=pcfg["probe_group_size"],
                     probe_topk=pcfg["probe_topk"],
@@ -213,6 +218,8 @@ async def main(args: argparse.Namespace) -> None:
             logging.warning("wandb log failed: %s", e)
 
     await retriever.aclose()
+    if probe_owned and hasattr(probe_client, "aclose"):
+        await probe_client.aclose()
     await vllm.aclose()
     await openai_client.aclose()
 

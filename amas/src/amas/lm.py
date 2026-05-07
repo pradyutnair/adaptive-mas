@@ -51,7 +51,8 @@ class VLLMClient:
 
     async def chat(self, system: str, user: str, *, temperature: float | None = None,
                    max_tokens: int | None = None, stop: list[str] | None = None,
-                   extra_body: dict | None = None) -> LMResult:
+                   extra_body: dict | None = None,
+                   json_mode: bool = False) -> LMResult:
         messages = []
         if system:
             messages.append({"role": "system", "content": system})
@@ -64,6 +65,9 @@ class VLLMClient:
         }
         if stop:
             body["stop"] = stop
+        if json_mode:
+            # vLLM (>=0.5) accepts OpenAI-style response_format for guided JSON output.
+            body["response_format"] = {"type": "json_object"}
         # Disable Qwen3 thinking by default for latency.
         if extra_body:
             body.update(extra_body)
@@ -72,6 +76,7 @@ class VLLMClient:
 
         async with self._sem:
             t0 = time.time()
+            json_mode_disabled = False
             async for attempt in AsyncRetrying(
                 stop=stop_after_attempt(4),
                 wait=wait_random_exponential(min=1, max=20),
@@ -81,6 +86,19 @@ class VLLMClient:
                 with attempt:
                     endpoint = await self._next_endpoint()
                     resp = await self._client.post(f"{endpoint}/chat/completions", json=body)
+                    # Some vLLM deployments reject `response_format`. On a 4xx (not 5xx)
+                    # while json_mode is set, retry once without it and rely on the
+                    # caller's parse_json_lenient. This is bounded: we strip
+                    # response_format and re-loop.
+                    if (400 <= resp.status_code < 500) and json_mode and not json_mode_disabled:
+                        body.pop("response_format", None)
+                        json_mode_disabled = True
+                        logger.warning(
+                            "vLLM endpoint %s rejected response_format=%s (HTTP %d). "
+                            "Retrying without JSON-mode, parser will fall back to lenient.",
+                            endpoint, "json_object", resp.status_code,
+                        )
+                        raise httpx.HTTPError(f"json-mode retry: {resp.status_code}: {resp.text[:200]}")
                     if resp.status_code >= 500:
                         raise httpx.HTTPError(f"{resp.status_code}: {resp.text[:200]}")
                     resp.raise_for_status()

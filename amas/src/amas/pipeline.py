@@ -142,15 +142,23 @@ async def run_amas(question: str, gold: Any, *,
                    orchestrator: Orchestrator,
                    retriever: RetrieverClient,
                    openai_client: OpenAIClient,
+                   probe_client: Any | None = None,
                    t_max: int = 3,
                    probe_group_size: int = 3,
                    probe_topk: int = 5,
                    rollout_temperature: float = 0.0,
                    ) -> AmasResult:
+    """Run the AMAS pipeline.
+
+    `probe_client` is the chat client used for the turn-0 probe. If unset, the
+    probe falls back to `openai_client` (legacy behaviour). For the cross-family
+    Qwen3-14B probe, callers should pass a VLLMClient as `probe_client`.
+    """
     t0 = time.time()
     ledger = Ledger()
     belief = BeliefState(top_k=5)
     qprofile = profile or profile_question(question, qid=qid)
+    probe_lm = probe_client if probe_client is not None else openai_client
 
     res = AmasResult(qid=qid, question=question, gold=gold, profile=qprofile,
                      gate=getattr(gate, "name", str(gate)),
@@ -158,7 +166,7 @@ async def run_amas(question: str, gold: Any, *,
 
     # ---- Turn 0: probe ----
     try:
-        probe = await run_probe(question, retriever=retriever, openai_client=openai_client,
+        probe = await run_probe(question, retriever=retriever, lm_client=probe_lm,
                                 ledger=ledger, belief=belief,
                                 topk=probe_topk, group_size=probe_group_size,
                                 temperature=0.7, turn=0)

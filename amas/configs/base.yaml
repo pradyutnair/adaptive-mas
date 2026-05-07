@@ -14,6 +14,18 @@ openai:
   temperature: 0.3
   concurrency: 24
 
+# Cross-family probe client. `kind: vllm` reuses the orchestrator's vLLM endpoints
+# unless `endpoints`/`model` are overridden here. `kind: openai` falls back to the
+# `openai` block above. Probe runs the SAS lane and seeds Belief State; making it
+# different model family from the conformal verifier is the structural choice
+# that keeps AMAS's "foreign verifier" claim intact.
+probe:
+  kind: vllm
+  model: Qwen/Qwen3-14B
+  max_tokens: 256
+  temperature: 0.7
+  concurrency: 16
+
 retriever:
   url: http://node408:8003/retrieve
   topk: 5

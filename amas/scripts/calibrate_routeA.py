@@ -34,8 +34,9 @@ from amas.gates.conformal import (
     conformal_quantile,
     write_calibration,
 )
+from amas.config import build_probe_client, load_env, validate_probe_config
 from amas.ledger import BeliefState, Ledger
-from amas.lm import OpenAIClient, parse_json_lenient
+from amas.lm import OpenAIClient, VLLMClient, parse_json_lenient
 from amas.metric import accuracy
 from amas.probe import run_probe
 from amas.retriever import RetrieverClient, format_passages
@@ -45,12 +46,23 @@ async def calibrate(args: argparse.Namespace) -> None:
     logging.basicConfig(level=logging.WARNING)
     load_env()
     cfg = yaml.safe_load(Path(args.config).read_text())
+    validate_probe_config(cfg)
 
     rcfg = cfg["retriever"]
     ocfg = cfg["openai"]
+    vcfg = cfg["vllm"]
     retriever = RetrieverClient(url=rcfg["url"], topk=rcfg["topk"], concurrency=rcfg["concurrency"])
     openai_client = OpenAIClient(model=ocfg["model"], max_tokens=300,
                                  temperature=0.0, concurrency=ocfg["concurrency"])
+    # Build a vLLM client only if probe config will use it. We avoid double-creating
+    # endpoints when probe is configured `kind: openai`.
+    probe_kind = str((cfg.get("probe") or {}).get("kind", "vllm")).lower()
+    vllm = None
+    if probe_kind == "vllm":
+        vllm = VLLMClient(endpoints=vcfg["endpoints"], model=vcfg["model"],
+                          max_tokens=vcfg["max_tokens"], temperature=vcfg["temperature"],
+                          concurrency=vcfg.get("concurrency", 12))
+    probe_client, probe_owned = build_probe_client(cfg, vllm=vllm, openai_client=openai_client)
 
     qpath = Path(args.questions)
     if qpath.suffix == ".jsonl":
@@ -67,7 +79,7 @@ async def calibrate(args: argparse.Namespace) -> None:
             ledger = Ledger()
             belief = BeliefState(top_k=5)
             probe = await run_probe(
-                q["question"], retriever=retriever, openai_client=openai_client,
+                q["question"], retriever=retriever, lm_client=probe_client,
                 ledger=ledger, belief=belief,
                 topk=rcfg["topk"], group_size=cfg["pipeline"]["probe_group_size"],
                 temperature=0.7, turn=0,
@@ -130,8 +142,19 @@ async def calibrate(args: argparse.Namespace) -> None:
     raw_path = out_path.with_suffix(".raw.jsonl")
     raw_path.write_text("\n".join(json.dumps(r) for r in rows))
 
-    await retriever.aclose()
-    await openai_client.aclose()
+    # Close every client exactly once (handles shared/owned/None combinations).
+    to_close = [retriever, openai_client]
+    if vllm is not None:
+        to_close.append(vllm)
+    if probe_owned:
+        to_close.append(probe_client)
+    seen: set[int] = set()
+    for c in to_close:
+        if c is None or id(c) in seen:
+            continue
+        seen.add(id(c))
+        if hasattr(c, "aclose"):
+            await c.aclose()
 
 
 def parse_args() -> argparse.Namespace:

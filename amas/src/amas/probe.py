@@ -1,18 +1,24 @@
 """Turn-0 probe: top-k retrieve + G self-consistency single-shot answers + ledger seed.
 
 Drives the SAS lane (gate may exit at turn 0) and seeds Belief State for both gates.
-Cheap: G=3 GPT-4o-mini calls per question + one batched retrieval.
+The probe LM client is configurable: any object exposing a `chat(system, user, *,
+temperature, max_tokens, json_mode)` coroutine that returns an `LMResult`-like value
+with `.text`, `.prompt_tokens`, `.completion_tokens` works. We default to the
+cross-family Qwen3-14B vLLM deployment so the conformal verifier (GPT-4o-mini)
+is genuinely an out-of-family judge.
 """
 from __future__ import annotations
 
 import asyncio
 from collections import Counter
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Union
 
 from .ledger import BeliefState, Ledger, parse_stance_from_agent
-from .lm import OpenAIClient, parse_json_lenient
+from .lm import OpenAIClient, VLLMClient, parse_json_lenient
 from .retriever import RetrieverClient, format_passages
+
+ProbeLM = Union[VLLMClient, OpenAIClient]
 
 
 PROBE_SYSTEM = (
@@ -40,10 +46,20 @@ class ProbeResult:
     passage_ids: list[str]
 
 
-async def run_probe(question: str, *, retriever: RetrieverClient, openai_client: OpenAIClient,
+async def run_probe(question: str, *, retriever: RetrieverClient,
+                    lm_client: ProbeLM | None = None,
+                    openai_client: OpenAIClient | None = None,
                     ledger: Ledger, belief: BeliefState,
                     topk: int = 5, group_size: int = 3, temperature: float = 0.7,
                     turn: int = 0) -> ProbeResult:
+    """Run the turn-0 probe. `lm_client` (preferred) is any chat client; for
+    backwards compatibility `openai_client` is accepted and forwarded if
+    `lm_client` is unset. One must be provided."""
+    if lm_client is None:
+        if openai_client is None:
+            raise ValueError("run_probe requires lm_client (preferred) or openai_client")
+        lm_client = openai_client
+
     passages = await retriever.retrieve(question, topk=topk)
     pid_list = ledger.add_passages(turn=turn, source_agent="Probe.Retriever", passages=passages)
 
@@ -51,7 +67,7 @@ async def run_probe(question: str, *, retriever: RetrieverClient, openai_client:
     user = build_probe_user(question, block)
 
     async def one_sample() -> tuple[str, float, int]:
-        res = await openai_client.chat(PROBE_SYSTEM, user, temperature=temperature, json_mode=True)
+        res = await lm_client.chat(PROBE_SYSTEM, user, temperature=temperature, json_mode=True)
         parsed = parse_json_lenient(res.text)
         ans = ""
         conf = 0.5

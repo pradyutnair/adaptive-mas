@@ -25,10 +25,10 @@ ROOT = Path("/local/yzheng/pnair/workspace/adaptive-mas/amas")
 sys.path.insert(0, str(ROOT / "src"))
 
 from amas.agents import load_prompts  # noqa: E402
-from amas.config import load_env  # noqa: E402
+from amas.config import build_probe_client, load_env, validate_probe_config  # noqa: E402
 from amas.gates import make_gate  # noqa: E402
 from amas.library import ExperienceLibrary  # noqa: E402
-from amas.lm import OpenAIClient, VLLMClient  # noqa: E402
+from amas.lm import OpenAIClient, VLLMClient, parse_json_lenient  # noqa: E402
 from amas.orchestrator import Orchestrator  # noqa: E402
 from amas.pipeline import run_amas  # noqa: E402
 from amas.retriever import RetrieverClient  # noqa: E402
@@ -40,6 +40,7 @@ BELIEF_HDR = "Current top candidates:"
 async def main() -> None:
     load_env()
     cfg = yaml.safe_load((ROOT / "configs/base.yaml").read_text())
+    validate_probe_config(cfg)
 
     vcfg = cfg["vllm"]; ocfg = cfg["openai"]; rcfg = cfg["retriever"]; pcfg = cfg["pipeline"]
     vllm = VLLMClient(endpoints=vcfg["endpoints"], model=vcfg["model"],
@@ -54,6 +55,29 @@ async def main() -> None:
                         library=library, prompts=prompts,
                         retriever_topk=rcfg["topk"], library_top_k=5, max_steps=8)
     gate = make_gate("off", openai_client=openai_client, cfg=cfg.get("gate", {}))
+
+    # Probe client per cfg.probe (Stage 2: defaults to Qwen3-14B vLLM).
+    probe_client, probe_owned = build_probe_client(cfg, vllm=vllm, openai_client=openai_client)
+
+    # Health check: one direct .chat() call against the probe client to fail fast on
+    # endpoint/model mismatches BEFORE running the full smoke. Codex-recommended.
+    # Parse JSON and assert {"ok": true} so a model returning prose does not pass.
+    try:
+        hc = await probe_client.chat(
+            "Reply with a single valid JSON object only. No prose.",
+            'Output exactly this JSON object verbatim: {"ok": true}',
+            temperature=0.0, max_tokens=64, json_mode=True,
+        )
+        print(f"PROBE HEALTH: model={getattr(probe_client, 'model', '?')} "
+              f"text={hc.text[:80]!r} tok={hc.prompt_tokens}+{hc.completion_tokens}")
+        parsed = parse_json_lenient(hc.text)
+        if not isinstance(parsed, dict) or parsed.get("ok") is not True:
+            print(f"FAIL: probe health check JSON malformed or ok!=true. "
+                  f"parsed={parsed!r}", file=sys.stderr)
+            sys.exit(1)
+    except Exception as e:
+        print(f"FAIL: probe client health check failed: {e}", file=sys.stderr)
+        sys.exit(1)
 
     smoke_path = Path("/local/yzheng/pnair/workspace/reproduction/hera/data/train_3_smoke.jsonl")
     rows = [json.loads(l) for l in smoke_path.read_text().splitlines() if l.strip()]
@@ -95,6 +119,7 @@ async def main() -> None:
                 question=r["question"], gold=r.get("answer", ""),
                 qid=r.get("id", ""), gate=gate,
                 orchestrator=orch, retriever=retriever, openai_client=openai_client,
+                probe_client=probe_client,
                 t_max=2, probe_group_size=pcfg.get("probe_group_size", 1),
                 probe_topk=pcfg.get("probe_topk", 5),
                 rollout_temperature=0.0,
@@ -138,7 +163,10 @@ async def main() -> None:
         for f in failures:
             print("FAIL:", f, file=sys.stderr)
         sys.exit(1)
-    print("STAGE-1 SMOKE PASS")
+    # Lifecycle: close owned probe client (does not double-close shared vllm/openai).
+    if probe_owned and hasattr(probe_client, "aclose"):
+        await probe_client.aclose()
+    print("STAGE-1+2 SMOKE PASS")
 
 
 if __name__ == "__main__":
