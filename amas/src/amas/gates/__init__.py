@@ -24,7 +24,8 @@ def make_gate(name: str, *, openai_client: OpenAIClient | None = None,
         )
     if name == "bayesian":
         return BayesianGate(
-            lambda_=float(cfg.get("lambda", 0.0008)),
+            tau_b=float(cfg.get("tau_b", 1.5)),
+            lambda_=float(cfg.get("lambda", 0.5)),
             fallback_cost=float(cfg.get("fallback_cost", 5000.0)),
         )
     if name == "oracle":
