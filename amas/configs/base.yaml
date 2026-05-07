@@ -46,10 +46,12 @@ gate:
   fallback_cost: 5000.0
 
 paths:
-  exp_lib: exp_lib/run01
-  results: results/run01
-  prompts: exp_lib/run01/prompts.json
-  library: exp_lib/run01/library.json
+  # Stage 5: AMAS-only experience library, no HERA warm-start. Library starts
+  # empty; entries are added during Stage 6 population (and later TF-GRPO).
+  exp_lib: exp_lib/amas_v1
+  results: results/amas_v1
+  prompts: exp_lib/amas_v1/prompts.json
+  library: exp_lib/amas_v1/library.json
 
 wandb:
   enabled: true
