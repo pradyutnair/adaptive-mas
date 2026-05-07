@@ -90,9 +90,11 @@ async def main() -> None:
     from amas import orchestrator as _orch
     orig = _agents.run_llm_agent
 
-    async def cap(prompt, q_, deps, passages, lm, ledger_text="", belief_text=""):
+    async def cap(prompt, q_, deps, passages, lm, ledger_text="", belief_text="",
+                  rejected_probe=""):
         inv = await orig(prompt, q_, deps, passages, lm,
-                         ledger_text=ledger_text, belief_text=belief_text)
+                         ledger_text=ledger_text, belief_text=belief_text,
+                         rejected_probe=rejected_probe)
         captured.append({
             "agent": inv.name,
             "user_msg": inv.inputs.get("user_msg", ""),

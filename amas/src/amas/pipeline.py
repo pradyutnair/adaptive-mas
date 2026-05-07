@@ -65,8 +65,13 @@ class AmasResult:
     probe_tokens: int = 0
     gate_tokens: int = 0
     mas_tokens: int = 0
+    router_tokens: int = 0
     n_turns: int = 0
     sas_committed: bool = False
+    # Stage 4: SAS/MAS lane selected by the router after the probe runs.
+    router_lane: str = "AUTO"
+    router_reason: str = ""
+    escalated_from_sas: bool = False
     elapsed_s: float = 0.0
     turns: list[TurnRecord] = field(default_factory=list)
     used_insight_ids: list[str] = field(default_factory=list)
@@ -175,10 +180,30 @@ async def run_amas(question: str, gold: Any, *,
         res.error = f"probe failed: {str(e)[:200]}"
         probe = None
 
+    # ---- Stage 4: router lane decision (SAS / MAS / AUTO) ----
+    router_lane = "AUTO"
+    if probe and probe.consensus_answer:
+        try:
+            agreement = float(probe.consensus_count) / float(max(1, len(probe.samples)))
+            router_lane, rinfo = await orchestrator.route_lane(
+                question, qprofile,
+                probe_answer=probe.consensus_answer,
+                probe_agreement=agreement,
+            )
+            res.router_lane = router_lane
+            res.router_reason = str(rinfo.get("reason", ""))
+            res.router_tokens = int(rinfo.get("tokens", 0))
+        except Exception as e:
+            logger.warning("router_lane failed: %s", e)
+            router_lane = "AUTO"
+            res.router_lane = "AUTO"
+            res.router_reason = f"router error: {str(e)[:80]}"
+
     # ---- Gate at turn 0 ----
     ctx: dict[str, Any] = {"gold": gold,
                             "passages": [],
                             "candidate": probe.consensus_answer if probe else "",
+                            "router_lane": router_lane,
                             }
     try:
         gate_dec = await gate.decide(question=question, ledger=ledger, belief=belief,
@@ -203,7 +228,36 @@ async def run_amas(question: str, gold: Any, *,
     )
     res.turns.append(rec0)
 
-    if gate_dec and gate_dec.action == GateAction.SAS_COMMIT and probe and probe.consensus_answer:
+    # Stage 4 lane policy: lane="MAS" forces multi-agent path even if the gate
+    # would have SAS-committed (router judged this is multi-hop). lane="SAS" or
+    # lane="AUTO" preserves the gate's SAS_COMMIT path. Escalation: lane="SAS"
+    # with a non-commit gate decision goes to MAS turn 1 with __rejected_probe__
+    # in agent context so MAS knows what the probe said and why it was rejected.
+    rejected_probe_msg = ""
+    # Escalation triggers only when the gate is an actual verifier and produced a
+    # non-commit decision. OffGate just disables the gate path, so a CONTINUE from
+    # it is not a real rejection and should not flag the probe as wrong.
+    gate_name = getattr(gate, "name", "")
+    if (
+        router_lane == "SAS"
+        and gate_dec
+        and gate_dec.action != GateAction.SAS_COMMIT
+        and gate_name != "off"
+    ):
+        res.escalated_from_sas = True
+        rejected_probe_msg = (
+            f"Probe answer was {probe.consensus_answer!r} but the verifier rejected "
+            f"it (action={gate_dec.action.value}, score={gate_dec.score:.2f}). "
+            f"Reason: {gate_dec.reason or '(none)'}. "
+            "Do not reuse this answer unless independently supported by fresh evidence "
+            "you find in the retrieval passages cited below."
+        )
+
+    if (
+        gate_dec and gate_dec.action == GateAction.SAS_COMMIT
+        and probe and probe.consensus_answer
+        and router_lane != "MAS"
+    ):
         res.sas_committed = True
         res.final_answer = normalize_answer_span(probe.consensus_answer, question=question)
         res.n_turns = 0
@@ -212,10 +266,18 @@ async def run_amas(question: str, gold: Any, *,
 
     # ---- MAS turns 1..t_max ----
     mutation_hint = ""
+    # Stage 4: lane filter for library retrieval inside sample_topology.
+    # router_lane="MAS" or SAS-escalation -> request MAS-lane (and "any") insights.
+    # router_lane="AUTO"/"SAS"-no-escalation -> legacy lane-agnostic retrieval.
+    if router_lane == "MAS" or res.escalated_from_sas:
+        lane_for_lib = "MAS"
+    else:
+        lane_for_lib = None
     for turn_idx in range(1, t_max + 1):
         try:
             topo, ids, sample_res = await orchestrator.sample_topology(
-                question, qprofile, temperature=rollout_temperature, mutation_hint=mutation_hint)
+                question, qprofile, temperature=rollout_temperature,
+                mutation_hint=mutation_hint, lane=lane_for_lib)
             # Stage 1: pass ledger + belief summaries into agent contexts. MAS LLM
             # agents read whatever evidence the pipeline has accumulated up to this
             # turn (probe ingestion + earlier MAS turns). Topology sampling does
@@ -224,6 +286,8 @@ async def run_amas(question: str, gold: Any, *,
                 "__ledger__": ledger.summarize_for_agent(n=8),
                 "__belief__": belief.summarize(k=5),
             }
+            if rejected_probe_msg:
+                agent_ctx["__rejected_probe__"] = rejected_probe_msg
             traj: Trajectory = await orchestrator.execute(
                 question, gold, topo, ids,
                 orch_tokens=sample_res.prompt_tokens + sample_res.completion_tokens,

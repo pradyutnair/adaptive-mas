@@ -285,6 +285,34 @@ def extract_final_answer(invs: list[AgentInvocation], question: str = "") -> str
     return normalize_answer_span(raw, question=question)
 
 
+ROUTER_SYSTEM = (
+    "You are a routing controller for a multi-agent QA system. Given a question, a "
+    "single-shot probe answer, and the agreement among probe samples, decide which "
+    "lane should run:\n"
+    " - SAS: the probe answer is plausibly correct on its own; skip the multi-agent "
+    "topology and let the verifier decide whether to commit it.\n"
+    " - MAS: the question requires multi-hop reasoning, comparison, or evidence the "
+    "probe could not have produced from a single retrieval; run the multi-agent path.\n"
+    " - AUTO: defer to the verifier; do not override the gate.\n"
+    "Return exactly one JSON object: {\"lane\": \"SAS\" | \"MAS\" | \"AUTO\", \"reason\": \"<short>\"}. "
+    "Pick MAS for compositional questions ('director of the film X', 'who Y in year Z'); "
+    "pick SAS for short factoids the probe already nailed; pick AUTO when uncertain."
+)
+
+
+def build_router_user(question: str, profile: str, probe_answer: str,
+                       probe_agreement: float, top_passage_score: float = 0.0) -> str:
+    return (
+        f"Question: {question}\n"
+        f"Question profile (heuristic): {profile}\n"
+        f"Probe consensus answer: {probe_answer!r}\n"
+        f"Probe self-consistency agreement (0..1): {probe_agreement:.2f}\n"
+        f"Top retrieval score (0..1): {top_passage_score:.2f}\n\n"
+        "Respond ONLY with a JSON object: "
+        "{\"lane\": \"SAS\" | \"MAS\" | \"AUTO\", \"reason\": \"<one short sentence>\"}."
+    )
+
+
 class Orchestrator:
     def __init__(self, vllm: VLLMClient, openai_client: OpenAIClient,
                  retriever: RetrieverClient, library: ExperienceLibrary,
@@ -300,11 +328,53 @@ class Orchestrator:
         self.library_top_k = library_top_k
         self.max_steps = max_steps
 
+    async def route_lane(self, query: str, profile: str, *,
+                         probe_answer: str, probe_agreement: float,
+                         top_passage_score: float = 0.0,
+                         temperature: float = 0.0) -> tuple[str, dict[str, Any]]:
+        """Stage 4 router: decide SAS / MAS / AUTO from probe + retrieval signals.
+
+        Returns `(lane, info)` where info carries the model's rationale and token
+        accounting. Falls back to AUTO on parse error or empty probe answer.
+        """
+        if not probe_answer:
+            return "AUTO", {"reason": "no probe answer", "tokens": 0}
+        user = build_router_user(query, profile, probe_answer, probe_agreement,
+                                 top_passage_score=top_passage_score)
+        try:
+            res = await self.vllm.chat(ROUTER_SYSTEM, user, temperature=temperature,
+                                        max_tokens=120, json_mode=True)
+            parsed = parse_json_lenient(res.text) or {}
+            lane = str(parsed.get("lane", "AUTO")).strip().upper()
+            if lane not in ("SAS", "MAS", "AUTO"):
+                lane = "AUTO"
+            reason = str(parsed.get("reason", ""))[:200]
+            return lane, {"reason": reason, "tokens": res.prompt_tokens + res.completion_tokens}
+        except Exception as e:
+            return "AUTO", {"reason": f"router error: {str(e)[:80]}", "tokens": 0}
+
     async def sample_topology(self, query: str, profile: str, *, temperature: float = 0.9,
-                                mutation_hint: str = "") -> tuple[dict[str, Any], list[str], LMResult]:
-        retrieved = self.library.retrieve(profile, top_k=self.library_top_k)
+                                mutation_hint: str = "",
+                                lane: str | None = None) -> tuple[dict[str, Any], list[str], LMResult]:
+        """Sample a topology. `lane` filters retrieved insights: when set to
+        "SAS"/"MAS", `library.retrieve` returns entries whose `entry.lane` is
+        either that lane or "any". `lane=None`/"AUTO" preserves the legacy
+        lane-agnostic retrieval (Stage 3 plumbing semantics)."""
+        lane_filter = lane if lane in ("SAS", "MAS") else None
+        retrieved = self.library.retrieve(profile, top_k=self.library_top_k, lane=lane_filter)
         ids = [e.id for e in retrieved]
-        text = self.library.to_paper_format(profile=profile, top_k=self.library_top_k) if retrieved else ""
+        # Render the lane-filtered entries directly so off-lane insights cannot leak
+        # back via to_paper_format's internal lane-agnostic retrieve.
+        if retrieved:
+            text = "\n".join(
+                f"- id: {e.id}\n"
+                f"  Query Type: {e.profile}\n"
+                f"  Insight: {e.insight}\n"
+                f"  Utility score: {e.utility}/{max(1, e.uses)}"
+                for e in retrieved
+            )
+        else:
+            text = ""
         user = build_orchestrator_user(query, profile, text, mutation_hint=mutation_hint)
         res = await self.vllm.chat(ORCHESTRATOR_SYSTEM, user, temperature=temperature, max_tokens=900)
         parsed = parse_json_lenient(res.text)
@@ -326,11 +396,15 @@ class Orchestrator:
         for item in order:
             steps.setdefault(item["step"], []).append(item)
 
-        # Cross-turn context for LLM agents (Stage 1: ledger + belief wiring).
+        # Cross-turn context for LLM agents.
+        #   Stage 1: __ledger__ / __belief__ summaries.
+        #   Stage 4: __rejected_probe__ when SAS escalated to MAS — agents see
+        #   the rejected probe answer + verifier rationale so they don't anchor.
         # When `ctx` is None or empty, agents see no extra prefix — backwards-compatible.
         _ctx = ctx or {}
         _ledger_text = str(_ctx.get("__ledger__", "") or "")
         _belief_text = str(_ctx.get("__belief__", "") or "")
+        _rejected_probe = str(_ctx.get("__rejected_probe__", "") or "")
 
         invocations: list[AgentInvocation] = []
         by_name: dict[str, AgentInvocation] = {}
@@ -356,7 +430,8 @@ class Orchestrator:
                                             ("EvidenceSelector", "ContextValidator", "AnswerGenerator",
                                              "ReflectAgent", "ConcludeAgent") else None,
                                             self.openai,
-                                            ledger_text=_ledger_text, belief_text=_belief_text)
+                                            ledger_text=_ledger_text, belief_text=_belief_text,
+                                            rejected_probe=_rejected_probe)
                 return inv
 
             # We need a mutable container for `passages` inside parallel calls.
