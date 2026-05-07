@@ -226,9 +226,26 @@ class AgentInvocation:
 
 
 def _format_context_for_agent(name: str, q: str, deps: dict[str, AgentInvocation],
-                               passages: list[Passage] | None = None) -> str:
-    """Build the user message for an agent given upstream outputs."""
-    parts = [f"Question: {q}"]
+                               passages: list[Passage] | None = None,
+                               ledger_text: str = "", belief_text: str = "") -> str:
+    """Build the user message for an agent given upstream outputs.
+
+    Cross-turn `ledger_text` / `belief_text` are prepended *before* the
+    question (when non-empty and not the placeholder strings emitted by an
+    empty Ledger / BeliefState) so MAS LLM agents at any turn read whatever
+    evidence the pipeline has accumulated up to that turn. Topology sampling
+    is unaffected at Stage 1 — only agent execution sees these prefixes.
+    """
+    parts: list[str] = []
+    if ledger_text:
+        lt = ledger_text.strip()
+        if lt and lt != "(ledger empty)":
+            parts.append("Cross-turn evidence ledger:\n" + lt)
+    if belief_text:
+        bt = belief_text.strip()
+        if bt and bt != "(no candidates)":
+            parts.append("Current top candidates:\n" + bt)
+    parts.append(f"Question: {q}")
     if "QueryDecomposer" in deps:
         sub = deps["QueryDecomposer"].output.get("sub_questions", [])
         if sub:
@@ -263,8 +280,10 @@ def _format_context_for_agent(name: str, q: str, deps: dict[str, AgentInvocation
 
 
 async def run_llm_agent(prompt: AgentPrompt, q: str, deps: dict[str, AgentInvocation],
-                         passages: list[Passage] | None, lm: OpenAIClient) -> AgentInvocation:
-    user = _format_context_for_agent(prompt.name, q, deps, passages)
+                         passages: list[Passage] | None, lm: OpenAIClient,
+                         ledger_text: str = "", belief_text: str = "") -> AgentInvocation:
+    user = _format_context_for_agent(prompt.name, q, deps, passages,
+                                     ledger_text=ledger_text, belief_text=belief_text)
     inv = AgentInvocation(name=prompt.name, inputs={"question": q, "user_msg": user})
     try:
         res = await lm.chat(prompt.system_prompt(), user, json_mode=True)

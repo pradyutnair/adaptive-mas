@@ -208,9 +208,18 @@ async def run_amas(question: str, gold: Any, *,
         try:
             topo, ids, sample_res = await orchestrator.sample_topology(
                 question, qprofile, temperature=rollout_temperature, mutation_hint=mutation_hint)
+            # Stage 1: pass ledger + belief summaries into agent contexts. MAS LLM
+            # agents read whatever evidence the pipeline has accumulated up to this
+            # turn (probe ingestion + earlier MAS turns). Topology sampling does
+            # NOT see ledger/belief at this stage — that is a deliberate scope cut.
+            agent_ctx = {
+                "__ledger__": ledger.summarize_for_agent(n=8),
+                "__belief__": belief.summarize(k=5),
+            }
             traj: Trajectory = await orchestrator.execute(
                 question, gold, topo, ids,
                 orch_tokens=sample_res.prompt_tokens + sample_res.completion_tokens,
+                ctx=agent_ctx,
             )
         except Exception as e:
             logger.warning("MAS turn %d failed: %s", turn_idx, e)

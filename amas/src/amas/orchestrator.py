@@ -305,7 +305,8 @@ class Orchestrator:
         return topo, ids, res
 
     async def execute(self, query: str, gold: str | list[str], topology: dict[str, Any],
-                       insight_ids: list[str], orch_tokens: int = 0) -> Trajectory:
+                       insight_ids: list[str], orch_tokens: int = 0,
+                       ctx: dict[str, Any] | None = None) -> Trajectory:
         from .metric import accuracy, contain, exact_match, f1_score
 
         t0 = time.time()
@@ -314,6 +315,12 @@ class Orchestrator:
         steps: dict[int, list[dict]] = {}
         for item in order:
             steps.setdefault(item["step"], []).append(item)
+
+        # Cross-turn context for LLM agents (Stage 1: ledger + belief wiring).
+        # When `ctx` is None or empty, agents see no extra prefix — backwards-compatible.
+        _ctx = ctx or {}
+        _ledger_text = str(_ctx.get("__ledger__", "") or "")
+        _belief_text = str(_ctx.get("__belief__", "") or "")
 
         invocations: list[AgentInvocation] = []
         by_name: dict[str, AgentInvocation] = {}
@@ -338,7 +345,8 @@ class Orchestrator:
                                             nonlocal_ref["passages"] if agent_name in
                                             ("EvidenceSelector", "ContextValidator", "AnswerGenerator",
                                              "ReflectAgent", "ConcludeAgent") else None,
-                                            self.openai)
+                                            self.openai,
+                                            ledger_text=_ledger_text, belief_text=_belief_text)
                 return inv
 
             # We need a mutable container for `passages` inside parallel calls.
