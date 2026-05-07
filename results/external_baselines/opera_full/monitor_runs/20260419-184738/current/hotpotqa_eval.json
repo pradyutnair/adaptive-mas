@@ -1,8 +1,0 @@
-{
-  "norm_em": 0.299,
-  "token_f1": 0.4383,
-  "contain": 0.587,
-  "total": 1000,
-  "answered": 984,
-  "done_over_full_dataset": "1000/1000"
-}

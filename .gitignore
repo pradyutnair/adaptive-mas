@@ -10,3 +10,16 @@ data/**/index_*/
 data/**/index_qwen3_embedding_06b/
 data/**/sentence_index.pkl
 .venv/
+
+# AMAS subproject artifacts
+amas/results/
+amas/wandb/
+amas/exp_lib/
+amas/logs/
+amas/__pycache__/
+amas/.amas_cache/
+amas/data/annotations/
+amas/data/*.jsonl
+amas/data/.processed_data/
+
+wandb/

@@ -1,289 +1,0 @@
-2026-04-18 21:05:50 [INFO] __main__: Loaded 50 questions from data/hotpotqa/questions_smoke50_seed42.json
-2026-04-18 21:05:50 [INFO] __main__: Checkpoint: 0 completed, 50 remaining
-2026-04-18 21:05:51 [INFO] sentence_transformers.base.model: No device provided, using cuda:0
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/modules.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/modules.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/config_sentence_transformers.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] sentence_transformers.base.model: Loading SentenceTransformer model from intfloat/e5-base-v2.
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/config_sentence_transformers.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/README.md "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/README.md "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/modules.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/modules.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/sentence_bert_config.json "HTTP/1.1 307 Temporary Redirect"
-Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-2026-04-18 21:05:51 [WARNING] huggingface_hub.utils._http: Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/sentence_bert_config.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/adapter_config.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/config.json "HTTP/1.1 200 OK"
-Loading weights:   0%|          | 0/199 [00:00<?, ?it/s]Loading weights: 100%|██████████| 199/199 [00:00<00:00, 4899.03it/s]
-[1mBertModel LOAD REPORT[0m from: intfloat/e5-base-v2
-Key                     | Status     |  | 
-------------------------+------------+--+-
-embeddings.position_ids | UNEXPECTED |  | 
-
-Notes:
-- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/processor_config.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/preprocessor_config.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/video_preprocessor_config.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/preprocessor_config.json "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/tokenizer_config.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/config.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/config.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/tokenizer_config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/tokenizer_config.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/e5-base-v2/tree/main/additional_chat_templates?recursive=false&expand=false "HTTP/1.1 404 Not Found"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/e5-base-v2/tree/main?recursive=true&expand=false "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/intfloat/e5-base-v2/resolve/main/1_Pooling/config.json "HTTP/1.1 307 Temporary Redirect"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: HEAD https://huggingface.co/api/resolve-cache/models/intfloat/e5-base-v2/f52bf8ec8c7124536f0efb74aca902b2995e5bcd/1_Pooling%2Fconfig.json "HTTP/1.1 200 OK"
-2026-04-18 21:05:51 [INFO] httpx: HTTP Request: GET https://huggingface.co/api/models/intfloat/e5-base-v2 "HTTP/1.1 200 OK"
-Processing questions:   0%|          | 0/50 [00:00<?, ?q/s]2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5abe953b5542993f32c2a170, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab69f9a554299710c8d1ef8, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5abc030e554299642a094bdc, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae6c2285542995703ce8b9a, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab57fc4554299488d4d99c0, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ade9c9c5542997c77adee8c, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a749af055429979e28829b7, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae1389655429901ffe4ae05, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5adcd4325542994d58a2f6ed, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a85c3225542992a431d1b95, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab94bc2554299743d22eacf, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae1f17e554299234fd04349, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab3cecd5542992ade7c6eae, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a8835dc5542994846c1ce2b, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a714dea5542994082a3e7a9, max_steps=4
-2026-04-18 21:05:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a8481945542997175ce1ed3, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][A
-Batches: 100%|██████████| 1/1 [00:00<00:00,  4.07it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00,  4.06it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.62it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 70.41it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 62.95it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 57.81it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 75.25it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 57.72it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 61.63it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 85.49it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.78it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 56.00it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 59.61it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 60.41it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.06it/s]
-2026-04-18 21:06:22 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae6c2285542995703ce8b9a, answer="her gaoler's family", subagents=1, verify=0, tokens=10436
-Processing questions:   2%|▏         | 1/50 [00:30<24:49, 30.41s/q]2026-04-18 21:06:22 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a84574455429933447460e6, max_steps=4
-2026-04-18 21:06:22 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab94bc2554299743d22eacf, answer='around 300 houses', subagents=1, verify=0, tokens=10460
-Processing questions:   4%|▍         | 2/50 [00:30<10:07, 12.65s/q]2026-04-18 21:06:22 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a72b2dc5542992359bc3173, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 52.37it/s]
-2026-04-18 21:06:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae1389655429901ffe4ae05, answer='Southern State Parkway', subagents=1, verify=0, tokens=10571
-Processing questions:   6%|▌         | 3/50 [00:33<06:28,  8.27s/q]2026-04-18 21:06:26 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7a3a945542996a35c17147, max_steps=4
-2026-04-18 21:06:27 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5abc030e554299642a094bdc, answer='1945 to 1951', subagents=1, verify=0, tokens=10812
-Processing questions:   8%|▊         | 4/50 [00:34<04:12,  5.49s/q]2026-04-18 21:06:27 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ade86b255429939a52fe8e0, max_steps=4
-2026-04-18 21:06:28 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a8481945542997175ce1ed3, answer='yes', subagents=1, verify=0, tokens=10914
-Processing questions:  10%|█         | 5/50 [00:36<02:58,  3.97s/q]2026-04-18 21:06:28 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a8f5b6f554299458435d5e7, max_steps=4
-2026-04-18 21:06:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a714dea5542994082a3e7a9, answer='Summer Wars', subagents=1, verify=0, tokens=11022
-Processing questions:  12%|█▏        | 6/50 [00:39<02:40,  3.65s/q]2026-04-18 21:06:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae40d405542996836b02c28, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.33it/s]
-2026-04-18 21:06:36 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a85c3225542992a431d1b95, answer='right-handed middle order batsman', subagents=1, verify=0, tokens=11689
-Processing questions:  14%|█▍        | 7/50 [00:43<02:51,  3.99s/q]2026-04-18 21:06:36 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a72334755429971e9dc934c, max_steps=4
-2026-04-18 21:06:36 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5adcd4325542994d58a2f6ed, answer='Colocasia and Coronilla are both flowering plant genera', subagents=1, verify=0, tokens=11807
-2026-04-18 21:06:36 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab8829d55429934fafe6e08, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 64.18it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 70.40it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 75.84it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 61.94it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 56.99it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.38it/s]
-2026-04-18 21:06:50 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a749af055429979e28829b7, answer='The Apple Dumpling Gang (1975)', subagents=1, verify=0, tokens=13629
-Processing questions:  18%|█▊        | 9/50 [00:58<03:47,  5.55s/q]2026-04-18 21:06:50 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7b1c0a55429931da12c9c9, max_steps=4
-2026-04-18 21:06:52 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7a3a945542996a35c17147, answer='Bank of China Tower', subagents=1, verify=0, tokens=9561
-Processing questions:  20%|██        | 10/50 [01:00<03:05,  4.64s/q]2026-04-18 21:06:52 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae40b2b55429970de88d8b3, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 59.75it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 59.26it/s]
-2026-04-18 21:06:59 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a72b2dc5542992359bc3173, answer='Anthony Rapp', subagents=1, verify=0, tokens=11284
-Processing questions:  22%|██▏       | 11/50 [01:07<03:27,  5.31s/q]2026-04-18 21:06:59 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab29c24554299449642c932, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 73.97it/s]
-2026-04-18 21:07:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab69f9a554299710c8d1ef8, answer='Adrian Conan Doyle and John Dickson Carr', subagents=1, verify=0, tokens=21184
-Processing questions:  24%|██▍       | 12/50 [01:10<02:54,  4.59s/q]2026-04-18 21:07:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae26fad554299495565da6f, max_steps=4
-2026-04-18 21:07:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae1f17e554299234fd04349, answer='the cathedral of the blessed virgin mary, truro is a church of england cathedral', subagents=1, verify=0, tokens=14314
-Processing questions:  26%|██▌       | 13/50 [01:10<02:04,  3.37s/q]2026-04-18 21:07:02 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7542425542996c70cfaecc, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 76.15it/s]
-2026-04-18 21:07:08 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: What screenplay was worked on by both Edward Carfagno and Miklos Rozsa?
-2026-04-18 21:07:10 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a72334755429971e9dc934c, answer='american country music artist ricky skaggs', subagents=1, verify=0, tokens=9505
-Processing questions:  28%|██▊       | 14/50 [01:17<02:41,  4.48s/q]2026-04-18 21:07:10 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5adecc7755429975fa854f9d, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 61.12it/s]
-2026-04-18 21:07:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ade86b255429939a52fe8e0, answer='Boston, Massachusetts', subagents=1, verify=0, tokens=12925
-Processing questions:  30%|███       | 15/50 [01:20<02:18,  3.97s/q]2026-04-18 21:07:12 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5abff9905542997d64295980, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 56.57it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.63it/s]
-2026-04-18 21:07:20 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab8829d55429934fafe6e08, answer='My Own Worst Enemy', subagents=1, verify=0, tokens=12747
-Processing questions:  32%|███▏      | 16/50 [01:28<02:54,  5.14s/q]2026-04-18 21:07:20 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ab5f372554299488d4d9a60, max_steps=4
-2026-04-18 21:07:21 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae40d405542996836b02c28, answer='the corner of north avenue and first avenue', subagents=1, verify=0, tokens=11922
-Processing questions:  34%|███▍      | 17/50 [01:28<02:05,  3.79s/q]2026-04-18 21:07:21 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7558425542992db9473647, max_steps=4
-2026-04-18 21:07:21 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab29c24554299449642c932, answer='yes', subagents=1, verify=0, tokens=9974
-Processing questions:  36%|███▌      | 18/50 [01:29<01:31,  2.87s/q]2026-04-18 21:07:21 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a72f45a5542992359bc31e6, max_steps=4
-2026-04-18 21:07:24 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab3cecd5542992ade7c6eae, answer='Forbidden Creatures focuses on animal smuggling and exotic pets, while No Animal', subagents=1, verify=0, tokens=17161
-Processing questions:  38%|███▊      | 19/50 [01:32<01:29,  2.88s/q]2026-04-18 21:07:24 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a83411655429966c78a6b5d, max_steps=4
-2026-04-18 21:07:25 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a84574455429933447460e6, answer='2015', subagents=1, verify=0, tokens=15227
-Processing questions:  40%|████      | 20/50 [01:33<01:04,  2.17s/q]2026-04-18 21:07:25 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a77aa095542995d83181260, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 61.91it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 57.54it/s]
-2026-04-18 21:07:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab57fc4554299488d4d99c0, answer='Finnmark County', subagents=1, verify=0, tokens=27398
-Processing questions:  42%|████▏     | 21/50 [01:39<01:41,  3.49s/q]2026-04-18 21:07:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae680cc5542996d980e7ba5, max_steps=4
-2026-04-18 21:07:32 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a8835dc5542994846c1ce2b, answer='allan mcnish', subagents=1, verify=0, tokens=19118
-Processing questions:  44%|████▍     | 22/50 [01:40<01:13,  2.64s/q]2026-04-18 21:07:32 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae4d3c95542990ba0bbb165, max_steps=4
-2026-04-18 21:07:33 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae26fad554299495565da6f, answer='Russian Ark', subagents=1, verify=0, tokens=10574
-Processing questions:  46%|████▌     | 23/50 [01:40<00:55,  2.05s/q]2026-04-18 21:07:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a790d8f554299029c4b5eec, max_steps=4
-2026-04-18 21:07:33 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7b1c0a55429931da12c9c9, answer='13 seasons', subagents=1, verify=0, tokens=13447
-Processing questions:  48%|████▊     | 24/50 [01:41<00:40,  1.55s/q]2026-04-18 21:07:33 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a717d4c5542994082a3e854, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 56.62it/s]
-2026-04-18 21:07:35 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae40b2b55429970de88d8b3, answer='founded in 1901 as a vocational high school', subagents=1, verify=0, tokens=11251
-Processing questions:  50%|█████     | 25/50 [01:43<00:42,  1.69s/q]2026-04-18 21:07:35 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a77322055429972597f1494, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.18it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 62.58it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.25it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 62.46it/s]
-2026-04-18 21:07:47 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5abff9905542997d64295980, answer='market town, civil parish and two electoral wards ( north and south )', subagents=1, verify=0, tokens=10753
-Processing questions:  52%|█████▏    | 26/50 [01:54<01:50,  4.59s/q]2026-04-18 21:07:47 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae163b3554299422ee99678, max_steps=4
-2026-04-18 21:07:48 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: who are the main stars of The Newcomers
-2026-04-18 21:07:49 [ERROR] adaptive_sage.investigator: All JSON parse attempts failed for sub-question: Sand Mountainis part of the southern tip of a mountain chain in which part of North America ?
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 67.33it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 59.45it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 62.14it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 78.53it/s]
-2026-04-18 21:07:56 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a72f45a5542992359bc31e6, answer='mgm grand garden arena ( originally known as the mgm grand garden special events', subagents=1, verify=0, tokens=10952
-Processing questions:  54%|█████▍    | 27/50 [02:04<02:20,  6.11s/q]2026-04-18 21:07:56 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a77cb335542997042120b3a, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.39it/s]
-2026-04-18 21:07:58 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7558425542992db9473647, answer='Mandarin Airlines', subagents=1, verify=0, tokens=10987
-Processing questions:  56%|█████▌    | 28/50 [02:06<01:47,  4.87s/q]2026-04-18 21:07:58 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5ae4a0ca5542995ad6573dcb, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 55.68it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 69.21it/s]
-2026-04-18 21:08:07 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a790d8f554299029c4b5eec, answer='george harrison', subagents=1, verify=0, tokens=10519
-Processing questions:  58%|█████▊    | 29/50 [02:14<02:04,  5.93s/q]2026-04-18 21:08:07 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a84e21d5542997b5ce3ff7c, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 60.91it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 68.55it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 69.12it/s]
-2026-04-18 21:08:14 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a83411655429966c78a6b5d, answer='justin spitzer', subagents=1, verify=0, tokens=12083
-Processing questions:  60%|██████    | 30/50 [02:22<02:08,  6.43s/q]2026-04-18 21:08:14 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a797bd95542994bb9457016, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 64.35it/s]
-2026-04-18 21:08:17 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae680cc5542996d980e7ba5, answer='johnny herbert', subagents=1, verify=0, tokens=12911
-Processing questions:  62%|██████▏   | 31/50 [02:25<01:44,  5.48s/q]2026-04-18 21:08:17 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a84973e5542992a431d1a67, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 70.66it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 60.22it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.48it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.65it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 61.36it/s]
-2026-04-18 21:08:29 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a77322055429972597f1494, answer='Deskmate', subagents=1, verify=0, tokens=11247
-Processing questions:  64%|██████▍   | 32/50 [02:37<02:10,  7.25s/q]2026-04-18 21:08:29 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7736bc554299373536021b, max_steps=4
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 65.05it/s]
-2026-04-18 21:08:31 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ab5f372554299488d4d9a60, answer='four acts', subagents=2, verify=0, tokens=20860
-Processing questions:  66%|██████▌   | 33/50 [02:38<01:35,  5.60s/q]2026-04-18 21:08:31 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5add7c9c5542990dbb2f7e60, max_steps=4
-2026-04-18 21:08:37 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a77cb335542997042120b3a, answer='john john florence', subagents=1, verify=0, tokens=11195
-Processing questions:  68%|██████▊   | 34/50 [02:45<01:32,  5.80s/q]2026-04-18 21:08:37 [INFO] adaptive_sage.pipeline: Pipeline start: question_id=5a7d3470554299452d57bb56, max_steps=4
-2026-04-18 21:08:37 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a84e21d5542997b5ce3ff7c, answer='glee', subagents=1, verify=0, tokens=10869
-Processing questions:  70%|███████   | 35/50 [02:45<01:03,  4.23s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 71.46it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 67.96it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 60.39it/s]
-2026-04-18 21:08:43 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ade9c9c5542997c77adee8c, answer='Julius Caesar', subagents=2, verify=0, tokens=58561
-Processing questions:  72%|███████▏  | 36/50 [02:51<01:05,  4.68s/q]2026-04-18 21:08:46 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a797bd95542994bb9457016, answer='ten', subagents=1, verify=0, tokens=10809
-Processing questions:  74%|███████▍  | 37/50 [02:53<00:52,  4.02s/q]2026-04-18 21:08:46 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a8f5b6f554299458435d5e7, answer='Appalachian mountain chain', subagents=2, verify=0, tokens=42614
-2026-04-18 21:08:48 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae4d3c95542990ba0bbb165, answer='istanbul', subagents=1, verify=0, tokens=20506
-Processing questions:  78%|███████▊  | 39/50 [02:56<00:30,  2.78s/q]2026-04-18 21:08:51 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7542425542996c70cfaecc, answer='Bruce Chatwin', subagents=2, verify=0, tokens=27193
-Processing questions:  80%|████████  | 40/50 [02:58<00:27,  2.71s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 64.53it/s]
-2026-04-18 21:08:55 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7736bc554299373536021b, answer='antonio lucio vivaldi', subagents=1, verify=0, tokens=10427
-Processing questions:  82%|████████▏ | 41/50 [03:03<00:27,  3.08s/q]2026-04-18 21:08:56 [WARNING] adaptive_sage.orchestrator: Duplicate grounded sub-question detected: 'who are the main stars of The Newcomers' — forcing answer
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 54.27it/s]
-2026-04-18 21:09:00 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5adecc7755429975fa854f9d, answer='Jeremy Hammond', subagents=2, verify=0, tokens=23636
-Processing questions:  84%|████████▍ | 42/50 [03:08<00:29,  3.73s/q]2026-04-18 21:09:02 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5abe953b5542993f32c2a170, answer='his superhero roles as the marvel comics characters steve rogers / captain ameri', subagents=3, verify=0, tokens=83244
-Processing questions:  86%|████████▌ | 43/50 [03:10<00:21,  3.11s/q]2026-04-18 21:09:05 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a7d3470554299452d57bb56, answer='Compliance', subagents=1, verify=0, tokens=10670
-Processing questions:  88%|████████▊ | 44/50 [03:13<00:18,  3.08s/q]2026-04-18 21:09:08 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5add7c9c5542990dbb2f7e60, answer='for love alone', subagents=1, verify=0, tokens=11454
-Processing questions:  90%|█████████ | 45/50 [03:16<00:15,  3.19s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 52.56it/s]
-2026-04-18 21:09:12 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a84973e5542992a431d1a67, answer='gracie mansion in new york', subagents=1, verify=0, tokens=20961
-Processing questions:  92%|█████████▏| 46/50 [03:19<00:12,  3.25s/q]2026-04-18 21:09:15 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a77aa095542995d83181260, answer='Pratt & Whitney F100', subagents=2, verify=0, tokens=29408
-Processing questions:  94%|█████████▍| 47/50 [03:22<00:09,  3.18s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.67it/s]
-2026-04-18 21:09:22 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae4a0ca5542995ad6573dcb, answer='1981', subagents=1, verify=0, tokens=32368
-Processing questions:  96%|█████████▌| 48/50 [03:30<00:08,  4.37s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 63.28it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 60.20it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 58.84it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 55.95it/s]
-2026-04-18 21:10:26 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5ae163b3554299422ee99678, answer='Sylvia Dee, Little Rock, Arkansas', subagents=5, verify=0, tokens=76981
-Processing questions:  98%|█████████▊| 49/50 [04:34<00:22, 22.19s/q]
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 126.46it/s]
-
-Batches:   0%|          | 0/1 [00:00<?, ?it/s][ABatches: 100%|██████████| 1/1 [00:00<00:00, 127.65it/s]
-2026-04-18 21:11:39 [INFO] adaptive_sage.pipeline: Pipeline done: question_id=5a717d4c5542994082a3e854, answer='Pavel Alexandrov', subagents=5, verify=0, tokens=118874
-Processing questions: 100%|██████████| 50/50 [05:47<00:00, 37.39s/q]Processing questions: 100%|██████████| 50/50 [05:47<00:00,  6.95s/q]
-
-============================================================
-Run complete: 50/50 succeeded, 0 failed
-Checkpoint had 0 previously completed
-Total in output: 50
-Elapsed: 347.6s (5.8min)
-============================================================

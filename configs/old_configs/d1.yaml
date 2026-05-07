@@ -1,9 +1,0 @@
-# Adaptive Recursive SAGE — D1
-# Oracle routing upper bound between S0 and M1.
-
-variant: d1
-
-oracle_routing:
-  base_variant: S0
-  alt_variant: M1
-  output_variant: D1
