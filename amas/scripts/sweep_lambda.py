@@ -106,7 +106,7 @@ async def main(args: argparse.Namespace) -> None:
             wandb.log({"lambda/lambda": r["lambda"], "lambda/em": r["em"], "lambda/f1": r["f1"], "lambda/acc": r["acc"], "lambda/avg_tokens": r["avg_tokens"], "lambda/sas_rate": r["sas_rate"]})
         wandb.finish()
     except Exception as e:
-        import logging; logging.warning("wandb log failed: %s", e)
+        logging.warning("wandb log failed: %s", e)
 
     await retriever.aclose(); await vllm.aclose(); await openai_client.aclose()
 

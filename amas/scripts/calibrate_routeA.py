@@ -115,7 +115,7 @@ async def calibrate(args: argparse.Namespace) -> None:
         wandb.log({"calib/n_total": len(rows), "calib/n_correct": len(correct_scores), "calib/n_incorrect": len(incorrect_scores), "calib/tau_high": tau_high, "calib/tau_low": tau_low})
         wandb.finish()
     except Exception as e:
-        import logging; logging.warning("wandb log failed: %s", e)
+        logging.warning("wandb log failed: %s", e)
 
     out_path = Path(args.out)
     write_calibration(out_path, tau_high=tau_high, tau_low=tau_low,
