@@ -62,6 +62,20 @@ def _load_annotations(annot_dir: str | None = None) -> dict[str, str]:
     return cache
 
 
+_VALID_LANES = ("any", "SAS", "MAS")
+
+
+def _normalize_lane(lane: Any) -> str:
+    if lane is None or lane == "":
+        return "any"
+    s = str(lane).strip()
+    if s.lower() in ("any", "auto", ""):
+        return "any"
+    if s.upper() in ("SAS", "MAS"):
+        return s.upper()
+    return "any"
+
+
 @dataclass
 class ExpEntry:
     id: str
@@ -70,6 +84,10 @@ class ExpEntry:
     utility: int = 0
     uses: int = 0
     rationale: str = ""
+    # Stage 3 (lane plumbing): which routing lane this insight is meant to inform.
+    # "SAS" -> commit-probe-only path, "MAS" -> multi-agent path, "any" -> applies to either.
+    # No behavioural change at Stage 3; orchestrator/library only learn to read+filter the field.
+    lane: str = "any"
 
     def utility_rate(self) -> float:
         return self.utility / max(1, self.uses or 1)
@@ -98,6 +116,7 @@ class ExperienceLibrary:
                 utility=int(x.get("utility", 0)),
                 uses=int(x.get("uses", 0)),
                 rationale=str(x.get("rationale", "")),
+                lane=_normalize_lane(x.get("lane", "any")),
             )
             for x in data.get("entries", [])
         ]
@@ -119,31 +138,37 @@ class ExperienceLibrary:
             "entries": [asdict(e) for e in self.entries],
         }
 
-    def add(self, profile: str, insight: str, rationale: str = "") -> str:
+    def add(self, profile: str, insight: str, rationale: str = "",
+            lane: str = "any") -> str:
         ins = insight.strip()
         if not ins:
             return ""
         prof = profile if profile in PROFILES else "any"
-        # Skip near-duplicate.
+        ln = _normalize_lane(lane)
+        # Skip near-duplicate within the same (profile, lane) bucket. Cross-lane
+        # duplicates are kept distinct because they target different routing paths.
         for e in self.entries:
-            if e.profile == prof and _token_overlap(ins, e.insight) > 0.85:
+            if e.profile == prof and e.lane == ln and _token_overlap(ins, e.insight) > 0.85:
                 return e.id
         eid = f"E-{self.next_num:03d}"
         self.next_num += 1
-        self.entries.append(ExpEntry(id=eid, profile=prof, insight=ins, rationale=rationale.strip()))
+        self.entries.append(ExpEntry(id=eid, profile=prof, insight=ins,
+                                      rationale=rationale.strip(), lane=ln))
         self.prune()
         return eid
 
     def delete(self, eid: str) -> None:
         self.entries = [e for e in self.entries if e.id != eid]
 
-    def merge(self, ids: list[str], merged_insight: str, profile: str = "any", rationale: str = "") -> str:
+    def merge(self, ids: list[str], merged_insight: str, profile: str = "any",
+              rationale: str = "", lane: str = "any") -> str:
         ids_set = set(ids)
         kept = [e for e in self.entries if e.id not in ids_set]
         merged_id = f"E-{self.next_num:03d}"
         self.next_num += 1
         kept.append(ExpEntry(id=merged_id, profile=profile if profile in PROFILES else "any",
-                             insight=merged_insight.strip(), rationale=rationale.strip()))
+                             insight=merged_insight.strip(), rationale=rationale.strip(),
+                             lane=_normalize_lane(lane)))
         self.entries = kept
         self.prune()
         return merged_id
@@ -156,15 +181,28 @@ class ExperienceLibrary:
                     e.utility += 1
                 return
 
-    def retrieve(self, profile: str, top_k: int = 5) -> list[ExpEntry]:
+    def retrieve(self, profile: str, top_k: int = 5,
+                  lane: str | None = None) -> list[ExpEntry]:
+        """Retrieve top-K insights for a profile. When `lane` is provided
+        (one of "SAS"/"MAS"), entries whose lane is neither `lane` nor "any"
+        are filtered out. `lane=None` keeps the legacy lane-agnostic behaviour.
+        """
         if not self.entries:
             return []
+
+        candidates = self.entries
+        if lane is not None:
+            ln = _normalize_lane(lane)
+            if ln in ("SAS", "MAS"):
+                candidates = [e for e in self.entries if e.lane in (ln, "any")]
+                if not candidates:
+                    return []
 
         def score(e: ExpEntry) -> float:
             match = 2.0 if e.profile == profile else (1.0 if e.profile == "any" else 0.0)
             return match + e.utility_rate()
 
-        rows = sorted(self.entries, key=score, reverse=True)
+        rows = sorted(candidates, key=score, reverse=True)
         # Diversity filter (>0.7 token overlap suppressed).
         out: list[ExpEntry] = []
         seen_tokens: list[set[str]] = []
@@ -205,13 +243,16 @@ class ExperienceLibrary:
                     profile=str(op.get("profile", op.get("query_type", "any"))),
                     insight=str(op.get("new_insight", op.get("insight", op.get("text", "")))),
                     rationale=str(op.get("rationale", "")),
+                    lane=op.get("lane", "any"),
                 )
             elif kind == "MERGE":
                 ids = list(op.get("target_entry_ids", op.get("ids", [])))
                 merged = str(op.get("merged_insight", op.get("text", "")))
                 profile = str(op.get("profile", "any"))
                 if ids and merged:
-                    self.merge(ids, merged, profile=profile, rationale=str(op.get("rationale", "")))
+                    self.merge(ids, merged, profile=profile,
+                                rationale=str(op.get("rationale", "")),
+                                lane=op.get("lane", "any"))
             elif kind == "PRUNE":
                 ids = list(op.get("target_entry_ids", op.get("ids", [])))
                 for eid in ids:
@@ -243,10 +284,14 @@ class ExperienceLibrary:
             text = str(ins.get("insight", ins.get("text", "")))
             if not text:
                 continue
+            ins_lane = _normalize_lane(ins.get("lane", "any"))
             matches = [e for e in self.entries
-                       if e.profile in (profile, "any") and _token_overlap(e.insight, text) >= conflict_threshold]
+                       if e.profile in (profile, "any")
+                       and e.lane in (ins_lane, "any")
+                       and _token_overlap(e.insight, text) >= conflict_threshold]
             if not matches:
-                self.add(profile=profile, insight=text, rationale=str(ins.get("rationale", "")))
+                self.add(profile=profile, insight=text,
+                          rationale=str(ins.get("rationale", "")), lane=ins_lane)
                 continue
             # COMPLEMENTARY: same profile, moderate overlap (similar topic, compatible direction).
             complementary = [e for e in matches
@@ -255,7 +300,13 @@ class ExperienceLibrary:
             if complementary:
                 ids = [e.id for e in complementary]
                 merged = self._naive_merge(text, complementary)
-                self.merge(ids, merged, profile=profile, rationale="Algorithm 3 COMPLEMENTARY")
+                merged_lane = ins_lane
+                if merged_lane == "any":
+                    lanes = {e.lane for e in complementary if e.lane != "any"}
+                    if len(lanes) == 1:
+                        merged_lane = lanes.pop()
+                self.merge(ids, merged, profile=profile,
+                            rationale="Algorithm 3 COMPLEMENTARY", lane=merged_lane)
                 continue
             if high_overlap:
                 # Treat as conflict only if utility differs substantially.

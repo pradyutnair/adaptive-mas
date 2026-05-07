@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 # Default topology used when orchestrator output is invalid (safe fallback).
 FALLBACK_TOPOLOGY = {
     "query_profile": "bridge",
+    "lane": "AUTO",
     "selected_agents": ["QueryDecomposer", "Retriever", "EvidenceSelector", "AnswerGenerator", "ConcludeAgent"],
     "execution_order": [
         {"step": 1, "agent": "QueryDecomposer", "depends_on": [], "mode": "sequential"},
@@ -79,7 +80,9 @@ def build_orchestrator_user(query: str, profile: str, library_text: str,
         '     "mode": "sequential|parallel"},\n'
         "    ...\n"
         "  ]\n"
-        "}"
+        "}\n"
+        "Notes: if you include a top-level \"lane\" field it must be one of "
+        "\"SAS\", \"MAS\", or \"AUTO\"; otherwise omit it."
     )
     if mutation_hint:
         # §3.5 topology mutation: still verbatim base prompt, append mutation feedback.
@@ -152,8 +155,15 @@ def validate_topology(topo: dict[str, Any]) -> dict[str, Any] | None:
             "mode": "sequential",
         })
         selected.append("ConcludeAgent")
+    # Stage 3: lane plumbing — accept and validate `lane` from the orchestrator
+    # response. Default "AUTO" means "no policy override; gate decides at runtime".
+    # Pipeline does not yet act on this field — Stage 4 wires routing.
+    raw_lane = str(topo.get("lane", "AUTO")).strip().upper()
+    if raw_lane not in ("SAS", "MAS", "AUTO"):
+        raw_lane = "AUTO"
     return {
         "query_profile": topo.get("query_profile", "bridge"),
+        "lane": raw_lane,
         "selected_agents": selected,
         "execution_order": cleaned,
     }
