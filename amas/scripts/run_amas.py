@@ -160,6 +160,8 @@ async def main(args: argparse.Namespace) -> None:
                     probe_group_size=pcfg["probe_group_size"],
                     probe_topk=pcfg["probe_topk"],
                     rollout_temperature=pcfg.get("rollout_temperature", 0.0),
+                    belief_stop_entropy=float(pcfg.get("belief_stop_entropy", 0.5)),
+                    belief_stop_conf=float(pcfg.get("belief_stop_conf", 0.80)),
                 )
             except Exception as e:
                 logging.exception("question %s failed", q.get("id"))

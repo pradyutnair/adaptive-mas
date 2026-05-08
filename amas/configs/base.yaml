@@ -32,11 +32,19 @@ retriever:
   concurrency: 8
 
 pipeline:
-  t_max: 1
+  # T_max=2 enables adaptive depth: turn 1 always runs after probe; turn 2 fires
+  # only when neither the conformal gate nor the belief STOP terminate after turn 1.
+  t_max: 2
   probe_group_size: 1
   probe_topk: 5
   rollout_temperature: 0.0
   eval_temperature: 0.0
+  # Stage 10: belief-driven STOP thresholds (mid-MAS adaptive termination).
+  # STOP fires when verifier verdict YES at conf >= belief_stop_conf AND
+  # belief.entropy() < belief_stop_entropy AND there is a top candidate + ledger
+  # evidence. Locked to a conservative grid point; tunable via run_amas kwargs.
+  belief_stop_entropy: 0.5
+  belief_stop_conf: 0.80
 
 gate:
   name: conformal           # conformal | bayesian | oracle | random | off | sas_only

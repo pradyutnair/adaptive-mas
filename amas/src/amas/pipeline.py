@@ -72,6 +72,10 @@ class AmasResult:
     router_lane: str = "AUTO"
     router_reason: str = ""
     escalated_from_sas: bool = False
+    # Stage 10: belief-driven STOP. True if pipeline terminated MAS early because
+    # belief converged independent of any gate verdict (entropy < tau_stop AND
+    # top.net_score >= tau_score).
+    belief_stopped: bool = False
     elapsed_s: float = 0.0
     turns: list[TurnRecord] = field(default_factory=list)
     used_insight_ids: list[str] = field(default_factory=list)
@@ -152,6 +156,8 @@ async def run_amas(question: str, gold: Any, *,
                    probe_group_size: int = 3,
                    probe_topk: int = 5,
                    rollout_temperature: float = 0.0,
+                   belief_stop_entropy: float = 0.5,
+                   belief_stop_conf: float = 0.80,
                    ) -> AmasResult:
     """Run the AMAS pipeline.
 
@@ -353,6 +359,36 @@ async def run_amas(question: str, gold: Any, *,
             belief_top=(belief.top().to_dict() if belief.top() else None),
         )
         res.turns.append(rec)
+
+        # Stage 10: belief-driven STOP. Adaptive-depth signal independent of the
+        # gate's tau_high threshold. Fires when (i) verifier verdict is YES with
+        # high confidence, (ii) belief has converged (low entropy), (iii) there is
+        # a non-empty top candidate, and (iv) the ledger has accumulated evidence
+        # to back it. STOP never fires from belief alone — verifier signal required.
+        gate_info_dict = (gate_dec.info or {}) if gate_dec else {}
+        verifier_verdict = str(gate_info_dict.get("verdict", "")).upper()
+        try:
+            verifier_conf = float(gate_info_dict.get("confidence", 0.0))
+        except (TypeError, ValueError):
+            verifier_conf = 0.0
+        belief_top_now = belief.top()
+        belief_entropy_now = belief.entropy()
+        belief_stop_fired = (
+            gate_dec is not None
+            and verifier_verdict == "YES"
+            and verifier_conf >= belief_stop_conf
+            and belief_entropy_now < belief_stop_entropy
+            and belief_top_now is not None
+            and (belief_top_now.answer or "").strip() != ""
+            and len(ledger.entries) > 0
+        )
+        if belief_stop_fired:
+            res.belief_stopped = True
+            top = belief_top_now
+            res.final_answer = normalize_answer_span(top.answer, question=question)
+            res.n_turns = turn_idx
+            _finalize(res, gold, t0)
+            return res
 
         if gate_dec and gate_dec.action == GateAction.STOP:
             # belief.top() is the ensemble of probe + MAS by support scoring; keep it.
