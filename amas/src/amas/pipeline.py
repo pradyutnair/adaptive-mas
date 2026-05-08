@@ -65,17 +65,8 @@ class AmasResult:
     probe_tokens: int = 0
     gate_tokens: int = 0
     mas_tokens: int = 0
-    router_tokens: int = 0
     n_turns: int = 0
     sas_committed: bool = False
-    # Stage 4: SAS/MAS lane selected by the router after the probe runs.
-    router_lane: str = "AUTO"
-    router_reason: str = ""
-    escalated_from_sas: bool = False
-    # Stage 10: belief-driven STOP. True if pipeline terminated MAS early because
-    # belief converged independent of any gate verdict (entropy < tau_stop AND
-    # top.net_score >= tau_score).
-    belief_stopped: bool = False
     elapsed_s: float = 0.0
     turns: list[TurnRecord] = field(default_factory=list)
     used_insight_ids: list[str] = field(default_factory=list)
@@ -151,25 +142,15 @@ async def run_amas(question: str, gold: Any, *,
                    orchestrator: Orchestrator,
                    retriever: RetrieverClient,
                    openai_client: OpenAIClient,
-                   probe_client: Any | None = None,
                    t_max: int = 3,
                    probe_group_size: int = 3,
                    probe_topk: int = 5,
                    rollout_temperature: float = 0.0,
-                   belief_stop_entropy: float = 0.5,
-                   belief_stop_conf: float = 0.80,
                    ) -> AmasResult:
-    """Run the AMAS pipeline.
-
-    `probe_client` is the chat client used for the turn-0 probe. If unset, the
-    probe falls back to `openai_client` (legacy behaviour). For the cross-family
-    Qwen3-14B probe, callers should pass a VLLMClient as `probe_client`.
-    """
     t0 = time.time()
     ledger = Ledger()
     belief = BeliefState(top_k=5)
     qprofile = profile or profile_question(question, qid=qid)
-    probe_lm = probe_client if probe_client is not None else openai_client
 
     res = AmasResult(qid=qid, question=question, gold=gold, profile=qprofile,
                      gate=getattr(gate, "name", str(gate)),
@@ -177,7 +158,7 @@ async def run_amas(question: str, gold: Any, *,
 
     # ---- Turn 0: probe ----
     try:
-        probe = await run_probe(question, retriever=retriever, lm_client=probe_lm,
+        probe = await run_probe(question, retriever=retriever, openai_client=openai_client,
                                 ledger=ledger, belief=belief,
                                 topk=probe_topk, group_size=probe_group_size,
                                 temperature=0.7, turn=0)
@@ -186,30 +167,10 @@ async def run_amas(question: str, gold: Any, *,
         res.error = f"probe failed: {str(e)[:200]}"
         probe = None
 
-    # ---- Stage 4: router lane decision (SAS / MAS / AUTO) ----
-    router_lane = "AUTO"
-    if probe and probe.consensus_answer:
-        try:
-            agreement = float(probe.consensus_count) / float(max(1, len(probe.samples)))
-            router_lane, rinfo = await orchestrator.route_lane(
-                question, qprofile,
-                probe_answer=probe.consensus_answer,
-                probe_agreement=agreement,
-            )
-            res.router_lane = router_lane
-            res.router_reason = str(rinfo.get("reason", ""))
-            res.router_tokens = int(rinfo.get("tokens", 0))
-        except Exception as e:
-            logger.warning("router_lane failed: %s", e)
-            router_lane = "AUTO"
-            res.router_lane = "AUTO"
-            res.router_reason = f"router error: {str(e)[:80]}"
-
     # ---- Gate at turn 0 ----
     ctx: dict[str, Any] = {"gold": gold,
                             "passages": [],
                             "candidate": probe.consensus_answer if probe else "",
-                            "router_lane": router_lane,
                             }
     try:
         gate_dec = await gate.decide(question=question, ledger=ledger, belief=belief,
@@ -234,36 +195,7 @@ async def run_amas(question: str, gold: Any, *,
     )
     res.turns.append(rec0)
 
-    # Stage 4 lane policy: lane="MAS" forces multi-agent path even if the gate
-    # would have SAS-committed (router judged this is multi-hop). lane="SAS" or
-    # lane="AUTO" preserves the gate's SAS_COMMIT path. Escalation: lane="SAS"
-    # with a non-commit gate decision goes to MAS turn 1 with __rejected_probe__
-    # in agent context so MAS knows what the probe said and why it was rejected.
-    rejected_probe_msg = ""
-    # Escalation triggers only when the gate is an actual verifier and produced a
-    # non-commit decision. OffGate just disables the gate path, so a CONTINUE from
-    # it is not a real rejection and should not flag the probe as wrong.
-    gate_name = getattr(gate, "name", "")
-    if (
-        router_lane == "SAS"
-        and gate_dec
-        and gate_dec.action != GateAction.SAS_COMMIT
-        and gate_name != "off"
-    ):
-        res.escalated_from_sas = True
-        rejected_probe_msg = (
-            f"Probe answer was {probe.consensus_answer!r} but the verifier rejected "
-            f"it (action={gate_dec.action.value}, score={gate_dec.score:.2f}). "
-            f"Reason: {gate_dec.reason or '(none)'}. "
-            "Do not reuse this answer unless independently supported by fresh evidence "
-            "you find in the retrieval passages cited below."
-        )
-
-    if (
-        gate_dec and gate_dec.action == GateAction.SAS_COMMIT
-        and probe and probe.consensus_answer
-        and router_lane != "MAS"
-    ):
+    if gate_dec and gate_dec.action == GateAction.SAS_COMMIT and probe and probe.consensus_answer:
         res.sas_committed = True
         res.final_answer = normalize_answer_span(probe.consensus_answer, question=question)
         res.n_turns = 0
@@ -272,32 +204,13 @@ async def run_amas(question: str, gold: Any, *,
 
     # ---- MAS turns 1..t_max ----
     mutation_hint = ""
-    # Stage 4: lane filter for library retrieval inside sample_topology.
-    # router_lane="MAS" or SAS-escalation -> request MAS-lane (and "any") insights.
-    # router_lane="AUTO"/"SAS"-no-escalation -> legacy lane-agnostic retrieval.
-    if router_lane == "MAS" or res.escalated_from_sas:
-        lane_for_lib = "MAS"
-    else:
-        lane_for_lib = None
     for turn_idx in range(1, t_max + 1):
         try:
             topo, ids, sample_res = await orchestrator.sample_topology(
-                question, qprofile, temperature=rollout_temperature,
-                mutation_hint=mutation_hint, lane=lane_for_lib)
-            # Stage 1: pass ledger + belief summaries into agent contexts. MAS LLM
-            # agents read whatever evidence the pipeline has accumulated up to this
-            # turn (probe ingestion + earlier MAS turns). Topology sampling does
-            # NOT see ledger/belief at this stage — that is a deliberate scope cut.
-            agent_ctx = {
-                "__ledger__": ledger.summarize_for_agent(n=8),
-                "__belief__": belief.summarize(k=5),
-            }
-            if rejected_probe_msg:
-                agent_ctx["__rejected_probe__"] = rejected_probe_msg
+                question, qprofile, temperature=rollout_temperature, mutation_hint=mutation_hint)
             traj: Trajectory = await orchestrator.execute(
                 question, gold, topo, ids,
                 orch_tokens=sample_res.prompt_tokens + sample_res.completion_tokens,
-                ctx=agent_ctx,
             )
         except Exception as e:
             logger.warning("MAS turn %d failed: %s", turn_idx, e)
@@ -359,36 +272,6 @@ async def run_amas(question: str, gold: Any, *,
             belief_top=(belief.top().to_dict() if belief.top() else None),
         )
         res.turns.append(rec)
-
-        # Stage 10: belief-driven STOP. Adaptive-depth signal independent of the
-        # gate's tau_high threshold. Fires when (i) verifier verdict is YES with
-        # high confidence, (ii) belief has converged (low entropy), (iii) there is
-        # a non-empty top candidate, and (iv) the ledger has accumulated evidence
-        # to back it. STOP never fires from belief alone — verifier signal required.
-        gate_info_dict = (gate_dec.info or {}) if gate_dec else {}
-        verifier_verdict = str(gate_info_dict.get("verdict", "")).upper()
-        try:
-            verifier_conf = float(gate_info_dict.get("confidence", 0.0))
-        except (TypeError, ValueError):
-            verifier_conf = 0.0
-        belief_top_now = belief.top()
-        belief_entropy_now = belief.entropy()
-        belief_stop_fired = (
-            gate_dec is not None
-            and verifier_verdict == "YES"
-            and verifier_conf >= belief_stop_conf
-            and belief_entropy_now < belief_stop_entropy
-            and belief_top_now is not None
-            and (belief_top_now.answer or "").strip() != ""
-            and len(ledger.entries) > 0
-        )
-        if belief_stop_fired:
-            res.belief_stopped = True
-            top = belief_top_now
-            res.final_answer = normalize_answer_span(top.answer, question=question)
-            res.n_turns = turn_idx
-            _finalize(res, gold, t0)
-            return res
 
         if gate_dec and gate_dec.action == GateAction.STOP:
             # belief.top() is the ensemble of probe + MAS by support scoring; keep it.

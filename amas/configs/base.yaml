@@ -14,37 +14,17 @@ openai:
   temperature: 0.3
   concurrency: 24
 
-# Cross-family probe client. `kind: vllm` reuses the orchestrator's vLLM endpoints
-# unless `endpoints`/`model` are overridden here. `kind: openai` falls back to the
-# `openai` block above. Probe runs the SAS lane and seeds Belief State; making it
-# different model family from the conformal verifier is the structural choice
-# that keeps AMAS's "foreign verifier" claim intact.
-probe:
-  kind: vllm
-  model: Qwen/Qwen3-14B
-  max_tokens: 256
-  temperature: 0.7
-  concurrency: 16
-
 retriever:
   url: http://node408:8003/retrieve
   topk: 5
   concurrency: 8
 
 pipeline:
-  # T_max=2 enables adaptive depth: turn 1 always runs after probe; turn 2 fires
-  # only when neither the conformal gate nor the belief STOP terminate after turn 1.
-  t_max: 2
+  t_max: 1
   probe_group_size: 1
   probe_topk: 5
   rollout_temperature: 0.0
   eval_temperature: 0.0
-  # Stage 10: belief-driven STOP thresholds (mid-MAS adaptive termination).
-  # STOP fires when verifier verdict YES at conf >= belief_stop_conf AND
-  # belief.entropy() < belief_stop_entropy AND there is a top candidate + ledger
-  # evidence. Locked to a conservative grid point; tunable via run_amas kwargs.
-  belief_stop_entropy: 0.5
-  belief_stop_conf: 0.80
 
 gate:
   name: conformal           # conformal | bayesian | oracle | random | off | sas_only
@@ -54,12 +34,10 @@ gate:
   fallback_cost: 5000.0
 
 paths:
-  # Stage 5: AMAS-only experience library, no HERA warm-start. Library starts
-  # empty; entries are added during Stage 6 population (and later TF-GRPO).
-  exp_lib: exp_lib/amas_v1
-  results: results/amas_v1
-  prompts: exp_lib/amas_v1/prompts.json
-  library: exp_lib/amas_v1/library.json
+  exp_lib: exp_lib/run01
+  results: results/run01
+  prompts: exp_lib/run01/prompts.json
+  library: exp_lib/run01/library.json
 
 wandb:
   enabled: true

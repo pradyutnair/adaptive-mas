@@ -162,17 +162,9 @@ def rank_group(trajs: list[Trajectory]) -> list[Trajectory]:
 
 
 async def run_group_rollout(orchestrator: Orchestrator, query: str, gold: str | list[str],
-                             profile: str, group_size: int, temperature: float = 0.9,
-                             lane: str | None = "MAS") -> list[Trajectory]:
-    """Sample G topologies in parallel and execute each.
-
-    `lane` (default "MAS") is forwarded to sample_topology so library retrieval
-    is lane-aware: only entries with entry.lane in {lane, "any"} feed the
-    orchestrator prompt. GRPO trains the MAS lane, so MAS-tagged insights are
-    the relevant retrieval set. Pass `lane=None` to disable filtering.
-    """
-    sampling = [orchestrator.sample_topology(query, profile, temperature=temperature, lane=lane)
-                for _ in range(group_size)]
+                             profile: str, group_size: int, temperature: float = 0.9) -> list[Trajectory]:
+    """Sample G topologies in parallel and execute each."""
+    sampling = [orchestrator.sample_topology(query, profile, temperature=temperature) for _ in range(group_size)]
     sampled = await asyncio.gather(*sampling)
     exec_tasks = []
     for topo, ids, res in sampled:
@@ -391,7 +383,7 @@ async def topology_mutation_round(orchestrator: Orchestrator, vllm: VLLMClient,
         hint = "\n".join(prior + [f"  - identified failure source: {failed_agent}"])
         sampled = await asyncio.gather(*[
             orchestrator.sample_topology(query, profile, temperature=max(temperature, 0.95),
-                                           mutation_hint=hint, lane="MAS")
+                                           mutation_hint=hint)
             for _ in range(group_size)
         ])
         exec_tasks = []
