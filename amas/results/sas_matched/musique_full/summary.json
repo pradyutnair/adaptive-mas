@@ -1,0 +1,13 @@
+{
+  "method": "sas_matched",
+  "n": 1000,
+  "em": 0.064,
+  "f1": 0.14366768509268527,
+  "contain": 0.09,
+  "acc": 0.09,
+  "avg_tokens": 1643.108,
+  "elapsed_s": 7142.673342227936,
+  "thinking": true,
+  "max_tokens": 4096,
+  "questions": "/local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json"
+}

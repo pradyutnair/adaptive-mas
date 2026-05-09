@@ -1,0 +1,13 @@
+{
+  "method": "sas_matched",
+  "n": 125,
+  "em": 0.256,
+  "f1": 0.3605583305583306,
+  "contain": 0.328,
+  "acc": 0.328,
+  "avg_tokens": 1576.104,
+  "elapsed_s": 1026.4407510757446,
+  "thinking": true,
+  "max_tokens": 4096,
+  "questions": "/local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json"
+}

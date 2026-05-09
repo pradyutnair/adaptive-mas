@@ -1,0 +1,10 @@
+{
+  "dataset": "musique",
+  "n": 1000,
+  "em": 0.099,
+  "f1": 0.17256461422134797,
+  "contain": 0.129,
+  "acc": 0.129,
+  "avg_tokens": 8937.166,
+  "method": "HERA-repro-renormalized"
+}

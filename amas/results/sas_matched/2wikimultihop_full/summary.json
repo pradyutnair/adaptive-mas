@@ -1,0 +1,13 @@
+{
+  "method": "sas_matched",
+  "n": 1000,
+  "em": 0.21,
+  "f1": 0.28602736707736715,
+  "contain": 0.298,
+  "acc": 0.298,
+  "avg_tokens": 1482.767,
+  "elapsed_s": 5321.733101129532,
+  "thinking": true,
+  "max_tokens": 4096,
+  "questions": "/local/yzheng/pnair/data/2wikimultihop/questions_1000_seed42.json"
+}

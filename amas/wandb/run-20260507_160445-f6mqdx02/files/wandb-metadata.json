@@ -1,0 +1,59 @@
+{
+  "os":  "Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28",
+  "python":  "CPython 3.10.18",
+  "startedAt":  "2026-05-07T14:04:45.579181Z",
+  "args":  [
+    "--train-path",
+    "data/train_240_v2.jsonl",
+    "--out-dir",
+    "exp_lib/grpo_run01",
+    "--run-name",
+    "grpo_run01",
+    "--train-size",
+    "179",
+    "--group-size",
+    "4",
+    "--batch-size",
+    "10",
+    "--rollout-temperature",
+    "0.9",
+    "--rope-per-query",
+    "--rope-min-buffer",
+    "2",
+    "--rope-buffer",
+    "8",
+    "--rope-variants",
+    "3",
+    "--rope-max-failures",
+    "4",
+    "--library-max",
+    "30",
+    "--init-library",
+    "exp_lib/run01/library.json",
+    "--init-prompts",
+    "exp_lib/run01/prompts.json"
+  ],
+  "program":  "/local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/train_grpo.py",
+  "codePath":  "amas/scripts/train_grpo.py",
+  "codePathLocal":  "scripts/train_grpo.py",
+  "git":  {
+    "remote":  "git@github.com:pradyutnair/adaptive-mas.git",
+    "commit":  "09e1faa0d45f9c8cff550e5eb8ddde6b79d389d7"
+  },
+  "email":  "pradyut.nair@student.uva.nl",
+  "root":  "/local/yzheng/pnair/workspace/adaptive-mas/amas",
+  "host":  "node409",
+  "executable":  "/local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "disk":  {
+    "/":  {
+      "total":  "187420844032",
+      "used":  "6983471104"
+    }
+  },
+  "memory":  {
+    "total":  "118110580736"
+  },
+  "writerId":  "x59uoaoy922ct3dmesmfe7cit5vcdan6"
+}

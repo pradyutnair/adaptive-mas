@@ -1,0 +1,10 @@
+{
+  "dataset": "bamboogle",
+  "n": 125,
+  "em": 0.344,
+  "f1": 0.44765252525252525,
+  "contain": 0.36,
+  "acc": 0.36,
+  "avg_tokens": 8488.304,
+  "method": "HERA-repro-renormalized"
+}

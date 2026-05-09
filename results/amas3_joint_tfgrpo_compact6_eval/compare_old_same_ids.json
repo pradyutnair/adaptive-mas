@@ -1,0 +1,114 @@
+{
+  "musique": {
+    "compiled": {
+      "n": 50,
+      "em": 0.36,
+      "f1": 0.414,
+      "contain": 0.38,
+      "tok": 7550.74,
+      "planner": 875.4,
+      "solver": 4553.16,
+      "synth": 1720.02,
+      "rewrite": 196.84,
+      "sas": 205.32,
+      "sas_n": 3
+    },
+    "old_same_ids": {
+      "n": 50,
+      "em": 0.34,
+      "f1": 0.4137777777777778,
+      "contain": 0.4,
+      "tok": 10399.7,
+      "planner": 710.2,
+      "solver": 5048.24,
+      "synth": 4214.16,
+      "rewrite": 221.78,
+      "sas": 205.32,
+      "sas_n": 3
+    }
+  },
+  "hotpot": {
+    "compiled": {
+      "n": 50,
+      "em": 0.38,
+      "f1": 0.5210025062656642,
+      "contain": 0.4,
+      "tok": 8792.44,
+      "planner": 854.7,
+      "solver": 5216.42,
+      "synth": 1724.88,
+      "rewrite": 217.0,
+      "sas": 779.44,
+      "sas_n": 3
+    },
+    "old_same_ids": {
+      "n": 50,
+      "em": 0.42,
+      "f1": 0.5530025062656643,
+      "contain": 0.48,
+      "tok": 10102.68,
+      "planner": 693.1,
+      "solver": 4931.4,
+      "synth": 3591.66,
+      "rewrite": 133.06,
+      "sas": 753.46,
+      "sas_n": 3
+    }
+  },
+  "2wiki": {
+    "compiled": {
+      "n": 50,
+      "em": 0.48,
+      "f1": 0.536,
+      "contain": 0.58,
+      "tok": 7677.88,
+      "planner": 906.2,
+      "solver": 4591.32,
+      "synth": 1840.38,
+      "rewrite": 117.4,
+      "sas": 222.58,
+      "sas_n": 1
+    },
+    "old_same_ids": {
+      "n": 50,
+      "em": 0.44,
+      "f1": 0.5066666666666667,
+      "contain": 0.52,
+      "tok": 10929.06,
+      "planner": 741.58,
+      "solver": 5425.28,
+      "synth": 4387.3,
+      "rewrite": 151.82,
+      "sas": 223.08,
+      "sas_n": 1
+    }
+  },
+  "bamboogle": {
+    "compiled": {
+      "n": 50,
+      "em": 0.34,
+      "f1": 0.5065757575757576,
+      "contain": 0.4,
+      "tok": 6135.32,
+      "planner": 788.4,
+      "solver": 3248.52,
+      "synth": 1696.2,
+      "rewrite": 38.0,
+      "sas": 364.2,
+      "sas_n": 3
+    },
+    "old_same_ids": {
+      "n": 50,
+      "em": 0.38,
+      "f1": 0.5542424242424243,
+      "contain": 0.48,
+      "tok": 7914.9,
+      "planner": 631.62,
+      "solver": 3103.68,
+      "synth": 3783.58,
+      "rewrite": 31.8,
+      "sas": 364.22,
+      "sas_n": 3
+    }
+  }
+}

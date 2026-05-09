@@ -1,0 +1,38 @@
+{
+  "next_num": 5,
+  "max_entries": 30,
+  "entries": [
+    {
+      "id": "E-001",
+      "profile": "any",
+      "insight": "For temporal queries, ensure that the decomposition captures both the specific events and their chronological context. This helps in retrieving accurate and complete information for validation and answer generation.",
+      "utility": 0,
+      "uses": 2,
+      "rationale": "This is the first insight for temporal queries and is distinct, so it should be added."
+    },
+    {
+      "id": "E-002",
+      "profile": "any",
+      "insight": "For temporal queries, ensure that the decomposition captures both the specific events and their chronological context. This helps in retrieving accurate and complete information for validation and answer generation. Always validate that all required information is present in the retrieved context before proceeding to answer generation to prevent providing incomplete or incorrect answers.",
+      "utility": 0,
+      "uses": 2,
+      "rationale": "This insight complements the first one by emphasizing validation after retrieval, so they are merged."
+    },
+    {
+      "id": "E-003",
+      "profile": "any",
+      "insight": "For temporal queries, ensure that the decomposition captures both the specific events and their chronological context. This helps in retrieving accurate and complete information for validation and answer generation. Always validate that all required information is present in the retrieved context before proceeding to answer generation to prevent providing incomplete or incorrect answers. When answering temporal queries, focus on extracting and presenting the exact dates or events that match the query's requirements, rather than generalizing or focusing on unrelated details.",
+      "utility": 0,
+      "uses": 2,
+      "rationale": "This insight aligns with the merged entry by emphasizing precision in answering temporal queries, so it is merged."
+    },
+    {
+      "id": "E-004",
+      "profile": "any",
+      "insight": "For temporal queries, ensure that the decomposition captures both the specific events and their chronological context. This helps in retrieving accurate and complete information for validation and answer generation. Always validate that all required information is present in the retrieved context before proceeding to answer generation to prevent providing incomplete or incorrect answers. When answering temporal queries, focus on extracting and presenting the exact dates or events that match the query's requirements, rather than generalizing or focusing on unrelated details. Ensure that the retrieval process is guided by well-structured and specific sub-questions, as this increases the likelihood of retrieving relevant and complete information for validation and answer generation.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight complements the merged entry by emphasizing the importance of sub-questions in retrieval, so it is merged."
+    }
+  ]
+}

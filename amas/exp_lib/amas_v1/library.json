@@ -1,0 +1,285 @@
+{
+  "next_num": 32,
+  "max_entries": 40,
+  "entries": [
+    {
+      "id": "E-001",
+      "profile": "temporal",
+      "insight": "For temporal queries about historical events, use the MAS lane to ensure accurate retrieval of historical dates and context.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-002",
+      "profile": "intersection",
+      "insight": "For intersection queries, use multi-agent system to retrieve and cross-verify attributes of multiple entities.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-003",
+      "profile": "intersection",
+      "insight": "For intersection queries, verifying the shared attribute (e.g., being an author) across multiple entities can be efficiently resolved using a multi-agent system with a retriever and evidence selector.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-004",
+      "profile": "intersection",
+      "insight": "For intersection queries, verify the attributes of each entity independently before comparing them.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-005",
+      "profile": "bridge",
+      "insight": "For bridge queries requiring collaborative entity identification, use a multi-agent system to decompose and rewrite the query for precise retrieval.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-006",
+      "profile": "bridge",
+      "insight": "For bridge queries involving relationships between entities, use MAS lane to decompose and resolve indirect references.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-007",
+      "profile": "temporal",
+      "insight": "For temporal queries requiring precise dates, use the MAS lane with a topology that includes EvidenceSelector and ContextValidator to ensure accurate date extraction.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-008",
+      "profile": "temporal",
+      "insight": "For temporal queries involving historical military events, decomposing the query to identify key events and their chronological order improves accuracy in retrieving the correct answer.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-009",
+      "profile": "bridge",
+      "insight": "When answering bridge-type queries that link entities to events, validating the context with specific evidence ensures the correct association between the entity and the event.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-010",
+      "profile": "intersection",
+      "insight": "For intersection queries, verifying the shared attribute of multiple entities requires confirming each entity's individual status before confirming their intersection.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-011",
+      "profile": "bridge",
+      "insight": "For bridge-type queries involving multiple entities, use a multi-agent system to decompose and rephrase the query for accurate retrieval.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-012",
+      "profile": "intersection",
+      "insight": "For intersection queries, verify the origin of each entity separately before comparing attributes.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-013",
+      "profile": "bridge",
+      "insight": "When answering bridge queries, decompose the question into distinct components and use multiple agents to validate each part before synthesizing the final answer.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-014",
+      "profile": "any",
+      "insight": "Use MAS lane for verification queries involving classification of entities into categories like vegetables.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-015",
+      "profile": "comparison",
+      "insight": "For comparison queries involving birth dates, ensure the Retriever and EvidenceSelector prioritize accurate biographical data sources.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-016",
+      "profile": "temporal",
+      "insight": "For temporal queries involving product releases, ensure the timeline of events includes both the product launch and any relevant legal decisions.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-017",
+      "profile": "comparison",
+      "insight": "For comparison queries involving nationality or origin, use multi-agent systems to retrieve and compare data from reliable sources.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-018",
+      "profile": "intersection",
+      "insight": "For intersection queries, verifying the shared attribute (e.g., profession) of multiple entities requires confirming each entity's role independently before concluding the intersection.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-019",
+      "profile": "temporal",
+      "insight": "For temporal queries involving historical figures, use the MAS lane to ensure accurate date retrieval from structured historical records.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-020",
+      "profile": "any",
+      "insight": "Use MAS lane for verification queries that require checking the presence or absence of entities in specific locations.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-021",
+      "profile": "bridge",
+      "insight": "For bridge queries requiring multi-step reasoning, decompose the query into subtasks and use a MAS topology to sequentially address each component.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-022",
+      "profile": "bridge",
+      "insight": "For bridge queries, the MAS lane effectively handles direct factual questions about well-known authors and their works.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-023",
+      "profile": "bridge",
+      "insight": "For queries asking for the employer of a person based on their profession, use a multi-agent system to retrieve and verify the information from reliable sources.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-024",
+      "profile": "temporal",
+      "insight": "For temporal queries involving family relationships, decompose the query to first identify the individual and then retrieve their family members' details.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-025",
+      "profile": "bridge",
+      "insight": "For bridge queries requiring specific historical data, use a multi-agent system with a retriever focused on mining and industrial history.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-026",
+      "profile": "temporal",
+      "insight": "For temporal bridge queries, prioritize identifying the exact time frame and relevant events to narrow down the search for the correct entity or action.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-027",
+      "profile": "intersection",
+      "insight": "Use multi-agent system to validate shared characteristics across entities in intersection queries.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-028",
+      "profile": "intersection",
+      "insight": "For intersection queries, use multi-agent system to verify shared attributes across entities.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-029",
+      "profile": "temporal",
+      "insight": "For temporal queries, ensure the retrieval process includes both the entity and the event to accurately determine the timeline.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-030",
+      "profile": "bridge",
+      "insight": "Use MAS lane for queries requiring cross-referencing of geographic entities.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-031",
+      "profile": "bridge",
+      "insight": "For bridge queries, use the MAS lane to leverage multiple agents for accurate retrieval and verification of factual information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+START hotpotqa 2026-05-09T02:49:25+02:00
+Failed to initialize disk cache, falling back to memory-only cache: [Errno 122] Cache directory "/home/yzheng/.dspy_cache/000" does not exist and could not be created
+2026-05-09 02:50:00,413 INFO root | progress: 5/1000 (31.4s, 6.3s/q)
+2026-05-09 02:50:16,198 INFO root | progress: 10/1000 (47.1s, 4.7s/q)
+2026-05-09 02:50:32,500 INFO root | progress: 15/1000 (63.4s, 4.2s/q)
+2026-05-09 02:50:56,601 INFO root | progress: 20/1000 (87.5s, 4.4s/q)
+2026-05-09 02:51:15,369 INFO root | progress: 25/1000 (106.3s, 4.3s/q)
+2026-05-09 02:51:40,648 INFO root | progress: 30/1000 (131.6s, 4.4s/q)

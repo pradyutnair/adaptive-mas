@@ -1,0 +1,14 @@
+{
+  "n": 50,
+  "em": 0.38,
+  "f1": 0.6154848484848485,
+  "contain": 0.52,
+  "acc": 0.52,
+  "avg_tokens": 2711.5,
+  "avg_turns": 0.22,
+  "sas_rate": 0.78,
+  "elapsed_s": 67.46677708625793,
+  "gate": "conformal",
+  "config": "configs/base.yaml",
+  "questions": "/local/yzheng/pnair/data/hotpotqa/questions_1000_seed42.json"
+}

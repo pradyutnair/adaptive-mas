@@ -1,0 +1,4 @@
+Stopped after aligned v2 Hotpot partial failed against old baseline on same completed IDs.
+Current at 237 eval rows: EM 0.3840, F1 0.4891, contain 0.4219, mean tokens ~7813.
+Old on same completed IDs: EM 0.4219, F1 0.5106, contain 0.4557.
+Decision: compact Hotpot policy does not transfer to full-prefix distribution; do not scale this policy.

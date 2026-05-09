@@ -1,0 +1,13 @@
+{
+  "method": "sas_matched",
+  "n": 1000,
+  "em": 0.305,
+  "f1": 0.4357735393175797,
+  "contain": 0.406,
+  "acc": 0.407,
+  "avg_tokens": 1474.726,
+  "elapsed_s": 5747.99745798111,
+  "thinking": true,
+  "max_tokens": 4096,
+  "questions": "/local/yzheng/pnair/data/hotpotqa/questions_1000_seed42.json"
+}

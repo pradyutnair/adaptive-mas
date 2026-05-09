@@ -1,0 +1,42 @@
+[
+  {
+    "dataset": "musique",
+    "n": 1000,
+    "em": 0.099,
+    "f1": 0.17256461422134797,
+    "contain": 0.129,
+    "acc": 0.129,
+    "avg_tokens": 8937.166,
+    "method": "HERA-repro-renormalized"
+  },
+  {
+    "dataset": "hotpotqa",
+    "n": 1000,
+    "em": 0.31,
+    "f1": 0.43559911629179365,
+    "contain": 0.427,
+    "acc": 0.427,
+    "avg_tokens": 8410.68,
+    "method": "HERA-repro-renormalized"
+  },
+  {
+    "dataset": "2wikimultihop",
+    "n": 1000,
+    "em": 0.159,
+    "f1": 0.31733244027214613,
+    "contain": 0.386,
+    "acc": 0.386,
+    "avg_tokens": 9171.544,
+    "method": "HERA-repro-renormalized"
+  },
+  {
+    "dataset": "bamboogle",
+    "n": 125,
+    "em": 0.344,
+    "f1": 0.44765252525252525,
+    "contain": 0.36,
+    "acc": 0.36,
+    "avg_tokens": 8488.304,
+    "method": "HERA-repro-renormalized"
+  }
+]

@@ -1,0 +1,5 @@
+Stopped after MuSiQue passed and Hotpot partial failed.
+MuSiQue1000 v3 passed: EM 0.202, F1 0.2912, contain 0.229, mean tokens 7666.192.
+Hotpot partial failed at 281 eval rows: EM 0.395, F1 0.4835, contain 0.4199, mean tokens ~7025.
+Old Hotpot full baseline: EM 0.429, F1 0.5337, contain 0.470, mean tokens ~9674.
+Decision: keep MuSiQue v3 policy; run Hotpot-specific train-only TF-GRPO/GEPA correction before scaling Hotpot/remaining datasets.

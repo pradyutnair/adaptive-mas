@@ -1,0 +1,14 @@
+{
+  "n": 50,
+  "em": 0.34,
+  "f1": 0.39355555555555555,
+  "contain": 0.4,
+  "acc": 0.4,
+  "avg_tokens": 10216.52,
+  "avg_turns": 1.0,
+  "sas_rate": 0.0,
+  "elapsed_s": 202.33428049087524,
+  "gate": "off",
+  "config": "configs/base.yaml",
+  "questions": "/local/yzheng/pnair/data/2wikimultihop/questions_1000_seed42.json"
+}

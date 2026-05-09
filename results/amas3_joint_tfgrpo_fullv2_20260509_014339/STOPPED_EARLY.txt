@@ -1,0 +1,4 @@
+Stopped after MuSiQue1000 completed because full quality gate failed.
+MuSiQue v2: EM 0.192, F1 0.2766, contain 0.219, mean tokens 7232.853.
+Old MuSiQue full baseline: EM 0.193, F1 0.2881, contain 0.225, mean tokens ~10431.
+Decision: efficient but not better; do not scale remaining datasets under this policy. Continue MuSiQue-focused train-only TF-GRPO/GEPA correction.

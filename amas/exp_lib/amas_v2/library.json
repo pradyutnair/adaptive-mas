@@ -1,0 +1,87 @@
+{
+  "next_num": 152,
+  "max_entries": 40,
+  "entries": [
+    {
+      "id": "E-002",
+      "profile": "intersection",
+      "insight": "For intersection queries, use multi-agent system to retrieve and cross-verify attributes of multiple entities.",
+      "utility": 68,
+      "uses": 88,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-127",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, and validate the sufficiency of the context before allowing the AnswerGenerator or ConcludeAgent to finalize the response. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 20,
+      "uses": 56,
+      "rationale": "This insight is semantically similar to the first new insight and can be merged to create a more comprehensive entry for comparison queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-130",
+      "profile": "any",
+      "insight": "For temporal queries, always include a ContextValidator or ReflectAgent to detect missing information and generate follow-up queries. Additionally, ensure that the ReflectAgent is used to infer the correct timeline and event relationships when the ContextValidator identifies missing information, allowing the system to synthesize a coherent answer based on partial evidence.",
+      "utility": 38,
+      "uses": 136,
+      "rationale": "The new insight complements the existing entry E-122 by adding a specific role for the ReflectAgent in synthesizing answers from partial evidence.",
+      "lane": "any"
+    },
+    {
+      "id": "E-138",
+      "profile": "any",
+      "insight": "For causal queries, ensure that QueryDecomposition explicitly identifies the cause-effect relationship being investigated. This helps in retrieving and selecting evidence that directly addresses the causal mechanism.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-139",
+      "profile": "any",
+      "insight": "Use the EvidenceSelector to prioritize passages that explicitly mention the cause or effect in the query. Avoid selecting evidence that only provides background context without directly answering the causal question.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-140",
+      "profile": "any",
+      "insight": "The ContextValidator should be used to ensure that the selected evidence is sufficient to answer the causal question. If the evidence is insufficient, the system should either request additional retrieval or clarify the query.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-145",
+      "profile": "any",
+      "insight": "Use query rewriting to generate multiple variations of the question, but ensure that the system can detect when these variations fail to retrieve the necessary information and adjust accordingly. For comparison queries, optimize query rewriting to focus on retrieving the exact data points needed (e.g., specific birth dates) rather than generating redundant or overly broad queries.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight enhances E-125 by adding a specific optimization for comparison queries, improving the utility of query rewriting in this context.",
+      "lane": "any"
+    },
+    {
+      "id": "E-146",
+      "profile": "any",
+      "insight": "Include a ConcludeAgent after the ReflectAgent to ensure the final answer is complete and explicitly addresses all parts of the query. Ensure that the ConcludeAgent is explicitly tasked with synthesizing the final answer based on validated evidence and inferred knowledge, even when some data is missing.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight enhances E-135 by specifying the role of the ConcludeAgent in synthesizing answers with inferred knowledge, aligning with the existing strategy for finalizing responses.",
+      "lane": "any"
+    },
+    {
+      "id": "E-150",
+      "profile": "any",
+      "insight": "Avoid using agents like ReflectAgent and AnswerGenerator unless the ContextValidator has confirmed that the evidence is sufficient. Ensure that the ConcludeAgent only produces an answer when the evidence is validated and sufficient. Otherwise, it should return a clear indication that the query cannot be answered with the available information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries on the use of AnswerGenerator and ConcludeAgent, reinforcing the need for sufficient evidence before finalizing answers.",
+      "lane": "any"
+    }
+  ]
+}

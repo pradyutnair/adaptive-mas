@@ -1,0 +1,40 @@
+{
+  "os":  "Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28",
+  "python":  "CPython 3.10.18",
+  "startedAt":  "2026-05-07T10:05:06.682689Z",
+  "args":  [
+    "--questions",
+    "/local/yzheng/pnair/data/hotpotqa/questions_1000_seed42.json",
+    "--out-dir",
+    "results/p1_full/hotpotqa_bayesian",
+    "--n",
+    "1000",
+    "--seed",
+    "42",
+    "--gate",
+    "bayesian",
+    "--concurrency",
+    "12",
+    "--run-name",
+    "hotpotqa_bayesian_p1full"
+  ],
+  "program":  "/local/yzheng/pnair/workspace/amas/scripts/run_amas.py",
+  "codePath":  "scripts/run_amas.py",
+  "codePathLocal":  "scripts/run_amas.py",
+  "email":  "pradyut.nair@student.uva.nl",
+  "root":  "/local/yzheng/pnair/workspace/amas",
+  "host":  "node409",
+  "executable":  "/local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "disk":  {
+    "/":  {
+      "total":  "187420844032",
+      "used":  "7898681344"
+    }
+  },
+  "memory":  {
+    "total":  "118110580736"
+  },
+  "writerId":  "sdcg9hqvb80h4gy2aa13rdtbcewd727y"
+}

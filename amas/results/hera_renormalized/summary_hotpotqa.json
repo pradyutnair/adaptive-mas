@@ -1,0 +1,10 @@
+{
+  "dataset": "hotpotqa",
+  "n": 1000,
+  "em": 0.31,
+  "f1": 0.43559911629179365,
+  "contain": 0.427,
+  "acc": 0.427,
+  "avg_tokens": 8410.68,
+  "method": "HERA-repro-renormalized"
+}

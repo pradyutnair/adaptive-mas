@@ -1,0 +1,10 @@
+{
+  "dataset": "2wikimultihop",
+  "n": 1000,
+  "em": 0.159,
+  "f1": 0.31733244027214613,
+  "contain": 0.386,
+  "acc": 0.386,
+  "avg_tokens": 9171.544,
+  "method": "HERA-repro-renormalized"
+}

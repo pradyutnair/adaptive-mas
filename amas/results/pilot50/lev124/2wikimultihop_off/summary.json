@@ -1,0 +1,14 @@
+{
+  "n": 50,
+  "em": 0.36,
+  "f1": 0.4233809523809524,
+  "contain": 0.42,
+  "acc": 0.42,
+  "avg_tokens": 10609.84,
+  "avg_turns": 1.0,
+  "sas_rate": 0.0,
+  "elapsed_s": 228.30480337142944,
+  "gate": "off",
+  "config": "configs/lev124.yaml",
+  "questions": "/local/yzheng/pnair/data/2wikimultihop/questions_1000_seed42.json"
+}

@@ -1,0 +1,14 @@
+{
+  "n": 50,
+  "em": 0.08,
+  "f1": 0.13176190476190477,
+  "contain": 0.1,
+  "acc": 0.1,
+  "avg_tokens": 4852.16,
+  "avg_turns": 0.44,
+  "sas_rate": 0.56,
+  "elapsed_s": 182.81012654304504,
+  "gate": "conformal",
+  "config": "configs/lev1.yaml",
+  "questions": "/local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json"
+}

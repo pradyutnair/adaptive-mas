@@ -1,0 +1,1 @@
+{"tau_high": 0.7, "tau_low": -2.197, "alpha": 0.05, "n_calib": 198, "note": "operating-point v1 (loose); pre-calibration default that produced the v1 Pareto numbers. tau_high=6.91 is PAC-rigorous alpha=0.05 alternative; saved separately."}

@@ -1,0 +1,21 @@
+{
+  "n_total": 179,
+  "n_success_at_threshold": 63,
+  "threshold": 0.7,
+  "candidate_insights": 36,
+  "filtered_insights_count": {
+    "instance_specific": 29
+  },
+  "library_entries_after": 31,
+  "library_entries_added": 36,
+  "mean_em": 0.329608938547486,
+  "mean_f1": 0.40944473377581286,
+  "mean_tokens": 9625.268156424581,
+  "tokens_p50": 9857,
+  "tokens_p95": 12523,
+  "router_lane_distribution": {
+    "MAS": 179
+  },
+  "out_dir": "results/populate_amas_v1/20260507_205732",
+  "git_commit": "71ff6b1cc004bd6d60a329ee34658efd2776a734"
+}

@@ -1,0 +1,14 @@
+{
+  "n": 50,
+  "em": 0.5,
+  "f1": 0.650987012987013,
+  "contain": 0.54,
+  "acc": 0.54,
+  "avg_tokens": 3960.4,
+  "avg_turns": 0.34,
+  "sas_rate": 0.66,
+  "elapsed_s": 169.25070357322693,
+  "gate": "conformal",
+  "config": "configs/lev124.yaml",
+  "questions": "/local/yzheng/pnair/data/hotpotqa/questions_1000_seed42.json"
+}

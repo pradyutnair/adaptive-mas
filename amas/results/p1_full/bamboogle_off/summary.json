@@ -1,0 +1,14 @@
+{
+  "n": 125,
+  "em": 0.392,
+  "f1": 0.5149333333333332,
+  "contain": 0.4,
+  "acc": 0.4,
+  "avg_tokens": 8975.224,
+  "avg_turns": 1.0,
+  "sas_rate": 0.0,
+  "elapsed_s": 907.2643399238586,
+  "gate": "off",
+  "config": "configs/base.yaml",
+  "questions": "/local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json"
+}

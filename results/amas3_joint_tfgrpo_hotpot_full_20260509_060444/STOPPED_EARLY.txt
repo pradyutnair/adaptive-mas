@@ -1,0 +1,4 @@
+Stopped after Hotpot partial failed against old baseline on the same completed IDs.
+Current at 241 eval rows: EM 0.3817, F1 0.4857, contain 0.4149, mean tokens ~7786.
+Old on same completed IDs: EM 0.4132, F1 0.5042, contain 0.4463.
+Decision: do not scale this Hotpot policy; continue Hotpot-specific correction.

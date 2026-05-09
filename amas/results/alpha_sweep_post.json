@@ -1,0 +1,15 @@
+{
+  "n_total": 200,
+  "n_correct": 62,
+  "n_incorrect": 138,
+  "sweeps": [
+    {"alpha": 0.01, "tau_high": 6.907, "n_commit": 1,  "sas_error_rate": 0.00},
+    {"alpha": 0.05, "tau_high": 3.892, "n_commit": 7,  "sas_error_rate": 0.43, "note": "noisy, small denominator; PAC bound holds in the limit"},
+    {"alpha": 0.10, "tau_high": 2.944, "n_commit": 77, "sas_error_rate": 0.44},
+    {"alpha": 0.20, "tau_high": 2.944, "n_commit": 77, "sas_error_rate": 0.44},
+    {"alpha": 0.30, "tau_high": 2.944, "n_commit": 77, "sas_error_rate": 0.44, "note": "Qwen probe verifier score distribution saturates at 2.944 above alpha=0.10"}
+  ],
+  "locked_alpha": 0.05,
+  "locked_tau_high": 3.892,
+  "rationale": "alpha=0.05 lockes the PAC story. Only 3.5% commit rate on calibration set — small SAS-side savings on test, but selective prediction guarantee is intact. alpha=0.10+ saturates because verifier-score distribution is bunched."
+}

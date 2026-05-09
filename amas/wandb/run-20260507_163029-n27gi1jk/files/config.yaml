@@ -1,0 +1,67 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        code_path: code/amas/scripts/sweep_alpha.py
+        e:
+            0f2teq2pnfars9e9opf0t5pugiz0260z:
+                args:
+                    - --questions
+                    - /local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json
+                    - --out-dir
+                    - results/alpha_sweep
+                    - --calib-raw
+                    - results/route_a_calibration.raw.jsonl
+                    - --n
+                    - "100"
+                    - --seed
+                    - "42"
+                    - --concurrency
+                    - "6"
+                    - --alphas
+                    - 0.05,0.2,0.5
+                codePath: amas/scripts/sweep_alpha.py
+                codePathLocal: scripts/sweep_alpha.py
+                cpu_count: 24
+                cpu_count_logical: 48
+                disk:
+                    /:
+                        total: "187420844032"
+                        used: "6983667712"
+                email: pradyut.nair@student.uva.nl
+                executable: /local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python
+                git:
+                    commit: 09e1faa0d45f9c8cff550e5eb8ddde6b79d389d7
+                    remote: git@github.com:pradyutnair/adaptive-mas.git
+                host: node409
+                memory:
+                    total: "118110580736"
+                os: Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28
+                program: /local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/sweep_alpha.py
+                python: CPython 3.10.18
+                root: /local/yzheng/pnair/workspace/adaptive-mas/amas
+                startedAt: "2026-05-07T14:30:29.072235Z"
+                writerId: 0f2teq2pnfars9e9opf0t5pugiz0260z
+        m: []
+        python_version: 3.10.18
+        t:
+            "1":
+                - 95
+            "2":
+                - 95
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.10.18
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+alphas:
+    value:
+        - 0.05
+        - 0.2
+        - 0.5
+"n":
+    value: 100

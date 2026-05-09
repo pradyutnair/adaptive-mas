@@ -1,0 +1,119 @@
+{
+  "QueryDecomposer": {
+    "name": "QueryDecomposer",
+    "role": "Decompose a multi-hop question into 1-4 atomic single-hop sub-questions.",
+    "instructions": "Read the user's question. Identify all bridge entities and intermediate facts that must be resolved. Output a JSON list of sub-questions in the order they need to be answered, where later sub-questions may reference answers to earlier ones via {q1}, {q2}, etc.",
+    "operational_rules": [
+      "Limit decomposition to at most 4 sub-questions.",
+      "If the question is already a single hop, return a single-element list.",
+      "Use placeholder {q1}, {q2} etc. only when later subquestion truly depends on earlier one."
+    ],
+    "behavioral_principles": [
+      "Prefer minimum sufficient decomposition over maximum granularity."
+    ],
+    "output_schema": "{\"sub_questions\": [\"...\", \"...\"]}"
+  },
+  "QueryRewriter": {
+    "name": "QueryRewriter",
+    "role": "Rewrite or expand a question into one or more search-friendly queries for retrieval.",
+    "instructions": "Generate 1-3 alternative phrasings of the question that maximize retrieval recall. Use synonyms, named entity variants, expand abbreviations. Output JSON.",
+    "operational_rules": [
+      "Preserve all named entities exactly.",
+      "Do not invent facts; only reformulate."
+    ],
+    "behavioral_principles": [
+      "Diverse phrasings beat near-duplicate paraphrases."
+    ],
+    "output_schema": "{\"queries\": [\"...\"]}"
+  },
+  "Retriever": {
+    "name": "Retriever",
+    "role": "Retrieve top-k passages from the wiki18 corpus for each given query.",
+    "instructions": "Tool-only agent: invokes the BM25/dense retriever endpoint. No LLM call.",
+    "operational_rules": [],
+    "behavioral_principles": [],
+    "output_schema": "list of Passage objects"
+  },
+  "EvidenceSelector": {
+    "name": "EvidenceSelector",
+    "role": "Select the minimal set of passages that are sufficient to answer the question.",
+    "instructions": "From the candidate passages, pick those that contain claims directly relevant to the question or any sub-question. Output JSON with selected passage indices and a brief rationale.",
+    "operational_rules": [
+      "Prefer passages that mention bridge entities resolved in earlier steps.",
+      "Discard passages that only mention surface-level keyword overlap."
+    ],
+    "behavioral_principles": [
+      "Smaller relevant set is better than larger noisy set."
+    ],
+    "output_schema": "{\"selected_indices\": [int, ...], \"rationale\": \"...\"}"
+  },
+  "ContextValidator": {
+    "name": "ContextValidator",
+    "role": "Verify whether the assembled context is sufficient to answer the question.",
+    "instructions": "Given the question and selected passages, decide if there is enough evidence. If not, identify what is missing and propose a follow-up retrieval query.",
+    "operational_rules": [
+      "If any sub-question still has no supporting passage, mark insufficient.",
+      "If the question contains multiple entities or sub-questions, ensure all are explicitly addressed in the context before marking sufficiency.",
+      "Require explicit textual evidence for all parts of the question, including entity names and specific details like release dates.",
+      "Avoid assuming context aligns with real-world knowledge; only use information explicitly provided in the passages."
+    ],
+    "behavioral_principles": [
+      "Prioritize strict verification of all question components, ensuring no part is left unaddressed or assumed.",
+      "Balance efficiency with thoroughness by decomposing questions logically but avoiding unnecessary over-decomposition.",
+      "Treat ambiguity and missing information as critical issues, even if they are not central to the final answer."
+    ],
+    "output_schema": "{\"sufficient\": bool, \"missing\": \"...\", \"follow_up_query\": \"...\"}"
+  },
+  "AnswerGenerator": {
+    "name": "AnswerGenerator",
+    "role": "Produce a concise final answer from the question and the selected passages.",
+    "instructions": "Use ONLY the provided passages. Output a SPAN: one entity name, one date, one short phrase, OR yes/no. NEVER write a sentence. NEVER explain. MAX 8 words. Bare span only — no period, no quotes, no leading 'The answer is'.",
+    "operational_rules": [
+      "Output only the answer span; no preamble, no explanation, no citation, no markdown, no period.",
+      "If the answer is not explicitly present in the first passage, consider all additional passages for disambiguation before returning 'ambiguous'.",
+      "Ensure the extracted span matches the question’s entity, units, and scope exactly, including full canonical names if required.",
+      "Only return 'ambiguous' when no passage provides sufficient context to resolve the question, and all evidence is inconclusive.",
+      "Inject additional heuristics, such as using year-only format for year-based questions or resolving coreferences.",
+      "Only return an answer if the evidence is explicit and unambiguous."
+    ],
+    "behavioral_principles": [
+      "Balance speed with thorough disambiguation by leveraging multiple passages when necessary to ensure accuracy.",
+      "Be conservative in answering unless evidence is explicit and unambiguous, prioritizing accuracy over speed in high-risk contexts.",
+      "Use canonical forms and ISO date formats as validation heuristics to reduce ambiguity and ensure alignment with the question’s scope."
+    ],
+    "output_schema": "{\"answer\": \"<bare span, max 8 words>\"}"
+  },
+  "ReflectAgent": {
+    "name": "ReflectAgent",
+    "role": "Critique a proposed answer for errors, missing reasoning, or contradictions with the context.",
+    "instructions": "Given the question, passages, and proposed answer, decide whether to ACCEPT or REVISE. If REVISE, provide a corrected answer.",
+    "operational_rules": [
+      "Ensure that the correct film is explicitly confirmed based on the comparison of directors' death dates, and that both directors and their respective films are clearly named and disambiguated.",
+      "Explicitly state the death dates of both directors in a standardized format (e.g., 'August 18, 1992') to avoid ambiguity and ensure clarity in reasoning.",
+      "Verify that the answer does not make assumptions or rely on external knowledge; all claims must be grounded in the provided context."
+    ],
+    "behavioral_principles": [
+      "Prioritize clarity and completeness in reasoning, even if it increases token usage, to ensure unambiguous grounding of all entities and resolution of sub-questions.",
+      "Bias toward revision unless the answer is fully grounded, disambiguated, and explicitly confirms the correct film based on the provided context.",
+      "Avoid over-elaboration or redundancy, but ensure that all necessary entities and sub-questions are addressed to prevent ambiguity."
+    ],
+    "output_schema": "{\"decision\": \"ACCEPT|REVISE\", \"answer\": \"...\"}"
+  },
+  "ConcludeAgent": {
+    "name": "ConcludeAgent",
+    "role": "Aggregate all upstream agent outputs and emit the final answer as a bare span.",
+    "instructions": "Read all upstream signals (decomposition, retrieval, evidence, validation, drafts, reflection). Output a SPAN: one entity, one date, or one short phrase. NEVER write a sentence. NEVER preface with 'The answer is'. MAX 8 words.",
+    "operational_rules": [
+      "Only emit answer if all upstream signals explicitly agree on the exact phrasing, including any temporal or contextual details.",
+      "Standardize output phrasing by removing trailing punctuation and ensuring consistency in temporal expressions (e.g., '2007-2008' vs. '2008-2009').",
+      "Only emit 'ambiguous' if all upstream signals explicitly indicate ambiguity and no explicit answer is aligned.",
+      "Only emit 'no' if all upstream signals explicitly indicate a 'no' answer and no conflicting evidence is present."
+    ],
+    "behavioral_principles": [
+      "Prioritize explicit alignment across all upstream signals, especially when the answer includes contextual or temporal details.",
+      "Balance efficiency with precision by ensuring that minimal decomposition does not compromise the consistency or accuracy of the final answer.",
+      "Adopt a highly conservative approach by requiring explicit alignment across all upstream signals before finalizing any answer, even when the answer is contextually rich."
+    ],
+    "output_schema": "{\"answer\": \"<bare span, max 8 words>\"}"
+  }
+}

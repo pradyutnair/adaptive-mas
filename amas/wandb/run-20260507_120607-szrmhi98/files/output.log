@@ -1,0 +1,17 @@
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+bamboogle_125: 100%|██████████| 125/125 [17:06<00:00,  8.21s/it]
+{
+  "method": "sas_matched",
+  "n": 125,
+  "em": 0.256,
+  "f1": 0.3605583305583306,
+  "contain": 0.328,
+  "acc": 0.328,
+  "avg_tokens": 1576.104,
+  "elapsed_s": 1026.4407510757446,
+  "thinking": true,
+  "max_tokens": 4096,
+  "questions": "/local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json"
+}

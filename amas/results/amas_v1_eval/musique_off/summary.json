@@ -1,0 +1,14 @@
+{
+  "n": 1000,
+  "em": 0.107,
+  "f1": 0.20997265389409378,
+  "contain": 0.139,
+  "acc": 0.139,
+  "avg_tokens": 11513.876,
+  "avg_turns": 1.0,
+  "sas_rate": 0.0,
+  "elapsed_s": 2198.6385984420776,
+  "gate": "off",
+  "config": "configs/base.yaml",
+  "questions": "/local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json"
+}

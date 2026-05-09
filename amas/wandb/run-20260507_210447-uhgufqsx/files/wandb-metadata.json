@@ -1,0 +1,38 @@
+{
+  "os":  "Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28",
+  "python":  "CPython 3.10.18",
+  "startedAt":  "2026-05-07T19:04:47.576351Z",
+  "args":  [
+    "--questions",
+    "/local/yzheng/pnair/workspace/reproduction/hera/data/routeA_calib_200.jsonl",
+    "--concurrency",
+    "16",
+    "--alpha",
+    "0.05",
+    "--out",
+    "results/route_a_calibration.json"
+  ],
+  "program":  "/local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/calibrate_routeA.py",
+  "codePath":  "amas/scripts/calibrate_routeA.py",
+  "codePathLocal":  "scripts/calibrate_routeA.py",
+  "git":  {
+    "remote":  "git@github.com:pradyutnair/adaptive-mas.git",
+    "commit":  "71ff6b1cc004bd6d60a329ee34658efd2776a734"
+  },
+  "email":  "pradyut.nair@student.uva.nl",
+  "root":  "/local/yzheng/pnair/workspace/adaptive-mas/amas",
+  "host":  "node409",
+  "executable":  "/local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "disk":  {
+    "/":  {
+      "total":  "187420844032",
+      "used":  "6975221760"
+    }
+  },
+  "memory":  {
+    "total":  "118110580736"
+  },
+  "writerId":  "0noggky7ti9lu4l5cz770wpca28zzln6"
+}

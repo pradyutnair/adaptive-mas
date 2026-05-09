@@ -1,0 +1,897 @@
+[
+  {
+    "id": "2hop__59308_11211",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac3b879554299204fd21e17",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__71940_39199",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__46304_83854",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5adcd8985542992c1e3a242d",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5a84ad845542997b5ce3ff0b",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__41221_84668",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "4b6214bf084e11ebbd56ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ab568c9554299494045efb0",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a90771e55429916514e74cc",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5a83088a55429966c78a6afc",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "b480c3e409c211ebbdb0ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a8cefa355429941ae14df54",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__62735_471321",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a7792435542995d831811e4",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__26935_85063",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__72296_18135",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "c50978da086111ebbd5dac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "ff8484be087511ebbd67ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ab1c5105542997061209561",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5adeb3715542995534e8c6da",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab488f85542990594ba9c58",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "cdf23bf1099511ebbdb0ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "e57878680bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__117333_421693",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__2737_2913",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5f82e01f08f211ebbdaaac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ae0de5d5542990adbacf692",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__245233_36134",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__2961_2998",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "dea0b81e0bd911eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a77bd595542995d83181291",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__143456_782099",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac1bc0e5542994ab5c67dea",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "514f218c08c111ebbd8bac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__62507_403930",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a7972835542994bb945700e",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__582734_777968",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__856003_56335",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a8e002c5542995085b37371",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "37e4b1a20bdd11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5adf72205542992d7e9f935e",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__637219_53204",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab31d43554299233954ff0e",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__75933_446818",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "06836006092311ebbdaeac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "d9b75424089211ebbd74ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5adfcfd855429925eb1afa9e",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "f8ee9c840bdb11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a7179445542994082a3e84c",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5a73f2265542993a88ae2ea9",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "aea3156008ec11ebbda7ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ab67813554299710c8d1ea5",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "0128ded20bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a81f60e55429903bc27ba09",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__776442_127916",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__5527_29346",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__667140_56101",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "9e841e45087611ebbd67ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "01d26b440bde11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__810899_126906",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "813cfc3a086b11ebbd5fac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "fd7b460208da11ebbd9cac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__14164_14184",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac538ef5542994611c8b437",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "b0e2b8b60bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "f88a202b08c911ebbd92ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__503938_28376",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a78b59d554299148911f958",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__14164_60600",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "f5cbfbd60bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "be8f6d1208ce11ebbd94ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__64591_24792",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__75710_66282",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__45769_82816",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "7e77e30709bd11ebbdb0ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a8c738d554299653c1aa06f",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "4c19d4de08c911ebbd92ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5abe690055429965af743ef5",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__18305_20957",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "01b804d60bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__14959_51888",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a837d4b554299123d8c213d",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "11bd17ca08af11ebbd83ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a8885b4554299206df2b2e4",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__30913_30900",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__47086_770460",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__41219_61968",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "0bff8cb0088b11ebbd6fac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a87ecb85542993e715ac00f",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "ba844d6a0bd911eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "0858493208f711ebbdaaac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "ecbcf033085711ebbd5aac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "3a3a823a087011ebbd62ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__25985_864388",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__2846_2741",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab9fe8755429901930fa767",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__64650_32505",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac012425542996f0d89cb1a",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5adda9d35542997dc790700e",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "4cf7f3e80bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ade127f55429939a52fe7eb",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__325567_158069",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__983_92923",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "cbe4923c08c211ebbd8cac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a7a1bb25542996a35c170d2",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__2928_2741",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a7149f45542994082a3e777",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a80061d5542992bc0c4a682",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "36525d1e0bdb11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "4eec3b540bdd11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__852_41721",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "7fd2c60c0bdd11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "8b37df05089111ebbd73ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__97093_42092",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__52445_18135",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a8ba62d554299240d9c205c",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac3beb75542995ef918c20b",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "0372fcda0bdd11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__503938_154727",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__312585_2998",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__775856_159045",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__617536_62031",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab98b2d554299131ca4236e",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "afdad3de087011ebbd63ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a775b8b5542994aec3b72a7",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__983_40795",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__98134_42092",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__64591_24815",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ae0ae595542993d6555ec12",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ac2460955429951e9e68518",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "149dddc0086511ebbd5eac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2499e222087f11ebbd6bac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__97238_42092",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ae1fc135542997283cd2309",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5abeef545542993fe9a41da7",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "8c791f3a085111ebbd58ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a7738dc554299373536021f",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "792cd4d60bd911eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__427311_20093",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab433675542991751b4d6e6",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a7b970c554299294a54aa0b",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__83349_61033",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "be8812200bd911eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__93350_56335",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__374395_2630",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5abc2e3d554299114383a0f6",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "5adcebc15542994d58a2f717",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "2hop__216409_154727",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "af66aade086311ebbd5eac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5ae0eb395542990adbacf6cb",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__18305_16154",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__654531_52667",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "891a5cce0bd911eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a90883955429933b8a2053c",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__887_41721",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__18115_18135",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__96989_336223",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "8ab73dfa08b311ebbd86ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__550790_42092",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__216409_42092",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5ab49a5f55429942dd415f76",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__370027_127008",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__550790_154727",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "4b58cae608dd11ebbd9dac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__802256_89145",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__824500_69926",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "dac76732087411ebbd67ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "b6ec67b1089211ebbd74ac1f6bf848b6",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "2hop__18025_34539",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5adf53885542995ec70e8fc5",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__248486_85512",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "a7da68e00bdc11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a7d7c745542995f4f40227f",
+    "source": "hotpotqa",
+    "question_type": "comparison"
+  },
+  {
+    "id": "1e3ba4ac0bda11eba7f7acde48001122",
+    "source": "2wikimultihop",
+    "question_type": ""
+  },
+  {
+    "id": "5a7f4bdd5542994857a766e0",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "5a7e7bf455429949594199d6",
+    "source": "hotpotqa",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__2747_2913",
+    "source": "musique",
+    "question_type": "bridge"
+  },
+  {
+    "id": "2hop__85583_51888",
+    "source": "musique",
+    "question_type": "bridge"
+  }
+]

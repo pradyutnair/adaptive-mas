@@ -1,0 +1,1 @@
+{"_timestamp":1.7781472401525347e+09,"eval/avg_tokens":819.536,"_step":0,"eval/n":125,"eval/em":0.312,"eval/elapsed_s":159.72781038284302,"_wandb":{"runtime":160},"_runtime":160,"eval/f1":0.4130666666666667,"eval/avg_turns":0,"eval/contain":0.328,"eval/acc":0.328,"eval/sas_rate":1}

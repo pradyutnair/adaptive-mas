@@ -1,0 +1,68 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        code_path: code/amas/scripts/sweep_tau_b.py
+        e:
+            sbvdwu0fs7h6siqnxn25ba55q107t8cf:
+                args:
+                    - --questions
+                    - /local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json
+                    - --out-dir
+                    - results/tau_b_sweep_v2
+                    - --n
+                    - "200"
+                    - --seed
+                    - "42"
+                    - --concurrency
+                    - "8"
+                    - --taus
+                    - 0.7,0.9,1.0,1.1,1.2,1.3
+                codePath: amas/scripts/sweep_tau_b.py
+                codePathLocal: scripts/sweep_tau_b.py
+                cpu_count: 24
+                cpu_count_logical: 48
+                disk:
+                    /:
+                        total: "187420844032"
+                        used: "6983397376"
+                email: pradyut.nair@student.uva.nl
+                executable: /local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python
+                git:
+                    commit: 09e1faa0d45f9c8cff550e5eb8ddde6b79d389d7
+                    remote: git@github.com:pradyutnair/adaptive-mas.git
+                host: node409
+                memory:
+                    total: "118110580736"
+                os: Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28
+                program: /local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/sweep_tau_b.py
+                python: CPython 3.10.18
+                root: /local/yzheng/pnair/workspace/adaptive-mas/amas
+                startedAt: "2026-05-07T13:54:21.600535Z"
+                writerId: sbvdwu0fs7h6siqnxn25ba55q107t8cf
+        m: []
+        python_version: 3.10.18
+        t:
+            "1":
+                - 95
+            "2":
+                - 95
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.10.18
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+"n":
+    value: 200
+taus:
+    value:
+        - 0.7
+        - 0.9
+        - 1
+        - 1.1
+        - 1.2
+        - 1.3

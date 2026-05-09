@@ -1,0 +1,23 @@
+{
+  "git_commit": "71ff6b1cc004bd6d60a329ee34658efd2776a734",
+  "config_path": "configs/base.yaml",
+  "questions_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n": 179,
+  "threshold": 0.7,
+  "concurrency": 16,
+  "force": true,
+  "forced_lane": "MAS",
+  "gate": "off",
+  "vllm_model": "Qwen/Qwen3-14B",
+  "vllm_endpoints": [
+    "http://localhost:8001/v1",
+    "http://localhost:8002/v1",
+    "http://localhost:8003/v1"
+  ],
+  "openai_model": "gpt-4o-mini",
+  "retriever_url": "http://node408:8003/retrieve",
+  "retriever_topk": 5,
+  "library_path": "exp_lib/amas_v1/library.json",
+  "prompts_path": "exp_lib/amas_v1/prompts.json",
+  "out_dir": "results/populate_amas_v1/20260507_205732"
+}

@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28",
+  "python":  "CPython 3.10.18",
+  "startedAt":  "2026-05-07T13:54:21.600535Z",
+  "args":  [
+    "--questions",
+    "/local/yzheng/pnair/data/musique/questions_1000_seedfull_combined.json",
+    "--out-dir",
+    "results/tau_b_sweep_v2",
+    "--n",
+    "200",
+    "--seed",
+    "42",
+    "--concurrency",
+    "8",
+    "--taus",
+    "0.7,0.9,1.0,1.1,1.2,1.3"
+  ],
+  "program":  "/local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/sweep_tau_b.py",
+  "codePath":  "amas/scripts/sweep_tau_b.py",
+  "codePathLocal":  "scripts/sweep_tau_b.py",
+  "git":  {
+    "remote":  "git@github.com:pradyutnair/adaptive-mas.git",
+    "commit":  "09e1faa0d45f9c8cff550e5eb8ddde6b79d389d7"
+  },
+  "email":  "pradyut.nair@student.uva.nl",
+  "root":  "/local/yzheng/pnair/workspace/adaptive-mas/amas",
+  "host":  "node409",
+  "executable":  "/local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python",
+  "cpu_count":  24,
+  "cpu_count_logical":  48,
+  "disk":  {
+    "/":  {
+      "total":  "187420844032",
+      "used":  "6983397376"
+    }
+  },
+  "memory":  {
+    "total":  "118110580736"
+  },
+  "writerId":  "sbvdwu0fs7h6siqnxn25ba55q107t8cf"
+}

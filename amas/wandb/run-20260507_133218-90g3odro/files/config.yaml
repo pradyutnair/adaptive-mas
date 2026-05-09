@@ -1,0 +1,83 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        code_path: code/amas/scripts/run_amas.py
+        e:
+            bcd6pw0w8mwyte58fo33q523b52rnk4c:
+                args:
+                    - --questions
+                    - /local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json
+                    - --out-dir
+                    - results/p1_full_calib/bamboogle_conformal
+                    - --n
+                    - "125"
+                    - --seed
+                    - "42"
+                    - --gate
+                    - conformal
+                    - --concurrency
+                    - "10"
+                    - --run-name
+                    - bamboogle_conformal_calib
+                codePath: amas/scripts/run_amas.py
+                codePathLocal: scripts/run_amas.py
+                cpu_count: 24
+                cpu_count_logical: 48
+                disk:
+                    /:
+                        total: "187420844032"
+                        used: "7002832896"
+                email: pradyut.nair@student.uva.nl
+                executable: /local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python
+                git:
+                    commit: 0ed52c195927adcdc688c8c94c0f944dd36e1150
+                    remote: git@github.com:pradyutnair/adaptive-mas.git
+                host: node409
+                memory:
+                    total: "118110580736"
+                os: Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28
+                program: /local/yzheng/pnair/workspace/adaptive-mas/amas/scripts/run_amas.py
+                python: CPython 3.10.18
+                root: /local/yzheng/pnair/workspace/adaptive-mas/amas
+                startedAt: "2026-05-07T11:32:18.788274Z"
+                writerId: bcd6pw0w8mwyte58fo33q523b52rnk4c
+        m: []
+        python_version: 3.10.18
+        t:
+            "1":
+                - 95
+            "2":
+                - 95
+            "3":
+                - 13
+                - 16
+            "4": 3.10.18
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+gate:
+    value:
+        alpha: 0.05
+        calib_path: results/route_a_calibration.json
+        fallback_cost: 5000
+        lambda: 0.0008
+        name: conformal
+"n":
+    value: 125
+openai_model:
+    value: gpt-4o-mini
+pipeline:
+    value:
+        eval_temperature: 0
+        probe_group_size: 1
+        probe_topk: 5
+        rollout_temperature: 0
+        t_max: 1
+questions:
+    value: /local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json
+retriever_topk:
+    value: 5
+vllm_model:
+    value: Qwen/Qwen3-14B

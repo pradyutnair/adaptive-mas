@@ -1,0 +1,213 @@
+{
+  "next_num": 92,
+  "max_entries": 40,
+  "entries": [
+    {
+      "id": "E-001",
+      "profile": "temporal",
+      "insight": "For temporal queries about historical events, use the MAS lane to ensure accurate retrieval of historical dates and context.",
+      "utility": 29,
+      "uses": 68,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-002",
+      "profile": "intersection",
+      "insight": "For intersection queries, use multi-agent system to retrieve and cross-verify attributes of multiple entities.",
+      "utility": 30,
+      "uses": 36,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-012",
+      "profile": "intersection",
+      "insight": "For intersection queries, verify the origin of each entity separately before comparing attributes.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-018",
+      "profile": "intersection",
+      "insight": "For intersection queries, verifying the shared attribute (e.g., profession) of multiple entities requires confirming each entity's role independently before concluding the intersection.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-026",
+      "profile": "temporal",
+      "insight": "For temporal bridge queries, prioritize identifying the exact time frame and relevant events to narrow down the search for the correct entity or action.",
+      "utility": 28,
+      "uses": 60,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-034",
+      "profile": "any",
+      "insight": "For temporal queries, ensure that the EvidenceSelector and ContextValidator agents explicitly check for missing temporal connections or contextual details that could invalidate the answer, especially when retrieving historical, product, or family-related information.",
+      "utility": 58,
+      "uses": 104,
+      "rationale": "This insight aligns with existing temporal entries that emphasize the role of EvidenceSelector and ContextValidator in ensuring accuracy.",
+      "lane": "any"
+    },
+    {
+      "id": "E-036",
+      "profile": "any",
+      "insight": "For temporal queries, avoid overgeneralization in the AnswerGenerator and ReflectAgent by ensuring the final answer is directly tied to validated evidence, especially when retrieving historical, product, or family-related information.",
+      "utility": 58,
+      "uses": 100,
+      "rationale": "This insight aligns with existing temporal entries that emphasize the importance of evidence-based answers and validation.",
+      "lane": "any"
+    },
+    {
+      "id": "E-059",
+      "profile": "any",
+      "insight": "Ensure that the EvidenceSelector selects passages that directly mention the governing body responsible for the action, rather than just the country.",
+      "utility": 3,
+      "uses": 8,
+      "rationale": "This insight is distinct and not covered by existing entries related to bridge-type queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-071",
+      "profile": "any",
+      "insight": "For bridge-type queries, ensure the retrieval process includes fallback mechanisms or additional queries if initial evidence is insufficient, decompose queries into sub-questions focusing on entity relationships, and prioritize the ReflectAgent to synthesize evidence or leverage domain knowledge. The ConcludeAgent should avoid returning 'ambiguous' and instead infer answers based on ReflectAgent reasoning or fallback strategies. Query rewriters should generate diverse queries to improve retrieval accuracy for indirect relationships.",
+      "utility": 7,
+      "uses": 8,
+      "rationale": "The new insight aligns with and complements existing entries on bridge-type queries, enhancing the existing guidance with fallback mechanisms and retrieval strategies.",
+      "lane": "any"
+    },
+    {
+      "id": "E-072",
+      "profile": "any",
+      "insight": "For bridge-type queries, ensure the retrieval process includes fallback mechanisms or additional queries if initial evidence is insufficient, decompose queries into sub-questions focusing on entity relationships, and prioritize the ReflectAgent to synthesize evidence or leverage domain knowledge. The ConcludeAgent should avoid returning 'ambiguous' and instead infer answers based on ReflectAgent reasoning or fallback strategies. Query rewriters should generate diverse queries to improve retrieval accuracy for indirect relationships.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is semantically compatible with existing entries on bridge-type queries and enhances the role of the ReflectAgent in handling insufficient evidence.",
+      "lane": "any"
+    },
+    {
+      "id": "E-073",
+      "profile": "any",
+      "insight": "For bridge-type queries, ensure the retrieval process includes fallback mechanisms or additional queries if initial evidence is insufficient, decompose queries into sub-questions focusing on entity relationships, and prioritize the ReflectAgent to synthesize evidence or leverage domain knowledge. The ConcludeAgent should avoid returning 'ambiguous' and instead infer answers based on ReflectAgent reasoning or fallback strategies. Query rewriters should generate diverse queries to improve retrieval accuracy for indirect relationships.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is semantically compatible with existing entries on bridge-type queries and enhances the role of the ConcludeAgent in handling insufficient evidence.",
+      "lane": "any"
+    },
+    {
+      "id": "E-074",
+      "profile": "any",
+      "insight": "For bridge-type queries, ensure the retrieval process includes fallback mechanisms or additional queries if initial evidence is insufficient, decompose queries into sub-questions focusing on entity relationships, and prioritize the ReflectAgent to synthesize evidence or leverage domain knowledge. The ConcludeAgent should avoid returning 'ambiguous' and instead infer answers based on ReflectAgent reasoning or fallback strategies. Query rewriters should generate diverse queries to improve retrieval accuracy for indirect relationships.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is semantically compatible with existing entries on bridge-type queries and enhances the role of query rewriters in improving retrieval accuracy.",
+      "lane": "any"
+    },
+    {
+      "id": "E-075",
+      "profile": "any",
+      "insight": "For causal queries, ensure that the ReflectAgent is utilized to validate and correct the AnswerGenerator's output, especially when the initial answer is derived from external knowledge or assumptions.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and not covered by existing entries in the library, which focus on other query types like temporal, intersection, or comparison.",
+      "lane": "any"
+    },
+    {
+      "id": "E-078",
+      "profile": "any",
+      "insight": "Use the ConcludeAgent to refine the final answer by incorporating additional details (e.g., location, time) that may be available in the ReflectAgent's output.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is not covered by existing entries and introduces a new strategy for refining answers in causal queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-079",
+      "profile": "any",
+      "insight": "For verification queries involving classification of entities into categories like vegetables or checking the presence or absence of entities in specific locations, ensure the ConcludeAgent's final answer is strictly aligned with the ReflectAgent's reasoning to avoid contradictions and ensure accurate categorization.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with E-014 and E-020, which both involve classification and verification queries, and the guidance is complementary.",
+      "lane": "any"
+    },
+    {
+      "id": "E-080",
+      "profile": "any",
+      "insight": "For verification queries involving classification of entities into categories like vegetables or checking the presence or absence of entities in specific locations, use the QueryRewriter to generate multiple query variations that explicitly target the classification of the subject to improve retrieval accuracy.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight complements E-014 and E-020 by suggesting a strategy to improve retrieval accuracy for classification and verification queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-081",
+      "profile": "any",
+      "insight": "For verification queries involving classification of entities into categories like vegetables or checking the presence or absence of entities in specific locations, the ReflectAgent should provide a clear and detailed explanation of the classification to ensure the ConcludeAgent makes an accurate and consistent final decision.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with E-014 and E-020, emphasizing the ReflectAgent's role in providing clarity for classification and verification queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-082",
+      "profile": "any",
+      "insight": "For intersection queries, ensure the ContextValidator explicitly confirms the sufficiency of the retrieved evidence before proceeding to the AnswerGenerator to avoid redundant or inefficient steps in the agent topology.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with several intersection-related entries and provides a generalizable strategy for improving agent topology efficiency.",
+      "lane": "any"
+    },
+    {
+      "id": "E-083",
+      "profile": "any",
+      "insight": "For verification queries involving classification of entities into categories like vegetables or checking the presence or absence of entities in specific locations, prioritize evidence that directly addresses the classification of the subject rather than general information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with E-014 and E-020, emphasizing the importance of prioritizing relevant evidence for classification queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-088",
+      "profile": "any",
+      "insight": "For comparison queries involving factual data like death dates or release dates, ensure the ReflectAgent is explicitly trained to interpret and compare such data accurately, prioritize accurate biographical or temporal data sources, validate the sufficiency of retrieved evidence before concluding, use follow-up queries or reasoning agents to infer answers when critical information is missing, and explicitly trigger follow-up queries to retrieve missing data about entities before attempting to draw a conclusion.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries for comparison queries and complements them by emphasizing the need for follow-up queries when data is missing.",
+      "lane": "any"
+    },
+    {
+      "id": "E-089",
+      "profile": "any",
+      "insight": "For comparison queries involving factual data like death dates or release dates, ensure the ReflectAgent is explicitly trained to interpret and compare such data accurately, prioritize accurate biographical or temporal data sources, validate the sufficiency of retrieved evidence before concluding, use follow-up queries or reasoning agents to infer answers when critical information is missing, and use the ReflectAgent to analyze and reason about the available evidence, especially when information is incomplete, to identify gaps and guide the system to address them.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries for comparison queries and adds a specific role for the ReflectAgent in identifying gaps and guiding the system.",
+      "lane": "any"
+    },
+    {
+      "id": "E-090",
+      "profile": "any",
+      "insight": "For comparison queries involving factual data like death dates or release dates, ensure the ReflectAgent is explicitly trained to interpret and compare such data accurately, prioritize accurate biographical or temporal data sources, validate the sufficiency of retrieved evidence before concluding, use follow-up queries or reasoning agents to infer answers when critical information is missing, and include a ConcludeAgent to ensure that the final answer is well-structured and explicitly addresses the original query, even if the answer is based on partial information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries for comparison queries and adds the role of the ConcludeAgent in structuring the final answer.",
+      "lane": "any"
+    },
+    {
+      "id": "E-091",
+      "profile": "any",
+      "insight": "For comparison queries involving factual data like death dates or release dates, ensure the ReflectAgent is explicitly trained to interpret and compare such data accurately, prioritize accurate biographical or temporal data sources, validate the sufficiency of retrieved evidence before concluding, use follow-up queries or reasoning agents to infer answers when critical information is missing, avoid making assumptions or defaulting to a conclusion when critical information is missing, and prioritize retrieving the missing data before attempting to resolve the comparison.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries for comparison queries and reinforces the importance of retrieving missing data before concluding.",
+      "lane": "any"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+wandb: Detected [openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+questions_1000_seed42:  88%|████████▊ | 883/1000 [1:24:13<15:25,  7.91s/it]

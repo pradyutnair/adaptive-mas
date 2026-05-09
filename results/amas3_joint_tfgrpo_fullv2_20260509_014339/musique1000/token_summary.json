@@ -1,0 +1,10 @@
+{
+  "rows": 1000,
+  "mean_total_tokens_actual": 7232.853,
+  "mean_planner_tokens": 866.989,
+  "mean_solver_tokens": 4023.234,
+  "mean_synth_tokens": 2098.018,
+  "mean_rewrite_tokens": 97.239,
+  "mean_sas_tokens": 0.0,
+  "sas_exits": 0
+}

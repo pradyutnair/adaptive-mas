@@ -1,0 +1,195 @@
+{
+  "next_num": 152,
+  "max_entries": 40,
+  "entries": [
+    {
+      "id": "E-002",
+      "profile": "intersection",
+      "insight": "For intersection queries, use multi-agent system to retrieve and cross-verify attributes of multiple entities.",
+      "utility": 68,
+      "uses": 88,
+      "rationale": "single-q SA from F1=1.00 on training pool",
+      "lane": "MAS"
+    },
+    {
+      "id": "E-127",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, and validate the sufficiency of the context before allowing the AnswerGenerator or ConcludeAgent to finalize the response. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 20,
+      "uses": 56,
+      "rationale": "This insight is semantically similar to the first new insight and can be merged to create a more comprehensive entry for comparison queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-128",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, and validate the sufficiency of the context before allowing the AnswerGenerator or ConcludeAgent to finalize the response. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight emphasizes the use of QueryDecomposer for comparison queries and aligns with existing entries, making it suitable for merging.",
+      "lane": "any"
+    },
+    {
+      "id": "E-129",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, and validate the sufficiency of the context before allowing the AnswerGenerator or ConcludeAgent to finalize the response. Ensure that the EvidenceSelector selects only the most relevant and accurate passages for the comparison, avoiding irrelevant or conflicting information that could confuse the reasoning process.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight adds a new component about the EvidenceSelector and can be merged with existing entries to create a more complete and comprehensive entry for comparison queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-130",
+      "profile": "any",
+      "insight": "For temporal queries, always include a ContextValidator or ReflectAgent to detect missing information and generate follow-up queries. Additionally, ensure that the ReflectAgent is used to infer the correct timeline and event relationships when the ContextValidator identifies missing information, allowing the system to synthesize a coherent answer based on partial evidence.",
+      "utility": 38,
+      "uses": 136,
+      "rationale": "The new insight complements the existing entry E-122 by adding a specific role for the ReflectAgent in synthesizing answers from partial evidence.",
+      "lane": "any"
+    },
+    {
+      "id": "E-131",
+      "profile": "any",
+      "insight": "For temporal queries, always include a ContextValidator or ReflectAgent to detect missing information and generate follow-up queries. Additionally, decompose the query into clear sub-questions that isolate the temporal and spatial components of the answer, ensuring that the retrieval and selection processes are focused on the most relevant information.",
+      "utility": 38,
+      "uses": 136,
+      "rationale": "The new insight adds a query decomposition strategy for temporal queries, which enhances the existing entry E-122.",
+      "lane": "any"
+    },
+    {
+      "id": "E-132",
+      "profile": "any",
+      "insight": "For temporal queries, always include a ContextValidator or ReflectAgent to detect missing information and generate follow-up queries. Additionally, avoid over-reliance on the ContextValidator to determine the sufficiency of information; instead, use the ReflectAgent to synthesize and infer the answer when the context is incomplete but partially relevant.",
+      "utility": 24,
+      "uses": 96,
+      "rationale": "The new insight provides a refinement to the existing strategy in E-122 by emphasizing the ReflectAgent's role in synthesizing answers from incomplete context.",
+      "lane": "any"
+    },
+    {
+      "id": "E-133",
+      "profile": "any",
+      "insight": "For temporal queries, always include a ContextValidator or ReflectAgent to detect missing information and generate follow-up queries. Additionally, ensure that the EvidenceSelector prioritizes passages that directly address the temporal relationship between the events in the query, reducing ambiguity and improving the accuracy of the final answer.",
+      "utility": 20,
+      "uses": 56,
+      "rationale": "The new insight enhances the existing entry E-122 by specifying the role of the EvidenceSelector in improving accuracy for temporal queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-136",
+      "profile": "any",
+      "insight": "When retrieving information, prioritize queries that explicitly ask for the location of the 2014 Austrian Grand Prix to ensure the answer includes both the circuit name and its location.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This is a specific and actionable insight not covered by existing entries, as it provides a concrete example of retrieval prioritization for bridge-type queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-138",
+      "profile": "any",
+      "insight": "For causal queries, ensure that QueryDecomposition explicitly identifies the cause-effect relationship being investigated. This helps in retrieving and selecting evidence that directly addresses the causal mechanism.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-139",
+      "profile": "any",
+      "insight": "Use the EvidenceSelector to prioritize passages that explicitly mention the cause or effect in the query. Avoid selecting evidence that only provides background context without directly answering the causal question.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-140",
+      "profile": "any",
+      "insight": "The ContextValidator should be used to ensure that the selected evidence is sufficient to answer the causal question. If the evidence is insufficient, the system should either request additional retrieval or clarify the query.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a new strategy for handling causal queries, which is not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-143",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, validate the sufficiency of the context, and infer missing information from external knowledge if retrieval fails. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight complements E-126 by adding the capability of the ReflectAgent to infer missing information, enhancing the existing strategy for comparison queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-144",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, validate the sufficiency of the context, and confirm that all required data points are retrieved before answering. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight enhances E-126 by emphasizing the validation of required data points before answering, aligning with the existing strategy for comparison queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-145",
+      "profile": "any",
+      "insight": "Use query rewriting to generate multiple variations of the question, but ensure that the system can detect when these variations fail to retrieve the necessary information and adjust accordingly. For comparison queries, optimize query rewriting to focus on retrieving the exact data points needed (e.g., specific birth dates) rather than generating redundant or overly broad queries.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight enhances E-125 by adding a specific optimization for comparison queries, improving the utility of query rewriting in this context.",
+      "lane": "any"
+    },
+    {
+      "id": "E-146",
+      "profile": "any",
+      "insight": "Include a ConcludeAgent after the ReflectAgent to ensure the final answer is complete and explicitly addresses all parts of the query. Ensure that the ConcludeAgent is explicitly tasked with synthesizing the final answer based on validated evidence and inferred knowledge, even when some data is missing.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight enhances E-135 by specifying the role of the ConcludeAgent in synthesizing answers with inferred knowledge, aligning with the existing strategy for finalizing responses.",
+      "lane": "any"
+    },
+    {
+      "id": "E-147",
+      "profile": "any",
+      "insight": "For comparison queries, always use a QueryDecomposer to break the query into sub-questions about individual components. Ensure that the ReflectAgent uses accurate and consistent data when reasoning about comparisons, validate the sufficiency of the context, and attempt to infer missing data using the ReflectAgent or external knowledge if retrieval fails. This helps prevent incorrect or ambiguous answers due to incomplete or conflicting information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight complements E-126 by specifying a fallback strategy for handling incomplete retrieval, enhancing the robustness of the comparison query handling process.",
+      "lane": "any"
+    },
+    {
+      "id": "E-148",
+      "profile": "any",
+      "insight": "For bridge-type queries that require connecting specific historical figures, their works, and external commentary, ensure that the retrieval phase includes access to a comprehensive database of historical context, critiques, and commentary on the subject matter. Additionally, use the ReflectAgent to resolve ambiguities, synthesize information from multiple sources, and infer plausible answers based on domain knowledge when explicit evidence is incomplete.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight complements existing entries on bridge-type queries by emphasizing the ReflectAgent's role in inferring answers when evidence is incomplete.",
+      "lane": "any"
+    },
+    {
+      "id": "E-149",
+      "profile": "any",
+      "insight": "Ensure that the retrieval process is optimized to fetch information about financial aspects of leagues, such as attendance remittances, to avoid missing critical context.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This is a distinct insight not covered by existing entries, focusing on optimizing retrieval for financial aspects of leagues.",
+      "lane": "any"
+    },
+    {
+      "id": "E-150",
+      "profile": "any",
+      "insight": "Avoid using agents like ReflectAgent and AnswerGenerator unless the ContextValidator has confirmed that the evidence is sufficient. Ensure that the ConcludeAgent only produces an answer when the evidence is validated and sufficient. Otherwise, it should return a clear indication that the query cannot be answered with the available information.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight aligns with existing entries on the use of AnswerGenerator and ConcludeAgent, reinforcing the need for sufficient evidence before finalizing answers.",
+      "lane": "any"
+    },
+    {
+      "id": "E-151",
+      "profile": "any",
+      "insight": "For bridge-type queries that require connecting specific historical figures, their works, and external commentary, ensure that the retrieval phase includes access to a comprehensive database of historical context, critiques, and commentary on the subject matter. Additionally, incorporate domain-specific knowledge into the ReflectAgent to handle cases where explicit evidence is missing, especially for queries involving league finances or historical events.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "The new insight complements existing entries on bridge-type queries by emphasizing the importance of domain-specific knowledge in the ReflectAgent.",
+      "lane": "any"
+    }
+  ]
+}

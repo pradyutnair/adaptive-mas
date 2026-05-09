@@ -1,0 +1,78 @@
+{
+  "next_num": 13,
+  "max_entries": 30,
+  "entries": [
+    {
+      "id": "E-005",
+      "profile": "any",
+      "insight": "For temporal queries involving specific events and dates, ensure the retrieval and selection agents focus on extracting the relevant time-based information directly from the passages without overcomplicating the reasoning process. Additionally, include the ReflectAgent to validate the timeline and contextual accuracy of the answer.",
+      "utility": 5,
+      "uses": 8,
+      "rationale": "The new insight complements E-001 by adding the ReflectAgent for timeline validation, enhancing the existing guidance for temporal queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-006",
+      "profile": "any",
+      "insight": "For temporal queries involving specific events and dates, ensure the retrieval and selection agents focus on extracting the relevant time-based information directly from the passages without overcomplicating the reasoning process. Additionally, retrieve and select multiple relevant passages to ensure that both the entity and its temporal range are accurately identified and cross-verified.",
+      "utility": 5,
+      "uses": 8,
+      "rationale": "The new insight aligns with E-001 by emphasizing the importance of retrieving multiple passages for accurate temporal information, thus enhancing the existing entry.",
+      "lane": "any"
+    },
+    {
+      "id": "E-007",
+      "profile": "any",
+      "insight": "Ensure that the final answer explicitly includes both the entity and its temporal range (e.g., 'Roman Empire, 27 BC - 476 AD') to avoid partial or incomplete responses.",
+      "utility": 8,
+      "uses": 8,
+      "rationale": "This insight introduces a new requirement for the final answer format that is not covered by existing entries and is specific to temporal queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-008",
+      "profile": "any",
+      "insight": "For temporal queries involving specific events and dates, ensure the retrieval and selection agents focus on extracting the relevant time-based information directly from the passages without overcomplicating the reasoning process. Additionally, avoid over-reliance on a single passage; use evidence selection to gather multiple sources and ensure the answer is robust and well-supported.",
+      "utility": 8,
+      "uses": 8,
+      "rationale": "The new insight reinforces the need for multiple sources in temporal queries, which aligns with and enhances E-001.",
+      "lane": "any"
+    },
+    {
+      "id": "E-009",
+      "profile": "any",
+      "insight": "For comparison queries, ensure that the decomposition explicitly identifies the attributes to be compared (e.g., directors and their death dates) and that the reasoning step clearly compares these attributes to reach a conclusion.",
+      "utility": 8,
+      "uses": 8,
+      "rationale": "This insight is distinct and addresses a specific need for comparison queries not covered by existing entries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-010",
+      "profile": "any",
+      "insight": "Avoid unnecessary agents like ContextValidator or ConcludeAgent unless the query explicitly requires cross-referencing multiple pieces of information, verifying context, or provides a clear, value-added step. Their inclusion can lead to confusion or incorrect final answers if not properly integrated.",
+      "utility": 4,
+      "uses": 4,
+      "rationale": "This insight aligns with E-002 by addressing the avoidance of redundant agents and can be merged for broader applicability.",
+      "lane": "any"
+    },
+    {
+      "id": "E-011",
+      "profile": "any",
+      "insight": "Ensure the QueryDecomposer, QueryRewriter, EvidenceSelector, and AnswerGenerator generate sub-questions and select passages that directly align with the final answer, avoid introducing ambiguity, and explicitly provide the necessary comparative data. Prioritize direct extraction when the answer is explicitly mentioned in the retrieved passages.",
+      "utility": 4,
+      "uses": 4,
+      "rationale": "This insight complements E-003 and E-004 by emphasizing the need for aligned sub-questions and explicit data selection for comparative queries.",
+      "lane": "any"
+    },
+    {
+      "id": "E-012",
+      "profile": "any",
+      "insight": "Include a ReflectAgent that explicitly performs the comparison and clearly states which film has the director who died later, rather than just providing names or dates.",
+      "utility": 0,
+      "uses": 0,
+      "rationale": "This insight is distinct and introduces a specific recommendation for the ReflectAgent in comparison queries not covered by existing entries.",
+      "lane": "any"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+Stopped early after MuSiQue1000 completed and Hotpot partial underperformed.
+MuSiQue1000: EM 0.199, F1 0.2794, contain 0.223, mean tokens 6655.947.
+Old MuSiQue full baseline: EM 0.193, F1 0.2881, contain 0.225, mean tokens ~10431.
+Hotpot partial at stop: 136 rows; eval at 116 rows EM 0.3879, F1 0.4833, contain 0.4224, mean tokens ~6964, below old full baseline.
+Decision: base is efficient but not quality-preserving; proceed to corrective TF-GRPO/GEPA pass using IRCoT train only.

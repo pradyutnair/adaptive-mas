@@ -1,0 +1,67 @@
+_wandb:
+    value:
+        cli_version: 0.26.1
+        code_path: code/scripts/run_sas_matched.py
+        e:
+            awe4hmx4fmopccosc8mabxoc2j19dhsc:
+                args:
+                    - --questions
+                    - /local/yzheng/pnair/workspace/reproduction/sparc-rag/data/bamboogle_125.json
+                    - --out-dir
+                    - results/sas_matched/bamboogle_full
+                    - --n
+                    - "125"
+                    - --seed
+                    - "42"
+                    - --concurrency
+                    - "8"
+                    - --max-tokens
+                    - "4096"
+                    - --run-name
+                    - sas_matched_bamboogle_full
+                codePath: scripts/run_sas_matched.py
+                codePathLocal: scripts/run_sas_matched.py
+                cpu_count: 24
+                cpu_count_logical: 48
+                disk:
+                    /:
+                        total: "187420844032"
+                        used: "7877222400"
+                email: pradyut.nair@student.uva.nl
+                executable: /local/yzheng/pnair/workspace/adaptive-mas/.venv/bin/python
+                host: node409
+                memory:
+                    total: "118110580736"
+                os: Linux-4.18.0-348.2.1.el8_5.x86_64-x86_64-with-glibc2.28
+                program: /local/yzheng/pnair/workspace/amas/scripts/run_sas_matched.py
+                python: CPython 3.10.18
+                root: /local/yzheng/pnair/workspace/amas
+                startedAt: "2026-05-07T09:45:49.945195Z"
+                writerId: awe4hmx4fmopccosc8mabxoc2j19dhsc
+        m: []
+        python_version: 3.10.18
+        t:
+            "1":
+                - 95
+            "2":
+                - 95
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.10.18
+            "5": 0.26.1
+            "10":
+                - 20
+            "12": 0.26.1
+            "13": linux-x86_64
+max_tokens:
+    value: 4096
+model:
+    value: Qwen/Qwen3-14B
+"n":
+    value: 125
+thinking:
+    value: true
+topk:
+    value: 5
