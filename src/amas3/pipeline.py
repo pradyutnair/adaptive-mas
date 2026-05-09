@@ -579,6 +579,13 @@ class AmasPipeline:
         ct = set(c.split())
         return bool(at) and at.issubset(ct)
 
+    @classmethod
+    def _candidate_from_text(cls, text: str, candidates: list[str]) -> str:
+        for cand in candidates:
+            if cls._is_alias_of_candidate(text, cand):
+                return cand
+        return ""
+
     @staticmethod
     def _comparison_candidates(question: str) -> list[str]:
         q = (question or "").strip()
@@ -616,17 +623,47 @@ class AmasPipeline:
         ans_norm = self._norm_answer_text(answer)
         if not ans_norm:
             return answer
-        question_norm = self._norm_answer_text(question)
-        for cand in candidates:
-            cand_norm = self._norm_answer_text(cand)
-            for finding in bus.all():
+        direct = self._candidate_from_text(answer, candidates)
+        if direct:
+            return direct
+
+        findings = [f for f in bus.all() if f.answer]
+        candidate_values: dict[str, set[str]] = {c: set() for c in candidates}
+        for finding in findings:
+            subq_norm = self._norm_answer_text(finding.sub_question)
+            find_ans_norm = self._norm_answer_text(finding.answer)
+            found_candidate = self._candidate_from_text(finding.answer, candidates)
+            if found_candidate:
+                return found_candidate
+            for cand in candidates:
+                cand_norm = self._norm_answer_text(cand)
+                if cand_norm and cand_norm in subq_norm and find_ans_norm:
+                    candidate_values[cand].add(find_ans_norm)
+
+        # Propagate one bridge step: candidate -> director/person/entity -> compared value.
+        for _ in range(2):
+            changed = False
+            for finding in findings:
                 subq_norm = self._norm_answer_text(finding.sub_question)
                 find_ans_norm = self._norm_answer_text(finding.answer)
-                if cand_norm and cand_norm in subq_norm and find_ans_norm:
-                    if find_ans_norm in question_norm:
-                        return cand
-                    if ans_norm == find_ans_norm or ans_norm in find_ans_norm or find_ans_norm in ans_norm:
-                        return cand
+                for cand, vals in candidate_values.items():
+                    if any(v and v in subq_norm for v in vals) and find_ans_norm not in vals:
+                        vals.add(find_ans_norm)
+                        changed = True
+            if not changed:
+                break
+
+        for cand, vals in candidate_values.items():
+            if any(v and (ans_norm == v or ans_norm in v or v in ans_norm) for v in vals):
+                return cand
+
+        yes_no = ans_norm in {"yes", "no", "true", "false"}
+        if yes_no:
+            for finding in reversed(findings):
+                subq_norm = self._norm_answer_text(finding.sub_question)
+                if all(self._norm_answer_text(c) in subq_norm for c in candidates):
+                    if re.search(r"\bolder than\b|\btaller than\b|\blarger than\b|\bmore recent\b|\breleased more recently\b", subq_norm):
+                        return candidates[0] if ans_norm in {"yes", "true"} else candidates[1]
         for cand in candidates:
             if self._is_alias_of_candidate(answer, cand):
                 return cand
