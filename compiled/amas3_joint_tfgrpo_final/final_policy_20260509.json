@@ -1,0 +1,31 @@
+{
+  "selection_date": "2026-05-09",
+  "selection_basis": "IRCoT train-only mixed TF-GRPO rollouts plus same-ID full validation; no gold/baseline runtime features",
+  "global_train_rollouts": "compiled/amas3_joint_tfgrpo_global179_current_20260509_1115/rollouts.jsonl",
+  "policies": {
+    "musique": {
+      "profile": "plan6_retrieval3_compact8",
+      "run": "results/amas3_musique1000_context_solver_c24_20260509_1036",
+      "metrics": {"norm_em": 0.204, "token_f1": 0.2933, "contain": 0.231, "mean_tokens": 7785.872}
+    },
+    "hotpotqa": {
+      "profile": "compact5_synth_with_comparison_bugfix",
+      "run": "results/amas3_hotpot1000_tfgrpo_compact5_bugfix_c24_20260509_1245",
+      "metrics": {"norm_em": 0.420, "token_f1": 0.5286, "contain": 0.462, "mean_tokens": 7351.198}
+    },
+    "2wikimultihop": {
+      "profile": "quality5_repair_with_comparison_bugfix",
+      "run": "results/amas3_2wiki1000_tfgrpo_quality5_repair_bugfix_c24_20260509_1325",
+      "metrics": {"norm_em": 0.398, "token_f1": 0.4638, "contain": 0.441, "mean_tokens": 9045.120}
+    },
+    "bamboogle": {
+      "profile": "compact_synth_base",
+      "run": "results/amas3_bamboogle125_context_solver_c24_20260509_1032",
+      "metrics": {"norm_em": 0.448, "token_f1": 0.5673, "contain": 0.464, "mean_tokens": 6322.424}
+    }
+  },
+  "base_comparison": {
+    "hotpotqa": {"base": {"norm_em": 0.404, "token_f1": 0.5108, "contain": 0.444, "mean_tokens": 8015.434}, "final_delta": {"norm_em": 0.016, "token_f1": 0.0178, "contain": 0.018, "mean_tokens": -664.236}},
+    "2wikimultihop": {"base": {"norm_em": 0.386, "token_f1": 0.4504, "contain": 0.429, "mean_tokens": 9096.945}, "final_delta": {"norm_em": 0.012, "token_f1": 0.0134, "contain": 0.012, "mean_tokens": -51.825}}
+  }
+}
