@@ -1,0 +1,81 @@
+{
+  "policy": "compact5_synth_no_prompt_injection",
+  "library": "compiled/amas3_experience_collection/library.json",
+  "selected_from": "compiled/amas3_joint_tfgrpo_train36_w015",
+  "note": "IRCoT-train library selected compact synthesis/topology. Raw library is not injected into inference prompts because validation reduced quality and added prompt cost.",
+  "results_50q": {
+    "musique": {
+      "em": 0.38,
+      "f1": 0.4318,
+      "contain": 0.4,
+      "tokens": 6427.3,
+      "path": "results/amas3_joint_tfgrpo_noexp_eval/musique50"
+    },
+    "hotpotqa": {
+      "em": 0.46,
+      "f1": 0.5785,
+      "contain": 0.48,
+      "tokens": 7485.7,
+      "path": "results/amas3_joint_tfgrpo_noexp_eval/hotpot50"
+    },
+    "2wikimultihop_compact5": {
+      "em": 0.42,
+      "f1": 0.4767,
+      "contain": 0.48,
+      "tokens": 6811.7,
+      "path": "results/amas3_joint_tfgrpo_noexp_eval/2wiki50"
+    },
+    "2wikimultihop_compact8_diagnostic": {
+      "em": 0.44,
+      "f1": 0.4967,
+      "contain": 0.5,
+      "tokens": 7340.2,
+      "path": "results/amas3_joint_tfgrpo_noexp_compact8_eval/2wiki50"
+    },
+    "bamboogle": {
+      "em": 0.42,
+      "f1": 0.5609,
+      "contain": 0.46,
+      "tokens": 5747.2,
+      "path": "results/amas3_joint_tfgrpo_noexp_eval/bamboogle50"
+    }
+  },
+  "old_same_ids_50q": {
+    "musique": {
+      "em": 0.34,
+      "f1": 0.4138,
+      "contain": 0.4,
+      "tokens": 10399.7
+    },
+    "hotpotqa": {
+      "em": 0.42,
+      "f1": 0.553,
+      "contain": 0.48,
+      "tokens": 10102.7
+    },
+    "2wikimultihop": {
+      "em": 0.44,
+      "f1": 0.5067,
+      "contain": 0.52,
+      "tokens": 10929.1
+    },
+    "bamboogle": {
+      "em": 0.38,
+      "f1": 0.5542,
+      "contain": 0.48,
+      "tokens": 7914.9
+    }
+  },
+  "sas_threshold_sweep": {
+    "policy": "same compact5, tau_sas_g=0.55, tau_sas_conf=0.65",
+    "musique50": {
+      "em": 0.14,
+      "f1": 0.2461,
+      "contain": 0.16,
+      "tokens": 6704.9,
+      "sas_exits": 0,
+      "path": "results/amas3_joint_tfgrpo_saslo_eval/musique50"
+    },
+    "decision": "reject; conservative SAS collapse is retained because lower threshold damaged quality without increasing SAS exits"
+  }
+}

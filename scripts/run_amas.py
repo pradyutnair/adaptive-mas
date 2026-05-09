@@ -44,6 +44,12 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--min-retrievals-per-solver', type=int, default=1)
     ap.add_argument('--medium-retrievals-per-solver', type=int, default=2)
     ap.add_argument('--max-repairs', type=int, default=2)
+    ap.add_argument('--max-plan-subgoals', type=int, default=6)
+    ap.add_argument('--synth-max-chunks', type=int, default=20)
+    ap.add_argument('--synth-excerpt-chars', type=int, default=700)
+    ap.add_argument('--synth-no-cot', action='store_true', default=False)
+    ap.add_argument('--skip-synth-on-final-ok', action='store_true', default=False)
+    ap.add_argument('--skip-synth-confidence', type=float, default=0.82)
     ap.add_argument('--planner-replica', type=int, default=0)
     ap.add_argument('--planner-model', choices=['qwen3-8b', 'qwen3-14b'], default='qwen3-8b')
     ap.add_argument('--planner-mode', choices=['think', 'nothink'], default='think', help='thinking mode for planner and bridge resolver')
@@ -140,6 +146,12 @@ async def main() -> None:
                 min_retrievals_per_solver=args.min_retrievals_per_solver,
                 medium_retrievals_per_solver=args.medium_retrievals_per_solver,
                 max_repairs=args.max_repairs,
+                max_plan_subgoals=args.max_plan_subgoals,
+                synth_max_chunks=args.synth_max_chunks,
+                synth_excerpt_chars=args.synth_excerpt_chars,
+                synth_chain_of_thought=not args.synth_no_cot,
+                skip_synth_on_final_ok=args.skip_synth_on_final_ok,
+                skip_synth_confidence=args.skip_synth_confidence,
             ),
         )
         for i in range(n_replicas)
@@ -168,6 +180,12 @@ async def main() -> None:
         'min_retrievals_per_solver': args.min_retrievals_per_solver,
         'medium_retrievals_per_solver': args.medium_retrievals_per_solver,
         'max_repairs': args.max_repairs,
+        'max_plan_subgoals': args.max_plan_subgoals,
+        'synth_max_chunks': args.synth_max_chunks,
+        'synth_excerpt_chars': args.synth_excerpt_chars,
+        'synth_chain_of_thought': not args.synth_no_cot,
+        'skip_synth_on_final_ok': args.skip_synth_on_final_ok,
+        'skip_synth_confidence': args.skip_synth_confidence,
         'retriever_url': args.retriever_url,
         'max_retrievals_per_solver': args.max_retrievals,
         'repair_enabled': args.repair,

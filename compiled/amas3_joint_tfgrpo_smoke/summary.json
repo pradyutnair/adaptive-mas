@@ -1,0 +1,43 @@
+{
+  "train_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n_train": 12,
+  "token_target": 7000.0,
+  "token_weight": 0.25,
+  "stats": {
+    "full_reference": {
+      "n": 12,
+      "mean_reward": 0.017020833333333336,
+      "mean_f1": 0.3333333333333333,
+      "mean_contain": 0.3333333333333333,
+      "mean_tokens": 8968.0,
+      "wins": 0
+    },
+    "compact_synth": {
+      "n": 12,
+      "mean_reward": 0.11088988095238095,
+      "mean_f1": 0.3333333333333333,
+      "mean_contain": 0.3333333333333333,
+      "mean_tokens": 6228.416666666667,
+      "wins": 2
+    },
+    "compact_fastfinal": {
+      "n": 12,
+      "mean_reward": 0.07861607142857142,
+      "mean_f1": 0.25,
+      "mean_contain": 0.25,
+      "mean_tokens": 4798.75,
+      "wins": 10
+    }
+  },
+  "winner_counts": {
+    "compact_fastfinal": 10,
+    "compact_synth": 2
+  },
+  "failure_modes": {
+    "over_budget": 16,
+    "wrong_answer": 25
+  },
+  "selected_policy": "compact_fastfinal",
+  "experience_file": "compiled/amas3_joint_tfgrpo_smoke/experience.txt",
+  "policy_file": "compiled/amas3_joint_tfgrpo_smoke/policy.json"
+}

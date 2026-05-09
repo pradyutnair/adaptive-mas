@@ -1,0 +1,107 @@
+{
+  "train_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n_train": 57,
+  "source_filter": "hotpotqa",
+  "token_target": 8500.0,
+  "token_weight": 0.04,
+  "policy_names": [
+    "compact_synth",
+    "compact5_synth",
+    "retrieval3_compact8",
+    "plan6_retrieval3_compact8",
+    "plan6_retrieval3_oldlike"
+  ],
+  "stats": {
+    "compact_synth": {
+      "n": 57,
+      "mean_reward": 0.6006842429603421,
+      "mean_f1": 0.6463241436925647,
+      "mean_contain": 0.6140350877192983,
+      "mean_tokens": 7983.122807017544,
+      "timeouts_or_errors": 0,
+      "wins": 5
+    },
+    "compact5_synth": {
+      "n": 57,
+      "mean_reward": 0.5775228619677535,
+      "mean_f1": 0.6231981468823573,
+      "mean_contain": 0.5789473684210527,
+      "mean_tokens": 7355.175438596491,
+      "timeouts_or_errors": 0,
+      "wins": 47
+    },
+    "retrieval3_compact8": {
+      "n": 57,
+      "mean_reward": 0.5993480750896852,
+      "mean_f1": 0.6502227791701476,
+      "mean_contain": 0.5964912280701754,
+      "mean_tokens": 7956.3859649122805,
+      "timeouts_or_errors": 0,
+      "wins": 1
+    },
+    "plan6_retrieval3_compact8": {
+      "n": 57,
+      "mean_reward": 0.6060740056022411,
+      "mean_f1": 0.6550960735171261,
+      "mean_contain": 0.6140350877192983,
+      "mean_tokens": 8251.771929824561,
+      "timeouts_or_errors": 0,
+      "wins": 1
+    },
+    "plan6_retrieval3_oldlike": {
+      "n": 57,
+      "mean_reward": 0.5608761108653989,
+      "mean_f1": 0.6170843776106935,
+      "mean_contain": 0.5789473684210527,
+      "mean_tokens": 9993.192982456141,
+      "timeouts_or_errors": 0,
+      "wins": 3
+    }
+  },
+  "source_stats": {
+    "hotpotqa:compact_synth": {
+      "n": 57,
+      "mean_reward": 0.6006842429603421,
+      "mean_f1": 0.6463241436925647,
+      "mean_contain": 0.6140350877192983,
+      "mean_tokens": 7983.122807017544
+    },
+    "hotpotqa:compact5_synth": {
+      "n": 57,
+      "mean_reward": 0.5775228619677535,
+      "mean_f1": 0.6231981468823573,
+      "mean_contain": 0.5789473684210527,
+      "mean_tokens": 7355.175438596491
+    },
+    "hotpotqa:retrieval3_compact8": {
+      "n": 57,
+      "mean_reward": 0.5993480750896852,
+      "mean_f1": 0.6502227791701476,
+      "mean_contain": 0.5964912280701754,
+      "mean_tokens": 7956.3859649122805
+    },
+    "hotpotqa:plan6_retrieval3_compact8": {
+      "n": 57,
+      "mean_reward": 0.6060740056022411,
+      "mean_f1": 0.6550960735171261,
+      "mean_contain": 0.6140350877192983,
+      "mean_tokens": 8251.771929824561
+    },
+    "hotpotqa:plan6_retrieval3_oldlike": {
+      "n": 57,
+      "mean_reward": 0.5608761108653989,
+      "mean_f1": 0.6170843776106935,
+      "mean_contain": 0.5789473684210527,
+      "mean_tokens": 9993.192982456141
+    }
+  },
+  "winner_counts": {
+    "compact5_synth": 47,
+    "compact_synth": 5,
+    "plan6_retrieval3_oldlike": 3,
+    "retrieval3_compact8": 1,
+    "plan6_retrieval3_compact8": 1
+  },
+  "selected_policy_by_mean_reward": "plan6_retrieval3_compact8",
+  "rollouts": "compiled/amas3_joint_tfgrpo_hotpot57_20260509_0900/rollouts.jsonl"
+}

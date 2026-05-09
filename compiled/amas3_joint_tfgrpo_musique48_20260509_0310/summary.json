@@ -1,0 +1,107 @@
+{
+  "train_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n_train": 48,
+  "source_filter": "musique",
+  "token_target": 8500.0,
+  "token_weight": 0.04,
+  "policy_names": [
+    "compact_synth",
+    "retrieval3_compact8",
+    "bridge_retrieval3_compact8",
+    "cot_retrieval3_compact8",
+    "quality12_retrieval3"
+  ],
+  "stats": {
+    "compact_synth": {
+      "n": 48,
+      "mean_reward": 0.1859935432826976,
+      "mean_f1": 0.25645413614163615,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 6907.583333333333,
+      "timeouts_or_errors": 0,
+      "wins": 23
+    },
+    "retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.18462883740034472,
+      "mean_f1": 0.2550652472527472,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 7012.416666666667,
+      "timeouts_or_errors": 0,
+      "wins": 8
+    },
+    "bridge_retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.1884905794817927,
+      "mean_f1": 0.2615823412698413,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 7197.25,
+      "timeouts_or_errors": 0,
+      "wins": 13
+    },
+    "cot_retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.1512773441876751,
+      "mean_f1": 0.21852678571428572,
+      "mean_contain": 0.08333333333333333,
+      "mean_tokens": 7173.4375,
+      "timeouts_or_errors": 0,
+      "wins": 1
+    },
+    "quality12_retrieval3": {
+      "n": 48,
+      "mean_reward": 0.1956672197532859,
+      "mean_f1": 0.26687080280830283,
+      "mean_contain": 0.125,
+      "mean_tokens": 7745.541666666667,
+      "timeouts_or_errors": 0,
+      "wins": 3
+    }
+  },
+  "source_stats": {
+    "musique:compact_synth": {
+      "n": 48,
+      "mean_reward": 0.1859935432826976,
+      "mean_f1": 0.25645413614163615,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 6907.583333333333
+    },
+    "musique:retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.18462883740034472,
+      "mean_f1": 0.2550652472527472,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 7012.416666666667
+    },
+    "musique:bridge_retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.1884905794817927,
+      "mean_f1": 0.2615823412698413,
+      "mean_contain": 0.10416666666666667,
+      "mean_tokens": 7197.25
+    },
+    "musique:cot_retrieval3_compact8": {
+      "n": 48,
+      "mean_reward": 0.1512773441876751,
+      "mean_f1": 0.21852678571428572,
+      "mean_contain": 0.08333333333333333,
+      "mean_tokens": 7173.4375
+    },
+    "musique:quality12_retrieval3": {
+      "n": 48,
+      "mean_reward": 0.1956672197532859,
+      "mean_f1": 0.26687080280830283,
+      "mean_contain": 0.125,
+      "mean_tokens": 7745.541666666667
+    }
+  },
+  "winner_counts": {
+    "retrieval3_compact8": 8,
+    "compact_synth": 23,
+    "bridge_retrieval3_compact8": 13,
+    "quality12_retrieval3": 3,
+    "cot_retrieval3_compact8": 1
+  },
+  "selected_policy_by_mean_reward": "quality12_retrieval3",
+  "rollouts": "compiled/amas3_joint_tfgrpo_musique48_20260509_0310/rollouts.jsonl"
+}

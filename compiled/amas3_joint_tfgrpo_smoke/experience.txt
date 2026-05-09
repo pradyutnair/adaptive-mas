@@ -1,0 +1,6 @@
+- For SAS, accept only direct wh-target answers that are type-safe, verifier-passed, and explicitly supported by retrieved text; otherwise escalate.
+- For MAS, prefer the minimum sufficient decomposition and cap bridge questions at three subgoals unless the question explicitly lists independent comparisons.
+- For final synthesis, use only the final-hop evidence plus the strongest supporting solver chunks; avoid re-reading every probe chunk.
+- When a final solver answer is high-confidence, grounded, and type-matched, commit it directly instead of running a broad synthesis pass.
+- For bridge questions, phrase each dependent retrieval query with the resolved bridge answer and the final requested relation.
+- Deployment policy selected by train reward: compact_fastfinal; keep this as a fixed policy at inference.

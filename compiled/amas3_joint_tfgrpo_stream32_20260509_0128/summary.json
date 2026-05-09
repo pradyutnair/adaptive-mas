@@ -1,0 +1,175 @@
+{
+  "train_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n_train": 32,
+  "token_target": 8000.0,
+  "token_weight": 0.08,
+  "policy_names": [
+    "compact_synth",
+    "compact5_synth",
+    "retrieval3_compact8",
+    "plan4_compact8",
+    "synth12_retrieval2"
+  ],
+  "stats": {
+    "compact_synth": {
+      "n": 32,
+      "mean_reward": 0.299759429945055,
+      "mean_f1": 0.3774267399267399,
+      "mean_contain": 0.34375,
+      "mean_tokens": 6924.8125,
+      "timeouts_or_errors": 0,
+      "wins": 4
+    },
+    "compact5_synth": {
+      "n": 32,
+      "mean_reward": 0.28031553571428564,
+      "mean_f1": 0.3569940476190476,
+      "mean_contain": 0.3125,
+      "mean_tokens": 6555.5,
+      "timeouts_or_errors": 0,
+      "wins": 22
+    },
+    "retrieval3_compact8": {
+      "n": 32,
+      "mean_reward": 0.31927692994505497,
+      "mean_f1": 0.3930517399267399,
+      "mean_contain": 0.375,
+      "mean_tokens": 6926.1875,
+      "timeouts_or_errors": 0,
+      "wins": 4
+    },
+    "plan4_compact8": {
+      "n": 32,
+      "mean_reward": 0.3363430460164835,
+      "mean_f1": 0.41760531135531137,
+      "mean_contain": 0.375,
+      "mean_tokens": 7061.09375,
+      "timeouts_or_errors": 0,
+      "wins": 2
+    },
+    "synth12_retrieval2": {
+      "n": 32,
+      "mean_reward": 0.263603179945055,
+      "mean_f1": 0.3461767399267399,
+      "mean_contain": 0.3125,
+      "mean_tokens": 7415.4375,
+      "timeouts_or_errors": 0,
+      "wins": 0
+    }
+  },
+  "source_stats": {
+    "2wikimultihop:compact_synth": {
+      "n": 8,
+      "mean_reward": 0.36101124999999995,
+      "mean_f1": 0.41666666666666663,
+      "mean_contain": 0.5,
+      "mean_tokens": 7648.875
+    },
+    "2wikimultihop:compact5_synth": {
+      "n": 8,
+      "mean_reward": 0.36636125,
+      "mean_f1": 0.41666666666666663,
+      "mean_contain": 0.5,
+      "mean_tokens": 7113.875
+    },
+    "2wikimultihop:retrieval3_compact8": {
+      "n": 8,
+      "mean_reward": 0.36103874999999996,
+      "mean_f1": 0.41666666666666663,
+      "mean_contain": 0.5,
+      "mean_tokens": 7646.125
+    },
+    "2wikimultihop:plan4_compact8": {
+      "n": 8,
+      "mean_reward": 0.48021625,
+      "mean_f1": 0.5416666666666666,
+      "mean_contain": 0.625,
+      "mean_tokens": 8228.375
+    },
+    "2wikimultihop:synth12_retrieval2": {
+      "n": 8,
+      "mean_reward": 0.35551999999999995,
+      "mean_f1": 0.41666666666666663,
+      "mean_contain": 0.5,
+      "mean_tokens": 8198.0
+    },
+    "hotpotqa:compact_synth": {
+      "n": 9,
+      "mean_reward": 0.6689319047619047,
+      "mean_f1": 0.7619047619047619,
+      "mean_contain": 0.6666666666666666,
+      "mean_tokens": 6916.333333333333
+    },
+    "hotpotqa:compact5_synth": {
+      "n": 9,
+      "mean_reward": 0.6728974603174602,
+      "mean_f1": 0.7619047619047619,
+      "mean_contain": 0.6666666666666666,
+      "mean_tokens": 6519.777777777777
+    },
+    "hotpotqa:retrieval3_compact8": {
+      "n": 9,
+      "mean_reward": 0.6688996825396826,
+      "mean_f1": 0.7619047619047619,
+      "mean_contain": 0.6666666666666666,
+      "mean_tokens": 6919.555555555556
+    },
+    "hotpotqa:plan4_compact8": {
+      "n": 9,
+      "mean_reward": 0.6659330158730159,
+      "mean_f1": 0.7619047619047619,
+      "mean_contain": 0.6666666666666666,
+      "mean_tokens": 7216.222222222223
+    },
+    "hotpotqa:synth12_retrieval2": {
+      "n": 9,
+      "mean_reward": 0.6652007936507937,
+      "mean_f1": 0.7619047619047619,
+      "mean_contain": 0.6666666666666666,
+      "mean_tokens": 7289.444444444444
+    },
+    "musique:compact_synth": {
+      "n": 15,
+      "mean_reward": 0.04558830769230768,
+      "mean_f1": 0.1258119658119658,
+      "mean_contain": 0.06666666666666667,
+      "mean_tokens": 6543.733333333334
+    },
+    "musique:compact5_synth": {
+      "n": 15,
+      "mean_reward": -0.0011246666666666631,
+      "mean_f1": 0.08222222222222222,
+      "mean_contain": 0.0,
+      "mean_tokens": 6279.133333333333
+    },
+    "musique:retrieval3_compact8": {
+      "n": 15,
+      "mean_reward": 0.0872303076923077,
+      "mean_f1": 0.15914529914529912,
+      "mean_contain": 0.13333333333333333,
+      "mean_tokens": 6546.2
+    },
+    "musique:plan4_compact8": {
+      "n": 15,
+      "mean_reward": 0.061856688644688664,
+      "mean_f1": 0.14485958485958486,
+      "mean_contain": 0.06666666666666667,
+      "mean_tokens": 6345.466666666666
+    },
+    "musique:synth12_retrieval2": {
+      "n": 15,
+      "mean_reward": -0.026377692307692314,
+      "mean_f1": 0.05914529914529915,
+      "mean_contain": 0.0,
+      "mean_tokens": 7073.666666666667
+    }
+  },
+  "winner_counts": {
+    "retrieval3_compact8": 4,
+    "compact_synth": 4,
+    "compact5_synth": 22,
+    "plan4_compact8": 2
+  },
+  "selected_policy_by_mean_reward": "plan4_compact8",
+  "rollouts": "compiled/amas3_joint_tfgrpo_stream32_20260509_0128/rollouts.jsonl"
+}

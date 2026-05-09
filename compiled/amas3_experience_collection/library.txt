@@ -1,0 +1,5 @@
+- Use direct SAS only as a verifier-gated cheap exit; if the answer is not an explicit wh-target span in retrieved evidence, escalate to MAS.
+- Prefer compact MAS plans with at most three subgoals; train rollouts show longer plans add cost without reliable F1 gains.
+- Keep synthesis compact: final-hop evidence plus strongest solver evidence is enough; broad 20-chunk synthesis burns tokens without consistent quality gain.
+- Use compact synthesis rather than unconditional fast-final when preserving quality matters; fast-final is token-cheapest but validation can lose wh-target alignment.
+- For comparison or classifier questions, preserve the requested candidate/class as the final answer; do not return the compared property or modifier.

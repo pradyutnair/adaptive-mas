@@ -1,0 +1,54 @@
+{
+  "name": "source_aware_compact_synth",
+  "max_retrievals": 2,
+  "max_plan_subgoals": 3,
+  "synth_max_chunks": 5,
+  "synth_excerpt_chars": 300,
+  "synth_chain_of_thought": false,
+  "skip_synth_on_final_ok": false,
+  "skip_synth_confidence": 0.9,
+  "repair_enabled": false,
+  "use_sas_collapse": true,
+  "tau_sas_g": 0.65,
+  "tau_sas_conf": 0.75,
+  "adaptive_solver_budget": true,
+  "min_retrievals_per_solver": 1,
+  "medium_retrievals_per_solver": 2,
+  "max_repairs": 0,
+  "selected_after": "IRCoT train36 TF-GRPO with quality-preserving token penalty; validation kept compact synthesis instead of fast-final",
+  "experience_library": "compiled/amas3_experience_collection/library.json",
+  "inference_experience_prompt": null,
+  "selection_rule": "Use IRCoT-train experience to select compact synthesis/topology; do not inject raw library text at inference because validation increased drift and prompt cost.",
+  "default_policy": "compact5_synth",
+  "source_switches": {
+    "musique": {
+      "synth_max_chunks": 5,
+      "synth_excerpt_chars": 300,
+      "reason": "compact5 improved 50q EM/F1 at 6.4k tokens"
+    },
+    "hotpotqa": {
+      "synth_max_chunks": 5,
+      "synth_excerpt_chars": 300,
+      "reason": "compact5 improved 50q EM/F1 at 7.5k tokens"
+    },
+    "2wikimultihop": {
+      "synth_max_chunks": 8,
+      "synth_excerpt_chars": 420,
+      "reason": "IRCoT-train source stats and 50q diagnostic favored wider compact synthesis under 8k"
+    },
+    "bamboogle": {
+      "synth_max_chunks": 5,
+      "synth_excerpt_chars": 300,
+      "reason": "compact5 improved 50q EM/F1 at 5.7k tokens"
+    }
+  },
+  "full_base_run": "results/amas3_joint_tfgrpo_fullbase_20260508_233333",
+  "switches": {
+    "sas_collapse": "on, conservative verifier gate only",
+    "mas_planning": "on, capped at 3 subgoals",
+    "repair": "off",
+    "synth_cot": "off",
+    "synth_context": "source-aware compact chunks",
+    "retrieval_retries": "max 2 with adaptive per-solver budget"
+  }
+}

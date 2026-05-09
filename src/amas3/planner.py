@@ -24,6 +24,16 @@ Each sub-question must be answerable by ONE retrieval over Wikipedia plus
 ONE short reading step. If a sub-question depends on an earlier answer,
 reference it inline using <A.I> where I is the earlier subgoal id.
 
+Wh-target discipline:
+- Preserve the original requested answer type in the final sub-question.
+- For "right-handed what" or similar modifier questions, ask for the role/type
+  modified by the phrase, not whether the phrase is true.
+- For "which/between A and B" comparisons, the final sub-question should choose
+  A or B, not return the compared date/place/property.
+- For entity questions with descriptors (born date, nationality, profession),
+  identify the entity satisfying all descriptors, not the most famous partial
+  match.
+
 Output STRICT JSON with keys:
 - subgoals: list of {id, question, depends_on, expected_answer_type, is_final, rationale}
 - final_id: id of the subgoal whose answer is the final answer
@@ -40,7 +50,7 @@ Exactly one subgoal has is_final=true.
 _MAX_SUBGOALS = 6
 
 
-def _parse_plan(raw: str, original_question: str) -> tuple[Plan, str]:
+def _parse_plan(raw: str, original_question: str, max_subgoals: int = _MAX_SUBGOALS) -> tuple[Plan, str]:
     """Parse the planner's JSON output. Falls back to a single-node plan on errors."""
     text = raw.strip()
     m = re.search(r'\{.*\}', text, re.DOTALL)
@@ -55,7 +65,8 @@ def _parse_plan(raw: str, original_question: str) -> tuple[Plan, str]:
     raw_subgoals = obj.get('subgoals', [])
     subgoals: list[SubgoalNode] = []
     seen_ids = set()
-    for i, item in enumerate(raw_subgoals[:_MAX_SUBGOALS], start=1):
+    max_subgoals = max(1, min(int(max_subgoals or _MAX_SUBGOALS), _MAX_SUBGOALS))
+    for i, item in enumerate(raw_subgoals[:max_subgoals], start=1):
         if not isinstance(item, dict):
             continue
         try:
@@ -115,13 +126,13 @@ def _maybe_with_experience(sig_class, experience: str):
     return sig_class.with_instructions(new_instr)
 
 
-def run_planner(planner_lm: dspy.LM, question: str, experience: str = "") -> Plan:
+def run_planner(planner_lm: dspy.LM, question: str, experience: str = "", max_subgoals: int = _MAX_SUBGOALS) -> Plan:
     """Run the Planner once. Returns a Plan with planner_tokens populated."""
     sig = _maybe_with_experience(DecomposeMultiHop, experience)
     with dspy.context(lm=planner_lm):
         cot = dspy.ChainOfThought(sig)
         pred = cot(question=question)
-    plan, status = _parse_plan(pred.plan_json, question)
+    plan, status = _parse_plan(pred.plan_json, question, max_subgoals=max_subgoals)
     try:
         history = planner_lm.history[-1] if planner_lm.history else None
         usage = (history or {}).get('usage') or {}

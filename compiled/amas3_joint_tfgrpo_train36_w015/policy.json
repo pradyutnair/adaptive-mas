@@ -1,0 +1,18 @@
+{
+  "name": "compact_fastfinal",
+  "max_retrievals": 2,
+  "max_plan_subgoals": 3,
+  "synth_max_chunks": 6,
+  "synth_excerpt_chars": 360,
+  "synth_chain_of_thought": false,
+  "skip_synth_on_final_ok": true,
+  "skip_synth_confidence": 0.82,
+  "repair_enabled": false,
+  "use_sas_collapse": true,
+  "tau_sas_g": 0.65,
+  "tau_sas_conf": 0.75,
+  "adaptive_solver_budget": true,
+  "min_retrievals_per_solver": 1,
+  "medium_retrievals_per_solver": 2,
+  "max_repairs": 0
+}

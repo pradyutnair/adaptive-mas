@@ -102,6 +102,7 @@ GROUNDING RULES:
 Output STRICT JSON: {"answer_span": <str>, "evidence_chunk_id": <str>, "confidence": <float>}.
 If you cannot ground the answer, output {"answer_span": "", "evidence_chunk_id": "", "confidence": 0.0}.
 """
+    original_question: str = dspy.InputField(desc='Original user question; use only to disambiguate entities/relations, not as evidence')
     sub_question: str = dspy.InputField()
     expected_answer_type: str = dspy.InputField()
     chunks_json: str = dspy.InputField(desc='Top-k chunks: list of {chunk_id, text}')
@@ -115,6 +116,7 @@ Use named entities and key relation words from the sub-question. Add
 disambiguating context if you can infer it. Return a single short query
 string (no JSON).
 """
+    original_question: str = dspy.InputField(desc='Original user question for disambiguating ambiguous names and relations')
     sub_question: str = dspy.InputField()
     expected_answer_type: str = dspy.InputField()
     previous_queries: str = dspy.InputField(desc='Newline-separated previous queries that did not work')
@@ -168,6 +170,7 @@ You produced answer_v1 with confidence_v1 from the same chunks. Now reconsider:
 
 Output STRICT JSON: {"answer_span": <str>, "confidence": <float>, "evidence_chunk_id": <str>, "changed": <bool>}.
 """
+    original_question: str = dspy.InputField(desc='Original user question; use only to check entity/relation alignment')
     sub_question: str = dspy.InputField()
     expected_answer_type: str = dspy.InputField()
     chunks_json: str = dspy.InputField()
@@ -181,6 +184,7 @@ async def run_solver(
     solver_lm: dspy.LM,
     rewrite_lm: dspy.LM | None,
     retriever: Retriever,
+    original_question: str,
     sub_question: str,
     expected_answer_type: str,
     starting_chunks: list[RetrievedChunk] | None,
@@ -213,6 +217,7 @@ async def run_solver(
                 mod = dspy.Predict(extract_sig)
                 pred = await asyncio.to_thread(
                     mod,
+                    original_question=original_question,
                     sub_question=sub_question,
                     expected_answer_type=expected_answer_type,
                     chunks_json=chunks_json,
@@ -277,6 +282,7 @@ async def run_solver(
                 rmod = dspy.Predict(rewrite_sig)
                 rpred = await asyncio.to_thread(
                     rmod,
+                    original_question=original_question,
                     sub_question=sub_question,
                     expected_answer_type=expected_answer_type,
                     previous_queries='\n'.join(queries_issued),
@@ -329,6 +335,7 @@ async def run_solver(
                 refmod = dspy.Predict(refine_sig)
                 rfpred = await asyncio.to_thread(
                     refmod,
+                    original_question=original_question,
                     sub_question=sub_question,
                     expected_answer_type=expected_answer_type,
                     chunks_json=_format_chunks(chunks_used),

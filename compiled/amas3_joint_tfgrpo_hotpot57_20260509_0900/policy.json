@@ -1,0 +1,22 @@
+{
+  "name": "plan6_retrieval3_compact8",
+  "max_retrievals": 3,
+  "max_plan_subgoals": 6,
+  "synth_max_chunks": 8,
+  "synth_excerpt_chars": 420,
+  "synth_chain_of_thought": false,
+  "skip_synth_on_final_ok": false,
+  "skip_synth_confidence": 0.9,
+  "repair_enabled": false,
+  "use_sas_collapse": true,
+  "tau_sas_g": 0.65,
+  "tau_sas_conf": 0.75,
+  "adaptive_solver_budget": true,
+  "min_retrievals_per_solver": 1,
+  "medium_retrievals_per_solver": 2,
+  "max_repairs": 0,
+  "use_bridge_resolver": false,
+  "bridge_g_threshold": 0.45,
+  "use_multi_plan": false,
+  "K_plans": 3
+}

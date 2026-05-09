@@ -9,6 +9,8 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+import re
+import string
 import time
 from dataclasses import dataclass, field
 from typing import Any
@@ -94,6 +96,12 @@ class AmasPipelineConfig:
     min_retrievals_per_solver: int = 1
     medium_retrievals_per_solver: int = 2
     max_repairs: int = 2
+    max_plan_subgoals: int = 6
+    synth_max_chunks: int = 20
+    synth_excerpt_chars: int = 700
+    synth_chain_of_thought: bool = True
+    skip_synth_on_final_ok: bool = False
+    skip_synth_confidence: float = 0.82
 
 
 class AmasPipeline:
@@ -214,7 +222,13 @@ class AmasPipeline:
             mp_retrievals = sum(len(p.chunks) > 0 for p in mp.chosen_probes)
             result.n_retrieval_calls += mp_retrievals
         else:
-            plan = await asyncio.to_thread(run_planner, self.planner_lm, question, enhanced_experience)
+            plan = await asyncio.to_thread(
+                run_planner,
+                self.planner_lm,
+                question,
+                enhanced_experience,
+                self.config.max_plan_subgoals,
+            )
             result.planner_tokens = plan.planner_tokens
             result.plan_subgoals = len(plan.subgoals)
 
@@ -259,11 +273,31 @@ class AmasPipeline:
             _add(chunks)
         for p in probes:
             _add(p.chunks)
-        # Cap to 20 chunks max to keep synth context tight
-        union_capped = union[:20]
+        union_capped = union[:max(1, int(self.config.synth_max_chunks))]
+
+        final_finding = bus.findings_by_node.get(final_node.id) if final_node else None
+        if (
+            self.config.skip_synth_on_final_ok
+            and final_finding
+            and final_finding.answer
+            and final_finding.status == FindingStatus.OK
+            and float(final_finding.confidence or 0.0) >= self.config.skip_synth_confidence
+        ):
+            synth_obj = {
+                'answer': final_finding.answer,
+                'answer_type': final_node.expected_answer_type if final_node else 'other',
+                'justification': f'fast_final_solver(conf={final_finding.confidence:.3f})',
+                'support_ids': final_finding.evidence_ids or [],
+            }
+            synth_tokens = 0
+        else:
+            synth_obj = None
+            synth_tokens = 0
 
         try:
-            if self.config.synth_recursion_rounds > 1:
+            if synth_obj is not None:
+                pass
+            elif self.config.synth_recursion_rounds > 1:
                 from .synth_refine import run_synth_recursion
                 synth_obj, synth_tokens = await asyncio.to_thread(
                     run_synth_recursion,
@@ -282,6 +316,8 @@ class AmasPipeline:
                     bus=bus,
                     final_evidence=union_capped,
                     experience=self.config.experience_library,
+                    excerpt_chars=self.config.synth_excerpt_chars,
+                    chain_of_thought=self.config.synth_chain_of_thought,
                 )
         except Exception as e:
             logger.warning('synth call failed (%s); falling back to best non-bridge finding', type(e).__name__)
@@ -305,7 +341,8 @@ class AmasPipeline:
                 synth_obj = {'answer': '', 'answer_type': 'other', 'justification': 'synth_failed_no_findings', 'support_ids': []}
             synth_tokens = 0
         result.synth_tokens = synth_tokens
-        result.answer = str(synth_obj.get('answer', '')).strip()
+        raw_answer = str(synth_obj.get('answer', '')).strip()
+        result.answer = self._align_candidate_comparison_answer(question, raw_answer, bus)
         result.answer_type = str(synth_obj.get('answer_type', 'other'))
         result.justification = str(synth_obj.get('justification', ''))[:300]
         sup = synth_obj.get('support_ids', [])
@@ -348,6 +385,7 @@ class AmasPipeline:
             solver_lm=self.worker_lm,
             rewrite_lm=self.worker_lm,
             retriever=self.retriever,
+            original_question=question,
             sub_question=question,
             expected_answer_type=node.expected_answer_type if node else 'entity',
             starting_chunks=original.chunks,
@@ -387,6 +425,7 @@ class AmasPipeline:
                     solver_lm=self.worker_lm,
                     rewrite_lm=self.worker_lm,
                     retriever=self.retriever,
+                    original_question=question,
                     sub_question=sub_q,
                     expected_answer_type=node.expected_answer_type,
                     starting_chunks=start_chunks,
@@ -434,6 +473,7 @@ class AmasPipeline:
                 solver_lm=self.worker_lm,
                 rewrite_lm=self.worker_lm,
                 retriever=self.retriever,
+                original_question=result.question,
                 sub_question=sub_q,
                 expected_answer_type=node.expected_answer_type,
                 starting_chunks=None,
@@ -519,6 +559,78 @@ class AmasPipeline:
         if g >= 0.45:
             return max(1, min(self.config.medium_retrievals_per_solver, max_r))
         return max_r
+
+    @staticmethod
+    def _norm_answer_text(text: str) -> str:
+        text = (text or "").lower()
+        text = re.sub(r"\b(a|an|the)\b", "", text)
+        text = "".join(ch for ch in text if ch not in set(string.punctuation))
+        return " ".join(text.split()).strip()
+
+    @classmethod
+    def _is_alias_of_candidate(cls, answer: str, candidate: str) -> bool:
+        a = cls._norm_answer_text(answer)
+        c = cls._norm_answer_text(candidate)
+        if not a or not c:
+            return False
+        if a == c or a in c or c in a:
+            return True
+        at = set(a.split())
+        ct = set(c.split())
+        return bool(at) and at.issubset(ct)
+
+    @staticmethod
+    def _comparison_candidates(question: str) -> list[str]:
+        q = (question or "").strip()
+        if not re.search(r"\b(which|who|whose)\b|\bolder\b|\bfurther\b|\bhighest\b|\blarger\b|\bmore\b", q, flags=re.I):
+            return []
+        between_pair = re.search(r"\bbetween\s+(.+?)\s+and\s+(.+?)\s+(?:which|who|whose|was|were|is|are)\b", q, flags=re.I)
+        if between_pair:
+            candidates = [between_pair.group(1).strip(" ,"), between_pair.group(2).strip(" ,")]
+            return candidates if all(candidates) else []
+        if " or " not in q.lower():
+            return []
+        matches = list(re.finditer(r"\s+or\s+", q, flags=re.I))
+        if not matches:
+            return []
+        split = matches[-1]
+        left_context = q[:split.start()].strip(" ,?")
+        right = q[split.end():].strip(" ,?")
+        right = re.split(r"\?|\.", right)[0].strip(" ,")
+        left = left_context
+        if "," in left:
+            left = left.rsplit(",", 1)[-1].strip()
+        between = re.search(r"\bbetween\s+(.+)$", left, flags=re.I)
+        if between:
+            left = between.group(1).strip()
+        proper = re.search(r"([A-Z][\w'’.-]*(?:\s+[A-Z][\w'’.-]*){0,6})$", left)
+        if proper:
+            left = proper.group(1).strip()
+        candidates = [c.strip(" ,") for c in (left, right) if c.strip(" ,")]
+        return candidates if len(candidates) == 2 else []
+
+    def _align_candidate_comparison_answer(self, question: str, answer: str, bus: FindingsBus) -> str:
+        candidates = self._comparison_candidates(question)
+        if len(candidates) != 2 or not answer:
+            return answer
+        ans_norm = self._norm_answer_text(answer)
+        if not ans_norm:
+            return answer
+        question_norm = self._norm_answer_text(question)
+        for cand in candidates:
+            cand_norm = self._norm_answer_text(cand)
+            for finding in bus.all():
+                subq_norm = self._norm_answer_text(finding.sub_question)
+                find_ans_norm = self._norm_answer_text(finding.answer)
+                if cand_norm and cand_norm in subq_norm and find_ans_norm:
+                    if find_ans_norm in question_norm:
+                        return cand
+                    if ans_norm == find_ans_norm or ans_norm in find_ans_norm or find_ans_norm in ans_norm:
+                        return cand
+        for cand in candidates:
+            if self._is_alias_of_candidate(answer, cand):
+                return cand
+        return answer
 
     def _final_evidence_chunks(
         self,

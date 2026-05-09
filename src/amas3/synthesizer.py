@@ -52,6 +52,16 @@ Step 4: Search the final_evidence chunks for a span that:
             original question explicitly asks for one of them),
         (c) stands in the required relation from Step 3 with the bridge.
 
+Special target-alignment rules:
+- For comparison questions ("which of A and B", "between A and B"), output the
+  candidate entity that satisfies the condition, not the condition value.
+- For classifier questions with a modifier ("right-handed what", "American
+  professional Hawaiian surfer"), output the requested class/role/person that
+  satisfies all modifiers, not the modifier itself.
+- If the final finding is a boolean check over a candidate, output the
+  candidate when the check is true; do not output "yes/no" unless the original
+  question is explicitly yes/no.
+
 Step 5: Output the FULL form as it appears in evidence. Do not abbreviate.
 
 GROUNDING RULES:
@@ -155,16 +165,18 @@ def run_synthesizer(
     bus: FindingsBus,
     final_evidence: list[RetrievedChunk],
     experience: str = "",
+    excerpt_chars: int = 700,
+    chain_of_thought: bool = True,
 ) -> tuple[dict[str, Any], int]:
     findings_summary = _format_findings(bus)
-    final_evidence_json = _format_evidence(final_evidence)
+    final_evidence_json = _format_evidence(final_evidence, excerpt_chars=excerpt_chars)
     sig = WhTargetAlignedSynthesis
     if experience:
         base = sig.instructions or sig.__doc__ or ""
         sig = sig.with_instructions("Prior experiential knowledge from past attempts:\n" + experience + "\n\n" + base)
     with dspy.context(lm=synth_lm):
-        cot = dspy.ChainOfThought(sig)
-        pred = cot(
+        mod = dspy.ChainOfThought(sig) if chain_of_thought else dspy.Predict(sig)
+        pred = mod(
             original_question=original_question,
             findings_summary=findings_summary,
             final_evidence_json=final_evidence_json,

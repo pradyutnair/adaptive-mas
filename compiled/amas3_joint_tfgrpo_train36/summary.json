@@ -1,0 +1,52 @@
+{
+  "train_path": "/local/yzheng/pnair/workspace/reproduction/hera/data/train_240_v2.jsonl",
+  "n_train": 36,
+  "token_target": 7000.0,
+  "token_weight": 0.25,
+  "stats": {
+    "full_reference": {
+      "n": 36,
+      "mean_reward": 0.05179960317460318,
+      "mean_f1": 0.40532407407407406,
+      "mean_contain": 0.3333333333333333,
+      "mean_tokens": 9964.638888888889,
+      "wins": 2
+    },
+    "compact_synth": {
+      "n": 36,
+      "mean_reward": 0.1340406746031746,
+      "mean_f1": 0.40532407407407406,
+      "mean_contain": 0.3333333333333333,
+      "mean_tokens": 7108.111111111111,
+      "wins": 0
+    },
+    "compact5_synth": {
+      "n": 36,
+      "mean_reward": 0.1514950396825397,
+      "mean_f1": 0.4076388888888889,
+      "mean_contain": 0.3333333333333333,
+      "mean_tokens": 6654.75,
+      "wins": 11
+    },
+    "compact_fastfinal": {
+      "n": 36,
+      "mean_reward": 0.1550625,
+      "mean_f1": 0.37060185185185185,
+      "mean_contain": 0.3055555555555556,
+      "mean_tokens": 5579.777777777777,
+      "wins": 23
+    }
+  },
+  "winner_counts": {
+    "compact_fastfinal": 23,
+    "compact5_synth": 11,
+    "full_reference": 2
+  },
+  "failure_modes": {
+    "over_budget": 73,
+    "wrong_answer": 78
+  },
+  "selected_policy": "compact_fastfinal",
+  "experience_file": "compiled/amas3_joint_tfgrpo_train36/experience.txt",
+  "policy_file": "compiled/amas3_joint_tfgrpo_train36/policy.json"
+}
