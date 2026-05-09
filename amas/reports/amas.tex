@@ -36,22 +36,22 @@ with a Calibrated Conformal Routing Gate}}
 \maketitle
 
 \begin{abstract}
-\amas is a multi-hop question answering system that adaptively routes queries
-between a single-shot answer (\sas) lane and a multi-agent search (\mas) lane.
-The \sas lane is a single GPT-4o-mini probe over top-$k=5$ retrieved passages.
-The \mas lane is an LLM-orchestrated topology over up to seven specialized
-agents (Qwen3-14B for the orchestrator and library updates, GPT-4o-mini for
-each subagent). Routing is governed by a \emph{calibrated foreign verifier}
-implemented as a split-conformal predictor at $\alpha{=}0.05$, with a marginal
-coverage guarantee on \sas-lane errors. On four standard multi-hop benchmarks
-(MuSiQue, HotpotQA, 2WikiMultihop, Bamboogle) and a 1000-question evaluation
-(125 for Bamboogle), the conformal-gated configuration of \amas produces a
-clean Pareto improvement against the matched-untrained \hera baseline:
-$+1.3$ to $+15.0$ percentage points (pp) of token-F1 at $-30\%$ to $-55\%$ of
-the tokens. The empirical \sas-lane commit rate adapts to dataset difficulty,
-ranging from $40.5\%$ (2Wiki) to $66.4\%$ (HotpotQA), and on HotpotQA and
-Bamboogle the mean F1 of \sas commits exceeds the mean F1 of \mas-handled
-questions, indicating that the verifier is selecting easy questions correctly.
+\amas is a multi-hop question answering system that routes each query between
+a single-shot answer (\sas) lane and a multi-agent search (\mas) lane. The
+\sas lane is a single GPT-4o-mini probe over top-$k=5$ retrieved passages. The
+\mas lane is an LLM-orchestrated topology over specialized agents (Qwen3-14B
+for the orchestrator, GPT-4o-mini for subagents). Routing is governed by a
+foreign verifier used as a split-conformal gate. On HotpotQA, 2WikiMultihop,
+and Bamboogle, the conformal gate gives a useful cost--quality tradeoff: it
+keeps $40.5$--$66.4\%$ of questions in the cheap \sas lane and reduces token
+cost by $30$--$55\%$ relative to a matched untrained \hera baseline. The
+MuSiQue result is the main failure case. \amas-conformal reaches only
+$0.104$ EM, $0.193$ F1, and $0.133$ Acc/contain on MuSiQue; even the ungated
+\mas lane reaches only $0.112$ EM and $0.209$ F1. The system therefore shows
+real \emph{compute adaptivity} (routing changes cost), but only partial
+\emph{quality adaptivity}: the gate often sends easier questions to \sas, yet
+the underlying \mas lane is too weak on MuSiQue for the adaptive policy to
+recover strong final accuracy.
 \end{abstract}
 
 \section{Introduction}
@@ -370,14 +370,18 @@ $+13.4$pp. The token cost is roughly equal (within 1.06--1.09$\times$
 choices in \amas already produce a stronger \mas baseline than the matched
 \hera reproduction.
 
-\paragraph{\amas-conformal: the Pareto operating point.}
-With the conformal gate enabled at $\alpha=0.05$, \amas matches or beats
-\hera on F1 on all four datasets while spending substantially fewer tokens:
-$+1.3$pp F1 at $-33\%$ tokens (MuSiQue), $+10.3$pp at $-55\%$ (HotpotQA),
-$+15.0$pp at $-30\%$ (2WikiMultihop), and $+1.1$pp at $-43\%$ (Bamboogle).
-The conformal trades a small amount of F1 against \amas-off (the upper
-quality envelope) for a 30--55\% reduction in compute, while still
-remaining above \hera on quality.
+\paragraph{\amas-conformal: the Pareto operating point, with a MuSiQue caveat.}
+With the conformal gate enabled, \amas spends substantially fewer tokens:
+$-33\%$ tokens on MuSiQue, $-55\%$ on HotpotQA, $-30\%$ on 2WikiMultihop,
+and $-43\%$ on Bamboogle relative to \hera-repro. F1 is above \hera-repro
+on all four datasets, but the strength of the claim is uneven. HotpotQA
+and 2Wiki show clear gains ($+5.6$pp and $+6.0$pp EM; $+5.6$pp and
+$+6.0$pp Acc). MuSiQue is much weaker: \amas-conformal is only $+0.5$pp EM
+and $+0.4$pp Acc over \hera-repro, and the absolute score remains low
+($0.104$ EM, $0.193$ F1, $0.133$ Acc). Against \amas-off, the gate saves
+$38\%$ tokens on MuSiQue but gives up $1.6$pp F1 and $1.2$pp Acc. Thus the
+MuSiQue result should be read as an efficiency result, not as evidence that
+the current adaptive system solves hard compositional QA.
 
 \paragraph{\amas-bayesian: a degenerate baseline.}
 The closed-system Bayesian gate commits aggressively (sas-rate $\sim$100\%)
@@ -457,37 +461,94 @@ fraction of EM-correct commits, and the fraction of commits with $F_1\geq
 \begin{table}[H]
 \centering
 \small
-\begin{tabular}{lrrrrrr}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
 \toprule
-\textbf{Dataset} & \textbf{SAS rate} & \textbf{EM-correct} & \textbf{$F_1{\geq}0.5$} & \textbf{SAS F1} & \textbf{MAS F1} & \textbf{Verdict} \\
+\textbf{Dataset} & \textbf{SAS/MAS n} & \textbf{SAS rate} & \textbf{SAS EM} & \textbf{SAS EM err} & \textbf{$F_1{<}0.5$} & \textbf{SAS F1} & \textbf{MAS F1} & \textbf{Verdict} \\
 \midrule
-MuSiQue   &  42.7\% & 11.5\% & 24.1\% & 0.225 & 0.170 & $+5.5$pp \\
-HotpotQA  &  66.4\% & 39.2\% & 57.8\% & 0.545 & 0.385 & $+16.0$pp \\
-2Wiki     &  40.5\% & 20.0\% & 36.8\% & 0.337 & 0.406 & $-7.0$pp \\
-Bamboogle &  52.0\% & 41.5\% & 56.9\% & 0.549 & 0.352 & $+19.7$pp \\
+MuSiQue   & 427 / 573 & 42.7\% & 11.5\% & 88.5\% & 75.9\% & 0.225 & 0.170 & weak positive \\
+HotpotQA  & 664 / 336 & 66.4\% & 39.2\% & 60.8\% & 42.2\% & 0.545 & 0.385 & useful \\
+2Wiki     & 405 / 595 & 40.5\% & 20.0\% & 80.0\% & 63.2\% & 0.337 & 0.406 & misrouted \\
+Bamboogle & 65 / 60   & 52.0\% & 41.5\% & 58.5\% & 43.1\% & 0.549 & 0.352 & useful \\
 \bottomrule
 \end{tabular}
-\caption{\sas-lane correctness breakdown. ``Verdict'' is the mean-F1 gap
-between \sas-committed and \mas-handled questions; positive values mean the
-verifier is correctly routing easier questions to the \sas lane.}
+}
+\caption{\sas-vs-\mas distribution and \sas error rates for \amas-conformal.
+``SAS EM err'' is the fraction of committed \sas answers that are not exact
+matches. ``$F_1{<}0.5$'' is a softer committed-answer error rate.}
 \label{tab:sas}
 \end{table}
 
-On HotpotQA and Bamboogle, the verifier sends questions to \sas where the
-mean F1 is substantially higher than the F1 distribution of the questions
-it sends to \mas; the gate is doing real work, not just dropping coin
-flips. On MuSiQue the same pattern holds with a smaller margin
-($+5.5$pp). On 2WikiMultihop the verifier slightly over-commits: the
-\sas-handled F1 is $-7.0$pp below the \mas-handled F1, but the
-$30\%$ token saving is preserved and the conformal F1 still exceeds
-\hera-repro by $+15.0$pp.
+On HotpotQA and Bamboogle, the verifier is doing useful selection: committed
+\sas questions have much higher mean F1 than the questions sent to \mas. On
+MuSiQue the direction is positive but the absolute quality is poor. The
+committed \sas lane has $88.5\%$ EM error and $75.9\%$ of commits have
+$F_1<0.5$. The gate is selecting relatively easier MuSiQue items, but those
+``easy'' items are still mostly wrong under strict answer metrics. On 2Wiki,
+the split is actively wrong by mean F1: \sas-committed questions score
+$0.337$ F1 while \mas-handled questions score $0.406$ F1.
 
-The \sas-rate scales monotonically with the empirical probe-correctness on
-each dataset, ranging from $40.5\%$ on the hardest (2Wiki) to $66.4\%$
-on the easiest (HotpotQA). This is the structural adaptivity claim: the
-verifier consumes a similar amount of compute per question, but the
-\emph{distribution} over the (\sas, \mas) lanes shifts with question
-difficulty.
+The conservative verdict is therefore: \amas has real \emph{distributional}
+adaptivity because the \sas/\mas mixture changes by dataset (40.5--66.4\%
+\sas) and produces large token differences. It has only partial
+\emph{quality} adaptivity because the gate does not reliably isolate correct
+single-shot answers, and the \mas lane is not strong enough to rescue the
+hard MuSiQue tail.
+
+\subsection{MuSiQue failure analysis}
+\label{sec:musique-failure}
+
+MuSiQue is the critical dataset for this thesis because it stresses composed
+bridge reasoning rather than shallow entity matching. The current \amas
+numbers are too low for a final method:
+\[
+\begin{aligned}
+\text{\amas-conformal} &: 0.104\ \mathrm{EM},\ 0.193\ F_1,\ 0.133\ \mathrm{Acc},\\
+\text{\amas-off} &: 0.112\ \mathrm{EM},\ 0.209\ F_1,\ 0.145\ \mathrm{Acc}.
+\end{aligned}
+\]
+The ungated \mas lane is only $+3.7$pp F1 over \hera-repro and remains far
+below a useful MuSiQue operating point. The adaptive gate cannot compensate
+for this because it only chooses whether to skip \mas; it does not make the
+\mas execution itself better. In fact, on MuSiQue the gate saves tokens but
+slightly lowers quality relative to \amas-off.
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrrr}
+\toprule
+\textbf{Comparison on MuSiQue} & \textbf{$\Delta$EM} & \textbf{$\Delta F_1$} & \textbf{$\Delta$Acc} & \textbf{$\Delta$tokens} \\
+\midrule
+\amas-off vs \hera-repro        & +1.3pp & +3.7pp & +1.6pp & +8.0\% \\
+\amas-conformal vs \hera-repro  & +0.5pp & +2.1pp & +0.4pp & -33.1\% \\
+\amas-conformal vs \amas-off    & -0.8pp & -1.6pp & -1.2pp & -38.1\% \\
+\bottomrule
+\end{tabular}
+\caption{MuSiQue is primarily an efficiency tradeoff, not a strong quality
+result. The adaptive gate reduces tokens, but the absolute quality remains
+low and the gate gives up quality relative to the ungated \mas lane.}
+\label{tab:musique-delta}
+\end{table}
+
+The likely failure mode is not the presence or absence of adaptivity, but
+the weakness of the base \mas executor on bridge composition. The code runs
+only one \mas turn after the probe, and the lane decision is binary:
+commit the probe or run one fixed-depth orchestrated topology. There is no
+subgoal-level evidence sufficiency loop, no targeted bridge-conditioned
+retrieval retry, and no reliable final-target alignment check beyond the
+generic verifier. For MuSiQue, where many questions require resolving an
+intermediate entity and then asking a second question about it, this is too
+shallow.
+
+\paragraph{Verdict on adaptivity.}
+The current method is adaptive in compute allocation but not yet adaptive
+enough in reasoning allocation. A stronger MuSiQue method should make
+adaptivity internal to \mas: route simple questions to \sas, but for
+compositional questions dynamically allocate retrieval and solver effort per
+subgoal, require evidence sufficiency before accepting bridge facts, and
+verify that the final answer targets the original wh-question rather than an
+intermediate entity.
 
 \subsection{Calibration sweeps and gate behaviour}
 
@@ -647,6 +708,16 @@ breakdown on MuSiQue.
 
 \section{Limitations and future work}
 
+\paragraph{Low MuSiQue ceiling.}
+The central limitation is not only calibration; it is the low ceiling of the
+current \mas lane on MuSiQue. \amas-off reaches only $0.112$ EM and $0.209$
+F1, so the adaptive gate starts from a weak executor. A gate can save
+compute by skipping \mas on some questions, but it cannot turn a shallow
+one-turn \mas executor into a strong compositional reasoner. This is why the
+MuSiQue conformal result should not be presented as solving the thesis
+target; it is an efficiency-oriented baseline that exposes where the method
+needs to improve.
+
 \paragraph{Probe contamination.}
 The probe and the verifier are both \code{gpt-4o-mini}, whose pre-training
 corpus contains Wikipedia. Probe answers may therefore reflect memorization
@@ -687,25 +758,26 @@ a small change that should improve specialization.
 
 \section{Conclusion}
 
-\amas demonstrates that adaptive routing between a single-shot probe and a
-multi-agent search lane, governed by a calibrated foreign verifier, is a
-clean Pareto improvement over a matched-untrained \hera baseline on four
-multi-hop QA benchmarks. The \sas-lane commit rate adapts to dataset
-difficulty (40.5\%--66.4\%), and on HotpotQA and Bamboogle the verifier
-correctly routes easier questions to the cheap lane: mean \sas-committed
-F1 exceeds the F1 of the questions handed to \mas. The token saving ranges
-from 30\% to 55\% across datasets at matched-or-better quality. The
-conformal gate has a marginal coverage guarantee at $\alpha=0.05$ and
-calibrates on a 200-question pool that is id-disjoint from all evaluation
-sets. The principal remaining limitation is that the \mas lane is not yet
-trained on \amas-side data; with TF-GRPO+RoPE training on the \amas
-pipeline we expect further token reduction at parity quality.
+\amas demonstrates that routing between a single-shot probe and a
+multi-agent search lane can produce real compute adaptivity: the conformal
+gate changes the \sas/\mas mixture by dataset and saves 30--55\% tokens
+relative to \hera-repro. The quality-adaptivity evidence is mixed. On
+HotpotQA and Bamboogle, the gate clearly sends easier questions to \sas. On
+MuSiQue, the gate has a weak positive split by F1 but the committed-answer
+error rate remains very high, and the final absolute score is too low
+($0.104$ EM, $0.193$ F1, $0.133$ Acc). On 2Wiki the split is misrouted by
+mean F1. The honest conclusion is that this version of \amas is a useful
+adaptive-cost baseline, not yet a strong adaptive multi-agent QA method for
+MuSiQue. The next system should keep the cheap-lane idea but strengthen the
+\mas lane with subgoal-level sufficiency checks, bridge-conditioned
+retrieval, and final-target verification.
 
 \paragraph{Code and data.}
-The system as evaluated here is at commit \code{e54070389} of the
-\code{adaptive-mas/amas} repository. Calibration data, predictions,
-summaries, plot sources, and per-question \sas-correctness rolls live under
-\code{results/p1\_full/} and \code{reports/v1/}.
+This report was revised from checked-out commit \code{14dd8a288}. The relevant code lives
+under \code{amas/src/amas/}; the runner is \code{amas/scripts/run\_amas.py}.
+Local result summaries used here are in \code{amas/logs/p1\_full/},
+\code{amas/logs/p1\_full\_calib/}, \code{amas/logs/sas\_matched/}, and
+\code{amas/reports/v1/data/}.
 
 \begin{thebibliography}{9}
 \bibitem{hera-paper}
