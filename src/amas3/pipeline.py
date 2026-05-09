@@ -74,6 +74,14 @@ class AmasResult:
     sas_verifier_passed: bool = False
     sas_verifier_verdict: str = ''
     sas_verifier_tokens: int = 0
+    isa_accepted: bool = False
+    isa_escalated: bool = False
+    isa_confidence: float = 0.0
+    isa_rounds_used: int = 0
+    isa_tokens: int = 0
+    isa_evidence_count: int = 0
+    isa_grounded: bool = False
+    isa_missing_info: str = ''
 
 
 @dataclass
@@ -102,6 +110,10 @@ class AmasPipelineConfig:
     synth_chain_of_thought: bool = True
     skip_synth_on_final_ok: bool = False
     skip_synth_confidence: float = 0.82
+    use_isa: bool = False
+    isa_max_rounds: int = 3
+    isa_accept_threshold: float = 0.7
+    isa_g_threshold: float = 0.65
 
 
 class AmasPipeline:
@@ -133,7 +145,42 @@ class AmasPipeline:
         result.n_retrieval_calls += 1
         g_original, comp_o = compute_groundedness(question, original_chunks)
 
-        # Step 0.5: SAS-collapse attempt (single-agent efficiency for easy questions)
+        # Step 0.5a: ISA (Iterative Single Agent) -- proper adaptive cheap lane
+        if self.config.use_isa and g_original >= self.config.isa_g_threshold:
+            from .isa import run_isa
+            isa = await run_isa(
+                isa_lm=self.worker_lm,
+                retriever=self.retriever,
+                question=question,
+                initial_chunks=original_chunks,
+                max_rounds=self.config.isa_max_rounds,
+                accept_threshold=self.config.isa_accept_threshold,
+            )
+            result.isa_confidence = isa.confidence
+            result.isa_rounds_used = isa.rounds_used
+            result.isa_tokens = isa.total_tokens
+            result.isa_evidence_count = isa.evidence_count
+            result.isa_grounded = isa.grounded
+            result.isa_missing_info = isa.missing_info
+            if isa.accepted:
+                result.isa_accepted = True
+                result.topology = 'isa'
+                result.topology_rationale = (
+                    f'ISA accepted (conf={isa.confidence:.3f}, rounds={isa.rounds_used}, '
+                    f'evidence={isa.evidence_count})'
+                )
+                result.answer = isa.answer
+                result.answer_type = isa.answer_type
+                result.justification = f'ISA iterative single-agent ({isa.rounds_used} rounds)'
+                result.support_ids = []
+                result.probe_groundedness = [round(g_original, 4)]
+                result.total_tokens = isa.total_tokens
+                result.n_retrieval_calls += len(isa.queries_issued)
+                result.wallclock_seconds = round(time.time() - t0, 3)
+                return result
+            result.isa_escalated = True
+
+        # Step 0.5b: SAS-collapse attempt (single-agent efficiency for easy questions)
         if self.config.use_sas_collapse:
             from .sas_attempt import try_sas_attempt
             sas = await asyncio.to_thread(
@@ -366,6 +413,7 @@ class AmasPipeline:
             + result.rewrite_tokens
             + result.sas_attempt_tokens
             + result.bridge_resolver_tokens
+            + result.isa_tokens
         )
         result.wallclock_seconds = round(time.time() - t0, 3)
         return result

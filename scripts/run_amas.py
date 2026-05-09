@@ -34,6 +34,11 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--no-repair', dest='repair', action='store_false')
     ap.add_argument('--worker', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
     ap.add_argument('--synth-mode', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
+    ap.add_argument('--use-isa', dest='use_isa', action='store_true', default=False, help='enable ISA (Iterative Single Agent) adaptive cheap lane')
+    ap.add_argument('--no-isa', dest='use_isa', action='store_false')
+    ap.add_argument('--isa-max-rounds', type=int, default=3, help='max retrieval rounds for ISA')
+    ap.add_argument('--isa-accept-threshold', type=float, default=0.7, help='confidence threshold for ISA acceptance')
+    ap.add_argument('--isa-g-threshold', type=float, default=0.65, help='probe groundedness threshold to attempt ISA')
     ap.add_argument('--use-sas-collapse', action='store_true', default=False, help='enable probe-grounded SAS-collapse before MAS')
     ap.add_argument('--tau-sas-g', type=float, default=0.55)
     ap.add_argument('--tau-sas-conf', type=float, default=0.75)
@@ -152,6 +157,10 @@ async def main() -> None:
                 synth_chain_of_thought=not args.synth_no_cot,
                 skip_synth_on_final_ok=args.skip_synth_on_final_ok,
                 skip_synth_confidence=args.skip_synth_confidence,
+                use_isa=args.use_isa,
+                isa_max_rounds=args.isa_max_rounds,
+                isa_accept_threshold=args.isa_accept_threshold,
+                isa_g_threshold=args.isa_g_threshold,
             ),
         )
         for i in range(n_replicas)
@@ -196,6 +205,10 @@ async def main() -> None:
         'K_plans': args.K_plans,
         'use_bridge_resolver': args.use_bridge_resolver,
         'bridge_g_threshold': args.bridge_g_threshold,
+        'use_isa': args.use_isa,
+        'isa_max_rounds': args.isa_max_rounds,
+        'isa_accept_threshold': args.isa_accept_threshold,
+        'isa_g_threshold': args.isa_g_threshold,
     }, indent=2))
 
     sem = asyncio.Semaphore(args.concurrency)
@@ -246,6 +259,14 @@ async def main() -> None:
                         'sas_verifier_passed': r.sas_verifier_passed,
                         'sas_verifier_verdict': r.sas_verifier_verdict,
                         'sas_verifier_tokens': r.sas_verifier_tokens,
+                        'isa_accepted': r.isa_accepted,
+                        'isa_escalated': r.isa_escalated,
+                        'isa_confidence': r.isa_confidence,
+                        'isa_rounds_used': r.isa_rounds_used,
+                        'isa_tokens': r.isa_tokens,
+                        'isa_evidence_count': r.isa_evidence_count,
+                        'isa_grounded': r.isa_grounded,
+                        'isa_missing_info': r.isa_missing_info,
                     },
                 }
             except Exception as e:
