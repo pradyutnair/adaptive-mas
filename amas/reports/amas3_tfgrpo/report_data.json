@@ -1,0 +1,243 @@
+{
+  "ours": {
+    "MuSiQue:Base": {
+      "em": 0.204,
+      "f1": 0.2933,
+      "contain": 0.231,
+      "tokens": 7785.872,
+      "n": 1000,
+      "planner": 866.558,
+      "solver": 4528.027,
+      "synthesizer": 2109.09,
+      "rewrite": 134.814
+    },
+    "MuSiQue:TF-GRPO": {
+      "em": 0.204,
+      "f1": 0.2933,
+      "contain": 0.231,
+      "tokens": 7785.872,
+      "n": 1000,
+      "planner": 866.558,
+      "solver": 4528.027,
+      "synthesizer": 2109.09,
+      "rewrite": 134.814
+    },
+    "HotpotQA:Base": {
+      "em": 0.404,
+      "f1": 0.5108,
+      "contain": 0.444,
+      "tokens": 8015.434,
+      "n": 1000,
+      "planner": 805.568,
+      "solver": 4430.266,
+      "synthesizer": 2008.802,
+      "rewrite": 126.178
+    },
+    "HotpotQA:TF-GRPO": {
+      "em": 0.42,
+      "f1": 0.5286,
+      "contain": 0.462,
+      "tokens": 7351.198,
+      "n": 1000,
+      "planner": 805.707,
+      "solver": 4264.87,
+      "synthesizer": 1528.419,
+      "rewrite": 107.66
+    },
+    "2Wiki:Base": {
+      "em": 0.386,
+      "f1": 0.4504,
+      "contain": 0.429,
+      "tokens": 9096.945,
+      "n": 1000,
+      "planner": 844.12,
+      "solver": 5593.566,
+      "synthesizer": 2118.131,
+      "rewrite": 203.378
+    },
+    "2Wiki:TF-GRPO": {
+      "em": 0.398,
+      "f1": 0.4638,
+      "contain": 0.441,
+      "tokens": 9045.12,
+      "n": 1000,
+      "planner": 843.553,
+      "solver": 5973.876,
+      "synthesizer": 1591.706,
+      "rewrite": 298.233
+    },
+    "Bamboogle:Base": {
+      "em": 0.448,
+      "f1": 0.5673,
+      "contain": 0.464,
+      "tokens": 6322.424,
+      "n": 125,
+      "planner": 731.384,
+      "solver": 3166.408,
+      "synthesizer": 1923.32,
+      "rewrite": 55.984
+    },
+    "Bamboogle:TF-GRPO": {
+      "em": 0.448,
+      "f1": 0.5673,
+      "contain": 0.464,
+      "tokens": 6322.424,
+      "n": 125,
+      "planner": 731.384,
+      "solver": 3166.408,
+      "synthesizer": 1923.32,
+      "rewrite": 55.984
+    }
+  },
+  "baselines": {
+    "HotpotQA:Naive RAG": {
+      "em": 0.301,
+      "f1": 0.4174,
+      "contain": 0.377,
+      "tokens": 886.724,
+      "n": 1000
+    },
+    "HotpotQA:IRCoT": {
+      "em": 0.347,
+      "f1": 0.4638,
+      "contain": 0.448,
+      "tokens": 6046.448,
+      "n": 1000
+    },
+    "HotpotQA:OPERA-CoT": {
+      "em": 0.098,
+      "f1": 0.2142,
+      "contain": 0.327,
+      "tokens": 2227.031,
+      "n": 1000
+    },
+    "HotpotQA:MA-RAG": {
+      "em": 0.27,
+      "f1": 0.3865,
+      "contain": 0.42,
+      "tokens": 8067.199,
+      "n": 1000
+    },
+    "2Wiki:Naive RAG": {
+      "em": 0.253,
+      "f1": 0.3031,
+      "contain": 0.295,
+      "tokens": 924.862,
+      "n": 1000
+    },
+    "2Wiki:IRCoT": {
+      "em": 0.243,
+      "f1": 0.3317,
+      "contain": 0.474,
+      "tokens": 7106.4,
+      "n": 1000
+    },
+    "2Wiki:OPERA-CoT": {
+      "em": 0.046,
+      "f1": 0.1515,
+      "contain": 0.304,
+      "tokens": 2258.161,
+      "n": 1000
+    },
+    "2Wiki:MA-RAG": {
+      "em": 0.265,
+      "f1": 0.3458,
+      "contain": 0.412,
+      "tokens": 9195.29,
+      "n": 1000
+    },
+    "MuSiQue:Naive RAG": {
+      "em": 0.038,
+      "f1": 0.1073,
+      "contain": 0.079,
+      "tokens": 880.962,
+      "n": 1000
+    },
+    "MuSiQue:IRCoT": {
+      "em": 0.081,
+      "f1": 0.1564,
+      "contain": 0.127,
+      "tokens": 7409.18,
+      "n": 1000
+    },
+    "MuSiQue:OPERA-CoT": {
+      "em": 0.015,
+      "f1": 0.0634,
+      "contain": 0.058,
+      "tokens": 2206.396,
+      "n": 1000
+    },
+    "MuSiQue:MA-RAG": {
+      "em": 0.106,
+      "f1": 0.1982,
+      "contain": 0.177,
+      "tokens": 9028.643,
+      "n": 1000
+    },
+    "Bamboogle:IRCoT": {
+      "em": 0.296,
+      "f1": 0.3885,
+      "contain": 0.352,
+      "tokens": 6558.32,
+      "n": 125
+    }
+  },
+  "train": {
+    "compact_synth": {
+      "reward": 0.4675808919769021,
+      "f1": 0.5148310720936419,
+      "contain": 0.4748603351955307,
+      "tokens": 7917.217877094972,
+      "wins": 5
+    },
+    "compact5_synth": {
+      "reward": 0.47525919628186475,
+      "f1": 0.5198590050545357,
+      "contain": 0.48044692737430167,
+      "tokens": 7383.692737430168,
+      "wins": 162
+    },
+    "retrieval3_compact8": {
+      "reward": 0.47814437913713004,
+      "f1": 0.5261372705506784,
+      "contain": 0.4860335195530726,
+      "tokens": 8089.508379888268,
+      "wins": 3
+    },
+    "quality8_repair": {
+      "reward": 0.4803900386523326,
+      "f1": 0.5318081049924626,
+      "contain": 0.49162011173184356,
+      "tokens": 8884.698324022347,
+      "wins": 3
+    },
+    "cot_retrieval3_compact8": {
+      "reward": 0.4300382466892291,
+      "f1": 0.47511789886091554,
+      "contain": 0.44692737430167595,
+      "tokens": 8092.871508379888,
+      "wins": 1
+    },
+    "quality12_retrieval3": {
+      "reward": 0.46387897657386995,
+      "f1": 0.5163607342378292,
+      "contain": 0.4748603351955307,
+      "tokens": 8974.715083798883,
+      "wins": 2
+    },
+    "plan6_retrieval3_compact8": {
+      "reward": 0.4761798250473376,
+      "f1": 0.5262215128136916,
+      "contain": 0.4860335195530726,
+      "tokens": 8511.49720670391,
+      "wins": 2
+    },
+    "plan6_retrieval3_oldlike": {
+      "reward": 0.4344416499438781,
+      "f1": 0.4937580110764468,
+      "contain": 0.4581005586592179,
+      "tokens": 11056.508379888268,
+      "wins": 1
+    }
+  }
+}
