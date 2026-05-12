@@ -1,0 +1,3 @@
+[run] 2wiki at 00:13:42 limit=1000
+scripts/run_orch_1000q.sh: line 31: 3677174 Killed                  $RUN --questions "$QFILE" --output-dir "$OUTDIR" $BASE_PLANNER $BASE_LM $BASE_PIPE $WINNER --limit "$LIM" > "$OUTDIR/run.log" 2>&1
+[run] hotpot at 00:22:34 limit=1000

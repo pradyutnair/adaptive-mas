@@ -1,0 +1,16 @@
+{
+  "outputs": [
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/naive_rag_hotpotqa/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ircot_hotpotqa/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/opera_cot_hotpotqa/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ma_rag_hotpotqa/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/naive_rag_2wiki/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ircot_2wiki/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/opera_cot_2wiki/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ma_rag_2wiki/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/naive_rag_musique/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ircot_musique/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/opera_cot_musique/predictions.jsonl",
+    "/local/yzheng/pnair/baseline/results/full/combined_nothink_top5_node408/ma_rag_musique/predictions.jsonl"
+  ]
+}

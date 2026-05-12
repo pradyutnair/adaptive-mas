@@ -1,0 +1,11 @@
+[run] 2wiki at 02:21:40 limit=1000
+[run] hotpot at 02:58:47 limit=1000
+[run] musique at 03:27:22 limit=1000
+[run] bamboogle at 04:03:15 limit=125
+
+===== FINAL 1000Q SUMMARY =====
+dataset        EM     F1     CT     tok  ||  tgt_EM tgt_F1 tgt_CT tgt_tok
+2wiki       0.402  0.460  0.442    8073  ||   0.418  0.480  0.463   10269
+hotpot      0.410  0.508  0.442    6111  ||   0.420  0.529  0.455    8775
+musique     0.178  0.266  0.206    7039  ||   0.205  0.295  0.231    8550
+bamboogle   0.384  0.506  0.408    5167  ||   0.456  0.561  0.472    6504

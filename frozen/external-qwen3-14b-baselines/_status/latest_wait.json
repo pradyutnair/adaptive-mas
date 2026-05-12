@@ -1,0 +1,10 @@
+{
+  "waiting": [
+    [
+      "/local/yzheng/pnair/baseline/ma-rag/MA-RAG/plan_rag_extract_gpt4omini_musique",
+      999,
+      1000
+    ]
+  ],
+  "remaining_groups": 1
+}

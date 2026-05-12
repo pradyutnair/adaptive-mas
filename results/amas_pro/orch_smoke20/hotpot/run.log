@@ -1,0 +1,6 @@
+Failed to initialize disk cache, falling back to memory-only cache: [Errno 122] Cache directory "/home/yzheng/.dspy_cache/000" does not exist and could not be created
+2026-05-11 23:35:07,550 INFO root | progress: 5/20 (8.0s, 1.6s/q)
+2026-05-11 23:35:47,826 INFO root | progress: 10/20 (48.3s, 4.8s/q)
+2026-05-11 23:36:01,400 INFO root | progress: 15/20 (61.9s, 4.1s/q)
+2026-05-11 23:36:24,669 INFO root | progress: 20/20 (85.1s, 4.3s/q)
+2026-05-11 23:36:24,669 INFO root | done: 20 predictions written to results/amas_pro/orch_smoke20/hotpot/predictions.jsonl
