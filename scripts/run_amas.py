@@ -56,6 +56,18 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--use-bridge-resolver', action='store_true', default=False, help='enable bridge-resolution preprocessor')
     ap.add_argument('--bridge-g-threshold', type=float, default=0.45)
     ap.add_argument('--concurrency', type=int, default=4)
+    ap.add_argument('--use-orchestrator', action='store_true', default=False, help='enable probe-first orchestrator agent (answers or escalates to MAS)')
+    ap.add_argument('--orch-max-followups', type=int, default=2, help='max additional retrievals beyond the probe')
+    ap.add_argument('--orch-probe-min-g', type=float, default=0.0, help='skip orchestrator when probe groundedness < this (saves cost on impossible queries)')
+    ap.add_argument('--orch-min-confidence', type=float, default=0.65)
+    ap.add_argument('--orch-excerpt-chars', type=int, default=320)
+    ap.add_argument('--orch-max-chunks', type=int, default=5)
+    ap.add_argument('--orch-budget', type=int, default=384, help='max_tokens for the orchestrator LM call')
+    ap.add_argument('--orch-use-verifier', action='store_true', default=False, help='verify orchestrator answers with a second LLM call before accepting')
+    ap.add_argument('--orch-verifier-min-confidence', type=float, default=0.6)
+    ap.add_argument('--synth-slim', action='store_true', default=False, help='synth reads findings (answer+justification+short evidence) only, not full chunks')
+    ap.add_argument('--synth-excerpt-chars', type=int, default=220)
+    ap.add_argument('--synth-max-excerpts', type=int, default=6)
     return ap.parse_args()
 
 
@@ -107,7 +119,12 @@ async def main() -> None:
 
     worker_lms = _make_lm(args.worker, replica_offset=1)
     synth_lms = _make_lm(args.synth_mode, replica_offset=2)
-    sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=384) for i in range(n_replicas)] if args.use_sas_collapse else [None] * n_replicas
+    if args.use_orchestrator:
+        sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
+    elif args.use_sas_collapse:
+        sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=384) for i in range(n_replicas)]
+    else:
+        sas_lms = [None] * n_replicas
 
     retriever = Retriever(base_url=args.retriever_url)
     experience_text = ''
@@ -140,6 +157,17 @@ async def main() -> None:
                 min_retrievals_per_solver=args.min_retrievals_per_solver,
                 medium_retrievals_per_solver=args.medium_retrievals_per_solver,
                 max_repairs=args.max_repairs,
+                use_orchestrator=args.use_orchestrator,
+                orch_max_followups=args.orch_max_followups,
+                orch_probe_min_g=args.orch_probe_min_g,
+                orch_min_confidence=args.orch_min_confidence,
+                orch_excerpt_chars=args.orch_excerpt_chars,
+                orch_max_chunks=args.orch_max_chunks,
+                orch_use_verifier=args.orch_use_verifier,
+                orch_verifier_min_confidence=args.orch_verifier_min_confidence,
+                synth_slim=args.synth_slim,
+                synth_excerpt_chars=args.synth_excerpt_chars,
+                synth_max_excerpts=args.synth_max_excerpts,
             ),
         )
         for i in range(n_replicas)
@@ -178,6 +206,19 @@ async def main() -> None:
         'K_plans': args.K_plans,
         'use_bridge_resolver': args.use_bridge_resolver,
         'bridge_g_threshold': args.bridge_g_threshold,
+        'use_orchestrator': args.use_orchestrator,
+        'orch_max_followups': args.orch_max_followups,
+        'orch_probe_min_g': args.orch_probe_min_g,
+        'orch_min_confidence': args.orch_min_confidence,
+        'orch_excerpt_chars': args.orch_excerpt_chars,
+        'orch_max_chunks': args.orch_max_chunks,
+        'orch_budget': args.orch_budget,
+        'orch_use_verifier': args.orch_use_verifier,
+        'orch_verifier_min_confidence': args.orch_verifier_min_confidence,
+        'synth_slim': args.synth_slim,
+        'synth_excerpt_chars': args.synth_excerpt_chars,
+        'synth_max_excerpts': args.synth_max_excerpts,
+        'synth_budget': args.synth_budget,
     }, indent=2))
 
     sem = asyncio.Semaphore(args.concurrency)

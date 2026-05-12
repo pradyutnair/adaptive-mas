@@ -94,6 +94,17 @@ class AmasPipelineConfig:
     min_retrievals_per_solver: int = 1
     medium_retrievals_per_solver: int = 2
     max_repairs: int = 2
+    use_orchestrator: bool = False
+    orch_probe_min_g: float = 0.0
+    orch_max_followups: int = 2
+    orch_min_confidence: float = 0.65
+    orch_excerpt_chars: int = 320
+    orch_max_chunks: int = 5
+    orch_use_verifier: bool = False
+    orch_verifier_min_confidence: float = 0.6
+    synth_slim: bool = False
+    synth_excerpt_chars: int = 220
+    synth_max_excerpts: int = 6
 
 
 class AmasPipeline:
@@ -124,6 +135,57 @@ class AmasPipeline:
         original_chunks = await self.retriever.retrieve(question)
         result.n_retrieval_calls += 1
         g_original, comp_o = compute_groundedness(question, original_chunks)
+
+        # Step 0.25: orchestrator agent (probe direct | 2-3 followups | escalate)
+        if self.config.use_orchestrator and g_original >= self.config.orch_probe_min_g:
+            from .orchestrator import run_orchestrator
+            orch = await run_orchestrator(
+                orch_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,
+                retriever=self.retriever,
+                question=question,
+                probe_chunks=original_chunks,
+                max_followups=self.config.orch_max_followups,
+                min_answer_confidence=self.config.orch_min_confidence,
+                chunk_excerpt_chars=self.config.orch_excerpt_chars,
+                max_chunks_per_step=self.config.orch_max_chunks,
+            )
+            result.sas_attempt_tokens = orch.tokens
+            result.sas_attempt_confidence = orch.confidence
+            result.sas_attempt_grounded = bool(orch.support_ids)
+            result.sas_verifier_verdict = orch.action
+            result.n_retrieval_calls += max(0, orch.retrieval_calls - 1)
+            if orch.action == 'answer' and orch.answer:
+                accept = True
+                if self.config.orch_use_verifier:
+                    from .orchestrator import run_verifier
+                    vr = await run_verifier(
+                        verifier_lm=self.synth_lm,
+                        question=question,
+                        answer=orch.answer,
+                        justification=orch.justification,
+                        chunks=orch.chunks_used,
+                        support_ids=orch.support_ids,
+                        excerpt_chars=self.config.orch_excerpt_chars,
+                        max_chunks=self.config.orch_max_chunks,
+                    )
+                    result.sas_verifier_tokens = vr.tokens
+                    result.sas_verifier_verdict = f"{vr.decision}|{vr.failure_reason[:80]}"
+                    result.sas_verifier_passed = vr.decision == 'accept'
+                    accept = vr.decision == 'accept' and vr.confidence >= self.config.orch_verifier_min_confidence
+                if accept:
+                    result.sas_collapse = True
+                    result.topology = 'orchestrator_answer'
+                    result.topology_rationale = f"orchestrator answered (conf={orch.confidence:.2f}, retrievals={orch.retrieval_calls})"
+                    result.answer = orch.answer
+                    result.answer_type = orch.answer_type
+                    result.justification = orch.justification[:300]
+                    result.support_ids = orch.support_ids or [c.chunk_id for c in orch.chunks_used[:5]]
+                    result.probe_groundedness = [round(g_original, 4)]
+                    result.total_tokens = result.sas_attempt_tokens + result.sas_verifier_tokens
+                    result.wallclock_seconds = round(time.time() - t0, 3)
+                    result.n_solvers_invoked = 1
+                    return result
+            result.sas_escalated = True
 
         # Step 0.5: SAS-collapse attempt (single-agent efficiency for easy questions)
         if self.config.use_sas_collapse:
@@ -275,12 +337,31 @@ class AmasPipeline:
                     rounds=self.config.synth_recursion_rounds,
                 )
             else:
+                synth_evidence = union_capped
+                if self.config.synth_slim:
+                    # Drop full chunks; rely on findings (answer + justification + tiny support excerpts)
+                    synth_evidence = []
+                    # Re-tag chunks to short excerpts to keep token-cost minimal even if synth peeks
+                    short = []
+                    seen = set()
+                    for f in bus.all():
+                        for eid in (f.evidence_ids or [])[:2]:
+                            if eid in seen:
+                                continue
+                            seen.add(eid)
+                            for c in union_capped:
+                                if c.chunk_id == eid:
+                                    short.append(type(c)(chunk_id=c.chunk_id, text=c.text[:self.config.synth_excerpt_chars], score=getattr(c, 'score', 0.0)))
+                                    break
+                        if len(short) >= self.config.synth_max_excerpts:
+                            break
+                    synth_evidence = short[:self.config.synth_max_excerpts]
                 synth_obj, synth_tokens = await asyncio.to_thread(
                     run_synthesizer,
                     synth_lm=self.synth_lm,
                     original_question=question,
                     bus=bus,
-                    final_evidence=union_capped,
+                    final_evidence=synth_evidence,
                     experience=self.config.experience_library,
                 )
         except Exception as e:

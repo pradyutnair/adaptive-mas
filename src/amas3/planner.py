@@ -37,7 +37,8 @@ Exactly one subgoal has is_final=true.
     plan_json: str = dspy.OutputField(desc='Strict JSON object with subgoals, final_id, reasoning')
 
 
-_MAX_SUBGOALS = 6
+import os as _os
+_MAX_SUBGOALS = int(_os.environ.get('AMAS_MAX_SUBGOALS', 6))
 
 
 def _parse_plan(raw: str, original_question: str) -> tuple[Plan, str]:
