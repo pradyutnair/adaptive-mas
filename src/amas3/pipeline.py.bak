@@ -137,7 +137,7 @@ class AmasPipeline:
         g_original, comp_o = compute_groundedness(question, original_chunks)
 
         # Step 0.25: orchestrator agent (probe direct | 2-3 followups | escalate)
-        if self.config.use_orchestrator:  # gate removed — orchestrator decides itself (answer / retrieve / escalate)
+        if self.config.use_orchestrator and g_original >= self.config.orch_probe_min_g:
             from .orchestrator import run_orchestrator
             orch = await run_orchestrator(
                 orch_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,

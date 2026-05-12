@@ -63,6 +63,7 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--orch-excerpt-chars', type=int, default=320)
     ap.add_argument('--orch-max-chunks', type=int, default=5)
     ap.add_argument('--orch-budget', type=int, default=384, help='max_tokens for the orchestrator LM call')
+    ap.add_argument('--orch-think', dest='orch_think', action='store_true', default=False, help='use qwen14b in think mode for the orchestrator (native CoT, more tokens)')
     ap.add_argument('--orch-use-verifier', action='store_true', default=False, help='verify orchestrator answers with a second LLM call before accepting')
     ap.add_argument('--orch-verifier-min-confidence', type=float, default=0.6)
     ap.add_argument('--synth-slim', action='store_true', default=False, help='synth reads findings (answer+justification+short evidence) only, not full chunks')
@@ -120,7 +121,11 @@ async def main() -> None:
     worker_lms = _make_lm(args.worker, replica_offset=1)
     synth_lms = _make_lm(args.synth_mode, replica_offset=2)
     if args.use_orchestrator:
-        sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
+        if args.orch_think:
+            from amas3.lm import make_qwen14b_think_small_lm
+            sas_lms = [make_qwen14b_think_small_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
+        else:
+            sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
     elif args.use_sas_collapse:
         sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=384) for i in range(n_replicas)]
     else:
@@ -213,6 +218,7 @@ async def main() -> None:
         'orch_excerpt_chars': args.orch_excerpt_chars,
         'orch_max_chunks': args.orch_max_chunks,
         'orch_budget': args.orch_budget,
+        'orch_think': args.orch_think,
         'orch_use_verifier': args.orch_use_verifier,
         'orch_verifier_min_confidence': args.orch_verifier_min_confidence,
         'synth_slim': args.synth_slim,

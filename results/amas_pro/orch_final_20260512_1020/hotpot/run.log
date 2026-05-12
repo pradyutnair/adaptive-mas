@@ -1,0 +1,1 @@
+Failed to initialize disk cache, falling back to memory-only cache: [Errno 122] Cache directory "/home/yzheng/.dspy_cache/000" does not exist and could not be created

@@ -1,0 +1,11 @@
+[run] 2wiki at 11:58:59 limit=1000
+[run] hotpot at 12:32:23 limit=1000
+[run] musique at 12:58:57 limit=1000
+[run] bamboogle at 13:31:25 limit=125
+
+===== V10 1000Q FINAL =====
+ds             EM     F1     CT     tok | base ΔEM Δtok%
+2wiki       0.424  0.485  0.463    9010 | +0.006 -12.3%
+hotpot      0.408  0.508  0.445    6837 | -0.012 -22.1%
+musique     0.193  0.283  0.223    7794 | -0.012 -8.8%
+bamboogle   0.360  0.490  0.384    5674 | -0.096 -12.8%

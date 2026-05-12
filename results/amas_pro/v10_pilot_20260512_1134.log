@@ -1,0 +1,11 @@
+[run] 2wiki at 11:34:08 limit=200
+[run] hotpot at 11:41:26 limit=200
+[run] musique at 11:47:22 limit=200
+[run] bamboogle at 11:54:28 limit=125
+
+===== V10 PILOT 200Q vs clean base =====
+dataset        EM     F1     CT     tok  ||  base  ΔEM   Δtok%
+2wiki       0.430  0.475  0.455    9282  ||  10269  +0.012  -9.6%
+hotpot      0.425  0.516  0.460    6933  ||   8775  +0.005  -21.0%
+musique     0.225  0.308  0.265    7739  ||   8550  +0.020  -9.5%
+bamboogle   0.376  0.505  0.400    5721  ||   6504  -0.080  -12.0%

@@ -1,0 +1,11 @@
+[run] 2wiki at 11:12:23 limit=100
+[run] hotpot at 11:16:53 limit=100
+[run] musique at 11:20:00 limit=100
+[run] bamboogle at 11:24:19 limit=125
+
+===== V9 PILOT 100Q =====
+dataset        EM     F1     CT     tok    n
+2wiki       0.370  0.414  0.420    9795  100
+hotpot      0.430  0.534  0.460    6810  100
+musique     0.270  0.333  0.300    8624  100
+bamboogle   0.376  0.505  0.400    6127  125

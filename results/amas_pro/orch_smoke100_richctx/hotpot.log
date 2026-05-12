@@ -1,0 +1,23 @@
+Failed to initialize disk cache, falling back to memory-only cache: [Errno 122] Cache directory "/home/yzheng/.dspy_cache/000" does not exist and could not be created
+2026-05-12 09:36:39,362 INFO root | progress: 5/100 (8.9s, 1.8s/q)
+2026-05-12 09:36:47,997 INFO root | progress: 10/100 (17.5s, 1.8s/q)
+2026-05-12 09:37:17,871 INFO root | progress: 15/100 (47.4s, 3.2s/q)
+2026-05-12 09:37:25,354 INFO root | progress: 20/100 (54.9s, 2.7s/q)
+2026-05-12 09:37:31,851 INFO root | progress: 25/100 (61.4s, 2.5s/q)
+2026-05-12 09:37:38,817 INFO root | progress: 30/100 (68.4s, 2.3s/q)
+2026-05-12 09:37:45,846 INFO root | progress: 35/100 (75.4s, 2.2s/q)
+2026-05-12 09:38:02,119 INFO root | progress: 40/100 (91.7s, 2.3s/q)
+2026/05/12 09:38:09 WARNING dspy.clients.lm: LM response was truncated due to exceeding max_tokens=640. You can inspect the latest LM interactions with `dspy.inspect_history()`. To avoid truncation, consider passing a larger max_tokens when setting up dspy.LM. You may also consider increasing the temperature (currently 0.0)  if the reason for truncation is repetition.
+2026-05-12 09:38:14,508 INFO root | progress: 45/100 (104.1s, 2.3s/q)
+2026-05-12 09:38:24,672 INFO root | progress: 50/100 (114.2s, 2.3s/q)
+2026-05-12 09:38:30,476 INFO root | progress: 55/100 (120.0s, 2.2s/q)
+2026-05-12 09:38:42,635 INFO root | progress: 60/100 (132.2s, 2.2s/q)
+2026-05-12 09:38:48,919 INFO root | progress: 65/100 (138.5s, 2.1s/q)
+2026-05-12 09:38:54,251 INFO root | progress: 70/100 (143.8s, 2.1s/q)
+2026-05-12 09:39:02,817 INFO root | progress: 75/100 (152.4s, 2.0s/q)
+2026-05-12 09:39:09,561 INFO root | progress: 80/100 (159.1s, 2.0s/q)
+2026-05-12 09:39:15,159 INFO root | progress: 85/100 (164.7s, 1.9s/q)
+2026-05-12 09:39:29,975 INFO root | progress: 90/100 (179.5s, 2.0s/q)
+2026-05-12 09:39:33,475 INFO root | progress: 95/100 (183.0s, 1.9s/q)
+2026-05-12 09:39:37,707 INFO root | progress: 100/100 (187.3s, 1.9s/q)
+2026-05-12 09:39:37,707 INFO root | done: 100 predictions written to results/amas_pro/orch_smoke100_richctx/hotpot/predictions.jsonl
