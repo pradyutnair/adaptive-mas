@@ -1,7 +1,9 @@
-"""Deterministic topology selector.
+"""Deterministic MAS execution-shape annotator.
 
-Maps probe signals + plan structure to one of {SAS, Linear, FanDAG, BridgeFirst}.
-No LLM calls. Thresholds are exposed for ablation; defaults chosen conservatively.
+SAS is handled before planning by the verifier-gated SAS attempt. This module
+does not choose a separate SAS or bridge-first route. It only annotates the
+dependency graph as linear or fan-DAG for analysis; execution itself follows
+the planner's dependencies.
 """
 from __future__ import annotations
 from dataclasses import dataclass
@@ -27,18 +29,6 @@ def select_topology(
     original = probes[0]
     sub_probes = probes[1:]
 
-    if (
-        original.groundedness >= th.sas_high
-        and original.wh_target_extractable
-        and original.chunks
-    ):
-        return TopologyDecision(
-            Topology.SAS,
-            rationale='original_grounded_and_wh_extractable',
-            confidence=original.groundedness,
-            sas_grounded_chunk_id=original.chunks[0].chunk_id,
-        )
-
     if len(plan.subgoals) <= 1:
         return TopologyDecision(Topology.LINEAR, rationale='single_subgoal')
 
@@ -48,8 +38,8 @@ def select_topology(
 
     if low_sub > 0 and has_dependencies:
         return TopologyDecision(
-            Topology.BRIDGE_FIRST,
-            rationale=f'low_groundedness_on_{low_sub}_subqs_with_deps',
+            Topology.LINEAR,
+            rationale=f'emergent_linear_low_groundedness_on_{low_sub}_subqs',
             confidence=1.0 - (sum(sub_g) / max(len(sub_g), 1)),
         )
 
