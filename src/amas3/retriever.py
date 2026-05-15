@@ -35,7 +35,15 @@ class Retriever:
             data = resp.json()
         out = []
         for batch in data.get('results', []):
-            chunks = [RetrievedChunk(chunk_id=str(h['chunk_id']), text=h.get('text', ''),
-                                     score=float(h.get('score', 0.0))) for h in batch]
+            chunks = []
+            for h in batch:
+                chunk_id = h.get('chunk_id', h.get('id', h.get('doc_id', '')))
+                chunks.append(
+                    RetrievedChunk(
+                        chunk_id=str(chunk_id),
+                        text=h.get('text', h.get('paragraph_text', h.get('contents', ''))),
+                        score=float(h.get('score', 0.0)),
+                    )
+                )
             out.append(chunks)
         return out

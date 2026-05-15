@@ -198,8 +198,6 @@ async def run_solver(
     if experience:
         base_x = (extract_sig.instructions or extract_sig.__doc__ or "")
         extract_sig = extract_sig.with_instructions("Prior experiential knowledge from past attempts:\n" + experience + "\n\n" + base_x)
-        base_r = (rewrite_sig.instructions or rewrite_sig.__doc__ or "")
-        rewrite_sig = rewrite_sig.with_instructions("Prior experiential knowledge from past attempts:\n" + experience + "\n\n" + base_r)
     queries_issued: list[str] = []
     chunks_used: list[RetrievedChunk] = []
     extraction_tokens = 0
@@ -267,6 +265,11 @@ async def run_solver(
         extraction_tokens += tk
         best_finding = f
         if f.status == FindingStatus.OK and f.confidence >= refine_threshold:
+            f.rewrites_used = 0
+            return SolverResult(f, chunks_used, queries_issued, extraction_tokens, rewrite_tokens)
+        if max_retrievals <= 1 and f.status == FindingStatus.OK and f.confidence >= min_confidence:
+            # Budget=1 means the learned policy chose the cheap probe-only
+            # path. Do not spend a second retrieval just to chase confidence.
             f.rewrites_used = 0
             return SolverResult(f, chunks_used, queries_issued, extraction_tokens, rewrite_tokens)
 

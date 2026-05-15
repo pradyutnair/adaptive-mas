@@ -105,6 +105,8 @@ class AmasPipelineConfig:
     synth_slim: bool = False
     synth_excerpt_chars: int = 220
     synth_max_excerpts: int = 6
+    role_prompts: dict[str, str] = field(default_factory=dict)
+    max_plan_subgoals: int = 4
 
 
 class AmasPipeline:
@@ -125,6 +127,17 @@ class AmasPipeline:
         self.retriever = retriever
         self.config = config or AmasPipelineConfig()
 
+    def _role_experience(self, role: str, extra: str = "") -> str:
+        parts = []
+        if self.config.experience_library:
+            parts.append(self.config.experience_library)
+        role_prompt = (self.config.role_prompts or {}).get(role, "")
+        if role_prompt:
+            parts.append(f"Role-specific evolved prompt for {role}:\n{role_prompt}")
+        if extra:
+            parts.append(extra)
+        return "\n\n".join(parts)
+
     async def run(self, question: str, qid: str = '') -> AmasResult:
         t0 = time.time()
         bus = FindingsBus()
@@ -137,7 +150,7 @@ class AmasPipeline:
         g_original, comp_o = compute_groundedness(question, original_chunks)
 
         # Step 0.25: orchestrator agent (probe direct | 2-3 followups | escalate)
-        if self.config.use_orchestrator:  # gate removed — orchestrator decides itself (answer / retrieve / escalate)
+        if self.config.use_orchestrator and g_original >= self.config.orch_probe_min_g:
             from .orchestrator import run_orchestrator
             orch = await run_orchestrator(
                 orch_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,
@@ -148,6 +161,7 @@ class AmasPipeline:
                 min_answer_confidence=self.config.orch_min_confidence,
                 chunk_excerpt_chars=self.config.orch_excerpt_chars,
                 max_chunks_per_step=self.config.orch_max_chunks,
+                experience=self._role_experience("orchestrator"),
             )
             result.sas_attempt_tokens = orch.tokens
             result.sas_attempt_confidence = orch.confidence
@@ -239,9 +253,7 @@ class AmasPipeline:
                 result.bridge_resolved = br.bridge_entity
             result.bridge_resolver_tokens = br.tokens
 
-        enhanced_experience = self.config.experience_library
-        if bridge_hint:
-            enhanced_experience = (enhanced_experience + " " + bridge_hint).strip() if enhanced_experience else bridge_hint
+        enhanced_experience = self._role_experience("planner", bridge_hint)
 
         # Step 2: planning (single or multi-plan GRPO)
         from .types import ProbeResult
@@ -276,7 +288,13 @@ class AmasPipeline:
             mp_retrievals = sum(len(p.chunks) > 0 for p in mp.chosen_probes)
             result.n_retrieval_calls += mp_retrievals
         else:
-            plan = await asyncio.to_thread(run_planner, self.planner_lm, question, enhanced_experience)
+            plan = await asyncio.to_thread(
+                run_planner,
+                self.planner_lm,
+                question,
+                enhanced_experience,
+                self.config.max_plan_subgoals,
+            )
             result.planner_tokens = plan.planner_tokens
             result.plan_subgoals = len(plan.subgoals)
 
@@ -333,7 +351,7 @@ class AmasPipeline:
                     original_question=question,
                     bus=bus,
                     final_evidence=union_capped,
-                    experience=self.config.experience_library,
+                    experience=self._role_experience("synth"),
                     rounds=self.config.synth_recursion_rounds,
                 )
             else:
@@ -362,7 +380,7 @@ class AmasPipeline:
                     original_question=question,
                     bus=bus,
                     final_evidence=synth_evidence,
-                    experience=self.config.experience_library,
+                    experience=self._role_experience("synth"),
                 )
         except Exception as e:
             logger.warning('synth call failed (%s); falling back to best non-bridge finding', type(e).__name__)
@@ -435,7 +453,7 @@ class AmasPipeline:
             node_id=node.id if node else 1,
             hop_idx=0,
             max_retrievals=self._retrieval_budget_for_node(node, plan, probes) if node else self.config.max_retrievals_per_solver,
-            experience=self.config.experience_library,
+            experience=self._role_experience("solver"),
         )
         result.solver_tokens += sr.extraction_tokens
         result.rewrite_tokens += sr.rewrite_tokens
@@ -474,7 +492,7 @@ class AmasPipeline:
                     node_id=node.id,
                     hop_idx=hop_idx,
                     max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
-                    experience=self.config.experience_library,
+                    experience=self._role_experience("solver"),
                 ))
             results = await asyncio.gather(*tasks, return_exceptions=True)
             for (node, sub_q, hop_idx), sr in zip(metas, results):
@@ -521,7 +539,7 @@ class AmasPipeline:
                 node_id=node.id,
                 hop_idx=self._depth_of(node, plan),
                 max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
-                experience=self.config.experience_library,
+                experience=self._role_experience("solver"),
             )
             if sr.finding.status == FindingStatus.OK or sr.finding.confidence > f.confidence:
                 bus.findings_by_node[node.id] = sr.finding

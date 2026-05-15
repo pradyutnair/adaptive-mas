@@ -52,7 +52,15 @@ Step 4: Search the final_evidence chunks for a span that:
             original question explicitly asks for one of them),
         (c) stands in the required relation from Step 3 with the bridge.
 
-Step 5: Output the FULL form as it appears in evidence. Do not abbreviate.
+Step 5: Enforce the explicit answer category after the wh-word. If the
+        original asks for a rocket/company/source/film/person/date/number,
+        the final answer must be that category, not a related bridge.
+
+Step 6: For comparisons/superlatives, use the candidate facts to decide the
+        winner; do not treat an intermediate candidate as final unless the
+        comparison relation has been resolved.
+
+Step 7: Output the FULL form as it appears in evidence. Do not abbreviate.
 
 GROUNDING RULES:
 - Prefer answers that appear verbatim in final_evidence chunks.

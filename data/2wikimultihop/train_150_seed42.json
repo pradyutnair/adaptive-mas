@@ -1,0 +1,902 @@
+[
+  {
+    "id": "train_5932",
+    "question": "Are Disen\u00e5 Station and Gare De Carbonne located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14113",
+    "question": "Who lived longer, William Lee Miller or Frederick William Hill?",
+    "answer": "William Lee Miller",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6988",
+    "question": "Which film has the director born earlier, The Southsiders or Reunion In France?",
+    "answer": "The Southsiders",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5936",
+    "question": "Who is the father of the director of film The Lovers (2017 Film)?",
+    "answer": "Ken Jacobs",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6956",
+    "question": "Which film has the director born first, Best Of Enemies (2015 Film) or The Rhineland Girl?",
+    "answer": "The Rhineland Girl",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3502",
+    "question": "Which country the performer of song You'Re My Man is from?",
+    "answer": "American",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5911",
+    "question": "Who is the maternal grandfather of Eleanor Of Brittany (Abbess)?",
+    "answer": "Henry III",
+    "type": "inference"
+  },
+  {
+    "id": "train_5976",
+    "question": "Are the directors of both films Deep Waters (1920 Film) and Crave (Film) from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6944",
+    "question": "Where was the director of film The Devil'S Agent born?",
+    "answer": "London",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5998",
+    "question": "What nationality is the director of film Los Gringos?",
+    "answer": "American",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14178",
+    "question": "Where did the director of film The Alley Cats (Film) die?",
+    "answer": "New York",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5951",
+    "question": "Which film came out earlier, Gunning For Vengeance or The Midnight Drives?",
+    "answer": "Gunning For Vengeance",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14165",
+    "question": "Where was the director of film Anita B. born?",
+    "answer": "Turin",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6954",
+    "question": "Where was the place of death of the director of film H\u00e4r Kommer B\u00e4rs\u00e4rkarna?",
+    "answer": "Uppsala",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5999",
+    "question": "Are director of film Barry Lyndon and director of film Vamps (film) both from the same country?",
+    "answer": "yes",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_12264",
+    "question": "Are both movies, Endless Poetry and Gigolo (Film), from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6963",
+    "question": "Do both films Vacations in Majorca and Come On In (film) have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14182",
+    "question": "What is the place of birth of the director of film Beauties Of The Night?",
+    "answer": "Paris",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12285",
+    "question": "Are both villages, Dukan Kopt and Zildyarovo, located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_3568",
+    "question": "What is the place of birth of Charles Parrocel's father?",
+    "answer": "Brignoles",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5961",
+    "question": "Which film whose director was born first, Gremlins 2: The New Batch or F\u00e5r\u00f6 Document?",
+    "answer": "F\u00e5r\u00f6 Document",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6943",
+    "question": "Are both Valea Ro\u0219ie (Olt) and Bhavani River located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12240",
+    "question": "Do both films Anima Mundi (Film) and The Bay Boy have the directors that share the same nationality?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_12228",
+    "question": "Where was the place of death of the director of film The Man From Home (1914 Film)?",
+    "answer": "Hollywood",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3581",
+    "question": "Are Audrey O'Brien and V. Gordon Childe of the same nationality?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_3519",
+    "question": "Where was the performer of song I Was A Lover, A Leader Of Men born?",
+    "answer": "Douglas",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14116",
+    "question": "Are Cowles Mead and Micka\u00ebl Mazzoli both from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5972",
+    "question": "Are both villages, Gaanderen and Berkeh, Fars, located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6934",
+    "question": "Which band was formed earlier, Pel Mel or Chicory Tip?",
+    "answer": "Chicory Tip",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5948",
+    "question": "Where did the director of film Verdi, The King Of Melody die?",
+    "answer": "Rome",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12274",
+    "question": "What is the place of birth of the director of film Goliath And The Rebel Slave?",
+    "answer": "Rome",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6977",
+    "question": "Who died first, Robert Absalom Thom or Robert Garrett?",
+    "answer": "Robert Absalom Thom",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12271",
+    "question": "Do both films Deuces Wild and Cavalcade Of The West have the directors from the same country?",
+    "answer": "yes",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14176",
+    "question": "Where did the director of film The Fear Market die?",
+    "answer": "Hollywood",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12213",
+    "question": "Which country the composer of song Sun Bird is from?",
+    "answer": "American",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5927",
+    "question": "Which award the director of film Mama'S Affair got?",
+    "answer": "Academy Award for Best Director",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14142",
+    "question": "What is the date of birth of Anusara Siriprasadh's father?",
+    "answer": "20 September 1853",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14170",
+    "question": "What nationality is the director of film Two Guys From Texas?",
+    "answer": "American",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3532",
+    "question": "Are Keshar-E Sargap and Mazraeh-Ye Karim Jarjani both located in the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12272",
+    "question": "Do director of film Whispers (1990 film) and director of film The Angel (2018 American film) share the same nationality?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5959",
+    "question": "When did William Nevill, 4Th Earl Of Abergavenny's father die?",
+    "answer": "27 March 1843",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5912",
+    "question": "When is the performer of song Throw It Back 's birthday?",
+    "answer": "July 1, 1971",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5990",
+    "question": "Who died first, Ertu\u011f Ergin or Agnes Windeck?",
+    "answer": "Agnes Windeck",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14183",
+    "question": "Does Jordan Miller (cornerback) have the same nationality as Sean Ortiz?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14161",
+    "question": "What is the date of death of the director of film Atom Age Vampire?",
+    "answer": "12 August 1994",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14119",
+    "question": "What is the date of death of the editor of magazine The American Review (Literary Journal)?",
+    "answer": "December 8, 1952",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3542",
+    "question": "Do both films, Femmes De Sade and La Carapate, have the directors who are from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5920",
+    "question": "Which film has the director born later, The Cow and I or Sheikh Jackson?",
+    "answer": "Sheikh Jackson",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14144",
+    "question": "Where was the place of death of the director of film A Shriek In The Night?",
+    "answer": "Los Angeles",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6985",
+    "question": "Are Kerat Gol-E Sofla and Institutional Group Home 33 both located in the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14159",
+    "question": "Where was the director of film Green Eyes (1918 Film) born?",
+    "answer": "Irish",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12263",
+    "question": "When did \u015eah Sultan (Daughter Of Selim Ii)'s mother die?",
+    "answer": "7 December 1583",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3566",
+    "question": "When was the company that published Wascana Review founded?",
+    "answer": "1911",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6938",
+    "question": "Are Chanalu, Bardsir and Gurjiq located in the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12244",
+    "question": "Which film has the director died first, Raid In St. Pauli or Relax Freddie?",
+    "answer": "Raid In St. Pauli",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3514",
+    "question": "Were both Jennie Snyder Urman and Leonid Belakhov, born in the same place?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5970",
+    "question": "Where was the place of burial of Mary Of Scotland, Countess Of Boulogne's father?",
+    "answer": "Dunfermline Abbey",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12251",
+    "question": "When was the director of film La Course \u00c0 L'\u00c9chalote born?",
+    "answer": "25 July 1934",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3556",
+    "question": "Do Boles\u0142aw W\u0142asnowolski and El\u00ednborg Halld\u00f3rsd\u00f3ttir share the same nationality?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6940",
+    "question": "Which film has the director who died earlier, Forbidden Priests or The Clown (1976 Film)?",
+    "answer": "Forbidden Priests",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3518",
+    "question": "Do both films: L.A. Without A Map and Don'T Tell Me Any Stories have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14134",
+    "question": "Where did the director of film The Electric Grandmother die?",
+    "answer": "Santa Barbara, California",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5938",
+    "question": "Were both Missy Gold and Edward Balfour (Cricketer), born in the same place?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_3567",
+    "question": "When is Eileen O'Casey's husband's birthday?",
+    "answer": "30 March 1880",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12284",
+    "question": "Who was born first out of Valent\u00edn Uriona and Jeremy Bloom?",
+    "answer": "Valent\u00edn Uriona",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5964",
+    "question": "Are Juhani Avellan and Ethan Carter Iii from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5953",
+    "question": "Where was the performer of song U Don'T Know Me (Like U Used To) born?",
+    "answer": "McComb",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14106",
+    "question": "Who is older, Michael Atkinson or Heidemarie Steiner?",
+    "answer": "Heidemarie Steiner",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6990",
+    "question": "Do the movies Hold Me, Thrill Me, Kiss Me (Film) and Traffic In Souls, originate from the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12242",
+    "question": "When did Begga's mother die?",
+    "answer": "8 May 652",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6923",
+    "question": "Were both Micha\u0142 Mak and Law Adam, born in the same place?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5937",
+    "question": "When did the composer of film Countess Dora die?",
+    "answer": "5 March 1923",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3531",
+    "question": "Do both Ghosts \u2013 Italian Style and Naughty Cinderella films have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5973",
+    "question": "What is the place of birth of the performer of song Chemistry (Eva Simons Song)?",
+    "answer": "Amsterdam",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3570",
+    "question": "Which country the director of film La Moglie In Bianco... L'Amante Al Pepe is from?",
+    "answer": "Italian",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3508",
+    "question": "Who is the father of the director of film Aanivaer?",
+    "answer": "J. Mahendran",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3513",
+    "question": "When was the director of film The Scarlet Coat born?",
+    "answer": "January 3, 1910",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12279",
+    "question": "What is the date of death of the director of film Stocks And Blondes?",
+    "answer": "February 22, 1968",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14189",
+    "question": "Which film has the director who was born later, A Message to Garcia (film) or The Pipes?",
+    "answer": "The Pipes",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5902",
+    "question": "Which film was released first, Tih Minh or Dharani (Film)?",
+    "answer": "Tih Minh",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5981",
+    "question": "Where was the place of death of the director of film The Man Who Reclaimed His Head?",
+    "answer": "Santa Monica",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12211",
+    "question": "What is the award that the performer of song Mr. Perfect (Song) got?",
+    "answer": "Eurovision",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5934",
+    "question": "Are Michael R. Heim and Mario Roshi from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6962",
+    "question": "When did the director of film Marionettes Of Desire die?",
+    "answer": "7 March 1931",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12220",
+    "question": "Were Jane Summersett and Helmuth Duckadam from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14153",
+    "question": "Where was the place of death of the director of film The Master Touch?",
+    "answer": "Rome",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6900",
+    "question": "Are Cambridge Municipal Airport (Ohio) and Tri-City Airport (Kansas) both located in the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6929",
+    "question": "Which film has the director died first, Melod\u00edas Porte\u00f1as or The Flesh Is Weak?",
+    "answer": "Melod\u00edas Porte\u00f1as",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6968",
+    "question": "Which song came out earlier, S'Il Suffisait D'Aimer (Song) or Sappy?",
+    "answer": "Sappy",
+    "type": "comparison"
+  },
+  {
+    "id": "train_3575",
+    "question": "Where was the place of death of the director of film General John Regan (1933 Film)?",
+    "answer": "Chobham, Surrey",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6995",
+    "question": "Are both villages, Titevand and Nowruzabad, Ardabil, located in the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12223",
+    "question": "Do director of film Joshy (Film) and director of film Keep 'Em Slugging share the same nationality?",
+    "answer": "yes",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_5947",
+    "question": "Are both director of film A Cool, Dry Place and director of film Days Of Being Wild from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6935",
+    "question": "Where was the place of death of the director of film My Fighting Gentleman?",
+    "answer": "Woodland Hills, California",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6959",
+    "question": "Who is the father of the composer of film Darbar (Film)?",
+    "answer": "Ravi Raghavendra",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6931",
+    "question": "Which country the performer of song Al'S Place is from?",
+    "answer": "American",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14179",
+    "question": "Which film has more directors, Voyage To The Prehistoric Planet or Heroes Shed No Tears (1986 Film)?",
+    "answer": "Voyage To The Prehistoric Planet",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5997",
+    "question": "Do both films Gangster'S Boy and Torno A Vivere Da Solo have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6904",
+    "question": "Are both director of film Poola Rangadu and director of film Paganini Horror from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3527",
+    "question": "Do both The Mad Martindales and Trailer Park Of Terror films have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3549",
+    "question": "Are both Tamarasheni and Aliabad-E Yusefi located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6994",
+    "question": "Where did Henrique Salas Feo's father study?",
+    "answer": "Yale",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14167",
+    "question": "Are the movies Unmatched and Run (2014 film), from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5969",
+    "question": "Where was the place of death of the director of film Magic Mirror (Film)?",
+    "answer": "Porto",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6901",
+    "question": "What is the award that the director of film Simon (1980 Film) got?",
+    "answer": "Academy Award for Best Original Screenplay",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12214",
+    "question": "Do both Free Woman and The Closed Chain films have the directors from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6969",
+    "question": "Do Steve Souchock and Charley O'Leary have the same nationality?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12245",
+    "question": "When was the director of film You So Crazy born?",
+    "answer": "May 22, 1950",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6958",
+    "question": "When is the director of film Arizona Terrors 's birthday?",
+    "answer": "July 14, 1908",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5929",
+    "question": "Are both universities, Autonomous University of Coahuila and West Bengal State University, located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5986",
+    "question": "Are director of film The Return Of Swamp Thing and director of film Spooky Buddies from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14148",
+    "question": "Which film has the director who died earlier, The Fifth Musketeer or Can Heironymus Merkin Ever Forget Mercy Humppe And Find True Happiness??",
+    "answer": "Can Heironymus Merkin Ever Forget Mercy Humppe And Find True Happiness?",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14146",
+    "question": "What is the date of birth of the director of film Dancemaker?",
+    "answer": "November 26, 1951",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3560",
+    "question": "Who died later, Dorothy Fay or Henry Gurney?",
+    "answer": "Dorothy Fay",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12289",
+    "question": "Who is the father-in-law of Noble Lady Shun?",
+    "answer": "Yongzheng",
+    "type": "inference"
+  },
+  {
+    "id": "train_14133",
+    "question": "Do director of film Rudaali and director of film Wedding Bells (1921 Film) have the same nationality?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6932",
+    "question": "What is the date of birth of the director of film Tommy Atkins In The Park?",
+    "answer": "3 October 1869",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14151",
+    "question": "When is the director of film Gang War In Milan 's birthday?",
+    "answer": "6 August 1931",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12217",
+    "question": "Where was the place of death of Maria Caroline Gibert De Lametz's husband?",
+    "answer": "Paris",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5903",
+    "question": "Were both Javier Baraja and Birgit Rockmeier, born in the same place?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12208",
+    "question": "Who died later, Anton Cottier or Francis Garc\u00eda?",
+    "answer": "Francis Garc\u00eda",
+    "type": "comparison"
+  },
+  {
+    "id": "train_3546",
+    "question": "Do both directors of films Ma Su Chen and Uncertain Lady share the same nationality?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_12278",
+    "question": "Which film came out earlier, Black Republic or Maaveeran?",
+    "answer": "Maaveeran",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6942",
+    "question": "Are the directors of films In The Pit and Don Pasquale (1940 Film) both from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6989",
+    "question": "What is the place of birth of the director of film Shod With Fire?",
+    "answer": "Denver",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6926",
+    "question": "Which film has the director who was born earlier, Me, Me, Me... And The Others or Paprika (1991 Film)?",
+    "answer": "Me, Me, Me... And The Others",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_6972",
+    "question": "Which film has the director died first, Midnight Mystery or Naughty Baby (Film)?",
+    "answer": "Midnight Mystery",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3569",
+    "question": "Are both villages, Bidlang, Zahedan and Tarfside, located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14166",
+    "question": "Were both Russ Wrightstone and Keith Milow, born in the same place?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14125",
+    "question": "Who has more scope of profession, Dave Freudenthal or Raghuram?",
+    "answer": "Dave Freudenthal",
+    "type": "comparison"
+  },
+  {
+    "id": "train_6924",
+    "question": "Are both Johann Cloppenburg and Basil Marceaux from the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_14139",
+    "question": "Where was the director of film Coast To Coast (1987 Film) born?",
+    "answer": "San Antonio, Texas",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12202",
+    "question": "When did the director of film Thus Is Life die?",
+    "answer": "1966",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3506",
+    "question": "Why did Clovis Iii's father die?",
+    "answer": "plague",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3596",
+    "question": "Are both Moni Sar and Bersin located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_12253",
+    "question": "Are director of film Calcutta (1947 Film) and director of film Pal Do Pal both from the same country?",
+    "answer": "no",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_3504",
+    "question": "Which film has the director died first, La Provinciale (1981 Film) or Tulips Of Haarlem?",
+    "answer": "Tulips Of Haarlem",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_14145",
+    "question": "What is the date of birth of the director of film The Wing Or The Thigh?",
+    "answer": "25 July 1934",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14173",
+    "question": "When did the director of film I Do Not Want To Know Who You Are die?",
+    "answer": "10 August 1961",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12250",
+    "question": "Who is Joan I, Countess Of Burgundy's paternal grandmother?",
+    "answer": "Beatrice I, Countess of Burgundy",
+    "type": "inference"
+  },
+  {
+    "id": "train_6910",
+    "question": "Which film has the director who was born earlier, The Beautiful Blonde From Bashful Bend or Ana Arabia?",
+    "answer": "The Beautiful Blonde From Bashful Bend",
+    "type": "bridge_comparison"
+  },
+  {
+    "id": "train_12246",
+    "question": "Are Patton (Film) and The Hero Of The Hour from the same country?",
+    "answer": "yes",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5913",
+    "question": "Where did David Hyrum Smith's father die?",
+    "answer": "Carthage, Illinois",
+    "type": "compositional"
+  },
+  {
+    "id": "train_12283",
+    "question": "Are Qarnabad and Grevenbicht both located in the same country?",
+    "answer": "no",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5944",
+    "question": "Who is younger, Paul Bonwick or Samson Alcantara?",
+    "answer": "Paul Bonwick",
+    "type": "comparison"
+  },
+  {
+    "id": "train_5940",
+    "question": "Where was the place of death of Michael Kre\u0161imir Ii Of Croatia's wife?",
+    "answer": "Kingdom of Croatia",
+    "type": "compositional"
+  },
+  {
+    "id": "train_14108",
+    "question": "What is the place of birth of the director of film Nazi Love Camp 27?",
+    "answer": "Rome",
+    "type": "compositional"
+  },
+  {
+    "id": "train_6905",
+    "question": "Where did the director of film Love And Deficit die?",
+    "answer": "Stockholm",
+    "type": "compositional"
+  },
+  {
+    "id": "train_3501",
+    "question": "When is the director of film Painting The Clouds With Sunshine (Film) 's birthday?",
+    "answer": "December 17, 1894",
+    "type": "compositional"
+  },
+  {
+    "id": "train_5915",
+    "question": "What is the date of death of the composer of song Let'S Take An Old-Fashioned Walk (Irving Berlin Song)?",
+    "answer": "September 22, 1989",
+    "type": "compositional"
+  }
+]

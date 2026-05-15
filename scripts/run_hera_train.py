@@ -1,0 +1,644 @@
+#!/usr/bin/env python3
+"""HERA training: token-cost-aware TF-GRPO + constrained GEPA + semantic orchestration.
+
+Key improvements:
+1. Dual reward (task + efficiency) in group rollouts
+2. Token budget awareness in topology sampling
+3. Experience library capped at 40 entries with aggressive pruning
+4. GEPA with 800-char prompt cap and quality gates
+5. Comprehensive W&B logging with token cost metrics
+6. Role-specific experience injection
+"""
+from __future__ import annotations
+
+import argparse
+import asyncio
+import json
+import logging
+import os
+import sys
+import urllib.error
+import urllib.request
+from dataclasses import fields
+from pathlib import Path
+from typing import Any
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT / "src"))
+
+import dspy
+
+from amas3.experience_library import ExperienceEntry, ExperienceLibrary
+from amas3.gepa import FailureBuffer, run_gepa_epoch, save_evolved_prompts, MAX_PROMPT_CHARS
+from amas3.lm import make_qwen14b_nothink_lm
+from amas3.orch_grpo import optimize_orchestration
+from amas3.pipeline import AmasPipeline, AmasPipelineConfig, AmasResult
+from amas3.retriever import Retriever
+from amas3.tf_grpo import (
+    apply_experience_updates,
+    characterize_query_profile,
+    extract_semantic_advantages,
+    run_group_rollouts,
+    update_experience_credit_from_group,
+    compute_dual_reward,
+    compute_token_efficiency_reward,
+    compute_contain,
+)
+
+
+def check_retriever_health(base_url: str, timeout_seconds: float = 10.0) -> None:
+    url = base_url.rstrip("/") + "/retrieve"
+    payload = json.dumps({"queries": ["health check"], "topk": 1, "mode": "text"}).encode("utf-8")
+    req = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout_seconds) as resp:
+            if resp.status >= 400:
+                raise RuntimeError(f"HTTP {resp.status}")
+            data = json.loads(resp.read().decode("utf-8") or "{}")
+    except (urllib.error.URLError, TimeoutError, OSError, json.JSONDecodeError) as exc:
+        raise RuntimeError(f"Retriever health check failed for {url}: {exc}") from exc
+    if not isinstance(data, dict) or "results" not in data:
+        raise RuntimeError(f"Retriever health check returned unexpected payload from {url}: {str(data)[:200]}")
+
+log = logging.getLogger(__name__)
+
+TRAIN_FILES = {
+    "hotpotqa": REPO_ROOT / "data" / "cache_train" / "hotpotqa_train_cache_seed42_150.json",
+    "2wikimultihop": REPO_ROOT / "data" / "cache_train" / "2wikimultihop_train_cache_seed42_150.json",
+    "musique": REPO_ROOT / "data" / "cache_train" / "musique_train_cache_seed42_150.json",
+}
+
+DEFAULT_OUTPUT_DIR = REPO_ROOT / "compiled" / "hera"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="HERA: token-aware TF-GRPO + constrained GEPA")
+    parser.add_argument("--epochs", type=int, default=2)
+    parser.add_argument("--limit-per-dataset", type=int, default=0)
+    parser.add_argument("--datasets", default="hotpotqa,2wikimultihop,musique", help="Comma-separated train datasets to use")
+    parser.add_argument("--K", type=int, default=3)
+    parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
+    parser.add_argument("--retriever-url", default="http://node408:8003")
+    parser.add_argument("--skip-gepa", action="store_true")
+    parser.add_argument("--gepa-max-trajectories", type=int, default=10)
+    parser.add_argument("--skip-orch-opt", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--concurrency", type=int, default=int(os.environ.get("AMAS_TRAIN_CONCURRENCY", "24")), help="Reserved for legacy batch mode; online HERA uses K concurrent rollouts per question")
+    parser.add_argument("--wandb", action="store_true", default=os.environ.get("AMAS_WANDB", "0") == "1")
+    parser.add_argument("--wandb-project", default=os.environ.get("WANDB_PROJECT", "adaptive-mas-hera"))
+    parser.add_argument("--wandb-entity", default=os.environ.get("WANDB_ENTITY", ""))
+    parser.add_argument("--wandb-run-name", default=os.environ.get("WANDB_RUN_NAME", ""))
+    parser.add_argument("--max-library-size", type=int, default=40)
+    parser.add_argument("--reward-alpha", type=float, default=0.7, help="Weight for task reward vs efficiency")
+    return parser.parse_args()
+
+
+def init_wandb(args: argparse.Namespace, output_dir: Path, train_size: int):
+    if not args.wandb:
+        return None
+    try:
+        import wandb
+    except Exception as exc:
+        log.warning("wandb requested but unavailable: %s", exc)
+        return None
+    wandb_root = output_dir / "wandb"
+    wandb_root.mkdir(parents=True, exist_ok=True)
+    os.environ.setdefault("WANDB_DIR", str(wandb_root))
+    os.environ.setdefault("WANDB_CACHE_DIR", str(wandb_root / "cache"))
+    os.environ.setdefault("WANDB_CONFIG_DIR", str(wandb_root / "config"))
+    os.environ.setdefault("WANDB_DATA_DIR", str(wandb_root / "data"))
+    os.environ.setdefault("WANDB_ARTIFACT_DIR", str(wandb_root / "artifacts"))
+    for subdir in ("cache", "config", "data", "artifacts"):
+        (wandb_root / subdir).mkdir(parents=True, exist_ok=True)
+    mode = os.environ.get("WANDB_MODE", "online")
+    kwargs = {
+        "project": args.wandb_project,
+        "name": args.wandb_run_name or output_dir.name,
+        "mode": mode,
+        "config": {
+            "epochs": args.epochs,
+            "limit_per_dataset": args.limit_per_dataset,
+            "datasets": args.datasets,
+            "K": args.K,
+            "concurrency": args.concurrency,
+            "gepa_max_trajectories": args.gepa_max_trajectories,
+            "retriever_url": args.retriever_url,
+            "output_dir": str(output_dir),
+            "train_size": train_size,
+            "max_library_size": args.max_library_size,
+            "reward_alpha": args.reward_alpha,
+            "max_prompt_chars": MAX_PROMPT_CHARS,
+            "version": "hera_online",
+            "update_mode": "online_per_question_group",
+        },
+    }
+    if args.wandb_entity:
+        kwargs["entity"] = args.wandb_entity
+    run = wandb.init(**kwargs)
+    log.info("wandb run initialized: %s", getattr(run, "url", ""))
+    return run
+
+
+def wandb_log(run: Any, data: dict, step: int | None = None) -> None:
+    if run is None:
+        return
+    try:
+        run.log(data, step=step)
+    except Exception as exc:
+        log.warning("wandb log failed: %s", exc)
+
+
+def log_rollout_table(run: Any, rows: list[dict], prefix: str = "tf_grpo") -> None:
+    if run is None or not rows:
+        return
+    try:
+        import wandb
+        table = wandb.Table(columns=[
+            "epoch", "dataset", "id", "em", "f1", "contain", "tokens", "dual_reward",
+            "token_efficiency", "topology", "policy_name", "mutation", "answer", "gold_answer",
+        ])
+        for row in rows:
+            topo = row.get("sampled_topology") or {}
+            table.add_data(
+                row.get("epoch"), row.get("dataset"), row.get("id"),
+                row.get("em"), row.get("f1"), row.get("contain"), row.get("total_tokens"),
+                row.get("dual_reward", 0), row.get("token_efficiency", 0),
+                row.get("topology"), row.get("policy_name"),
+                topo.get("topology_mutation", ""),
+                str(row.get("answer", ""))[:120],
+                str(row.get("gold_answer", ""))[:120],
+            )
+        run.log({f"{prefix}/rollouts": table})
+    except Exception as exc:
+        log.warning("wandb rollout table failed: %s", exc)
+
+
+def load_json(path: Path) -> list[dict]:
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    if not isinstance(data, list):
+        raise ValueError(f"Expected list in {path}")
+    return data
+
+
+def load_train_data(limit_per_dataset: int, datasets: str = "hotpotqa,2wikimultihop,musique") -> list[dict]:
+    rows: list[dict] = []
+    missing = [str(path) for path in TRAIN_FILES.values() if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing train files: {', '.join(missing)}")
+    selected = {d.strip() for d in datasets.split(",") if d.strip()}
+    unknown = selected - set(TRAIN_FILES)
+    if unknown:
+        raise ValueError(f"Unknown datasets: {sorted(unknown)}")
+    for dataset, path in TRAIN_FILES.items():
+        if dataset not in selected:
+            continue
+        data = load_json(path)
+        if limit_per_dataset > 0:
+            data = data[:limit_per_dataset]
+        for item in data:
+            row = dict(item)
+            row["dataset"] = dataset
+            rows.append(row)
+    return rows
+
+
+def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = None) -> AmasPipelineConfig:
+    config = overrides or {}
+    return AmasPipelineConfig(
+        max_retrievals_per_solver=int(config.get("max_retrievals_per_solver", 2)),  # Default 2 (was 3)
+        repair_enabled=bool(config.get("repair_enabled", True)),
+        experience_library=library.to_text() if library.size() > 0 else "",
+        adaptive_solver_budget=bool(config.get("adaptive_solver_budget", True)),
+        min_retrievals_per_solver=1,
+        medium_retrievals_per_solver=2,
+        max_repairs=int(config.get("max_repairs", 1)),  # Reduced from 2
+        use_orchestrator=True,
+        orch_min_confidence=float(config.get("orch_min_confidence", 0.75)),  # Raised from 0.65
+        orch_max_followups=int(config.get("orch_max_followups", 1)),  # Reduced from 2
+        orch_probe_min_g=0.0,
+        orch_excerpt_chars=int(config.get("orch_excerpt_chars", 280)),  # Reduced from 320
+        orch_max_chunks=int(config.get("orch_max_chunks", 4)),  # Reduced from 5
+        orch_use_verifier=bool(config.get("orch_use_verifier", True)),
+        orch_verifier_min_confidence=float(config.get("orch_verifier_min_confidence", 0.6)),
+        synth_slim=True,
+        synth_excerpt_chars=200,
+        synth_max_excerpts=5,
+        max_plan_subgoals=int(config.get("max_plan_subgoals", 4)),
+    )
+
+
+def rollout_temperatures(k: int) -> tuple[float, ...]:
+    base = (0.35, 0.55, 0.75, 0.95, 1.10)
+    if k <= len(base):
+        return base[:max(1, k)]
+    return tuple(base + tuple(1.10 for _ in range(k - len(base))))
+
+
+def build_pipeline(retriever: Retriever, config: AmasPipelineConfig) -> AmasPipeline:
+    return AmasPipeline(
+        planner_lm=make_qwen14b_nothink_lm(replica_idx=0, max_tokens=768),
+        worker_lm=make_qwen14b_nothink_lm(replica_idx=1, max_tokens=768),
+        synth_lm=make_qwen14b_nothink_lm(replica_idx=2, max_tokens=768),
+        sas_lm=make_qwen14b_nothink_lm(replica_idx=0, max_tokens=384),
+        retriever=retriever,
+        config=config,
+    )
+
+
+def rollout_to_row(dataset: str, epoch: int, rollout) -> dict:
+    result = dict(rollout.result)
+    row = {
+        "dataset": dataset,
+        "epoch": epoch,
+        "id": rollout.question_id,
+        "question": rollout.question,
+        "gold_answer": rollout.gold_answer,
+        "answer": rollout.predicted_answer,
+        "prediction": rollout.predicted_answer,
+        "em": rollout.em,
+        "f1": rollout.f1,
+        "contain": rollout.contain,
+        "temperature": rollout.temperature,
+        "policy_name": rollout.policy_name,
+        "sampled_topology": rollout.sampled_topology,
+        "total_tokens": rollout.total_tokens,
+        "topology": rollout.topology,
+        "plan_subgoals": rollout.plan_subgoals,
+        "findings": rollout.findings,
+        "wallclock_seconds": rollout.wallclock_seconds,
+        "result": result,
+        "dual_reward": rollout.dual_reward,
+        "token_efficiency": rollout.token_efficiency,
+    }
+    for key in ("sas_collapse", "sas_escalated", "sas_attempt_confidence",
+                "n_retrieval_calls", "n_solvers_invoked"):
+        row[key] = result.get(key, 0)
+    return row
+
+
+def append_jsonl(path: Path, rows: list[dict]) -> None:
+    with open(path, "a", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def failed_trajectory_from_row(row: dict) -> dict:
+    result_data = row.get("result", {})
+    allowed = {field.name for field in fields(AmasResult)}
+    result_data = {key: value for key, value in result_data.items() if key in allowed}
+    return {
+        "question": row["question"],
+        "qid": row["id"],
+        "gold_answer": row["gold_answer"],
+        "result": AmasResult(**result_data),
+    }
+
+
+async def run_training(
+    train_data: list[dict],
+    library: ExperienceLibrary,
+    retriever: Retriever,
+    reflection_lm: dspy.LM,
+    epochs: int,
+    K: int,
+    output_dir: Path,
+    concurrency: int = 24,
+    wandb_run: Any = None,
+    max_library_size: int = 40,
+    reward_alpha: float = 0.7,
+) -> tuple[ExperienceLibrary, list[dict], list[dict], FailureBuffer]:
+    """Run HERA TF-GRPO online: update library after each same-query group."""
+    results_path = output_dir / "training_results.jsonl"
+    if results_path.exists():
+        results_path.unlink()
+    all_rows: list[dict] = []
+    failed_trajectories: list[dict] = []
+    failure_buffer = FailureBuffer()
+    learning_step = 0
+
+    log.info(
+        "online HERA mode: one question group per update; K=%d concurrent rollouts; requested outer concurrency=%d",
+        K, concurrency,
+    )
+
+    for epoch in range(1, epochs + 1):
+        epoch_rows: list[dict] = []
+        epoch_insight_count = 0
+        epoch_start_size = library.size()
+
+        for idx, item in enumerate(train_data, start=1):
+            learning_step += 1
+            log.info("epoch %d step %d question %d/%d %s", epoch, learning_step, idx, len(train_data), item["id"])
+
+            config = build_pipeline_config(library)
+            group = await run_group_rollouts(
+                question=item["question"],
+                qid=str(item["id"]),
+                gold_answer=str(item["answer"]),
+                retriever=retriever,
+                config=config,
+                temperatures=rollout_temperatures(K),
+                library=library,
+                dataset=item.get("dataset", "default"),
+                reward_alpha=reward_alpha,
+            )
+            rows = [rollout_to_row(item["dataset"], epoch, rollout) for rollout in group.rollouts]
+            topology_signatures = [tuple((row.get("sampled_topology") or {}).get("_topology_signature", [])) for row in rows]
+            unique_topology_signatures = len({sig for sig in topology_signatures if sig})
+            duplicate_retries = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("_duplicate_retry"))
+            duplicate_retry_changed = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("_duplicate_retry_changed"))
+            for row in rows:
+                row["learning_step"] = learning_step
+                row["library_size_before_update"] = library.size()
+                row["group_unique_topology_signatures"] = unique_topology_signatures
+                row["group_duplicate_retries"] = duplicate_retries
+                row["group_duplicate_retry_changed"] = duplicate_retry_changed
+            append_jsonl(results_path, rows)
+
+            epoch_rows.extend(rows)
+            all_rows.extend(rows)
+            for row in rows:
+                if row["em"] < 0.5 and row["f1"] < 0.5 and row.get("contain", 0.0) < 0.5 and row.get("result"):
+                    failed = failed_trajectory_from_row(row)
+                    failed_trajectories.append(failed)
+                    failure_buffer.add(failed)
+
+            pre_library_size = library.size()
+            insights: list[dict] = []
+            query_type = characterize_query_profile(item["question"], item.get("dataset", "default"))
+            insights = extract_semantic_advantages(group, reflection_lm, query_type=query_type, library=library)
+            if insights:
+                epoch_insight_count += len(insights)
+
+            update_experience_credit_from_group(library, group)
+
+            library = apply_experience_updates(library, insights, reflection_lm, max_library_size=max_library_size)
+            cap_experience_library(library, max_library_size)
+            library.save(output_dir / "experience_library_live.json")
+            (output_dir / "training_progress.json").write_text(json.dumps({
+                "epoch": epoch,
+                "learning_step": learning_step,
+                "questions_seen": idx,
+                "total_questions": len(train_data),
+                "library_size": library.size(),
+                "unique_topology_signatures": unique_topology_signatures,
+                "duplicate_topology_retries": duplicate_retries,
+                "duplicate_retry_changed": duplicate_retry_changed,
+            }, indent=2), encoding="utf-8")
+
+            group_tokens = sum(float(row.get("total_tokens", 0) or 0) for row in rows) / max(1, len(rows))
+            group_f1 = sum(float(row.get("f1", 0) or 0) for row in rows) / max(1, len(rows))
+            group_contain = sum(float(row.get("contain", 0) or 0) for row in rows) / max(1, len(rows))
+            group_em = sum(float(row.get("em", 0) or 0) for row in rows) / max(1, len(rows))
+            group_reward = sum(float(row.get("dual_reward", 0) or 0) for row in rows) / max(1, len(rows))
+            group_eff = sum(float(row.get("token_efficiency", 0) or 0) for row in rows) / max(1, len(rows))
+            best_f1 = max((float(row.get("f1", 0) or 0) for row in rows), default=0.0)
+            best_contain = max((float(row.get("contain", 0) or 0) for row in rows), default=0.0)
+            best_reward = max((float(row.get("dual_reward", 0) or 0) for row in rows), default=0.0)
+            mutations = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("topology_mutation"))
+
+            wandb_log(wandb_run, {
+                "tf_grpo/group_avg_tokens": group_tokens,
+                "tf_grpo/group_avg_f1": group_f1,
+                "tf_grpo/group_avg_contain": group_contain,
+                "tf_grpo/group_avg_em": group_em,
+                "tf_grpo/group_avg_dual_reward": group_reward,
+                "tf_grpo/group_avg_token_efficiency": group_eff,
+                "tf_grpo/group_best_f1": best_f1,
+                "tf_grpo/group_best_contain": best_contain,
+                "tf_grpo/group_best_dual_reward": best_reward,
+                "tf_grpo/group_mixed": int(group.has_mixed_outcomes),
+                "tf_grpo/group_rollouts": len(rows),
+                "tf_grpo/topology_mutations": mutations,
+                "tf_grpo/unique_topology_signatures": unique_topology_signatures,
+                "tf_grpo/duplicate_topology_retries": duplicate_retries,
+                "tf_grpo/duplicate_retry_changed": duplicate_retry_changed,
+                "tf_grpo/learning_step": learning_step,
+                "experience_library/size": library.size(),
+                "experience_library/delta_size": library.size() - pre_library_size,
+                "experience_library/new_insights": len(insights),
+            }, step=learning_step)
+            log.info(
+                "epoch %d step %d %s rows=%d mixed=%s insights=%d lib=%d avg_tok=%.0f avg_reward=%.3f",
+                epoch, learning_step, item["id"], len(rows), group.has_mixed_outcomes,
+                len(insights), library.size(), group_tokens, group_reward,
+            )
+
+        library.save(output_dir / f"experience_library_epoch{epoch}.json")
+        epoch_avg_tokens = sum(float(r.get("total_tokens", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+        epoch_avg_f1 = sum(float(r.get("f1", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+        epoch_avg_contain = sum(float(r.get("contain", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+        epoch_avg_em = sum(float(r.get("em", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+        epoch_avg_reward = sum(float(r.get("dual_reward", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+        epoch_avg_eff = sum(float(r.get("token_efficiency", 0) or 0) for r in epoch_rows) / max(1, len(epoch_rows))
+
+        # HERA Section 5.3.1: per-dataset token-consumption trajectory for the
+        # exploration -> exploitation transition (LOWESS-ready jsonl).
+        by_dataset: dict[str, list[dict]] = {}
+        for r in epoch_rows:
+            by_dataset.setdefault(str(r.get("dataset", "default")), []).append(r)
+        with (output_dir / "token_dynamics.jsonl").open("a", encoding="utf-8") as f:
+            f.write(json.dumps({
+                "epoch": epoch,
+                "learning_step": learning_step,
+                "scope": "all",
+                "rows": len(epoch_rows),
+                "library_size": library.size(),
+                "avg_tokens": round(epoch_avg_tokens, 1),
+                "avg_f1": round(epoch_avg_f1, 4),
+                "avg_contain": round(epoch_avg_contain, 4),
+                "avg_em": round(epoch_avg_em, 4),
+                "avg_token_efficiency": round(epoch_avg_eff, 4),
+            }, ensure_ascii=False) + "\n")
+            for ds, ds_rows in by_dataset.items():
+                ds_n = max(1, len(ds_rows))
+                f.write(json.dumps({
+                    "epoch": epoch,
+                    "learning_step": learning_step,
+                    "scope": "dataset",
+                    "dataset": ds,
+                    "rows": len(ds_rows),
+                    "library_size": library.size(),
+                    "avg_tokens": round(sum(float(x.get("total_tokens", 0) or 0) for x in ds_rows) / ds_n, 1),
+                    "avg_f1": round(sum(float(x.get("f1", 0) or 0) for x in ds_rows) / ds_n, 4),
+                    "avg_contain": round(sum(float(x.get("contain", 0) or 0) for x in ds_rows) / ds_n, 4),
+                    "avg_em": round(sum(float(x.get("em", 0) or 0) for x in ds_rows) / ds_n, 4),
+                    "avg_token_efficiency": round(sum(float(x.get("token_efficiency", 0) or 0) for x in ds_rows) / ds_n, 4),
+                }, ensure_ascii=False) + "\n")
+
+        wandb_log(wandb_run, {
+            "tf_grpo/epoch_rows": len(epoch_rows),
+            "tf_grpo/epoch_insights": epoch_insight_count,
+            "tf_grpo/epoch_avg_f1": epoch_avg_f1,
+            "tf_grpo/epoch_avg_contain": epoch_avg_contain,
+            "tf_grpo/epoch_avg_em": epoch_avg_em,
+            "tf_grpo/epoch_avg_tokens": epoch_avg_tokens,
+            "tf_grpo/epoch_avg_dual_reward": epoch_avg_reward,
+            "tf_grpo/epoch_avg_token_efficiency": epoch_avg_eff,
+            "experience_library/size": library.size(),
+            "experience_library/delta_size": library.size() - epoch_start_size,
+        }, step=learning_step)
+        log_rollout_table(wandb_run, epoch_rows, prefix=f"tf_grpo/epoch_{epoch}")
+        log.info("epoch %d complete, library=%d, rows=%d, avg_tokens=%.0f, avg_reward=%.3f",
+                 epoch, library.size(), len(epoch_rows), epoch_avg_tokens, epoch_avg_reward)
+
+    return library, all_rows, failed_trajectories, failure_buffer
+
+
+def cap_experience_library(library: ExperienceLibrary, max_size: int = 40) -> None:
+    """Enforce the global HERA library cap after all ADD/MERGE/GEPA/orch writes."""
+    while library.size() > max_size:
+        lowest = min(library.entries.values(), key=lambda e: (e.utility, -e.usage_count, e.success_count))
+        library.prune(lowest.id)
+
+
+def add_prompt_rules_to_library(library: ExperienceLibrary, evolved_prompts: dict, max_size: int = 40) -> None:
+    for role, prompt in evolved_prompts.items():
+        if not prompt:
+            continue
+        # Only add concise summary, not full prompt
+        summary = prompt[:150]
+        library.add(
+            ExperienceEntry(
+                id=f"gepa_prompt_{role}",
+                profile=f"evolved_prompt_{role}",
+                insight=f"{role}: {summary}",
+                utility=0.6,
+                target_roles=(role,),
+                applies_when=f"Role is {role}",
+                avoid_when="",
+            )
+        )
+    # Enforce size limit
+    while library.size() > max_size:
+        lowest = min(library.entries.values(), key=lambda e: (e.utility, -e.usage_count))
+        library.prune(lowest.id)
+
+
+def serialize_orch_diagnostics(result: dict) -> dict:
+    """Serialize orchestrator analysis to JSON-safe form.
+
+    HERA training emits diagnostics ONLY (no flat config_overrides or
+    per-query-type threshold tables). All useful signal from training is
+    pushed into the experience library as ExperienceEntry rows; pi_O reads
+    those at eval time and samples Gamma adaptively.
+    """
+    serial = dict(result)
+    serial["new_entries"] = [
+        entry if isinstance(entry, dict) else entry.__dict__
+        for entry in result.get("new_entries", [])
+    ]
+    return serial
+
+
+def main() -> None:
+    args = parse_args()
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
+    if not args.dry_run:
+        try:
+            check_retriever_health(args.retriever_url)
+        except RuntimeError as exc:
+            raise SystemExit(str(exc)) from exc
+    output_dir = Path(args.output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    train_data = load_train_data(args.limit_per_dataset, args.datasets)
+    log.info("loaded %d training questions", len(train_data))
+
+    wandb_run = init_wandb(args, output_dir, len(train_data))
+
+    retriever = Retriever(base_url=args.retriever_url)
+    reflection_lm = dspy.LM(model="openai/gpt-5", max_tokens=16000, temperature=1.0)
+    library = ExperienceLibrary()
+
+    library, training_rows, failed_trajectories, failure_buffer = asyncio.run(
+        run_training(
+            train_data=train_data,
+            library=library,
+            retriever=retriever,
+            reflection_lm=reflection_lm,
+            epochs=args.epochs,
+            K=args.K,
+            output_dir=output_dir,
+            concurrency=args.concurrency,
+            wandb_run=wandb_run,
+            max_library_size=args.max_library_size,
+            reward_alpha=args.reward_alpha,
+        )
+    )
+
+    # GEPA phase
+    if args.skip_gepa or not failed_trajectories:
+        evolved = {}
+    else:
+        failed_trajectories = failed_trajectories[:max(1, args.gepa_max_trajectories)]
+        pipeline = build_pipeline(retriever, build_pipeline_config(library))
+        gepa_result = run_gepa_epoch(
+            reflection_lm=reflection_lm,
+            pipeline=pipeline,
+            retriever=retriever,
+            failed_trajectories=failed_trajectories,
+            experience_library=library,
+            failure_buffer=failure_buffer,
+        )
+        evolved = gepa_result.get("evolved_prompts", {})
+        add_prompt_rules_to_library(library, evolved, max_size=args.max_library_size)
+        cap_experience_library(library, args.max_library_size)
+        
+        # Log GEPA metrics
+        wandb_log(wandb_run, {
+            "gepa/failed_trajectories": len(failed_trajectories),
+            "gepa/operational_rules": len(gepa_result.get("operational_rules", [])),
+            "gepa/behavioral_principles": len(gepa_result.get("behavioral_principles", [])),
+        })
+        # Log prompt lengths
+        for role, prompt in evolved.items():
+            wandb_log(wandb_run, {f"gepa/prompt_chars_{role}": len(prompt or "")})
+    
+    save_evolved_prompts(evolved, str(output_dir / "evolved_prompts.json"))
+
+    # Orchestrator analysis -> experience-library insights (no flat config emission)
+    if args.skip_orch_opt:
+        diagnostics = {"new_entries": [], "routing_analysis": {}, "budget_analysis": {}, "topology_analysis": {}}
+    else:
+        diagnostics = optimize_orchestration(reflection_lm, training_rows, library)
+    cap_experience_library(library, args.max_library_size)
+    diagnostics = serialize_orch_diagnostics(diagnostics)
+
+    wandb_log(wandb_run, {
+        "orchestrator/new_entries": len(diagnostics.get("new_entries", [])),
+        "experience_library/final_size": library.size(),
+        "training/update_mode": "online_per_question_group",
+    })
+
+    # Diagnostics only; eval does NOT read this file. Eval consumes E and
+    # evolved prompts and samples Gamma via pi_O(Gamma | q, E, N).
+    (output_dir / "orchestration_diagnostics.json").write_text(
+        json.dumps(diagnostics, indent=2, ensure_ascii=False), encoding="utf-8",
+    )
+
+    library.save(output_dir / "experience_library.json")
+    
+    # Final summary
+    log.info("=" * 60)
+    log.info("HERA training complete")
+    log.info("Library: %d entries", library.size())
+    log.info("Evolved prompts: %s", {k: len(v) for k, v in evolved.items()} if evolved else "none")
+    log.info("Artifacts: %s", output_dir)
+    log.info("=" * 60)
+    
+    if wandb_run is not None:
+        try:
+            wandb_run.finish()
+        except Exception:
+            pass
+
+
+if __name__ == "__main__":
+    main()

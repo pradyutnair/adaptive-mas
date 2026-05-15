@@ -32,6 +32,19 @@ Output STRICT JSON with keys:
 ids start at 1 and are sequential. depends_on is a list of earlier ids.
 expected_answer_type in {person, place, date, number, yes_no, entity, other}.
 Exactly one subgoal has is_final=true.
+
+Decomposition rules:
+- Preserve the answer category named by the original wh-phrase. If the
+  question asks "what rocket/company/source", the final subgoal must ask for
+  that category, not for an intermediate spacecraft, founder, or location.
+- Preserve descriptor head nouns. For "the company founded as X", first ask
+  which company matches that descriptor, then ask the final attribute of that
+  company.
+- For comparisons and superlatives, retrieve each candidate's comparable
+  attribute before the final decision subgoal.
+- The final subgoal should restate the original wh-target with resolved
+  <A.I> placeholders; it must not ask for a bridge entity unless the original
+  question asks for that bridge.
 """
     question: str = dspy.InputField()
     plan_json: str = dspy.OutputField(desc='Strict JSON object with subgoals, final_id, reasoning')
@@ -41,8 +54,9 @@ import os as _os
 _MAX_SUBGOALS = int(_os.environ.get('AMAS_MAX_SUBGOALS', 6))
 
 
-def _parse_plan(raw: str, original_question: str) -> tuple[Plan, str]:
+def _parse_plan(raw: str, original_question: str, max_subgoals: int | None = None) -> tuple[Plan, str]:
     """Parse the planner's JSON output. Falls back to a single-node plan on errors."""
+    cap = max(1, int(max_subgoals or _MAX_SUBGOALS))
     text = raw.strip()
     m = re.search(r'\{.*\}', text, re.DOTALL)
     if m:
@@ -56,7 +70,7 @@ def _parse_plan(raw: str, original_question: str) -> tuple[Plan, str]:
     raw_subgoals = obj.get('subgoals', [])
     subgoals: list[SubgoalNode] = []
     seen_ids = set()
-    for i, item in enumerate(raw_subgoals[:_MAX_SUBGOALS], start=1):
+    for i, item in enumerate(raw_subgoals[:cap], start=1):
         if not isinstance(item, dict):
             continue
         try:
@@ -116,13 +130,26 @@ def _maybe_with_experience(sig_class, experience: str):
     return sig_class.with_instructions(new_instr)
 
 
-def run_planner(planner_lm: dspy.LM, question: str, experience: str = "") -> Plan:
+def run_planner(
+    planner_lm: dspy.LM,
+    question: str,
+    experience: str = "",
+    max_subgoals: int | None = None,
+) -> Plan:
     """Run the Planner once. Returns a Plan with planner_tokens populated."""
     sig = _maybe_with_experience(DecomposeMultiHop, experience)
+    if max_subgoals:
+        base_instr = sig.instructions or sig.__doc__ or ""
+        sig = sig.with_instructions(
+            f"Efficiency constraint: produce at most {max_subgoals} subgoals. "
+            "Combine bridge lookup and attribute lookup when one retrieval can answer both. "
+            "For comparisons, use one subgoal per candidate attribute plus one final decision at most.\n\n"
+            + base_instr
+        )
     with dspy.context(lm=planner_lm):
         cot = dspy.ChainOfThought(sig)
         pred = cot(question=question)
-    plan, status = _parse_plan(pred.plan_json, question)
+    plan, status = _parse_plan(pred.plan_json, question, max_subgoals=max_subgoals)
     try:
         history = planner_lm.history[-1] if planner_lm.history else None
         usage = (history or {}).get('usage') or {}

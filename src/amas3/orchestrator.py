@@ -33,27 +33,41 @@ from .retriever import Retriever
 from .types import RetrievedChunk
 
 
-_PROMPT = """You are the orchestrator for a multi-hop QA system. You see the original question and Wikipedia evidence chunks from the current retrieval. Decide one action per step.
+_PROMPT = """You are the orchestrator for a multi-hop QA system. You see the original \
+question and Wikipedia evidence chunks from the current retrieval. Decide one \
+action per step.
 
 Actions:
-- "answer": evidence directly supports a confident answer to the ORIGINAL question (not a bridge entity). Only use answer when the wh-target of the original question is satisfied by an explicit span in the evidence.
-- "retrieve": one more targeted retrieval will resolve the question. Emit next_query with a SPECIFIC follow-up query (a missing bridge fact, an entity attribute, a comparison side). Do NOT repeat prior queries. Use only if remaining_followups > 0.
-- "escalate": needs decomposition. Escalate IMMEDIATELY (do not retrieve) for any of:
-    * COMPARISON: 'older/younger', 'taller/shorter', 'first/last', 'which is bigger', 'same/different country/year/director'
-    * COMPOSITION: 'director of X is from where', 'spouse of X was born when', 'who founded the company that X works for'
-    * SET / COUNT: 'how many', 'which of these', 'list all', 'both'
-    * MULTI-CONSTRAINT: more than one independent condition that requires separate retrievals
-    * Evidence does not even mention the wh-target entity
-
-Default to escalate when uncertain. The cost of escalating is much smaller than the cost of a wrong cheap answer.
+- "answer": evidence directly supports a confident answer to the ORIGINAL \
+question (not a bridge entity). Only use answer when the wh-target of the \
+original question is satisfied by an explicit span in the evidence.
+- "retrieve": one more targeted retrieval will resolve the question. Emit \
+`next_query` with a SPECIFIC follow-up query (a missing bridge fact, an entity \
+attribute, a comparison side). Do NOT repeat prior queries. Use only if \
+remaining_followups > 0.
+- "escalate": needs decomposition: comparison across entities, set/count, \
+multiple constraints, ambiguous bridge, or evidence too sparse for cheap path.
 
 Rules:
-- Never answer with a bridge entity. The answer must match the wh-target of the original question.
-- confidence is your calibrated probability that the answer is exactly correct given the evidence. Be conservative: 0.85+ only if the evidence states the exact span verbatim.
-- If the wh-target span is not present verbatim in the evidence, do NOT answer.
+- Never answer with a bridge entity. The answer must match the wh-target of \
+the original question.
+- Extract the required answer category from the original wh-phrase. For \
+questions like "what rocket/company/source" or "which film/person", the \
+answer must be that category, not a related entity mentioned in evidence.
+- For questions containing a descriptor such as "the X that/which/who/where", \
+evidence that only identifies X is not enough; answer only after evidence \
+states the requested attribute of that X.
+- `confidence` is your calibrated probability that the answer is exactly \
+correct given the evidence. Be conservative: 0.85+ only if the evidence states \
+the exact span verbatim.
+- If you cannot reasonably answer AND no further useful retrieval is obvious, \
+choose `escalate`.
 
 Return STRICT JSON on ONE LINE, no prose:
-{"action":"answer|retrieve|escalate","answer":"short span or empty","answer_type":"person|place|date|number|yes_no|entity|other","justification":"short evidence relation","support_ids":["chunk_id"],"confidence":0.0,"next_query":"query or empty"}
+{"action":"answer|retrieve|escalate","answer":"short span or empty",\
+"answer_type":"person|place|date|number|yes_no|entity|other",\
+"justification":"short evidence relation","support_ids":["chunk_id"],\
+"confidence":0.0,"next_query":"query or empty"}
 """
 
 
@@ -73,8 +87,6 @@ class OrchestratorResult:
 
 def _parse_json(text: str) -> dict[str, Any]:
     s = (text or "").strip()
-    # Strip <think>...</think> block(s) so we don't accidentally parse braces inside reasoning prose
-    s = re.sub(r"<think>.*?</think>", "", s, flags=re.DOTALL).strip()
     m = re.search(r"\{.*\}", s, re.DOTALL)
     if m:
         s = m.group(0)
@@ -163,6 +175,7 @@ async def run_orchestrator(
     min_answer_confidence: float = 0.65,
     chunk_excerpt_chars: int = 320,
     max_chunks_per_step: int = 5,
+    experience: str = "",
 ) -> OrchestratorResult:
     """Run the orchestrator loop.
 
@@ -191,7 +204,10 @@ async def run_orchestrator(
             "search_history": history[-3:],
             "evidence": _chunks_payload(chunks_now, max_chunks=max_chunks_per_step, excerpt_chars=chunk_excerpt_chars),
         }
-        obj, tok = await _chat_json(orch_lm, _PROMPT, user_payload)
+        system_prompt = _PROMPT
+        if experience:
+            system_prompt = "Prior experiential knowledge from past attempts:\n" + experience + "\n\n" + _PROMPT
+        obj, tok = await _chat_json(orch_lm, system_prompt, user_payload)
         tokens_total += tok
         action = str(obj.get("action", "")).strip().lower()
         if action not in {"answer", "retrieve", "escalate"}:
@@ -278,8 +294,9 @@ _VERIFIER_PROMPT = """You verify whether a candidate answer is correct given the
 
 Accept ONLY if:
 - the answer is a direct, verbatim or near-verbatim span supported by the evidence
-- the answer matches the wh-target of the original question (not a bridge entity)
+- the answer matches the wh-target and explicit answer category of the original question (not a bridge entity)
 - the relation between the answer and the question is explicit in the evidence
+- evidence identifies the requested attribute of the described entity, not only the described entity itself
 
 Otherwise escalate.
 

@@ -84,7 +84,12 @@ def make_qwen14b_think_lm(cfg: LMConfig | None = None, port: int = 8003, replica
     )
 
 
-def make_qwen14b_nothink_lm(cfg: LMConfig | None = None, replica_idx: int = 0, max_tokens: int = 256) -> dspy.LM:
+def make_qwen14b_nothink_lm(
+    cfg: LMConfig | None = None,
+    replica_idx: int = 0,
+    max_tokens: int = 256,
+    temperature: float = 0.0,
+) -> dspy.LM:
     """Cheap fast Qwen3-14B for SAS-attempt extraction (~256 tokens)."""
     cfg = cfg or LMConfig()
     ports = [8001, 8002, 8003]
@@ -94,7 +99,7 @@ def make_qwen14b_nothink_lm(cfg: LMConfig | None = None, replica_idx: int = 0, m
         api_base=f'http://localhost:{chosen_port}/v1',
         api_key='EMPTY',
         max_tokens=max_tokens,
-        temperature=0.0,
+        temperature=temperature,
         extra_body={'chat_template_kwargs': {'enable_thinking': False}},
         cache=False,
     )
