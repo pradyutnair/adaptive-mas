@@ -107,6 +107,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-run-name", default=os.environ.get("WANDB_RUN_NAME", ""))
     parser.add_argument("--max-library-size", type=int, default=40)
     parser.add_argument("--reward-alpha", type=float, default=0.7, help="Weight for task reward vs efficiency")
+    parser.add_argument("--reflection-model", default="openai/gpt-5",
+                        help="OpenAI model for reflection / experience-library updates (e.g. openai/gpt-5, openai/gpt-4o-mini)")
     parser.add_argument("--stratified-pool",
                         default=str(Path(__file__).resolve().parent.parent / "data" / "train_stratified.jsonl"),
                         help="JSONL produced by scripts/build_train_set.py; when present, used in place of raw per-dataset caps.")
@@ -643,7 +645,9 @@ def main() -> None:
     wandb_run = init_wandb(args, output_dir, len(train_data))
 
     retriever = Retriever(base_url=args.retriever_url)
-    reflection_lm = dspy.LM(model="openai/gpt-5", max_tokens=16000, temperature=1.0)
+    reflection_lm_temp = 0.7 if "mini" in (args.reflection_model or "").lower() else 1.0
+    reflection_lm = dspy.LM(model=args.reflection_model, max_tokens=16000, temperature=reflection_lm_temp)
+    log.info("reflection model: %s (temp=%.1f)", args.reflection_model, reflection_lm_temp)
     library = ExperienceLibrary()
 
     library, training_rows, failed_trajectories, failure_buffer = asyncio.run(

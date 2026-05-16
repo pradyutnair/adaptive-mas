@@ -174,39 +174,16 @@ Deployment token budget B:
 Already sampled topologies for this rollout group:
 {avoid_topologies_text}
 
-Current rollout exploration axis:
-{exploration_axis}
-
 Query: {question}
 
-Design a MINIMAL topology by reasoning about q, the retrieved experiences,
-and the deployment budget B (no fixed thresholds or per-type tables):
-
-1. DEFAULT to routing_strategy="sas". Escalate to "sas_then_mas" or
-   "full_mas" ONLY if query semantics clearly demand multi-step composition
-   beyond what the sas_solver's internal retrieve-loop can handle:
-     - compound bridge with synthesis across >=3 hops,
-     - intersection / comparison across multiple distinct entities,
-     - multi-step temporal or causal chains.
-   Simple factoid lookups, single-attribute queries, yes/no checks, AND
-   tractable 2-hop bridges (the sas_solver can chain one extra retrieval)
-   stay on the "sas" lane. Aim for total tokens < B at all times.
-2. Set retrieval_budget to the smallest value the evidence supports:
-     - For "sas" use 1-3. This is the number of followup retrievals the
-       sas_solver may issue beyond the initial probe (1=single-shot,
-       2=allow one bridge hop, 3=allow two bridge hops).
-     - For "sas_then_mas" use 1-2.
-     - For "full_mas" use at most 2.
-3. Use the exploration axis to sample a semantically justified alternative,
-   not a fixed template.
-4. Do not duplicate an already sampled topology unless query semantics leave
-   no safe alternative.
-5. Every additional retrieval adds tokens; the reward explicitly penalizes
-   exceeding B AND truncates the rollout when the executor hits B. Justify
-   each non-SAS choice in the rationale.
+Choose ONE routing_strategy from {{sas, sas_then_mas, full_mas}} based on the
+query, the retrieved experiences, and B. Pick retrieval_budget in [1,3]: it
+caps how many followup retrievals the sas_solver may issue beyond its
+initial probe. The reward penalizes both incorrect/blank answers and tokens
+over B; there is no fixed default strategy.
 
 Return STRICT JSON (no other keys):
-{{"query_profile":"<one sentence>","routing_strategy":"sas|sas_then_mas|full_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<why this strategy is efficient given B>"}}"""
+{{"query_profile":"<one sentence>","routing_strategy":"sas|sas_then_mas|full_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<one sentence>"}}"""
 
 
 TOPOLOGY_MUTATION_PROMPT = """\

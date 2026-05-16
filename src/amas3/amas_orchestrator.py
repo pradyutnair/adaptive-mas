@@ -1,8 +1,9 @@
-"""SAS solver agent: one cheap LLM solver for the strict SAS lane.
+"""AMAS Orchestrator: one cheap LLM agent for the single-pass / SAS lane.
 
 NOT to be confused with the GRPO orchestrator (pi_O in `grpo.topology`),
 which is the topology sampler that decides whether to invoke this agent in
-the first place.
+the first place. `AmasOrch` is the runtime executor agent; pi_O is the
+learned routing policy.
 
 One LLM call per iteration. The agent receives:
 - original question
@@ -15,12 +16,12 @@ The agent emits strict JSON:
      "justification":"...", "support_ids":[...], "confidence":0.0,
      "next_query":"..."}
 
-`answer`     -> SAS solver returns; pipeline emits the answer directly.
-`retrieve`   -> SAS solver issues `next_query`, appends new chunks, loops.
+`answer`     -> AmasOrch returns; pipeline emits the answer directly.
+`retrieve`   -> AmasOrch issues `next_query`, appends new chunks, loops.
 `escalate`   -> hands off to the full MAS pipeline (only honored when the
                 pipeline config does NOT set sas_strict_single_pass).
 
-The SAS solver is intentionally cheaper than full MAS: bounded retrieval
+AmasOrch is intentionally cheaper than full MAS: bounded retrieval
 calls (1 + followups), no per-hop solver overhead, no synth call.
 """
 from __future__ import annotations
@@ -38,7 +39,7 @@ from .retriever import Retriever
 from .types import RetrievedChunk
 
 
-_PROMPT = """You are the SAS solver for a multi-hop QA system. You see the original \
+_PROMPT = """You are the AMAS Orchestrator (single-agent lane) for a multi-hop QA system. You see the original \
 question and Wikipedia evidence chunks from the current retrieval. Decide one \
 action per step.
 
@@ -65,8 +66,13 @@ states the requested attribute of that X.
 - `confidence` is your calibrated probability that the answer is exactly \
 correct given the evidence. Be conservative: 0.85+ only if the evidence states \
 the exact span verbatim.
-- If you cannot reasonably answer AND no further useful retrieval is obvious, \
-choose `escalate`.
+- When `remaining_followups == 0` you MUST set action="answer" and provide \
+your best-effort answer span (do NOT escalate, do NOT leave the answer field \
+empty). If the evidence is weak, lower `confidence` accordingly but still \
+commit to the most-supported span.
+- Use action="escalate" only when remaining_followups > 0 AND the query \
+clearly needs multi-agent decomposition (comparison across entities, \
+set/count, multiple constraints, ambiguous bridge).
 
 Return STRICT JSON on ONE LINE, no prose:
 {"action":"answer|retrieve|escalate","answer":"short span or empty",\
@@ -77,7 +83,7 @@ Return STRICT JSON on ONE LINE, no prose:
 
 
 @dataclass
-class SasSolverResult:
+class AmasOrch:
     action: str = "escalate"
     answer: str = ""
     answer_type: str = "other"
@@ -170,7 +176,7 @@ async def _chat_json(
     return _parse_json(text), int(usage.get("total_tokens", 0) or 0)
 
 
-async def run_sas_solver(
+async def run_amas_orchestrator(
     *,
     sas_lm: dspy.LM,
     retriever: Retriever,
@@ -181,7 +187,7 @@ async def run_sas_solver(
     chunk_excerpt_chars: int = 320,
     max_chunks_per_step: int = 5,
     experience: str = "",
-) -> SasSolverResult:
+) -> AmasOrch:
     """Run the SAS solver loop.
 
     Iteration 0 sees probe_chunks. If action='retrieve', we retrieve next_query
@@ -192,12 +198,13 @@ async def run_sas_solver(
     history: list[dict[str, Any]] = []
     tokens_total = 0
     retrieval_calls = 1 if probe_chunks else 0
-    last_result = SasSolverResult(
+    last_result = AmasOrch(
         action="escalate",
         chunks_used=_dedupe(all_chunks),
         search_history=history,
         retrieval_calls=retrieval_calls,
     )
+    best_answer: dict[str, Any] | None = None
 
     steps = max_followups + 1  # 1 initial step + N retrieve+answer steps
     for step_idx in range(steps):
@@ -238,21 +245,40 @@ async def run_sas_solver(
             "support_ids": support_ids,
         })
 
-        if action == "answer" and answer and conf >= min_answer_confidence:
-            return SasSolverResult(
-                action="answer",
-                answer=answer,
-                answer_type=str(obj.get("answer_type", "other")),
-                justification=justification,
-                support_ids=support_ids,
-                confidence=conf,
-                chunks_used=chunks_now,
-                search_history=history,
-                retrieval_calls=retrieval_calls,
-                tokens=tokens_total,
-            )
+        if action == "answer" and answer:
+            if best_answer is None or conf > best_answer["confidence"]:
+                best_answer = {
+                    "answer": answer,
+                    "answer_type": str(obj.get("answer_type", "other")),
+                    "justification": justification,
+                    "support_ids": support_ids,
+                    "confidence": conf,
+                    "chunks_used": chunks_now,
+                }
+            if conf >= min_answer_confidence:
+                return AmasOrch(
+                    action="answer",
+                    answer=answer,
+                    answer_type=str(obj.get("answer_type", "other")),
+                    justification=justification,
+                    support_ids=support_ids,
+                    confidence=conf,
+                    chunks_used=chunks_now,
+                    search_history=history,
+                    retrieval_calls=retrieval_calls,
+                    tokens=tokens_total,
+                )
         if action == "escalate":
-            last_result = SasSolverResult(
+            if answer and (best_answer is None or conf > best_answer["confidence"]):
+                best_answer = {
+                    "answer": answer,
+                    "answer_type": str(obj.get("answer_type", "other")),
+                    "justification": justification,
+                    "support_ids": support_ids,
+                    "confidence": conf,
+                    "chunks_used": chunks_now,
+                }
+            last_result = AmasOrch(
                 action="escalate",
                 answer=answer,
                 answer_type=str(obj.get("answer_type", "other")),
@@ -274,7 +300,7 @@ async def run_sas_solver(
         new_chunks = await retriever.retrieve(next_query)
         retrieval_calls += 1
         all_chunks.extend(new_chunks)
-        last_result = SasSolverResult(
+        last_result = AmasOrch(
             action="retrieve",
             answer=answer,
             answer_type=str(obj.get("answer_type", "other")),
@@ -287,6 +313,19 @@ async def run_sas_solver(
             tokens=tokens_total,
         )
 
+    if best_answer is not None:
+        return AmasOrch(
+            action="answer",
+            answer=best_answer["answer"],
+            answer_type=best_answer["answer_type"],
+            justification=best_answer["justification"],
+            support_ids=best_answer["support_ids"],
+            confidence=best_answer["confidence"],
+            chunks_used=best_answer["chunks_used"] or _dedupe(all_chunks),
+            search_history=history,
+            retrieval_calls=retrieval_calls,
+            tokens=tokens_total,
+        )
     last_result.action = "escalate"
     last_result.tokens = tokens_total
     last_result.retrieval_calls = retrieval_calls
@@ -295,7 +334,7 @@ async def run_sas_solver(
     return last_result
 
 
-_VERIFIER_PROMPT = """You verify whether a candidate answer is correct given the original question and the evidence excerpts the SAS solver used. Be strict.
+_VERIFIER_PROMPT = """You verify whether a candidate answer is correct given the original question and the evidence excerpts the AMAS Orchestrator (single-agent lane) used. Be strict.
 
 Accept ONLY if:
 - the answer is a direct, verbatim or near-verbatim span supported by the evidence
@@ -318,7 +357,7 @@ class VerifierResult:
     tokens: int = 0
 
 
-async def run_sas_verifier(
+async def run_amas_verifier(
     *,
     verifier_lm: dspy.LM,
     question: str,

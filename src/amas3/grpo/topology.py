@@ -34,47 +34,6 @@ logger = logging.getLogger(__name__)
 # Exploration axes
 # ---------------------------------------------------------------------------
 
-EXPLORATION_AXES = {
-    "exploit": "exploit: choose the highest-utility learned route with the smallest safe budget",
-    "frugal": "frugal: prefer direct orchestration or one-hop solving only when evidence supports the original wh-target",
-    "robust": "robust: use decomposition for ambiguous bridges/comparisons but keep retrieval budget minimal",
-    "risk_sensitive": "risk_sensitive: avoid direct answers unless the evidence states the exact final relation",
-    "repair_aware": "repair_aware: add repair/bridge resolution only when prior experience indicates missing evidence or bridge drift",
-}
-
-
-def exploration_axis_for_sample(
-    sample_index: int,
-    query_profile: str,
-    retrieved_entries: list[ExperienceEntry] | None = None,
-) -> str:
-    """Pick a semantic exploration axis conditioned on profile + library state.
-
-    The sample index selects among a query-ranked axis list; it does not map
-    to a fixed topology, so group diversity remains a property of pi_O.
-    """
-    profile = (query_profile or "").lower()
-    text = " ".join(
-        [profile]
-        + [getattr(e, "insight", "") + " " + getattr(e, "applies_when", "") + " " + getattr(e, "avoid_when", "")
-           for e in (retrieved_entries or [])]
-    ).lower()
-    scores = {name: 0.0 for name in EXPLORATION_AXES}
-    scores["exploit"] += 0.4
-    if "factoid" in profile or "date" in profile or "numeric" in profile:
-        scores["frugal"] += 1.1
-        scores["exploit"] += 0.5
-    if "bridge" in profile or "comparison" in profile or "set_or_boolean" in profile:
-        scores["robust"] += 1.0
-        scores["risk_sensitive"] += 0.7
-    if any(x in text for x in ("missing", "insufficient", "repair", "retry", "failed", "bridge drift")):
-        scores["repair_aware"] += 1.0
-    if any(x in text for x in ("skip", "shortcut", "sas", "direct", "fewer", "budget")):
-        scores["frugal"] += 0.6
-        scores["exploit"] += 0.2
-    ordered = sorted(EXPLORATION_AXES, key=lambda name: (-scores[name], name))
-    chosen = ordered[max(0, sample_index - 1) % len(ordered)]
-    return f"{EXPLORATION_AXES[chosen]} | query_conditioned_rank={ordered}"
 
 
 def format_avoid_topologies(topologies: list[dict[str, Any]] | None) -> str:
@@ -186,7 +145,6 @@ def sample_topology(
     qid: str,
     library: ExperienceLibrary | None,
     sampler_lm: dspy.LM,
-    sample_index: int = 1,
     dataset: str = "default",
     avoid_topologies: list[dict[str, Any]] | None = None,
     sas_coercion_min_utility: float = 0.5,
@@ -217,7 +175,6 @@ def sample_topology(
             experience_text = format_for_orchestrator(entries, max_entries=3, max_insight_chars=180)
 
     query_profile = characterize_query_profile(question, dataset, qid=qid)
-    exploration_axis = exploration_axis_for_sample(sample_index, query_profile, entries)
     budget_text = _budget_block(deployment_budget)
 
     prompt = TOPOLOGY_SAMPLING_PROMPT.format(
@@ -226,7 +183,6 @@ def sample_topology(
         query_profile=query_profile,
         budget_block=budget_text,
         avoid_topologies_text=format_avoid_topologies(avoid_topologies),
-        exploration_axis=exploration_axis,
         question=question,
     )
 
@@ -243,7 +199,6 @@ def sample_topology(
         if obj:
             obj["_sampler_tokens"] = sampler_tokens
             obj["_query_profile"] = query_profile
-            obj["_exploration_axis"] = exploration_axis
             obj["_experience_entry_ids"] = [e.id for e in entries]
             obj["_deployment_budget"] = deployment_budget if deployment_budget is not None else 0
             effective_min_utility = sas_coercion_min_utility
@@ -268,7 +223,6 @@ def sample_topology(
         "repair": False,
         "_sampler_tokens": 0,
         "_query_profile": query_profile,
-        "_exploration_axis": exploration_axis,
         "_experience_entry_ids": [e.id for e in entries],
         "_deployment_budget": deployment_budget if deployment_budget is not None else 0,
     }
@@ -324,6 +278,7 @@ def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipe
     c.medium_retrievals_per_solver = min(c.medium_retrievals_per_solver, c.max_retrievals_per_solver)
     c.min_retrievals_per_solver = min(c.min_retrievals_per_solver, c.medium_retrievals_per_solver)
     c.repair_enabled = repair
+    c.deployment_budget = int(topology.get("_deployment_budget", 0) or 0)
 
     if strategy == "sas":
         # Strict SAS: planner/solver/synth never run, but the sas_solver
@@ -377,8 +332,6 @@ def format_rollout_for_reflection(r: Rollout) -> str:
     sas_t = int(res.get("sas_attempt_tokens", 0) or 0)
     sas_v_t = int(res.get("sas_verifier_tokens", 0) or 0)
     B = int(topo.get("_deployment_budget", 0) or 0)
-    budget_exit = bool(res.get("budget_exit", False))
-    budget_stage = str(res.get("budget_exit_stage", "") or "")
     lines = [
         f"Policy: {r.policy_name}",
         f"Profile: {topo.get('query_profile', 'unknown')}",
@@ -390,10 +343,6 @@ def format_rollout_for_reflection(r: Rollout) -> str:
         (
             f"Per-agent tokens: sas={sas_t}, sas_verifier={sas_v_t}, "
             f"planner={planner_t}, solver={solver_t} (rewrite={rewrite_t}), synth={synth_t}"
-        ),
-        (
-            f"Budget exit: yes@{budget_stage} (executor truncated this rollout)"
-            if budget_exit else "Budget exit: no"
         ),
         f"Dual reward: {r.dual_reward:.3f}",
         f"Topology: {r.topology}",

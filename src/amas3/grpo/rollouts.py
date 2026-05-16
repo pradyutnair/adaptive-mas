@@ -151,7 +151,7 @@ async def run_group_rollouts(
         return await asyncio.to_thread(
             sample_topology,
             question=question, qid=qid, library=library,
-            sampler_lm=sampler_lm, sample_index=idx + 1, dataset=dataset,
+            sampler_lm=sampler_lm, dataset=dataset,
             avoid_topologies=prior_samples,
             deployment_budget=deployment_budget,
         )
@@ -172,7 +172,7 @@ async def run_group_rollouts(
             sampled_retry = await asyncio.to_thread(
                 sample_topology,
                 question=question, qid=qid, library=library,
-                sampler_lm=sampler_lm, sample_index=idx + 11, dataset=dataset,
+                sampler_lm=sampler_lm, dataset=dataset,
                 avoid_topologies=sampled_topologies,
             )
             retry_sig = topology_signature(sampled_retry)

@@ -69,8 +69,6 @@ class AmasResult:
     sas_verifier_passed: bool = False
     sas_verifier_verdict: str = ''
     sas_verifier_tokens: int = 0
-    budget_exit: bool = False
-    budget_exit_stage: str = ''
 
 
 @dataclass
@@ -102,16 +100,14 @@ class AmasPipelineConfig:
     role_prompts: dict[str, str] = field(default_factory=dict)
     max_plan_subgoals: int = 4
     # When the GRPO orchestrator (pi_O) picks routing_strategy="sas" the
-    # pipeline runs the SAS solver as a single-pass agent and MUST NOT fall
-    # through to planner/solver/synth. The SAS solver's answer (or blank) is
-    # final; failures flow to the experience library and GEPA buffer as-is.
+    # pipeline runs the SAS solver as a single-pass agent and does NOT fall
+    # through to planner/solver/synth. Whatever the SAS produces (best-effort
+    # answer, possibly low-confidence) is final; reward shaping discriminates.
     sas_strict_single_pass: bool = False
-    # Hard runtime token budget B (deployment_budget). When set (>0), the
-    # executor tracks tokens_spent across every LLM step and exits gracefully
-    # the moment tokens_spent >= B, surfacing the best-confidence finding so
-    # far without burning any further LLM calls. The mechanism is purely
-    # online: no per-dataset baselines, no per-strategy ceilings, no
-    # threshold tables. Set to 0 to disable (no runtime cap).
+    # Soft runtime token budget B passed to the executor for logging and used
+    # downstream in reward shaping (sigmoid centered on B). The executor does
+    # NOT hard-truncate rollouts on B; over-budget penalties are applied via
+    # the reward signal so the GRPO group still produces a learning signal.
     deployment_budget: int = 0
 
 
@@ -132,57 +128,6 @@ class AmasPipeline:
         self.sas_lm = sas_lm or worker_lm
         self.retriever = retriever
         self.config = config or AmasPipelineConfig()
-
-    @staticmethod
-    def _running_tokens(result: AmasResult) -> int:
-        """Live tally of every LLM-call token cost recorded on the result."""
-        return (
-            result.planner_tokens
-            + result.solver_tokens
-            + result.synth_tokens
-            + result.rewrite_tokens
-            + result.sas_attempt_tokens
-            + result.sas_verifier_tokens
-        )
-
-    def _over_budget(self, result: AmasResult) -> bool:
-        B = int(self.config.deployment_budget or 0)
-        if B <= 0:
-            return False
-        return self._running_tokens(result) >= B
-
-    def _finalize_from_findings(
-        self,
-        question: str,
-        bus: FindingsBus,
-        result: AmasResult,
-        t0: float,
-        stage: str,
-    ) -> AmasResult:
-        """Graceful exit: pick the highest-confidence finding so far. No more LLM calls."""
-        best = None
-        for f in bus.all():
-            if not f.answer:
-                continue
-            if best is None or f.confidence > best.confidence:
-                best = f
-        if best is not None:
-            result.answer = best.answer
-            result.answer_type = result.answer_type or 'other'
-            result.justification = (
-                f"budget_exit@{stage} (conf={best.confidence:.2f})"
-            )
-            result.support_ids = list(best.evidence_ids or [])
-        else:
-            result.answer = ''
-            result.justification = f"budget_exit@{stage} (no findings)"
-        result.budget_exit = True
-        result.budget_exit_stage = stage
-        if not result.topology:
-            result.topology = 'budget_truncated'
-        result.total_tokens = self._running_tokens(result)
-        result.wallclock_seconds = round(time.time() - t0, 3)
-        return result
 
     def _role_experience(self, role: str, extra: str = "") -> str:
         parts = []
@@ -208,8 +153,8 @@ class AmasPipeline:
 
         # Step 0.25: SAS solver (one cheap LLM call; optional followups or escalate)
         if self.config.use_sas_solver and g_original >= self.config.sas_probe_min_g:
-            from .sas_solver import run_sas_solver
-            sas = await run_sas_solver(
+            from .amas_orchestrator import run_amas_orchestrator
+            sas = await run_amas_orchestrator(
                 sas_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,
                 retriever=self.retriever,
                 question=question,
@@ -228,8 +173,8 @@ class AmasPipeline:
             if sas.action == 'answer' and sas.answer:
                 accept = True
                 if self.config.sas_use_verifier:
-                    from .sas_solver import run_sas_verifier
-                    vr = await run_sas_verifier(
+                    from .amas_orchestrator import run_amas_verifier
+                    vr = await run_amas_verifier(
                         verifier_lm=self.synth_lm,
                         question=question,
                         answer=sas.answer,
@@ -259,27 +204,37 @@ class AmasPipeline:
             # Strict SAS lane: pi_O picked routing_strategy="sas", so this run
             # is a single-pass attempt by definition. Do not escalate to
             # planner/solver/synth; surface whatever the SAS solver produced
-            # (including blanks) so failure flows to the experience library
-            # and the GEPA buffer.
+            # (best low-conf answer included) so the reward signal can
+            # discriminate, not just penalize blank outputs.
             if self.config.sas_strict_single_pass:
+                fallback_answer = sas.answer or ''
+                fallback_support = list(sas.support_ids or [])
+                fallback_just = sas.justification or ''
+                fallback_type = getattr(sas, 'answer_type', '') or 'other'
+                if not fallback_answer:
+                    for h in reversed(sas.search_history or []):
+                        cand = (h or {}).get('answer') or ''
+                        if cand:
+                            fallback_answer = cand
+                            fallback_support = [str(x) for x in (h.get('support_ids') or [])]
+                            fallback_just = f"sas_low_conf (conf={h.get('confidence', 0.0):.2f})"
+                            break
                 result.sas_collapse = True
                 result.topology = 'sas_strict_singlepass'
                 result.topology_rationale = (
                     f"sas-strict: action={sas.action} "
                     f"conf={sas.confidence:.2f} retrievals={sas.retrieval_calls}"
                 )
-                result.answer = sas.answer or ''
-                result.answer_type = getattr(sas, 'answer_type', '')
-                result.justification = (sas.justification or '')[:300]
-                result.support_ids = sas.support_ids or [c.chunk_id for c in sas.chunks_used[:5]]
+                result.answer = fallback_answer
+                result.answer_type = fallback_type
+                result.justification = (fallback_just or '')[:300]
+                result.support_ids = fallback_support or [c.chunk_id for c in sas.chunks_used[:5]]
                 result.probe_groundedness = [round(g_original, 4)]
                 result.total_tokens = result.sas_attempt_tokens + result.sas_verifier_tokens
                 result.wallclock_seconds = round(time.time() - t0, 3)
                 result.n_solvers_invoked = 1
                 return result
             result.sas_escalated = True
-            if self._over_budget(result):
-                return self._finalize_from_findings(question, bus, result, t0, 'after_sas')
 
         enhanced_experience = self._role_experience("planner")
 
@@ -338,9 +293,6 @@ class AmasPipeline:
 
         result.probe_groundedness = [round(p.groundedness, 4) for p in probes]
 
-        if self._over_budget(result):
-            return self._finalize_from_findings(question, bus, result, t0, 'after_planner')
-
         decision = select_topology(plan=plan, probes=probes, thresholds=self.config.topology_thresholds)
         result.topology = decision.topology.value
         result.topology_rationale = decision.rationale
@@ -350,14 +302,8 @@ class AmasPipeline:
         else:
             await self._execute_dag(question, plan, probes, bus, result, decision, solver_chunks_by_node)
 
-        if self._over_budget(result):
-            return self._finalize_from_findings(question, bus, result, t0, 'after_solvers')
-
         if self.config.repair_enabled:
             await self._maybe_repair(plan, probes, bus, result)
-
-        if self._over_budget(result):
-            return self._finalize_from_findings(question, bus, result, t0, 'after_repair')
 
         final_node = self._find_final_node(plan)
         final_evidence = self._final_evidence_chunks(final_node, plan, probes, bus)
@@ -511,8 +457,6 @@ class AmasPipeline:
     ) -> None:
         depth_levels = self._topo_levels(plan)
         for level_nodes in depth_levels:
-            if self._over_budget(result):
-                return
             tasks = []
             metas = []
             for node in level_nodes:

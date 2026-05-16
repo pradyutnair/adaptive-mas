@@ -1,0 +1,20 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 15:37:12,438 INFO __main__: loaded 30 training questions
+2026-05-16 15:37:12,438 INFO __main__: reflection model: openai/gpt-4o-mini (temp=0.7)
+2026-05-16 15:37:12,439 INFO __main__: online HERA mode: one question group per update; K=3 concurrent rollouts; requested outer concurrency=6
+2026-05-16 15:37:12,439 INFO __main__: epoch 1 step 1 question 1/30 2hop__512225_64689
+2026-05-16 15:38:22,619 INFO __main__: epoch 1 step 1 2hop__512225_64689 rows=4 mixed=False insights=0 lib=0 avg_tok=4760 avg_reward=0.155
+2026-05-16 15:38:22,620 INFO __main__: epoch 1 step 2 question 2/30 2hop__244419_40940
+2026-05-16 15:40:26,376 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-16 15:40:26,603 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.71it/s]
+2026-05-16 15:40:28,727 INFO __main__: epoch 1 step 2 2hop__244419_40940 rows=4 mixed=True insights=3 lib=3 avg_tok=6305 avg_reward=0.051
+2026-05-16 15:40:28,727 INFO __main__: epoch 1 step 3 question 3/30 2hop__103967_23140
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 84.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 66.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 58.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.28it/s]
