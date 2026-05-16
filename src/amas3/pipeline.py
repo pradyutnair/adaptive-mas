@@ -99,10 +99,8 @@ class AmasPipelineConfig:
     synth_max_excerpts: int = 6
     role_prompts: dict[str, str] = field(default_factory=dict)
     max_plan_subgoals: int = 4
-    # When the GRPO orchestrator (pi_O) picks routing_strategy="sas" the
-    # pipeline runs the SAS solver as a single-pass agent and does NOT fall
-    # through to planner/solver/synth. Whatever the SAS produces (best-effort
-    # answer, possibly low-confidence) is final; reward shaping discriminates.
+    # Legacy escape hatch. The GRPO orchestrator no longer emits a strict SAS
+    # route; its sas_first strategy always honors verifier-driven escalation.
     sas_strict_single_pass: bool = False
     # Soft runtime token budget B passed to the executor for logging and used
     # downstream in reward shaping (sigmoid centered on B). The executor does
@@ -201,11 +199,8 @@ class AmasPipeline:
                     result.wallclock_seconds = round(time.time() - t0, 3)
                     result.n_solvers_invoked = 1
                     return result
-            # Strict SAS lane: pi_O picked routing_strategy="sas", so this run
-            # is a single-pass attempt by definition. Do not escalate to
-            # planner/solver/synth; surface whatever the SAS solver produced
-            # (best low-conf answer included) so the reward signal can
-            # discriminate, not just penalize blank outputs.
+            # Legacy strict SAS lane. The current GRPO topology layer does not
+            # use this path; sas_first escalates naturally when SAS is weak.
             if self.config.sas_strict_single_pass:
                 fallback_answer = sas.answer or ''
                 fallback_support = list(sas.support_ids or [])

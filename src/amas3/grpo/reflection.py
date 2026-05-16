@@ -52,7 +52,7 @@ def format_library_for_reflection(
     ) or "(empty)"
 
 
-def _has_efficiency_contrast(group: GroupResult) -> bool:
+def has_efficiency_contrast(group: GroupResult) -> bool:
     """Admit reflection on tied-quality groups with meaningful token spread.
 
     HERA reflects on ranked group trajectories. In practice the local Qwen
@@ -85,7 +85,7 @@ def extract_semantic_advantages(
     library: ExperienceLibrary | None = None,
 ) -> list[dict]:
     """Extract <=3 insights from a mixed-outcome or efficiency-contrasting group."""
-    if not group.has_mixed_outcomes and not _has_efficiency_contrast(group):
+    if not group.has_mixed_outcomes and not has_efficiency_contrast(group):
         return []
 
     ranked = sorted(
@@ -115,11 +115,26 @@ def extract_semantic_advantages(
         response = reflection_lm(prompt)
 
     raw_text = response[0] if isinstance(response, list) else str(response)
+    valid_roles = {"orchestrator", "sas_solver", "planner", "solver", "synth"}
+
+    def sanitize_insight(ins: dict) -> None:
+        if "insight" in ins:
+            ins["insight"] = " ".join(str(ins["insight"]).split()[:32])
+        roles = ins.get("target_roles")
+        if not isinstance(roles, list) or not roles:
+            ins["target_roles"] = ["orchestrator"]
+        else:
+            ins["target_roles"] = [r for r in roles if r in valid_roles] or ["orchestrator"]
+
     obj = parse_json_object(raw_text)
     if obj and isinstance(obj.get("insights"), list):
         insights = obj.get("insights", [])
         for ins in insights:
-            if isinstance(ins, dict) and "insight" in ins:
-                ins["insight"] = " ".join(str(ins["insight"]).split()[:32])
+            if isinstance(ins, dict):
+                sanitize_insight(ins)
         return insights
-    return parse_json_array(raw_text)
+    insights = parse_json_array(raw_text)
+    for ins in insights:
+        if isinstance(ins, dict):
+            sanitize_insight(ins)
+    return insights

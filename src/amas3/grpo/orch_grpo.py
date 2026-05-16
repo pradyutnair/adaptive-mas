@@ -141,8 +141,8 @@ def derive_routing_rules(analysis: dict) -> list[dict]:
             rules.append({
                 "profile": f"routing_{qtype}",
                 "insight": (
-                    f"For {qtype} queries, prefer SAS (single-agent shortcut). "
-                    f"SAS accuracy: {stats['sas_accuracy']:.1%}, MAS accuracy: {stats['mas_accuracy']:.1%}, "
+                    f"For {qtype} queries, prefer sas_first. "
+                    f"SAS-first accuracy: {stats['sas_accuracy']:.1%}, direct-MAS accuracy: {stats['mas_accuracy']:.1%}, "
                     f"SAS saves {stats['mas_avg_tokens'] - stats['sas_avg_tokens']:.0f} tokens on average."
                 ),
                 "target_roles": ("orchestrator",),
@@ -153,8 +153,8 @@ def derive_routing_rules(analysis: dict) -> list[dict]:
             rules.append({
                 "profile": f"routing_{qtype}",
                 "insight": (
-                    f"For {qtype} queries, prefer full MAS decomposition. "
-                    f"MAS accuracy: {stats['mas_accuracy']:.1%} vs SAS: {stats['sas_accuracy']:.1%}."
+                    f"For {qtype} queries, prefer direct_mas decomposition. "
+                    f"Direct-MAS accuracy: {stats['mas_accuracy']:.1%} vs SAS-first: {stats['sas_accuracy']:.1%}."
                 ),
                 "target_roles": ("orchestrator",),
                 "applies_when": f"Query type is {qtype}",

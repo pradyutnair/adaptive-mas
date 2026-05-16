@@ -1,0 +1,33 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 18:11:41,976 INFO __main__: loaded 27 training questions
+2026-05-16 18:11:41,976 INFO __main__: reflection model: openai/gpt-5 (temp=1.0)
+2026-05-16 18:11:41,977 INFO __main__: online HERA mode: forced two-strategy groups; K=4 concurrent rollouts; requested outer concurrency=24
+2026-05-16 18:11:41,977 INFO __main__: epoch 1 step 1 question 1/27 2hop__528191_32631
+2026-05-16 18:16:34,175 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-16 18:16:34,403 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.98it/s]
+2026-05-16 18:16:36,645 INFO __main__: epoch 1 step 1 2hop__528191_32631 rows=5 mixed=True insights=3 lib=3 avg_tok=5324 avg_reward=-0.238
+2026-05-16 18:16:36,645 INFO __main__: epoch 1 step 2 question 2/27 2hop__244419_40940
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 78.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 77.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 49.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 51.26it/s]
+2026-05-16 18:21:10,118 INFO __main__: epoch 1 step 2 2hop__244419_40940 rows=4 mixed=False insights=3 lib=3 avg_tok=6643 avg_reward=-0.247
+2026-05-16 18:21:10,118 INFO __main__: epoch 1 step 3 question 3/27 2hop__103967_23140
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 78.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 77.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 73.31it/s]
+2026-05-16 18:24:43,983 INFO __main__: epoch 1 step 3 2hop__103967_23140 rows=4 mixed=True insights=3 lib=6 avg_tok=6925 avg_reward=0.852
+2026-05-16 18:24:43,983 INFO __main__: epoch 1 step 4 question 4/27 2hop__647869_2702
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 66.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 65.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.95it/s]
+2026-05-16 18:28:59,251 INFO __main__: epoch 1 step 4 2hop__647869_2702 rows=4 mixed=True insights=3 lib=9 avg_tok=13746 avg_reward=-0.521
+2026-05-16 18:28:59,251 INFO __main__: epoch 1 step 5 question 5/27 2hop__131781_47295

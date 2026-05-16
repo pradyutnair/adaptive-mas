@@ -18,8 +18,7 @@ The agent emits strict JSON:
 
 `answer`     -> AmasOrch returns; pipeline emits the answer directly.
 `retrieve`   -> AmasOrch issues `next_query`, appends new chunks, loops.
-`escalate`   -> hands off to the full MAS pipeline (only honored when the
-                pipeline config does NOT set sas_strict_single_pass).
+`escalate`   -> hands off to the full MAS pipeline.
 
 AmasOrch is intentionally cheaper than full MAS: bounded retrieval
 calls (1 + followups), no per-hop solver overhead, no synth call.
@@ -316,9 +315,8 @@ async def run_amas_orchestrator(
     # End-of-loop: never silently promote a sub-threshold best_answer to
     # action="answer" because the pipeline treats action="answer" as a signal
     # to skip MAS escalation. Instead, surface the best-effort answer in the
-    # `answer` field but keep action="escalate" so the non-strict pipeline
-    # falls through to planner/solver/synth as designed. The strict SAS lane
-    # in pipeline.py reads `sas.answer` directly and will use this fallback.
+    # `answer` field but keep action="escalate" so sas_first falls through to
+    # planner/solver/synth as designed.
     if best_answer is not None:
         return AmasOrch(
             action="escalate",

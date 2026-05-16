@@ -9,8 +9,8 @@ Layers:
   3. Under-cap bonus: when tokens <= UNDER_CAP_RATIO * envelope
      (e.g. <=7k under B=8k), a small reward bump rewards comfortable
      headroom under the cap.
-  4. Dual reward r = alpha*r_task + (1-alpha)*r_eff + under_cap_bonus
-                     - blank_penalty - over_budget_penalty.
+  4. Correctness-gated dual reward: token efficiency is only a meaningful
+     bonus once answer quality is non-trivial.
 
 Every cost-side term is anchored to the SAME envelope so pi_O is trained
 on a coherent signal.
@@ -47,7 +47,7 @@ UNDER_CAP_RATIO: float = 0.875
 UNDER_CAP_BONUS: float = 0.05
 
 
-def _envelope(dataset: str, deployment_budget: int | None) -> int:
+def reward_envelope(dataset: str, deployment_budget: int | None) -> int:
     if deployment_budget is not None and deployment_budget > 0:
         return int(deployment_budget)
     return TOKEN_BUDGET_BASELINES.get(dataset, TOKEN_BUDGET_BASELINES["default"])
@@ -62,7 +62,7 @@ def compute_token_efficiency_reward(
 
     At ratio=1.0: 0.5; ratio=0.5: ~0.88; ratio=1.5: ~0.12.
     """
-    envelope = _envelope(dataset, deployment_budget)
+    envelope = reward_envelope(dataset, deployment_budget)
     ratio = total_tokens / max(envelope, 1)
     reward = 1.0 / (1.0 + math.exp(2.0 * (ratio - 1.0)))
     return round(max(0.0, min(1.0, reward)), 4)
@@ -74,7 +74,7 @@ def compute_over_budget_penalty(
     deployment_budget: int | None = None,
 ) -> float:
     """Stepped penalty for exceeding the active envelope (B or baseline)."""
-    envelope = _envelope(dataset, deployment_budget)
+    envelope = reward_envelope(dataset, deployment_budget)
     ratio = total_tokens / max(envelope, 1)
     penalty = 0.0
     for threshold, delta in OVER_BUDGET_PENALTIES:
@@ -89,7 +89,7 @@ def compute_under_cap_bonus(
     deployment_budget: int | None = None,
 ) -> float:
     """Bonus when total_tokens <= UNDER_CAP_RATIO * envelope."""
-    envelope = _envelope(dataset, deployment_budget)
+    envelope = reward_envelope(dataset, deployment_budget)
     if total_tokens <= UNDER_CAP_RATIO * envelope:
         return UNDER_CAP_BONUS
     return 0.0
@@ -102,12 +102,23 @@ def compute_dual_reward(
     contain: float = 0.0,
     deployment_budget: int | None = None,
 ) -> float:
-    """r = alpha*r_task + (1-alpha)*r_eff(B)
-           + under_cap_bonus(B) - blank_penalty - over_budget_penalty(B)."""
+    """Reward quality first, then token efficiency.
+
+    Completely wrong answers must not win because they are cheap. This is
+    critical for SAS-first routing, where wrong confident shortcuts otherwise
+    dominate the group reward.
+    """
     r_task = compute_task_reward(em, f1, contain)
     r_eff = compute_token_efficiency_reward(total_tokens, dataset, deployment_budget)
-    r = alpha * r_task + (1 - alpha) * r_eff
-    r += compute_under_cap_bonus(total_tokens, dataset, deployment_budget)
+
+    if r_task < 0.05:
+        r = -0.30 + 0.10 * r_eff
+    elif r_task < 0.30:
+        r = 0.85 * r_task + 0.15 * r_eff
+    else:
+        r = alpha * r_task + (1 - alpha) * r_eff
+        r += compute_under_cap_bonus(total_tokens, dataset, deployment_budget)
+
     if not answered:
         r -= 0.15
     r -= compute_over_budget_penalty(total_tokens, dataset, deployment_budget)

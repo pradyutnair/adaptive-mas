@@ -3,7 +3,6 @@
 Contains the full sampling stack:
   * exploration axis selection (group-local diversity in semantic terms),
   * topology signature + pipeline-config translation,
-  * SAS coercion gate (data-driven, no per-query-type table),
   * Algorithm 6 structural mutation fallback,
   * fallback topology when the LM output is unparseable.
 """
@@ -55,75 +54,19 @@ def format_avoid_topologies(topologies: list[dict[str, Any]] | None) -> str:
 
 
 # ---------------------------------------------------------------------------
-# SAS coercion gate (data-driven, learned-experience signal only)
-# ---------------------------------------------------------------------------
-
-SAS_ENDORSEMENT_KEYWORDS: tuple[str, ...] = (
-    "prefer sas",
-    "sas shortcut",
-    "sas lane",
-    "single agent",
-    "single-agent",
-    "no decomposition",
-    "skip decomposition",
-    "skip planner",
-    "direct answer",
-    "answer directly",
-    "avoid full mas",
-    "avoid decomposition",
-    "full mas wastes",
-    "shortcut when",
-)
-
-
-def coerce_sas_if_supported(
-    topology: dict[str, Any],
-    retrieved_entries: list[ExperienceEntry] | None,
-    min_utility: float = 0.7,
-    min_supporting: int = 1,
-) -> dict[str, Any]:
-    """Revert pi_O's sampled topology to SAS when E says it suffices.
-
-    Triggers ONLY when ``min_supporting`` retrieved entries with utility >=
-    ``min_utility`` explicitly endorse the SAS lane via the keyword set above.
-    No per-query-type table, no hardcoded threshold map: the signal is the
-    learned experience library itself.
-    """
-    if not retrieved_entries:
-        return topology
-    strategy = str(topology.get("routing_strategy", "")).lower()
-    if strategy == "sas":
-        return topology
-
-    supporting_ids: list[str] = []
-    for entry in retrieved_entries:
-        if float(getattr(entry, "utility", 0.0)) < min_utility:
-            continue
-        text = " ".join([
-            getattr(entry, "insight", "") or "",
-            getattr(entry, "applies_when", "") or "",
-        ]).lower()
-        if any(k in text for k in SAS_ENDORSEMENT_KEYWORDS):
-            supporting_ids.append(entry.id)
-    if len(supporting_ids) < min_supporting:
-        return topology
-
-    coerced = dict(topology)
-    coerced["_pre_coercion_strategy"] = strategy or "unknown"
-    coerced["_pre_coercion_budget"] = topology.get("retrieval_budget")
-    coerced["_coerced_to_sas"] = True
-    coerced["_sas_coercion_support"] = supporting_ids
-    coerced["routing_strategy"] = "sas"
-    coerced["retrieval_budget"] = 1
-    coerced["repair"] = False
-    return coerced
-
-
-# ---------------------------------------------------------------------------
 # Topology sampling
 # ---------------------------------------------------------------------------
 
-def _budget_block(deployment_budget: int | None) -> str:
+def normalize_strategy(strategy: str) -> str:
+    """Map legacy labels onto the two valid deployment strategies."""
+    value = (strategy or "").strip().lower()
+    if value in {"sas", "sas_then_mas", "sas_first"}:
+        return "sas_first"
+    if value in {"mas", "full_mas", "direct_mas"}:
+        return "direct_mas"
+    return "sas_first"
+
+def budget_block_text(deployment_budget: int | None) -> str:
     """Render the deployment-budget context block for the orchestrator prompt."""
     if deployment_budget is None or deployment_budget <= 0:
         return "(no explicit budget; optimize for cost while preserving quality)"
@@ -145,10 +88,9 @@ def sample_topology(
     qid: str,
     library: ExperienceLibrary | None,
     sampler_lm: dspy.LM,
+    sample_index: int = 1,
     dataset: str = "default",
     avoid_topologies: list[dict[str, Any]] | None = None,
-    sas_coercion_min_utility: float = 0.5,
-    sas_coercion_min_supporting: int = 1,
     deployment_budget: int | None = None,
 ) -> dict[str, Any]:
     """Sample a topology from the budget-conditioned orchestrator policy
@@ -164,6 +106,7 @@ def sample_topology(
     reward shaping (training-time only). It is NOT consumed by the
     orchestrator prompt or the sampled topology.
     """
+    del sample_index
     experience_text = "(no prior experiences)"
     entries: list[ExperienceEntry] = []
     if library and library.size() > 0:
@@ -175,7 +118,7 @@ def sample_topology(
             experience_text = format_for_orchestrator(entries, max_entries=3, max_insight_chars=180)
 
     query_profile = characterize_query_profile(question, dataset, qid=qid)
-    budget_text = _budget_block(deployment_budget)
+    budget_text = budget_block_text(deployment_budget)
 
     prompt = TOPOLOGY_SAMPLING_PROMPT.format(
         agent_descriptions=AGENT_DESCRIPTIONS,
@@ -201,24 +144,14 @@ def sample_topology(
             obj["_query_profile"] = query_profile
             obj["_experience_entry_ids"] = [e.id for e in entries]
             obj["_deployment_budget"] = deployment_budget if deployment_budget is not None else 0
-            effective_min_utility = sas_coercion_min_utility
-            effective_min_supporting = sas_coercion_min_supporting
-            if deployment_budget is not None and 0 < deployment_budget < 4000:
-                # Tight budget tightens SAS coercion.
-                effective_min_utility = max(0.5, sas_coercion_min_utility - 0.2)
-                effective_min_supporting = max(1, sas_coercion_min_supporting - 0)
-            obj = coerce_sas_if_supported(
-                obj, entries,
-                min_utility=effective_min_utility,
-                min_supporting=effective_min_supporting,
-            )
+            obj["routing_strategy"] = normalize_strategy(str(obj.get("routing_strategy", "")))
             return obj
     except Exception as e:
         logger.warning("Topology sampling failed: %s", e)
 
     fallback = {
-        "query_profile": "fallback_conservative_sas_then_mas",
-        "routing_strategy": "sas_then_mas",
+        "query_profile": "fallback_conservative_sas_first",
+        "routing_strategy": "sas_first",
         "retrieval_budget": 2,
         "repair": False,
         "_sampler_tokens": 0,
@@ -226,22 +159,14 @@ def sample_topology(
         "_experience_entry_ids": [e.id for e in entries],
         "_deployment_budget": deployment_budget if deployment_budget is not None else 0,
     }
-    effective_min_utility = sas_coercion_min_utility
-    effective_min_supporting = sas_coercion_min_supporting
-    if deployment_budget is not None and 0 < deployment_budget < 4000:
-        effective_min_utility = max(0.5, sas_coercion_min_utility - 0.2)
-    return coerce_sas_if_supported(
-        fallback, entries,
-        min_utility=effective_min_utility,
-        min_supporting=effective_min_supporting,
-    )
+    return fallback
 
 
 # ---------------------------------------------------------------------------
 # Topology signature + pipeline config mapping
 # ---------------------------------------------------------------------------
 
-def _bounded_int(val, default, lo, hi):
+def bounded_int(val, default, lo, hi):
     try:
         v = int(val)
         return max(lo, min(hi, v))
@@ -252,7 +177,7 @@ def _bounded_int(val, default, lo, hi):
 def topology_signature(topology: dict[str, Any]) -> tuple:
     return (
         str(topology.get("routing_strategy", "")),
-        int(_bounded_int(topology.get("retrieval_budget"), 2, 1, 4)),
+        int(bounded_int(topology.get("retrieval_budget"), 2, 1, 4)),
         bool(topology.get("repair", False)),
     )
 
@@ -260,15 +185,13 @@ def topology_signature(topology: dict[str, Any]) -> tuple:
 def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipelineConfig:
     """Translate a sampled topology into a concrete AmasPipelineConfig.
 
-    The three supported routing_strategy values map to disjoint executor
-    modes. There are no leaky base-config defaults: every relevant field is
-    set explicitly per strategy, so the sticky ``use_sas_solver=True`` from a
-    base config can never override a ``full_mas`` choice (which was the bug
-    that caused 14k-token full_mas rollouts under tight B).
+    The two supported routing_strategy values map to disjoint executor modes:
+    ``sas_first`` probes with SAS and honors verifier-driven escalation, while
+    ``direct_mas`` skips SAS entirely.
     """
     c = replace(config)
-    strategy = str(topology.get("routing_strategy", "")).lower()
-    budget = _bounded_int(topology.get("retrieval_budget"), 2, 1, 4)
+    strategy = normalize_strategy(str(topology.get("routing_strategy", "")))
+    budget = bounded_int(topology.get("retrieval_budget"), 2, 1, 4)
     learned_cap = max(1, int(c.max_retrievals_per_solver))
     repair = bool(topology.get("repair", False))
 
@@ -280,27 +203,16 @@ def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipe
     c.repair_enabled = repair
     c.deployment_budget = int(topology.get("_deployment_budget", 0) or 0)
 
-    if strategy == "sas":
-        # Strict SAS: planner/solver/synth never run, but the sas_solver
-        # itself is allowed multiple retrieval+LLM steps so bridge / 2-hop
-        # questions are actually solvable on the SAS lane. The sampled
-        # retrieval_budget controls how many followup retrievals beyond the
-        # initial probe the sas_solver may issue (clamped 1..3 so SAS is
-        # never crippled to a single retrieval).
-        c.use_sas_solver = True
-        c.sas_strict_single_pass = True
-        c.sas_min_confidence = float(topology.get("sas_confidence", c.sas_min_confidence))
-        c.sas_max_followups = _bounded_int(topology.get("retrieval_budget"), 2, 1, 3)
-    elif strategy == "sas_then_mas":
-        # Probe with sas_solver; on low confidence escalate to full MAS. The
-        # sas_solver may still chain a bridge hop on its own before deciding
-        # to escalate.
+    if strategy == "sas_first":
+        # Probe with sas_solver; accept only confident answers. Otherwise
+        # the executor naturally escalates to full MAS. Keep SAS cheap:
+        # max 1 followup, small excerpts, no verifier (matches baseline).
         c.use_sas_solver = True
         c.sas_strict_single_pass = False
         c.sas_min_confidence = float(topology.get("sas_confidence", c.sas_min_confidence))
-        c.sas_max_followups = _bounded_int(topology.get("retrieval_budget"), 2, 1, 3)
-    elif strategy == "full_mas":
-        # Pure planner -> solver -> synth. Sas_solver MUST be off.
+        c.sas_max_followups = 1
+    elif strategy == "direct_mas":
+        # Pure planner -> solver -> synth. Sas_solver is skipped.
         c.use_sas_solver = False
         c.sas_strict_single_pass = False
     else:

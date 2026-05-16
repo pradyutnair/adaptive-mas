@@ -11,13 +11,13 @@ Module map:
   orch_grpo           Training-trajectory analyses producing orchestrator
                       insights (no flat threshold tables emitted).
   metrics             EM / F1 / Contain and the composite task reward.
-  rewards             Token-efficiency reward, over-budget penalty, dual
-                      reward (budget-conditioned).
+  rewards             Token-efficiency reward, over-budget penalty,
+                      correctness-gated dual reward.
   profiles            Canonical 5-class query profiler with GPT-4o cache.
   prompts             Every prompt template used by GRPO.
   parsing             Tolerant JSON object / array extraction.
   rollout             Rollout / GroupResult dataclasses.
-  topology            Topology sampling (pi_O), SAS coercion, mutations,
+  topology            Topology sampling (pi_O), routing normalization, mutations,
                       config translation.
   rollouts            Single + group rollout drivers.
   reflection          Semantic advantage extraction (Algorithm 2 reflection).
@@ -59,8 +59,8 @@ from .rewards import (
 from .rollout import GroupResult, Rollout
 from .rollouts import run_group_rollouts, run_single_rollout
 from .topology import (
-    coerce_sas_if_supported,
     config_from_topology,
+    normalize_strategy,
     sample_topology,
     topology_mutations,
     topology_signature,
@@ -77,7 +77,6 @@ __all__ = [
     "TOKEN_BUDGET_BASELINES",
     "apply_experience_updates",
     "characterize_query_profile",
-    "coerce_sas_if_supported",
     "compute_contain",
     "compute_dual_reward",
     "compute_em",
@@ -90,6 +89,7 @@ __all__ = [
     "format_for_orchestrator",
     "format_for_prompt",
     "normalize_answer",
+    "normalize_strategy",
     "optimize_orchestration",
     "parse_json_array",
     "parse_json_object",

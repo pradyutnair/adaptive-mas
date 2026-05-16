@@ -1,0 +1,86 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 17:24:14,147 INFO __main__: loaded 27 training questions
+2026-05-16 17:24:14,147 INFO __main__: reflection model: openai/gpt-5 (temp=1.0)
+2026-05-16 17:24:14,148 INFO __main__: online HERA mode: forced two-strategy groups; K=4 concurrent rollouts; requested outer concurrency=24
+2026-05-16 17:24:14,148 INFO __main__: epoch 1 step 1 question 1/27 2hop__528191_32631
+2026-05-16 17:28:40,526 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-16 17:28:40,753 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.51it/s]
+2026-05-16 17:28:42,937 INFO __main__: epoch 1 step 1 2hop__528191_32631 rows=5 mixed=True insights=3 lib=3 avg_tok=5708 avg_reward=-0.241
+2026-05-16 17:28:42,937 INFO __main__: epoch 1 step 2 question 2/27 2hop__244419_40940
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 76.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 77.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.25it/s]
+2026-05-16 17:33:10,333 INFO __main__: epoch 1 step 2 2hop__244419_40940 rows=4 mixed=True insights=2 lib=3 avg_tok=8949 avg_reward=-0.363
+2026-05-16 17:33:10,333 INFO __main__: epoch 1 step 3 question 3/27 2hop__103967_23140
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 70.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 80.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 57.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 65.36it/s]
+2026-05-16 17:36:07,465 INFO __main__: epoch 1 step 3 2hop__103967_23140 rows=4 mixed=True insights=3 lib=5 avg_tok=6216 avg_reward=0.540
+2026-05-16 17:36:07,465 INFO __main__: epoch 1 step 4 question 4/27 2hop__647869_2702
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 68.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 58.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 61.74it/s]
+2026-05-16 17:39:52,657 INFO __main__: epoch 1 step 4 2hop__647869_2702 rows=4 mixed=True insights=3 lib=7 avg_tok=13792 avg_reward=-0.548
+2026-05-16 17:39:52,658 INFO __main__: epoch 1 step 5 question 5/27 2hop__131781_47295
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 75.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 48.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.01it/s]
+2026-05-16 17:44:14,247 INFO __main__: epoch 1 step 5 2hop__131781_47295 rows=4 mixed=True insights=3 lib=7 avg_tok=9536 avg_reward=0.625
+2026-05-16 17:44:14,247 INFO __main__: epoch 1 step 6 question 6/27 train_32481
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 64.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 78.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 48.26it/s]
+2026-05-16 17:48:34,062 INFO __main__: epoch 1 step 6 train_32481 rows=4 mixed=True insights=3 lib=9 avg_tok=16336 avg_reward=-0.342
+2026-05-16 17:48:34,062 INFO __main__: epoch 1 step 7 question 7/27 train_5936
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 79.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 71.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 50.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.69it/s]
+2026-05-16 17:52:44,080 INFO __main__: epoch 1 step 7 train_5936 rows=4 mixed=True insights=3 lib=9 avg_tok=11678 avg_reward=-0.505
+2026-05-16 17:52:44,080 INFO __main__: epoch 1 step 8 question 8/27 train_6944
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 74.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 58.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 60.12it/s]
+2026-05-16 17:56:34,867 INFO __main__: epoch 1 step 8 train_6944 rows=4 mixed=True insights=3 lib=9 avg_tok=11312 avg_reward=0.536
+2026-05-16 17:56:34,867 INFO __main__: epoch 1 step 9 question 9/27 train_32415
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 64.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 61.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 46.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 55.75it/s]
+2026-05-16 17:59:28,733 INFO __main__: epoch 1 step 9 train_32415 rows=4 mixed=True insights=3 lib=12 avg_tok=4389 avg_reward=0.367
+2026-05-16 17:59:28,733 INFO __main__: epoch 1 step 10 question 10/27 train_14113
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 65.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 70.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 53.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 45.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 64.32it/s]
+2026-05-16 18:03:24,187 INFO __main__: epoch 1 step 10 train_14113 rows=4 mixed=True insights=3 lib=13 avg_tok=17455 avg_reward=-0.195
+2026-05-16 18:03:24,188 INFO __main__: epoch 1 step 11 question 11/27 train_67135
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 63.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 46.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 83.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 85.83it/s]
+2026-05-16 18:07:26,367 INFO __main__: epoch 1 step 11 train_67135 rows=4 mixed=True insights=3 lib=13 avg_tok=10304 avg_reward=-0.497
+2026-05-16 18:07:26,367 INFO __main__: epoch 1 step 12 question 12/27 train_80558
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 68.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 60.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.72it/s]
+2026-05-16 18:10:59,324 INFO __main__: epoch 1 step 12 train_80558 rows=4 mixed=True insights=3 lib=16 avg_tok=8528 avg_reward=0.658
+2026-05-16 18:10:59,324 INFO __main__: epoch 1 step 13 question 13/27 2hop__130868_91717

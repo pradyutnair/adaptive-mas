@@ -1,0 +1,2 @@
+{"epoch": 1, "learning_step": 15, "scope": "all", "rows": 31, "library_size": 38, "avg_tokens": 11951.7, "avg_f1": 0.4086, "avg_contain": 0.3871, "avg_em": 0.3871, "avg_token_efficiency": 0.3203}
+{"epoch": 1, "learning_step": 15, "scope": "dataset", "dataset": "hotpotqa", "rows": 31, "library_size": 38, "avg_tokens": 11951.7, "avg_f1": 0.4086, "avg_contain": 0.3871, "avg_em": 0.3871, "avg_token_efficiency": 0.3203}

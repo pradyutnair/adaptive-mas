@@ -8,6 +8,7 @@ from typing import Any
 
 from .experience_library import ExperienceLibrary
 from .metrics import compute_contain, compute_em, compute_f1, compute_task_reward
+from .profiles import characterize_query_profile
 from .rewards import (
     TOKEN_BUDGET_BASELINES,
     compute_dual_reward,
@@ -84,7 +85,7 @@ async def run_single_rollout(
     )
 
 
-def _needs_topology_mutation(group: GroupResult, dataset: str = "default") -> bool:
+def needs_topology_mutation(group: GroupResult, dataset: str = "default") -> bool:
     if not group.rollouts:
         return False
     if max(r.f1 for r in group.rollouts) > 0.05:
@@ -112,6 +113,7 @@ async def run_group_rollouts(
     dataset: str = "default",
     reward_alpha: float = 0.7,
     deployment_budget: int | None = None,
+    forced_diversity: bool = True,
 ) -> GroupResult:
     """Run K same-query rollouts, score with dual reward, rank by task then efficiency.
 
@@ -123,7 +125,7 @@ async def run_group_rollouts(
     group = GroupResult(question_id=qid, question=question, gold_answer=gold_answer)
     group.deployment_budget = int(deployment_budget) if deployment_budget else 0
 
-    async def _execute_topology(idx: int, temp: float, sampled_topology: dict[str, Any]) -> Rollout:
+    async def execute_topology(idx: int, temp: float, sampled_topology: dict[str, Any]) -> Rollout:
         policy_config = config_from_topology(config, sampled_topology)
         # Hard runtime budget enforcement: the executor exits gracefully the
         # moment tokens_spent >= B. No per-strategy ceilings, just the same B
@@ -138,7 +140,8 @@ async def run_group_rollouts(
             sas_lm=sas_lm, retriever=retriever, config=policy_config,
         )
         profile = str(sampled_topology.get("query_profile", "semantic_topology")).strip()
-        policy_name = f"piO_sample_{idx + 1}:{profile[:60]}"
+        strategy = str(sampled_topology.get("routing_strategy", "unknown")).strip()
+        policy_name = f"piO_sample_{idx + 1}:{strategy}:{profile[:50]}"
         return await run_single_rollout(
             pipeline, question, qid, gold_answer, temp,
             policy_name=policy_name, sampled_topology=sampled_topology,
@@ -146,7 +149,7 @@ async def run_group_rollouts(
             deployment_budget=deployment_budget,
         )
 
-    async def _sample_one_topology(idx: int, temp: float, prior_samples: list[dict[str, Any]]) -> dict[str, Any]:
+    async def sample_one_topology(idx: int, temp: float, prior_samples: list[dict[str, Any]]) -> dict[str, Any]:
         sampler_lm = make_qwen14b_nothink_lm(replica_idx=idx, max_tokens=900, temperature=max(0.2, temp))
         return await asyncio.to_thread(
             sample_topology,
@@ -158,13 +161,33 @@ async def run_group_rollouts(
 
     sampled_topologies: list[dict[str, Any]] = []
     seen_signatures: set[tuple] = set()
+    forced_templates: list[tuple[str, int]] = [
+        ("sas_first", 2),
+        ("direct_mas", 2),
+    ]
+    query_profile = characterize_query_profile(question, dataset, qid=qid)
     for idx, temp in enumerate(temperatures):
-        sampled = await _sample_one_topology(idx, temp, sampled_topologies)
+        if forced_diversity and idx < len(forced_templates):
+            strategy, budget = forced_templates[idx]
+            sampled = {
+                "query_profile": f"forced_diversity_{strategy}:{query_profile}",
+                "routing_strategy": strategy,
+                "retrieval_budget": budget,
+                "repair": False,
+                "rationale": "Forced structural exploration for TF-GRPO routing contrast.",
+                "_sampler_tokens": 0,
+                "_query_profile": query_profile,
+                "_experience_entry_ids": [],
+                "_deployment_budget": deployment_budget if deployment_budget is not None else 0,
+                "_forced_diversity": True,
+            }
+        else:
+            sampled = await sample_one_topology(idx, temp, sampled_topologies)
         sig = topology_signature(sampled)
         sampled["_topology_signature"] = list(sig)
         sampled["_duplicate_retry"] = False
         sampled["_duplicate_retry_changed"] = False
-        if sig in seen_signatures:
+        if sig in seen_signatures and not sampled.get("_forced_diversity"):
             sampled["_duplicate_retry"] = True
             sampler_lm = make_qwen14b_nothink_lm(
                 replica_idx=idx, max_tokens=900, temperature=min(1.15, max(0.45, temp + 0.25))
@@ -174,6 +197,7 @@ async def run_group_rollouts(
                 question=question, qid=qid, library=library,
                 sampler_lm=sampler_lm, dataset=dataset,
                 avoid_topologies=sampled_topologies,
+                deployment_budget=deployment_budget,
             )
             retry_sig = topology_signature(sampled_retry)
             if retry_sig != sig:
@@ -189,15 +213,15 @@ async def run_group_rollouts(
         seen_signatures.add(sig)
 
     group.rollouts = list(await asyncio.gather(
-        *[_execute_topology(idx, temp, sampled_topologies[idx]) for idx, temp in enumerate(temperatures)]
+        *[execute_topology(idx, temp, sampled_topologies[idx]) for idx, temp in enumerate(temperatures)]
     ))
 
-    if _needs_topology_mutation(group, dataset):
+    if needs_topology_mutation(group, dataset):
         mutation_lm = make_qwen14b_nothink_lm(replica_idx=len(group.rollouts), max_tokens=900, temperature=0.45)
         mutations = topology_mutations(group.rollouts, mutation_lm=mutation_lm, max_candidates=1)
         start = len(group.rollouts)
         mutated_rollouts = await asyncio.gather(*[
-            _execute_topology(start + idx, temperatures[-1] if temperatures else 0.9, topo)
+            execute_topology(start + idx, temperatures[-1] if temperatures else 0.9, topo)
             for idx, topo in enumerate(mutations)
         ])
         group.rollouts.extend(mutated_rollouts)
@@ -207,30 +231,20 @@ async def run_group_rollouts(
         return compute_task_reward(float(r.em), float(r.f1), float(r.contain))
 
     ranked = sorted(group.rollouts, key=lambda r: (-task_score(r), int(r.total_tokens)))
-    # Anchor the over-budget cap to the active envelope so the winner/loser
-    # banding stays consistent with the dual-reward over-budget penalty.
-    if getattr(group, "deployment_budget", 0):
-        abs_baseline = int(group.deployment_budget)
-    else:
-        abs_baseline = TOKEN_BUDGET_BASELINES.get(dataset, TOKEN_BUDGET_BASELINES["default"])
     if ranked:
-        best_task = task_score(ranked[0])
-        cheapest_tokens = min(max(1, int(r.total_tokens)) for r in group.rollouts)
-        for r in group.rollouts:
-            score = task_score(r)
-            over_abs_budget = r.total_tokens > 1.5 * abs_baseline
-            within_group_budget = r.total_tokens <= 1.25 * max(cheapest_tokens, ranked[0].total_tokens)
-            # Absolute over-budget rollouts (>1.5x the active envelope) cannot
-            # win even with peak task quality: HERA explicitly trades
-            # efficiency against quality.
-            if score >= best_task - 0.05 and within_group_budget and not over_abs_budget:
-                group.winners.append(r)
-            elif (
-                score <= best_task - 0.12
-                or r.total_tokens > 1.4 * cheapest_tokens
-                or over_abs_budget
-            ):
-                group.losers.append(r)
+        winner = ranked[0]
+        loser = sorted(group.rollouts, key=lambda r: (task_score(r), -int(r.total_tokens)))[0]
+        group.winners = [winner]
+        if loser is not winner:
+            group.losers = [loser]
 
-    group.has_mixed_outcomes = len(group.winners) > 0 and len(group.losers) > 0
+        winner_strategy = str((winner.sampled_topology or {}).get("routing_strategy", ""))
+        loser_strategy = str((loser.sampled_topology or {}).get("routing_strategy", ""))
+        score_gap = abs(task_score(winner) - task_score(loser))
+        token_gap = max(winner.total_tokens, loser.total_tokens) >= 1.10 * max(1, min(winner.total_tokens, loser.total_tokens))
+        group.has_mixed_outcomes = bool(group.losers) and (
+            winner_strategy != loser_strategy or score_gap > 0.02 or token_gap
+        )
+    else:
+        group.has_mixed_outcomes = False
     return group

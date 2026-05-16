@@ -7,30 +7,22 @@ from __future__ import annotations
 
 AGENT_DESCRIPTIONS = """\
 Note: the "orchestrator" in this codebase is pi_O (this topology sampler).
-The executor supports exactly three routing strategies. You do NOT choose
+The executor supports exactly two routing strategies. You do NOT choose
 individual agents or execution orders; the strategy fully determines the
 downstream agent set. Choose the cheapest strategy that the query
 semantics + retrieved experiences support.
 
 routing_strategy semantics:
-- "sas"          = sas_solver only (no planner/solver/synth fallback). The
-                   sas_solver itself loops: probe -> [retrieve -> reason]*
-                   for up to retrieval_budget followup retrievals (1-3),
-                   then answers. ~500-3500 tokens. Use for simple factoid
-                   lookups, single-entity attribute queries, yes/no checks,
-                   AND any 2-hop bridge whose intermediate entity is easy
-                   to extract from the probe (the sas_solver can chain a
-                   second retrieval on its own).
-- "sas_then_mas" = sas_solver probes first; on low confidence the executor
-                   escalates to planner -> solver -> synth.
-                   ~3000-8000 tokens. Use when the query needs verification
-                   or you suspect a bridge step the sas_solver may not
-                   handle alone.
-- "full_mas"     = planner -> solver -> synth (sas_solver disabled).
-                   ~5000-12000 tokens. Use only when query semantics clearly
-                   need multi-hop decomposition (compound bridge with
-                   synthesis, intersection across multiple distinct
-                   entities, multi-step temporal reasoning)."""
+- "sas_first"  = sas_solver probes first and may chain up to retrieval_budget
+                 followup retrievals. Accept the SAS answer only when it is
+                 confident and verifier-approved; otherwise the executor
+                 naturally escalates to planner -> solver -> synth. Use for
+                 simple factoids and bridge questions where the intermediate
+                 entity is likely recoverable from retrieval.
+- "direct_mas" = skip SAS entirely and run planner -> solver -> synth. Use
+                 when the question itself clearly requires decomposition,
+                 intersection, comparison, temporal chaining, or multiple
+                 constraints where a cheap probe is likely to waste tokens."""
 
 
 TRAJECTORY_SUMMARY_PROMPT = """\
@@ -53,8 +45,9 @@ Return only the numbered summary."""
 
 
 SEMANTIC_ADVANTAGE_PROMPT = """\
-You are analyzing multi-hop QA pipeline trajectories to extract reusable insights.
-Focus on BOTH quality AND token efficiency.
+You are analyzing same-query AMAS rollouts to extract actionable insights.
+The system has two routing strategies (sas_first, direct_mas) and multiple
+agents (planner, solver, synth, sas_solver). Learn what worked and why.
 
 Query: {question}
 Query type: {query_type}
@@ -62,44 +55,26 @@ Query type: {query_type}
 Current experience library:
 {library_text}
 
-The following trajectory summaries were executed for the SAME query, ranked by \
-task performance (F1 desc) then efficiency (tokens asc):
+The following trajectory summaries were executed for the SAME query, ranked by
+task performance first and token cost second:
 {trajectory_summaries}
 
-Compare high-advantage and low-advantage trajectories. If all trajectories
-failed, compare the least-wasteful failure against the most-wasteful failure
-and extract what to avoid or what missing routing/agent behavior is needed.
+Compare high-advantage and low-advantage trajectories. Identify:
+1. Routing: did sas_first save tokens on a simple query, or did direct_mas
+   avoid a wasteful SAS probe on a complex one?
+2. Decomposition: did a shallower/deeper plan lead to a better answer?
+3. Retrieval: did more/fewer retrievals help find the right evidence?
+4. Synthesis: did the synth correctly combine sub-answers?
 
-Each trajectory exposes a per-agent token breakdown (sas, sas_verifier,
-planner, solver, synth) plus the deployment budget B and whether the
-executor truncated the rollout via a 'Budget exit'. Attribute cost to
-specific stages: do not write vague 'use fewer tokens' insights. Write
-agent-specific insights tied to the observed breakdown.
+Extract 1-3 actionable insights. Each insight must be <=32 words and target
+the SPECIFIC role that should act on it:
+- "orchestrator" for routing decisions (sas_first vs direct_mas)
+- "planner" for decomposition strategy
+- "solver" for retrieval and evidence extraction
+- "synth" for answer synthesis
 
-Focus on:
-1. Per-agent cost: which agent(s) actually consumed the budget on this group?
-   Was synth the hotspot (too many evidence chunks)? Was solver the hotspot
-   (too many retrieval hops)? Was planner over-decomposing?
-2. Budget exits: if a trajectory hit Budget exit: yes@<stage>, what stage
-   would pi_O have skipped to keep B? Did the truncation still answer or
-   did it leave a blank?
-3. Routing: did SAS suffice given the per-stage breakdown of the MAS
-   alternatives? Was escalation to full_mas justified by the marginal F1?
-4. Decomposition: did fewer subgoals yield equal F1 with lower planner+
-   solver cost?
-5. Synthesis: did slim/short evidence give equal F1 with lower synth cost?
-
-Extract 1-3 actionable insights. EACH insight MUST address token efficiency and preserve/improve Contain:
-- How to achieve same/better quality with fewer tokens
-- Which steps to skip, combine, or shorten
-- When to use cheap path (SAS) vs expensive path (full MAS)
-
-Output STRICT JSON. target_roles values must come from:
-{{"orchestrator","sas_solver","planner","solver","synth"}}
-where "orchestrator" refers to the GRPO topology sampler pi_O (this policy),
-NOT to a downstream executor.
-
-{{"success_factors":["<factor>"],"failure_modes":["<mode>"],"insights":[{{"query_type":"<type>","insight":"<actionable insight <=32 words>","target_roles":["orchestrator|sas_solver|planner|solver|synth"],"token_impact":"saves|costs|neutral","estimated_token_savings":"<rough estimate>"}}]}}
+Output STRICT JSON:
+{{"success_factors":["<factor>"],"failure_modes":["<mode>"],"insights":[{{"query_type":"<type>","insight":"<<=32 words>","target_roles":["orchestrator|planner|solver|synth"],"token_impact":"saves|costs|neutral","estimated_token_savings":"<rough estimate>"}}]}}
 
 Return ONLY the JSON object. Keep each insight <=32 words."""
 
@@ -142,9 +117,9 @@ The library MUST stay under {max_entries} entries. Currently: {n_entries} entrie
 - Prefer MERGE over MODIFY when consolidation reduces redundancy.
 - Prefer DELETE when an entry contradicts a higher-utility entry.
 - Prefer ADD only when no existing entry could be MERGEd or MODIFIed.
-- Always favor insights about token efficiency and routing shortcuts (SAS
-  lane, fewer agents, smaller retrieval budget) since the reward explicitly
-  penalizes exceeding the learned token envelope.
+- Favor insights that are role-specific and actionable: routing rules for
+  orchestrator, decomposition guidance for planner, retrieval strategies for
+  solver, synthesis rules for synth.
 
 ## Output: JSON array, one object per new insight.
 ## target_roles values must come from:
@@ -159,7 +134,7 @@ TOPOLOGY_SAMPLING_PROMPT = """\
 You are pi_O, the GRPO orchestrator for multi-hop QA. Your only job is to
 emit a topology specification; you do NOT run any agent yourself.
 
-Strategies (the executor supports EXACTLY these three):
+Strategies (the executor supports EXACTLY these two):
 {agent_descriptions}
 
 Past experiences (ranked by utility):
@@ -176,20 +151,21 @@ Already sampled topologies for this rollout group:
 
 Query: {question}
 
-Choose ONE routing_strategy from {{sas, sas_then_mas, full_mas}} based on the
-query, the retrieved experiences, and B. Pick retrieval_budget in [1,3]: it
-caps how many followup retrievals the sas_solver may issue beyond its
-initial probe. The reward penalizes both incorrect/blank answers and tokens
-over B; there is no fixed default strategy.
+Choose ONE routing_strategy from {{sas_first, direct_mas}} based on the query,
+the retrieved experiences, and B. Pick retrieval_budget in [1,3]: it caps how
+many followup retrievals sas_first may issue beyond its initial probe.
+For direct_mas, still emit a retrieval_budget for downstream solver caps.
+The reward penalizes wrong answers first; token efficiency matters only after
+answer quality is preserved.
 
 Return STRICT JSON (no other keys):
-{{"query_profile":"<one sentence>","routing_strategy":"sas|sas_then_mas|full_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<one sentence>"}}"""
+{{"query_profile":"<one sentence>","routing_strategy":"sas_first|direct_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<one sentence>"}}"""
 
 
 TOPOLOGY_MUTATION_PROMPT = """\
 You are pi_O, the GRPO orchestrator, repairing failed multi-hop QA trajectories.
 
-Strategies (the executor supports EXACTLY these three):
+Strategies (the executor supports EXACTLY these two):
 {agent_descriptions}
 
 Question: {question}
@@ -198,8 +174,8 @@ Failed trajectories:
 {failed_trajectories}
 
 Propose ONE semantically justified routing change. Keep it minimal and
-token-aware. You may only switch between the three routing strategies and
+token-aware. You may only switch between the two routing strategies and
 tune retrieval_budget / repair.
 
 Return STRICT JSON (no other keys):
-{{"query_profile":"<failure-aware profile>","routing_strategy":"sas|sas_then_mas|full_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<why this mutation addresses the observed failure>"}}"""
+{{"query_profile":"<failure-aware profile>","routing_strategy":"sas_first|direct_mas","retrieval_budget":<int 1-3>,"repair":false,"rationale":"<why this mutation addresses the observed failure>"}}"""

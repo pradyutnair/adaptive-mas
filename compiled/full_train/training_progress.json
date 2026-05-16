@@ -1,0 +1,10 @@
+{
+  "epoch": 1,
+  "learning_step": 61,
+  "questions_seen": 61,
+  "total_questions": 150,
+  "library_size": 40,
+  "unique_topology_signatures": 2,
+  "duplicate_topology_retries": 0,
+  "duplicate_retry_changed": 0
+}

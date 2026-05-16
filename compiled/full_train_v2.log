@@ -1,0 +1,5 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 22:03:33,644 INFO __main__: loaded 150 training questions
+2026-05-16 22:03:33,645 INFO __main__: reflection model: openai/gpt-5 (temp=1.0)
+2026-05-16 22:03:33,645 INFO __main__: online HERA mode: forced two-strategy groups; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-16 22:03:33,645 INFO __main__: epoch 1 step 1 question 1/150 train_67140

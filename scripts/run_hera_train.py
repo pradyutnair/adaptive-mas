@@ -2,8 +2,8 @@
 """HERA training: token-cost-aware TF-GRPO + constrained GEPA + semantic orchestration.
 
 Key improvements:
-1. Dual reward (task + efficiency) in group rollouts
-2. Token budget awareness in topology sampling
+1. Correctness-gated reward in group rollouts
+2. Forced sas_first vs direct_mas topology diversity
 3. Experience library capped at 40 entries with aggressive pruning
 4. GEPA with 800-char prompt cap and quality gates
 5. Comprehensive W&B logging with token cost metrics
@@ -90,8 +90,8 @@ def parse_args() -> argparse.Namespace:
                              "TF-GRPO's 100-sample DAPO and HERA's stratified pool. 0 = no cap.")
     parser.add_argument("--datasets", default="hotpotqa,2wikimultihop,musique",
                         help="Comma-separated train datasets to use; pooled and shuffled per epoch.")
-    parser.add_argument("--K", type=int, default=5,
-                        help="Group size for TF-GRPO rollouts (paper default = 5).")
+    parser.add_argument("--K", type=int, default=4,
+                        help="Group size for TF-GRPO rollouts; default gives 2x sas_first and 2x direct_mas.")
     parser.add_argument("--shuffle-seed", type=int, default=42,
                         help="Seed for per-epoch shuffling of the mixed pool. -1 disables shuffling.")
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
@@ -114,10 +114,6 @@ def parse_args() -> argparse.Namespace:
                         help="JSONL produced by scripts/build_train_set.py; when present, used in place of raw per-dataset caps.")
     parser.add_argument("--no-stratified-pool", action="store_true",
                         help="Disable stratified pool even if data/train_stratified.jsonl exists.")
-    parser.add_argument("--budget-mix", default="3000,5000,8000",
-                        help="Comma-separated deployment-budget tokens to sample uniformly per group. "
-                             "Enables budget-conditioned policy pi_O(Gamma | q, E, N, B). "
-                             "Set to '' to disable budget-conditioning (revert to dataset-baseline penalties).")
     return parser.parse_args()
 
 
@@ -156,8 +152,9 @@ def init_wandb(args: argparse.Namespace, output_dir: Path, train_size: int):
             "max_library_size": args.max_library_size,
             "reward_alpha": args.reward_alpha,
             "max_prompt_chars": MAX_PROMPT_CHARS,
-            "version": "hera_online",
+            "version": "hera_two_strategy_forced_diversity",
             "update_mode": "online_per_question_group",
+            "forced_diversity": True,
         },
     }
     if args.wandb_entity:
@@ -260,23 +257,24 @@ def load_train_data(
     return rows
 
 
-def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = None) -> AmasPipelineConfig:
+def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = None, role_prompts: dict[str, str] | None = None) -> AmasPipelineConfig:
     config = overrides or {}
     return AmasPipelineConfig(
         max_retrievals_per_solver=int(config.get("max_retrievals_per_solver", 2)),  # Default 2 (was 3)
         repair_enabled=bool(config.get("repair_enabled", True)),
-        experience_library=library.to_text() if library.size() > 0 else "",
+        experience_library="",
+        role_prompts=role_prompts or {},
         adaptive_solver_budget=bool(config.get("adaptive_solver_budget", True)),
         min_retrievals_per_solver=1,
         medium_retrievals_per_solver=2,
         max_repairs=int(config.get("max_repairs", 1)),  # Reduced from 2
         use_sas_solver=True,
-        sas_min_confidence=float(config.get("sas_min_confidence", 0.75)),
+        sas_min_confidence=float(config.get("sas_min_confidence", 0.65)),
         sas_max_followups=int(config.get("sas_max_followups", 1)),
-        sas_probe_min_g=0.0,
-        sas_excerpt_chars=int(config.get("sas_excerpt_chars", 280)),
+        sas_probe_min_g=float(config.get("sas_probe_min_g", 0.0)),
+        sas_excerpt_chars=int(config.get("sas_excerpt_chars", 180)),
         sas_max_chunks=int(config.get("sas_max_chunks", 4)),
-        sas_use_verifier=bool(config.get("sas_use_verifier", True)),
+        sas_use_verifier=False,
         sas_verifier_min_confidence=float(config.get("sas_verifier_min_confidence", 0.6)),
         synth_slim=True,
         synth_excerpt_chars=200,
@@ -371,7 +369,6 @@ async def run_training(
     max_library_size: int = 40,
     reward_alpha: float = 0.7,
     shuffle_seed: int = 42,
-    budget_mix: tuple[int, ...] = (3000, 5000, 8000),
 ) -> tuple[ExperienceLibrary, list[dict], list[dict], FailureBuffer]:
     """Run HERA TF-GRPO online: update library after each same-query group."""
     import random
@@ -382,12 +379,8 @@ async def run_training(
     failed_trajectories: list[dict] = []
     failure_buffer = FailureBuffer()
     learning_step = 0
-    # Separate RNG for per-group budget sampling so it stays deterministic
-    # under different shuffle seeds and does not consume the shuffle stream.
-    group_budget_rng = random.Random((shuffle_seed if shuffle_seed >= 0 else 0) * 31 + 7)
-
     log.info(
-        "online HERA mode: one question group per update; K=%d concurrent rollouts; requested outer concurrency=%d",
+        "online HERA mode: forced two-strategy groups; K=%d concurrent rollouts; requested outer concurrency=%d",
         K, concurrency,
     )
 
@@ -411,14 +404,6 @@ async def run_training(
             log.info("epoch %d step %d question %d/%d %s", epoch, learning_step, idx, len(train_data), item["id"])
 
             config = build_pipeline_config(library)
-            # Budget-conditioned training: sample one B per group from the
-            # configured budget mix so the policy pi_O(Gamma | q, E, N, B)
-            # learns to adapt across deployment regimes. budget_mix=() turns
-            # this off and recovers HERA's pi_O(Gamma | q, E, N).
-            if budget_mix:
-                group_budget = int(group_budget_rng.choice(list(budget_mix)))
-            else:
-                group_budget = None
             group = await run_group_rollouts(
                 question=item["question"],
                 qid=str(item["id"]),
@@ -429,7 +414,8 @@ async def run_training(
                 library=library,
                 dataset=item.get("dataset", "default"),
                 reward_alpha=reward_alpha,
-                deployment_budget=group_budget,
+                deployment_budget=None,
+                forced_diversity=True,
             )
             rows = [rollout_to_row(item["dataset"], epoch, rollout) for rollout in group.rollouts]
             topology_signatures = [tuple((row.get("sampled_topology") or {}).get("_topology_signature", [])) for row in rows]
@@ -487,7 +473,9 @@ async def run_training(
             best_contain = max((float(row.get("contain", 0) or 0) for row in rows), default=0.0)
             best_reward = max((float(row.get("dual_reward", 0) or 0) for row in rows), default=0.0)
             mutations = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("topology_mutation"))
-            sas_coercions = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("_coerced_to_sas"))
+            forced_diversity_rollouts = sum(
+                1 for row in rows if (row.get("sampled_topology") or {}).get("_forced_diversity")
+            )
             ds_baseline = TOKEN_BUDGET_BASELINES_FOR_LOG.get(item.get("dataset", "default"), TOKEN_BUDGET_BASELINES_FOR_LOG["default"])
             over_budget = sum(1 for row in rows if float(row.get("total_tokens", 0) or 0) > 1.5 * ds_baseline)
 
@@ -504,7 +492,7 @@ async def run_training(
                 "tf_grpo/group_mixed": int(group.has_mixed_outcomes),
                 "tf_grpo/group_rollouts": len(rows),
                 "tf_grpo/topology_mutations": mutations,
-                "tf_grpo/sas_coercions": sas_coercions,
+                "tf_grpo/forced_diversity_rollouts": forced_diversity_rollouts,
                 "tf_grpo/over_budget_rollouts": over_budget,
                 "tf_grpo/unique_topology_signatures": unique_topology_signatures,
                 "tf_grpo/duplicate_topology_retries": duplicate_retries,
@@ -664,7 +652,6 @@ def main() -> None:
             max_library_size=args.max_library_size,
             reward_alpha=args.reward_alpha,
             shuffle_seed=args.shuffle_seed,
-            budget_mix=tuple(int(x) for x in args.budget_mix.split(",") if x.strip()),
         )
     )
 

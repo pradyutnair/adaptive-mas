@@ -400,8 +400,7 @@ async def run_one_question(
         row["metadata"]["pipeline_tokens"] = pipeline_tokens
         row["metadata"]["topology_sampler_tokens"] = sampler_tokens
         row["metadata"]["sampled_topology"] = sampled_topology
-        row["metadata"]["coerced_to_sas"] = bool(sampled_topology.get("_coerced_to_sas", False))
-        row["metadata"]["pre_coercion_strategy"] = sampled_topology.get("_pre_coercion_strategy", "")
+        row["metadata"]["routing_strategy"] = sampled_topology.get("routing_strategy", "")
         done_counter[0] += 1
         log.info("done %d/%d qid=%s topo=%s tok=%d",
                  done_counter[0], total, qid,
