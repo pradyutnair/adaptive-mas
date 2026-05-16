@@ -313,12 +313,18 @@ async def run_amas_orchestrator(
             tokens=tokens_total,
         )
 
+    # End-of-loop: never silently promote a sub-threshold best_answer to
+    # action="answer" because the pipeline treats action="answer" as a signal
+    # to skip MAS escalation. Instead, surface the best-effort answer in the
+    # `answer` field but keep action="escalate" so the non-strict pipeline
+    # falls through to planner/solver/synth as designed. The strict SAS lane
+    # in pipeline.py reads `sas.answer` directly and will use this fallback.
     if best_answer is not None:
         return AmasOrch(
-            action="answer",
+            action="escalate",
             answer=best_answer["answer"],
             answer_type=best_answer["answer_type"],
-            justification=best_answer["justification"],
+            justification=best_answer["justification"] or "sas_best_effort_low_conf",
             support_ids=best_answer["support_ids"],
             confidence=best_answer["confidence"],
             chunks_used=best_answer["chunks_used"] or _dedupe(all_chunks),

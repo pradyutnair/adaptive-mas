@@ -1,0 +1,12 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 15:52:49,633 INFO root | progress: 5/50 (6.3s, 1.3s/q)
+2026-05-16 15:52:51,677 INFO root | progress: 10/50 (8.4s, 0.8s/q)
+2026-05-16 15:53:18,546 INFO root | progress: 15/50 (35.3s, 2.4s/q)
+2026-05-16 15:53:21,647 INFO root | progress: 20/50 (38.4s, 1.9s/q)
+2026-05-16 15:53:26,553 INFO root | progress: 25/50 (43.3s, 1.7s/q)
+2026-05-16 15:53:30,957 INFO root | progress: 30/50 (47.7s, 1.6s/q)
+2026-05-16 15:53:41,424 INFO root | progress: 35/50 (58.1s, 1.7s/q)
+2026-05-16 15:53:53,456 INFO root | progress: 40/50 (70.2s, 1.8s/q)
+2026-05-16 15:54:04,502 INFO root | progress: 45/50 (81.2s, 1.8s/q)
+2026-05-16 15:54:18,268 INFO root | progress: 50/50 (95.0s, 1.9s/q)
+2026-05-16 15:54:18,268 INFO root | done: 50 predictions written to compiled/pilot50_balanced/predictions.jsonl
