@@ -58,10 +58,9 @@ def semantic_topology_label(row: dict) -> str:
         sig = topo.get("_topology_signature")
         if sig:
             return "|".join(str(x) for x in sig)
-        agents = ">".join(str(a) for a in topo.get("selected_agents", [])) or "agents_unknown"
         return (
             f"{topo.get('routing_strategy', 'strategy_unknown')}|"
-            f"{agents}|b{topo.get('retrieval_budget', '?')}|"
+            f"b{topo.get('retrieval_budget', '?')}|"
             f"repair{int(bool(topo.get('repair', False)))}"
         )
     return str(row.get("topology", "linear"))

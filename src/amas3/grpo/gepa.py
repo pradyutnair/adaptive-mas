@@ -23,7 +23,7 @@ from .experience_library import ExperienceEntry, ExperienceLibrary
 
 logger = logging.getLogger(__name__)
 
-AGENT_ROLES = ("planner", "solver", "synth", "orchestrator")
+AGENT_ROLES = ("planner", "solver", "synth", "sas_solver")
 
 MAX_PROMPT_CHARS = 800  # Hard cap - was 1500-1700 and caused bloat
 
@@ -137,13 +137,15 @@ def identify_failing_agents(
         return []
 
     if result.sas_collapse and f1 < 0.5 and cont < 0.5:
-        failures.append(("orchestrator", "premature_answer"))
+        failures.append(("sas_solver", "premature_answer"))
     if result.sas_escalated and f1 >= 0.8:
-        failures.append(("orchestrator", "unnecessary_escalation"))
+        failures.append(("sas_solver", "unnecessary_escalation"))
 
     if result.plan_subgoals == 0:
         failures.append(("planner", "bad_decomposition"))
-    elif result.plan_subgoals == 1 and result.topology not in ("sas", "orchestrator_answer", "verified_sas"):
+    elif result.plan_subgoals == 1 and result.topology not in (
+        "sas", "sas_solver_answer", "sas_strict_singlepass", "verified_sas",
+    ):
         failures.append(("planner", "bad_decomposition"))
 
     low_conf_count = 0
@@ -628,9 +630,9 @@ DEFAULT_PROMPTS = {
         "Emit the SHORT answer span (1-6 words) that DIRECTLY answers the original "
         "question's wh-target. Never return a bridge entity as final answer."
     ),
-    "orchestrator": (
-        "Route to SAS shortcut for simple factoid queries with clear evidence. "
-        "Escalate to full MAS for bridge/comparison/multi-hop questions."
+    "sas_solver": (
+        "Answer simple factoid queries directly from the evidence in one pass. "
+        "Match the wh-target type. Emit a short verbatim span; do not invent."
     ),
 }
 

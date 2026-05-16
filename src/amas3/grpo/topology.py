@@ -83,15 +83,13 @@ def format_avoid_topologies(topologies: list[dict[str, Any]] | None) -> str:
         return "(none)"
     rows = []
     for idx, topo in enumerate(topologies[-4:], start=1):
-        agents = ",".join(str(a) for a in topo.get("selected_agents", [])[:6])
         rows.append(
-            "{}. profile={}; strategy={}; budget={}; repair={}; agents={}".format(
+            "{}. profile={}; strategy={}; budget={}; repair={}".format(
                 idx,
                 str(topo.get("query_profile", ""))[:70],
                 topo.get("routing_strategy"),
                 topo.get("retrieval_budget"),
                 topo.get("repair"),
-                agents,
             )
         )
     return "\n".join(rows)
@@ -153,15 +151,10 @@ def coerce_sas_if_supported(
 
     coerced = dict(topology)
     coerced["_pre_coercion_strategy"] = strategy or "unknown"
-    coerced["_pre_coercion_agents"] = list(topology.get("selected_agents", []))
     coerced["_pre_coercion_budget"] = topology.get("retrieval_budget")
     coerced["_coerced_to_sas"] = True
     coerced["_sas_coercion_support"] = supporting_ids
     coerced["routing_strategy"] = "sas"
-    coerced["selected_agents"] = ["orchestrator"]
-    coerced["execution_order"] = [
-        {"step": 1, "agent": "orchestrator", "depends_on": [], "mode": "sequential"}
-    ]
     coerced["retrieval_budget"] = 1
     coerced["repair"] = False
     return coerced
@@ -196,7 +189,7 @@ def sample_topology(
     sample_index: int = 1,
     dataset: str = "default",
     avoid_topologies: list[dict[str, Any]] | None = None,
-    sas_coercion_min_utility: float = 0.7,
+    sas_coercion_min_utility: float = 0.5,
     sas_coercion_min_supporting: int = 1,
     deployment_budget: int | None = None,
 ) -> dict[str, Any]:
@@ -216,6 +209,7 @@ def sample_topology(
     experience_text = "(no prior experiences)"
     entries: list[ExperienceEntry] = []
     if library and library.size() > 0:
+        # First: experiences tagged for the GRPO orchestrator (pi_O itself).
         entries = library.retrieve_for_orchestrator(question, limit=3)
         if not entries:
             entries = library.retrieve(question, role="orchestrator", limit=3)
@@ -268,15 +262,8 @@ def sample_topology(
         logger.warning("Topology sampling failed: %s", e)
 
     fallback = {
-        "query_profile": "fallback_conservative_mas",
-        "selected_agents": ["orchestrator", "planner", "solver", "synthesizer"],
-        "execution_order": [
-            {"step": 1, "agent": "orchestrator", "depends_on": [], "mode": "sequential"},
-            {"step": 2, "agent": "planner", "depends_on": ["orchestrator"], "mode": "sequential"},
-            {"step": 3, "agent": "solver", "depends_on": ["planner"], "mode": "parallel"},
-            {"step": 4, "agent": "synthesizer", "depends_on": ["solver"], "mode": "sequential"},
-        ],
-        "routing_strategy": "orchestrator_then_mas",
+        "query_profile": "fallback_conservative_sas_then_mas",
+        "routing_strategy": "sas_then_mas",
         "retrieval_budget": 2,
         "repair": False,
         "_sampler_tokens": 0,
@@ -309,49 +296,62 @@ def _bounded_int(val, default, lo, hi):
 
 
 def topology_signature(topology: dict[str, Any]) -> tuple:
-    agents = tuple(str(a) for a in topology.get("selected_agents", []))
     return (
         str(topology.get("routing_strategy", "")),
-        agents,
         int(_bounded_int(topology.get("retrieval_budget"), 2, 1, 4)),
         bool(topology.get("repair", False)),
     )
 
 
 def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipelineConfig:
-    """Translate a sampled topology into a concrete AmasPipelineConfig."""
+    """Translate a sampled topology into a concrete AmasPipelineConfig.
+
+    The three supported routing_strategy values map to disjoint executor
+    modes. There are no leaky base-config defaults: every relevant field is
+    set explicitly per strategy, so the sticky ``use_sas_solver=True`` from a
+    base config can never override a ``full_mas`` choice (which was the bug
+    that caused 14k-token full_mas rollouts under tight B).
+    """
     c = replace(config)
     strategy = str(topology.get("routing_strategy", "")).lower()
     budget = _bounded_int(topology.get("retrieval_budget"), 2, 1, 4)
     learned_cap = max(1, int(c.max_retrievals_per_solver))
     repair = bool(topology.get("repair", False))
 
-    # The sampler may choose a smaller topology-specific budget, but should not
-    # silently expand the compiled TF-GRPO budget learned for this query type.
+    # The sampler chooses a topology-level retrieval budget, clamped to the
+    # learned per-query-type cap. We never silently expand it.
     c.max_retrievals_per_solver = max(1, min(budget, learned_cap))
     c.medium_retrievals_per_solver = min(c.medium_retrievals_per_solver, c.max_retrievals_per_solver)
     c.min_retrievals_per_solver = min(c.min_retrievals_per_solver, c.medium_retrievals_per_solver)
     c.repair_enabled = repair
 
     if strategy == "sas":
-        c.use_orchestrator = True
-        c.orch_min_confidence = float(topology.get("orchestrator_confidence", c.orch_min_confidence))
-        c.orch_max_followups = 1
-        # A sampled SAS topology is a cheap first attempt, not permission to
-        # cripple the fallback. If the orchestrator escalates, run a real MAS
-        # pass within the learned per-query-type cap.
-        fallback_floor = min(2, learned_cap)
-        c.max_retrievals_per_solver = max(c.max_retrievals_per_solver, fallback_floor)
-        c.medium_retrievals_per_solver = min(
-            max(c.medium_retrievals_per_solver, fallback_floor),
-            c.max_retrievals_per_solver,
-        )
+        # Strict SAS: planner/solver/synth never run, but the sas_solver
+        # itself is allowed multiple retrieval+LLM steps so bridge / 2-hop
+        # questions are actually solvable on the SAS lane. The sampled
+        # retrieval_budget controls how many followup retrievals beyond the
+        # initial probe the sas_solver may issue (clamped 1..3 so SAS is
+        # never crippled to a single retrieval).
+        c.use_sas_solver = True
+        c.sas_strict_single_pass = True
+        c.sas_min_confidence = float(topology.get("sas_confidence", c.sas_min_confidence))
+        c.sas_max_followups = _bounded_int(topology.get("retrieval_budget"), 2, 1, 3)
+    elif strategy == "sas_then_mas":
+        # Probe with sas_solver; on low confidence escalate to full MAS. The
+        # sas_solver may still chain a bridge hop on its own before deciding
+        # to escalate.
+        c.use_sas_solver = True
+        c.sas_strict_single_pass = False
+        c.sas_min_confidence = float(topology.get("sas_confidence", c.sas_min_confidence))
+        c.sas_max_followups = _bounded_int(topology.get("retrieval_budget"), 2, 1, 3)
     elif strategy == "full_mas":
-        c.use_orchestrator = False
-    elif strategy == "orchestrator_then_mas":
-        c.use_orchestrator = True
-        c.orch_min_confidence = float(topology.get("orchestrator_confidence", c.orch_min_confidence))
-        c.orch_max_followups = _bounded_int(topology.get("max_followups"), 1, 0, 2)
+        # Pure planner -> solver -> synth. Sas_solver MUST be off.
+        c.use_sas_solver = False
+        c.sas_strict_single_pass = False
+    else:
+        # Unknown strategy: refuse to silently inherit base defaults.
+        c.use_sas_solver = False
+        c.sas_strict_single_pass = False
 
     return c
 
@@ -361,16 +361,40 @@ def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipe
 # ---------------------------------------------------------------------------
 
 def format_rollout_for_reflection(r: Rollout) -> str:
-    """Format a rollout for reflection / mutation prompts."""
+    """Format a rollout for reflection / mutation prompts.
+
+    Exposes the per-agent token breakdown + budget-exit signal so the
+    reflection LM can attribute cost to specific stages and write actionable
+    insights ('synth wasted N tokens for entity questions', 'planner overran
+    B on comparison queries', etc.) rather than vague total-token guidance.
+    """
     topo = r.sampled_topology or {}
+    res = r.result if isinstance(r.result, dict) else {}
+    planner_t = int(res.get("planner_tokens", 0) or 0)
+    solver_t = int(res.get("solver_tokens", 0) or 0)
+    synth_t = int(res.get("synth_tokens", 0) or 0)
+    rewrite_t = int(res.get("rewrite_tokens", 0) or 0)
+    sas_t = int(res.get("sas_attempt_tokens", 0) or 0)
+    sas_v_t = int(res.get("sas_verifier_tokens", 0) or 0)
+    B = int(topo.get("_deployment_budget", 0) or 0)
+    budget_exit = bool(res.get("budget_exit", False))
+    budget_stage = str(res.get("budget_exit_stage", "") or "")
     lines = [
         f"Policy: {r.policy_name}",
         f"Profile: {topo.get('query_profile', 'unknown')}",
-        f"Agents: {topo.get('selected_agents', [])}",
         f"Strategy: {topo.get('routing_strategy', 'unknown')}",
         f"Retrieval budget: {topo.get('retrieval_budget', '?')}",
+        f"Deployment budget B: {B if B else 'unset'}",
         f"EM: {r.em}, F1: {r.f1:.3f}, Contain: {r.contain:.3f}",
         f"Total tokens: {r.total_tokens} (efficiency: {r.token_efficiency:.3f})",
+        (
+            f"Per-agent tokens: sas={sas_t}, sas_verifier={sas_v_t}, "
+            f"planner={planner_t}, solver={solver_t} (rewrite={rewrite_t}), synth={synth_t}"
+        ),
+        (
+            f"Budget exit: yes@{budget_stage} (executor truncated this rollout)"
+            if budget_exit else "Budget exit: no"
+        ),
         f"Dual reward: {r.dual_reward:.3f}",
         f"Topology: {r.topology}",
         f"Plan subgoals: {r.plan_subgoals}",

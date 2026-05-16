@@ -1,4 +1,4 @@
-"""AMAS pipeline orchestrator.
+"""AMAS pipeline executor.
 
 Deterministic Plan -> Probe -> TopologySelect -> Execute -> Synth flow.
 No emergent topology decisions (all driven by retrieval signals + plan structure).
@@ -69,6 +69,8 @@ class AmasResult:
     sas_verifier_passed: bool = False
     sas_verifier_verdict: str = ''
     sas_verifier_tokens: int = 0
+    budget_exit: bool = False
+    budget_exit_stage: str = ''
 
 
 @dataclass
@@ -86,19 +88,31 @@ class AmasPipelineConfig:
     min_retrievals_per_solver: int = 1
     medium_retrievals_per_solver: int = 2
     max_repairs: int = 2
-    use_orchestrator: bool = False
-    orch_probe_min_g: float = 0.0
-    orch_max_followups: int = 2
-    orch_min_confidence: float = 0.65
-    orch_excerpt_chars: int = 320
-    orch_max_chunks: int = 5
-    orch_use_verifier: bool = False
-    orch_verifier_min_confidence: float = 0.6
+    use_sas_solver: bool = False
+    sas_probe_min_g: float = 0.0
+    sas_max_followups: int = 2
+    sas_min_confidence: float = 0.65
+    sas_excerpt_chars: int = 320
+    sas_max_chunks: int = 5
+    sas_use_verifier: bool = False
+    sas_verifier_min_confidence: float = 0.6
     synth_slim: bool = False
     synth_excerpt_chars: int = 220
     synth_max_excerpts: int = 6
     role_prompts: dict[str, str] = field(default_factory=dict)
     max_plan_subgoals: int = 4
+    # When the GRPO orchestrator (pi_O) picks routing_strategy="sas" the
+    # pipeline runs the SAS solver as a single-pass agent and MUST NOT fall
+    # through to planner/solver/synth. The SAS solver's answer (or blank) is
+    # final; failures flow to the experience library and GEPA buffer as-is.
+    sas_strict_single_pass: bool = False
+    # Hard runtime token budget B (deployment_budget). When set (>0), the
+    # executor tracks tokens_spent across every LLM step and exits gracefully
+    # the moment tokens_spent >= B, surfacing the best-confidence finding so
+    # far without burning any further LLM calls. The mechanism is purely
+    # online: no per-dataset baselines, no per-strategy ceilings, no
+    # threshold tables. Set to 0 to disable (no runtime cap).
+    deployment_budget: int = 0
 
 
 class AmasPipeline:
@@ -118,6 +132,57 @@ class AmasPipeline:
         self.sas_lm = sas_lm or worker_lm
         self.retriever = retriever
         self.config = config or AmasPipelineConfig()
+
+    @staticmethod
+    def _running_tokens(result: AmasResult) -> int:
+        """Live tally of every LLM-call token cost recorded on the result."""
+        return (
+            result.planner_tokens
+            + result.solver_tokens
+            + result.synth_tokens
+            + result.rewrite_tokens
+            + result.sas_attempt_tokens
+            + result.sas_verifier_tokens
+        )
+
+    def _over_budget(self, result: AmasResult) -> bool:
+        B = int(self.config.deployment_budget or 0)
+        if B <= 0:
+            return False
+        return self._running_tokens(result) >= B
+
+    def _finalize_from_findings(
+        self,
+        question: str,
+        bus: FindingsBus,
+        result: AmasResult,
+        t0: float,
+        stage: str,
+    ) -> AmasResult:
+        """Graceful exit: pick the highest-confidence finding so far. No more LLM calls."""
+        best = None
+        for f in bus.all():
+            if not f.answer:
+                continue
+            if best is None or f.confidence > best.confidence:
+                best = f
+        if best is not None:
+            result.answer = best.answer
+            result.answer_type = result.answer_type or 'other'
+            result.justification = (
+                f"budget_exit@{stage} (conf={best.confidence:.2f})"
+            )
+            result.support_ids = list(best.evidence_ids or [])
+        else:
+            result.answer = ''
+            result.justification = f"budget_exit@{stage} (no findings)"
+        result.budget_exit = True
+        result.budget_exit_stage = stage
+        if not result.topology:
+            result.topology = 'budget_truncated'
+        result.total_tokens = self._running_tokens(result)
+        result.wallclock_seconds = round(time.time() - t0, 3)
+        return result
 
     def _role_experience(self, role: str, extra: str = "") -> str:
         parts = []
@@ -141,57 +206,80 @@ class AmasPipeline:
         result.n_retrieval_calls += 1
         g_original, comp_o = compute_groundedness(question, original_chunks)
 
-        # Step 0.25: orchestrator agent (probe direct | 2-3 followups | escalate)
-        if self.config.use_orchestrator and g_original >= self.config.orch_probe_min_g:
-            from .orchestrator import run_orchestrator
-            orch = await run_orchestrator(
-                orch_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,
+        # Step 0.25: SAS solver (one cheap LLM call; optional followups or escalate)
+        if self.config.use_sas_solver and g_original >= self.config.sas_probe_min_g:
+            from .sas_solver import run_sas_solver
+            sas = await run_sas_solver(
+                sas_lm=self.sas_lm if self.sas_lm is not None else self.worker_lm,
                 retriever=self.retriever,
                 question=question,
                 probe_chunks=original_chunks,
-                max_followups=self.config.orch_max_followups,
-                min_answer_confidence=self.config.orch_min_confidence,
-                chunk_excerpt_chars=self.config.orch_excerpt_chars,
-                max_chunks_per_step=self.config.orch_max_chunks,
-                experience=self._role_experience("orchestrator"),
+                max_followups=self.config.sas_max_followups,
+                min_answer_confidence=self.config.sas_min_confidence,
+                chunk_excerpt_chars=self.config.sas_excerpt_chars,
+                max_chunks_per_step=self.config.sas_max_chunks,
+                experience=self._role_experience("sas_solver"),
             )
-            result.sas_attempt_tokens = orch.tokens
-            result.sas_attempt_confidence = orch.confidence
-            result.sas_attempt_grounded = bool(orch.support_ids)
-            result.sas_verifier_verdict = orch.action
-            result.n_retrieval_calls += max(0, orch.retrieval_calls - 1)
-            if orch.action == 'answer' and orch.answer:
+            result.sas_attempt_tokens = sas.tokens
+            result.sas_attempt_confidence = sas.confidence
+            result.sas_attempt_grounded = bool(sas.support_ids)
+            result.sas_verifier_verdict = sas.action
+            result.n_retrieval_calls += max(0, sas.retrieval_calls - 1)
+            if sas.action == 'answer' and sas.answer:
                 accept = True
-                if self.config.orch_use_verifier:
-                    from .orchestrator import run_verifier
-                    vr = await run_verifier(
+                if self.config.sas_use_verifier:
+                    from .sas_solver import run_sas_verifier
+                    vr = await run_sas_verifier(
                         verifier_lm=self.synth_lm,
                         question=question,
-                        answer=orch.answer,
-                        justification=orch.justification,
-                        chunks=orch.chunks_used,
-                        support_ids=orch.support_ids,
-                        excerpt_chars=self.config.orch_excerpt_chars,
-                        max_chunks=self.config.orch_max_chunks,
+                        answer=sas.answer,
+                        justification=sas.justification,
+                        chunks=sas.chunks_used,
+                        support_ids=sas.support_ids,
+                        excerpt_chars=self.config.sas_excerpt_chars,
+                        max_chunks=self.config.sas_max_chunks,
                     )
                     result.sas_verifier_tokens = vr.tokens
                     result.sas_verifier_verdict = f"{vr.decision}|{vr.failure_reason[:80]}"
                     result.sas_verifier_passed = vr.decision == 'accept'
-                    accept = vr.decision == 'accept' and vr.confidence >= self.config.orch_verifier_min_confidence
+                    accept = vr.decision == 'accept' and vr.confidence >= self.config.sas_verifier_min_confidence
                 if accept:
                     result.sas_collapse = True
-                    result.topology = 'orchestrator_answer'
-                    result.topology_rationale = f"orchestrator answered (conf={orch.confidence:.2f}, retrievals={orch.retrieval_calls})"
-                    result.answer = orch.answer
-                    result.answer_type = orch.answer_type
-                    result.justification = orch.justification[:300]
-                    result.support_ids = orch.support_ids or [c.chunk_id for c in orch.chunks_used[:5]]
+                    result.topology = 'sas_solver_answer'
+                    result.topology_rationale = f"sas_solver answered (conf={sas.confidence:.2f}, retrievals={sas.retrieval_calls})"
+                    result.answer = sas.answer
+                    result.answer_type = sas.answer_type
+                    result.justification = sas.justification[:300]
+                    result.support_ids = sas.support_ids or [c.chunk_id for c in sas.chunks_used[:5]]
                     result.probe_groundedness = [round(g_original, 4)]
                     result.total_tokens = result.sas_attempt_tokens + result.sas_verifier_tokens
                     result.wallclock_seconds = round(time.time() - t0, 3)
                     result.n_solvers_invoked = 1
                     return result
+            # Strict SAS lane: pi_O picked routing_strategy="sas", so this run
+            # is a single-pass attempt by definition. Do not escalate to
+            # planner/solver/synth; surface whatever the SAS solver produced
+            # (including blanks) so failure flows to the experience library
+            # and the GEPA buffer.
+            if self.config.sas_strict_single_pass:
+                result.sas_collapse = True
+                result.topology = 'sas_strict_singlepass'
+                result.topology_rationale = (
+                    f"sas-strict: action={sas.action} "
+                    f"conf={sas.confidence:.2f} retrievals={sas.retrieval_calls}"
+                )
+                result.answer = sas.answer or ''
+                result.answer_type = getattr(sas, 'answer_type', '')
+                result.justification = (sas.justification or '')[:300]
+                result.support_ids = sas.support_ids or [c.chunk_id for c in sas.chunks_used[:5]]
+                result.probe_groundedness = [round(g_original, 4)]
+                result.total_tokens = result.sas_attempt_tokens + result.sas_verifier_tokens
+                result.wallclock_seconds = round(time.time() - t0, 3)
+                result.n_solvers_invoked = 1
+                return result
             result.sas_escalated = True
+            if self._over_budget(result):
+                return self._finalize_from_findings(question, bus, result, t0, 'after_sas')
 
         enhanced_experience = self._role_experience("planner")
 
@@ -250,6 +338,9 @@ class AmasPipeline:
 
         result.probe_groundedness = [round(p.groundedness, 4) for p in probes]
 
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_planner')
+
         decision = select_topology(plan=plan, probes=probes, thresholds=self.config.topology_thresholds)
         result.topology = decision.topology.value
         result.topology_rationale = decision.rationale
@@ -259,8 +350,14 @@ class AmasPipeline:
         else:
             await self._execute_dag(question, plan, probes, bus, result, decision, solver_chunks_by_node)
 
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_solvers')
+
         if self.config.repair_enabled:
             await self._maybe_repair(plan, probes, bus, result)
+
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_repair')
 
         final_node = self._find_final_node(plan)
         final_evidence = self._final_evidence_chunks(final_node, plan, probes, bus)
@@ -414,6 +511,8 @@ class AmasPipeline:
     ) -> None:
         depth_levels = self._topo_levels(plan)
         for level_nodes in depth_levels:
+            if self._over_budget(result):
+                return
             tasks = []
             metas = []
             for node in level_nodes:

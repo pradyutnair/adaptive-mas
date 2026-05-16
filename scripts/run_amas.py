@@ -51,16 +51,16 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--use-multi-plan', action='store_true', default=False, help='enable plan-level GRPO (K plans, pick by probe groundedness)')
     ap.add_argument('--K-plans', type=int, default=3)
     ap.add_argument('--concurrency', type=int, default=4)
-    ap.add_argument('--use-orchestrator', action='store_true', default=False, help='enable probe-first orchestrator agent (answers or escalates to MAS)')
-    ap.add_argument('--orch-max-followups', type=int, default=2, help='max additional retrievals beyond the probe')
-    ap.add_argument('--orch-probe-min-g', type=float, default=0.0, help='skip orchestrator when probe groundedness < this (saves cost on impossible queries)')
-    ap.add_argument('--orch-min-confidence', type=float, default=0.65)
-    ap.add_argument('--orch-excerpt-chars', type=int, default=320)
-    ap.add_argument('--orch-max-chunks', type=int, default=5)
-    ap.add_argument('--orch-budget', type=int, default=384, help='max_tokens for the orchestrator LM call')
-    ap.add_argument('--orch-think', dest='orch_think', action='store_true', default=False, help='use qwen14b in think mode for the orchestrator (native CoT, more tokens)')
-    ap.add_argument('--orch-use-verifier', action='store_true', default=False, help='verify orchestrator answers with a second LLM call before accepting')
-    ap.add_argument('--orch-verifier-min-confidence', type=float, default=0.6)
+    ap.add_argument('--use-sas-solver', action='store_true', default=False, help='enable the cheap probe-first SAS solver (answers or escalates to MAS)')
+    ap.add_argument('--sas-max-followups', type=int, default=2, help='max additional retrievals beyond the probe')
+    ap.add_argument('--sas-probe-min-g', type=float, default=0.0, help='skip SAS solver when probe groundedness < this (saves cost on impossible queries)')
+    ap.add_argument('--sas-min-confidence', type=float, default=0.65)
+    ap.add_argument('--sas-excerpt-chars', type=int, default=320)
+    ap.add_argument('--sas-max-chunks', type=int, default=5)
+    ap.add_argument('--sas-budget', type=int, default=384, help='max_tokens for the SAS solver LM call')
+    ap.add_argument('--sas-think', dest='sas_think', action='store_true', default=False, help='use qwen14b in think mode for the SAS solver (native CoT, more tokens)')
+    ap.add_argument('--sas-use-verifier', action='store_true', default=False, help='verify SAS solver answers with a second LLM call before accepting')
+    ap.add_argument('--sas-verifier-min-confidence', type=float, default=0.6)
     ap.add_argument('--synth-slim', action='store_true', default=False, help='synth reads findings (answer+justification+short evidence) only, not full chunks')
     ap.add_argument('--synth-excerpt-chars', type=int, default=220)
     ap.add_argument('--synth-max-excerpts', type=int, default=6)
@@ -115,12 +115,12 @@ async def main() -> None:
 
     worker_lms = _make_lm(args.worker, replica_offset=1)
     synth_lms = _make_lm(args.synth_mode, replica_offset=2)
-    if args.use_orchestrator:
-        if args.orch_think:
+    if args.use_sas_solver:
+        if args.sas_think:
             from amas3.lm import make_qwen14b_think_small_lm
-            sas_lms = [make_qwen14b_think_small_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
+            sas_lms = [make_qwen14b_think_small_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.sas_budget) for i in range(n_replicas)]
         else:
-            sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
+            sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.sas_budget) for i in range(n_replicas)]
     else:
         sas_lms = [None] * n_replicas
 
@@ -150,14 +150,14 @@ async def main() -> None:
                 min_retrievals_per_solver=args.min_retrievals_per_solver,
                 medium_retrievals_per_solver=args.medium_retrievals_per_solver,
                 max_repairs=args.max_repairs,
-                use_orchestrator=args.use_orchestrator,
-                orch_max_followups=args.orch_max_followups,
-                orch_probe_min_g=args.orch_probe_min_g,
-                orch_min_confidence=args.orch_min_confidence,
-                orch_excerpt_chars=args.orch_excerpt_chars,
-                orch_max_chunks=args.orch_max_chunks,
-                orch_use_verifier=args.orch_use_verifier,
-                orch_verifier_min_confidence=args.orch_verifier_min_confidence,
+                use_sas_solver=args.use_sas_solver,
+                sas_max_followups=args.sas_max_followups,
+                sas_probe_min_g=args.sas_probe_min_g,
+                sas_min_confidence=args.sas_min_confidence,
+                sas_excerpt_chars=args.sas_excerpt_chars,
+                sas_max_chunks=args.sas_max_chunks,
+                sas_use_verifier=args.sas_use_verifier,
+                sas_verifier_min_confidence=args.sas_verifier_min_confidence,
                 synth_slim=args.synth_slim,
                 synth_excerpt_chars=args.synth_excerpt_chars,
                 synth_max_excerpts=args.synth_max_excerpts,
@@ -194,16 +194,16 @@ async def main() -> None:
         'experience_file': args.experience_file,
         'use_multi_plan': args.use_multi_plan,
         'K_plans': args.K_plans,
-        'use_orchestrator': args.use_orchestrator,
-        'orch_max_followups': args.orch_max_followups,
-        'orch_probe_min_g': args.orch_probe_min_g,
-        'orch_min_confidence': args.orch_min_confidence,
-        'orch_excerpt_chars': args.orch_excerpt_chars,
-        'orch_max_chunks': args.orch_max_chunks,
-        'orch_budget': args.orch_budget,
-        'orch_think': args.orch_think,
-        'orch_use_verifier': args.orch_use_verifier,
-        'orch_verifier_min_confidence': args.orch_verifier_min_confidence,
+        'use_sas_solver': args.use_sas_solver,
+        'sas_max_followups': args.sas_max_followups,
+        'sas_probe_min_g': args.sas_probe_min_g,
+        'sas_min_confidence': args.sas_min_confidence,
+        'sas_excerpt_chars': args.sas_excerpt_chars,
+        'sas_max_chunks': args.sas_max_chunks,
+        'sas_budget': args.sas_budget,
+        'sas_think': args.sas_think,
+        'sas_use_verifier': args.sas_use_verifier,
+        'sas_verifier_min_confidence': args.sas_verifier_min_confidence,
         'synth_slim': args.synth_slim,
         'synth_excerpt_chars': args.synth_excerpt_chars,
         'synth_max_excerpts': args.synth_max_excerpts,

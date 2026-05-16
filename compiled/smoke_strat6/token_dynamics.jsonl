@@ -1,0 +1,4 @@
+{"epoch": 1, "learning_step": 6, "scope": "all", "rows": 12, "library_size": 7, "avg_tokens": 12913.1, "avg_f1": 0.6667, "avg_contain": 0.6667, "avg_em": 0.6667, "avg_token_efficiency": 0.2212}
+{"epoch": 1, "learning_step": 6, "scope": "dataset", "dataset": "hotpotqa", "rows": 4, "library_size": 7, "avg_tokens": 12260.5, "avg_f1": 1.0, "avg_contain": 1.0, "avg_em": 1.0, "avg_token_efficiency": 0.2179}
+{"epoch": 1, "learning_step": 6, "scope": "dataset", "dataset": "musique", "rows": 4, "library_size": 7, "avg_tokens": 9496.8, "avg_f1": 0.5, "avg_contain": 0.5, "avg_em": 0.5, "avg_token_efficiency": 0.3708}
+{"epoch": 1, "learning_step": 6, "scope": "dataset", "dataset": "2wikimultihop", "rows": 4, "library_size": 7, "avg_tokens": 16982.0, "avg_f1": 0.5, "avg_contain": 0.5, "avg_em": 0.5, "avg_token_efficiency": 0.0749}

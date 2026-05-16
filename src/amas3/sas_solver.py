@@ -1,4 +1,8 @@
-"""Orchestrator agent: answer-from-probe OR a few followup retrievals OR escalate to MAS.
+"""SAS solver agent: one cheap LLM solver for the strict SAS lane.
+
+NOT to be confused with the GRPO orchestrator (pi_O in `grpo.topology`),
+which is the topology sampler that decides whether to invoke this agent in
+the first place.
 
 One LLM call per iteration. The agent receives:
 - original question
@@ -11,11 +15,12 @@ The agent emits strict JSON:
      "justification":"...", "support_ids":[...], "confidence":0.0,
      "next_query":"..."}
 
-`answer`     -> orchestrator returns; pipeline emits the answer directly
-`retrieve`   -> orchestrator issues `next_query`, appends new chunks, loops
-`escalate`   -> orchestrator hands off to the full MAS pipeline
+`answer`     -> SAS solver returns; pipeline emits the answer directly.
+`retrieve`   -> SAS solver issues `next_query`, appends new chunks, loops.
+`escalate`   -> hands off to the full MAS pipeline (only honored when the
+                pipeline config does NOT set sas_strict_single_pass).
 
-The orchestrator is intentionally cheaper than full MAS: bounded retrieval
+The SAS solver is intentionally cheaper than full MAS: bounded retrieval
 calls (1 + followups), no per-hop solver overhead, no synth call.
 """
 from __future__ import annotations
@@ -33,7 +38,7 @@ from .retriever import Retriever
 from .types import RetrievedChunk
 
 
-_PROMPT = """You are the orchestrator for a multi-hop QA system. You see the original \
+_PROMPT = """You are the SAS solver for a multi-hop QA system. You see the original \
 question and Wikipedia evidence chunks from the current retrieval. Decide one \
 action per step.
 
@@ -72,7 +77,7 @@ Return STRICT JSON on ONE LINE, no prose:
 
 
 @dataclass
-class OrchestratorResult:
+class SasSolverResult:
     action: str = "escalate"
     answer: str = ""
     answer_type: str = "other"
@@ -165,9 +170,9 @@ async def _chat_json(
     return _parse_json(text), int(usage.get("total_tokens", 0) or 0)
 
 
-async def run_orchestrator(
+async def run_sas_solver(
     *,
-    orch_lm: dspy.LM,
+    sas_lm: dspy.LM,
     retriever: Retriever,
     question: str,
     probe_chunks: list[RetrievedChunk],
@@ -176,8 +181,8 @@ async def run_orchestrator(
     chunk_excerpt_chars: int = 320,
     max_chunks_per_step: int = 5,
     experience: str = "",
-) -> OrchestratorResult:
-    """Run the orchestrator loop.
+) -> SasSolverResult:
+    """Run the SAS solver loop.
 
     Iteration 0 sees probe_chunks. If action='retrieve', we retrieve next_query
     and loop. At most `max_followups` retrievals beyond the probe. If the loop
@@ -187,7 +192,7 @@ async def run_orchestrator(
     history: list[dict[str, Any]] = []
     tokens_total = 0
     retrieval_calls = 1 if probe_chunks else 0
-    last_result = OrchestratorResult(
+    last_result = SasSolverResult(
         action="escalate",
         chunks_used=_dedupe(all_chunks),
         search_history=history,
@@ -207,7 +212,7 @@ async def run_orchestrator(
         system_prompt = _PROMPT
         if experience:
             system_prompt = "Prior experiential knowledge from past attempts:\n" + experience + "\n\n" + _PROMPT
-        obj, tok = await _chat_json(orch_lm, system_prompt, user_payload)
+        obj, tok = await _chat_json(sas_lm, system_prompt, user_payload)
         tokens_total += tok
         action = str(obj.get("action", "")).strip().lower()
         if action not in {"answer", "retrieve", "escalate"}:
@@ -234,7 +239,7 @@ async def run_orchestrator(
         })
 
         if action == "answer" and answer and conf >= min_answer_confidence:
-            return OrchestratorResult(
+            return SasSolverResult(
                 action="answer",
                 answer=answer,
                 answer_type=str(obj.get("answer_type", "other")),
@@ -247,11 +252,11 @@ async def run_orchestrator(
                 tokens=tokens_total,
             )
         if action == "escalate":
-            last_result = OrchestratorResult(
+            last_result = SasSolverResult(
                 action="escalate",
                 answer=answer,
                 answer_type=str(obj.get("answer_type", "other")),
-                justification=justification or "orchestrator_escalate",
+                justification=justification or "sas_escalate",
                 support_ids=support_ids,
                 confidence=conf,
                 chunks_used=chunks_now,
@@ -269,7 +274,7 @@ async def run_orchestrator(
         new_chunks = await retriever.retrieve(next_query)
         retrieval_calls += 1
         all_chunks.extend(new_chunks)
-        last_result = OrchestratorResult(
+        last_result = SasSolverResult(
             action="retrieve",
             answer=answer,
             answer_type=str(obj.get("answer_type", "other")),
@@ -290,7 +295,7 @@ async def run_orchestrator(
     return last_result
 
 
-_VERIFIER_PROMPT = """You verify whether a candidate answer is correct given the original question and the evidence excerpts the orchestrator used. Be strict.
+_VERIFIER_PROMPT = """You verify whether a candidate answer is correct given the original question and the evidence excerpts the SAS solver used. Be strict.
 
 Accept ONLY if:
 - the answer is a direct, verbatim or near-verbatim span supported by the evidence
@@ -313,7 +318,7 @@ class VerifierResult:
     tokens: int = 0
 
 
-async def run_verifier(
+async def run_sas_verifier(
     *,
     verifier_lm: dspy.LM,
     question: str,
@@ -327,7 +332,7 @@ async def run_verifier(
     if not answer:
         return VerifierResult(decision="escalate", confidence=1.0, failure_reason="empty_answer", tokens=0)
     support_set = set(support_ids or [])
-    # Prefer the chunks the orchestrator cited; otherwise top-k of what it saw
+    # Prefer the chunks the SAS solver cited; otherwise top-k of what it saw
     cited = [c for c in chunks if c.chunk_id in support_set] if support_set else []
     extras = [c for c in chunks if c.chunk_id not in support_set]
     evidence = (cited + extras)[:max_chunks]

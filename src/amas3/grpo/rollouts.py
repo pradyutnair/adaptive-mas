@@ -50,7 +50,9 @@ async def run_single_rollout(
     scored_total_tokens = result.total_tokens + sampler_tokens
 
     answered = bool(pred.strip())
-    token_eff = compute_token_efficiency_reward(scored_total_tokens, dataset)
+    token_eff = compute_token_efficiency_reward(
+        scored_total_tokens, dataset, deployment_budget=deployment_budget,
+    )
     dual_r = compute_dual_reward(
         em, f1, scored_total_tokens, dataset, alpha=reward_alpha,
         answered=answered, contain=contain,
@@ -123,6 +125,10 @@ async def run_group_rollouts(
 
     async def _execute_topology(idx: int, temp: float, sampled_topology: dict[str, Any]) -> Rollout:
         policy_config = config_from_topology(config, sampled_topology)
+        # Hard runtime budget enforcement: the executor exits gracefully the
+        # moment tokens_spent >= B. No per-strategy ceilings, just the same B
+        # that pi_O conditioned on for this group.
+        policy_config.deployment_budget = int(deployment_budget) if deployment_budget else 0
         planner_lm = make_qwen14b_nothink_lm(replica_idx=idx, max_tokens=768)
         worker_lm = make_qwen14b_nothink_lm(replica_idx=idx + 1, max_tokens=768)
         synth_lm = make_qwen14b_nothink_lm(replica_idx=idx + 2, max_tokens=768)

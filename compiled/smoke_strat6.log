@@ -1,0 +1,63 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 13:11:20,404 INFO __main__: using stratified pool: 6 examples from /tmp/strat_smoke.jsonl
+2026-05-16 13:11:20,405 INFO __main__: loaded 6 training questions
+2026-05-16 13:11:20,405 INFO __main__: online HERA mode: one question group per update; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-16 13:11:20,405 INFO __main__: epoch 1 step 1 question 1/6 train_77440
+2026-05-16 13:14:07,624 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-16 13:14:07,862 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 60.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 52.99it/s]
+2026-05-16 13:14:10,007 INFO __main__: epoch 1 step 1 train_77440 rows=2 mixed=False insights=3 lib=3 avg_tok=9288 avg_reward=0.704
+2026-05-16 13:14:10,007 INFO __main__: epoch 1 step 2 question 2/6 2hop__845976_781580
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 55.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 60.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 50.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 54.96it/s]
+2026-05-16 13:17:24,485 INFO __main__: epoch 1 step 2 2hop__845976_781580 rows=2 mixed=False insights=3 lib=5 avg_tok=8444 avg_reward=0.031
+2026-05-16 13:17:24,485 INFO __main__: epoch 1 step 3 question 3/6 2hop__106465_159597
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 56.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 54.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 54.18it/s]
+2026-05-16 13:20:08,664 INFO __main__: epoch 1 step 3 2hop__106465_159597 rows=2 mixed=False insights=3 lib=7 avg_tok=10550 avg_reward=0.592
+2026-05-16 13:20:08,664 INFO __main__: epoch 1 step 4 question 4/6 train_67132
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 55.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 51.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 51.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 51.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 47.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.08it/s]
+2026-05-16 13:23:05,241 INFO __main__: epoch 1 step 4 train_67132 rows=2 mixed=False insights=3 lib=8 avg_tok=15234 avg_reward=0.427
+2026-05-16 13:23:05,241 INFO __main__: epoch 1 step 5 question 5/6 train_5948
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 60.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 62.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 79.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 89.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 58.14it/s]
+2026-05-16 13:25:56,249 INFO amas3.grpo.library_update: Pre-pruned stale entry E001 (utility=0.50)
+2026-05-16 13:25:56,250 INFO amas3.grpo.library_update: Pre-pruned stale entry E006 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 50.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.55it/s]
+2026-05-16 13:26:38,280 INFO __main__: epoch 1 step 5 train_5948 rows=2 mixed=False insights=3 lib=6 avg_tok=13729 avg_reward=-0.162
+2026-05-16 13:26:38,280 INFO __main__: epoch 1 step 6 question 6/6 train_12244
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 61.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 58.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 63.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 59.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 45.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 50.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.17it/s]
+2026-05-16 13:29:37,007 INFO __main__: epoch 1 step 6 train_12244 rows=2 mixed=False insights=3 lib=7 avg_tok=20235 avg_reward=0.407
+2026-05-16 13:29:37,020 INFO __main__: epoch 1 complete, library=7, rows=12, avg_tokens=12913, avg_reward=0.333
+2026-05-16 13:29:37,022 INFO amas3.grpo.gepa: GEPA: evolving solver (failures: ['hallucination'], trajs: 4)

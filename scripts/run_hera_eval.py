@@ -262,19 +262,19 @@ def build_pipeline_config(
     """Build a HERA base config.
 
     The base only switches on the HERA pipeline functionality required for
-    pi_O to operate (orchestrator on, adaptive solver budget, slim synth,
+    pi_O to operate (SAS solver on, adaptive solver budget, slim synth,
     verifier on). Every topology-shaping knob (retrieval budget, repair,
-    routing strategy, orch_min_confidence, etc.) is OVERWRITTEN per question
+    routing strategy, sas_min_confidence, etc.) is OVERWRITTEN per question
     by `config_from_topology(base, sampled_Gamma)` where Gamma is sampled
     from pi_O(. | q, E, N). There is no per-query-type threshold table and
     no eval-time grid.
     """
     return AmasPipelineConfig(
         experience_library=experience_text,
-        use_orchestrator=True,
+        use_sas_solver=True,
         adaptive_solver_budget=True,
         synth_slim=True,
-        orch_use_verifier=True,
+        sas_use_verifier=True,
         role_prompts=role_prompts or {},
     )
 

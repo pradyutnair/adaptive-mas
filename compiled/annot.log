@@ -1,0 +1,80 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-16 13:06:41,794 INFO: Annotating 150 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_train_hotpotqa.jsonl
+2026-05-16 13:06:43,874 INFO:   50 / 150 annotated
+2026-05-16 13:06:44,751 INFO:   100 / 150 annotated
+2026-05-16 13:06:46,032 INFO:   150 / 150 annotated
+2026-05-16 13:06:46,033 INFO: Annotating 150 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_train_2wikimultihop.jsonl
+2026-05-16 13:06:47,340 INFO:   50 / 150 annotated
+2026-05-16 13:06:48,536 INFO:   100 / 150 annotated
+2026-05-16 13:06:57,707 INFO:   150 / 150 annotated
+2026-05-16 13:06:57,708 INFO: Annotating 150 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_train_musique.jsonl
+2026-05-16 13:06:59,126 INFO:   50 / 150 annotated
+2026-05-16 13:07:00,175 INFO:   100 / 150 annotated
+2026-05-16 13:07:02,447 INFO:   150 / 150 annotated
+2026-05-16 13:07:02,534 INFO: Annotating 1000 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_test_hotpotqa.jsonl
+2026-05-16 13:07:04,108 INFO:   50 / 1000 annotated
+2026-05-16 13:07:05,180 INFO:   100 / 1000 annotated
+2026-05-16 13:07:06,226 INFO:   150 / 1000 annotated
+2026-05-16 13:07:07,170 INFO:   200 / 1000 annotated
+2026-05-16 13:07:08,247 INFO:   250 / 1000 annotated
+2026-05-16 13:07:09,229 INFO:   300 / 1000 annotated
+2026-05-16 13:07:10,318 INFO:   350 / 1000 annotated
+2026-05-16 13:07:11,251 INFO:   400 / 1000 annotated
+2026-05-16 13:07:12,318 INFO:   450 / 1000 annotated
+2026-05-16 13:07:13,351 INFO:   500 / 1000 annotated
+2026-05-16 13:07:14,432 INFO:   550 / 1000 annotated
+2026-05-16 13:07:15,446 INFO:   600 / 1000 annotated
+2026-05-16 13:07:16,496 INFO:   650 / 1000 annotated
+2026-05-16 13:07:17,567 INFO:   700 / 1000 annotated
+2026-05-16 13:07:18,724 INFO:   750 / 1000 annotated
+2026-05-16 13:07:19,814 INFO:   800 / 1000 annotated
+2026-05-16 13:07:20,825 INFO:   850 / 1000 annotated
+2026-05-16 13:07:21,871 INFO:   900 / 1000 annotated
+2026-05-16 13:07:22,973 INFO:   950 / 1000 annotated
+2026-05-16 13:07:24,064 INFO:   1000 / 1000 annotated
+2026-05-16 13:07:24,090 INFO: Annotating 1000 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_test_2wikimultihop.jsonl
+2026-05-16 13:07:25,501 INFO:   50 / 1000 annotated
+2026-05-16 13:07:26,576 INFO:   100 / 1000 annotated
+2026-05-16 13:07:27,737 INFO:   150 / 1000 annotated
+2026-05-16 13:07:28,764 INFO:   200 / 1000 annotated
+2026-05-16 13:07:30,002 INFO:   250 / 1000 annotated
+2026-05-16 13:07:31,026 INFO:   300 / 1000 annotated
+2026-05-16 13:07:32,195 INFO:   350 / 1000 annotated
+2026-05-16 13:07:33,442 INFO:   400 / 1000 annotated
+2026-05-16 13:07:34,654 INFO:   450 / 1000 annotated
+2026-05-16 13:07:35,850 INFO:   500 / 1000 annotated
+2026-05-16 13:07:37,066 INFO:   550 / 1000 annotated
+2026-05-16 13:07:38,250 INFO:   600 / 1000 annotated
+2026-05-16 13:07:39,484 INFO:   650 / 1000 annotated
+2026-05-16 13:07:40,691 INFO:   700 / 1000 annotated
+2026-05-16 13:07:41,941 INFO:   750 / 1000 annotated
+2026-05-16 13:07:43,105 INFO:   800 / 1000 annotated
+2026-05-16 13:07:44,277 INFO:   850 / 1000 annotated
+2026-05-16 13:07:45,404 INFO:   900 / 1000 annotated
+2026-05-16 13:07:46,659 INFO:   950 / 1000 annotated
+2026-05-16 13:07:52,774 INFO:   1000 / 1000 annotated
+2026-05-16 13:07:52,782 INFO: Annotating 1000 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_test_musique.jsonl
+2026-05-16 13:07:54,316 INFO:   50 / 1000 annotated
+2026-05-16 13:07:55,385 INFO:   100 / 1000 annotated
+2026-05-16 13:07:56,474 INFO:   150 / 1000 annotated
+2026-05-16 13:07:57,618 INFO:   200 / 1000 annotated
+2026-05-16 13:07:58,786 INFO:   250 / 1000 annotated
+2026-05-16 13:07:59,925 INFO:   300 / 1000 annotated
+2026-05-16 13:08:01,188 INFO:   350 / 1000 annotated
+2026-05-16 13:08:02,295 INFO:   400 / 1000 annotated
+2026-05-16 13:08:03,516 INFO:   450 / 1000 annotated
+2026-05-16 13:08:04,781 INFO:   500 / 1000 annotated
+2026-05-16 13:08:05,917 INFO:   550 / 1000 annotated
+2026-05-16 13:08:07,073 INFO:   600 / 1000 annotated
+2026-05-16 13:08:08,197 INFO:   650 / 1000 annotated
+2026-05-16 13:08:09,442 INFO:   700 / 1000 annotated
+2026-05-16 13:08:10,682 INFO:   750 / 1000 annotated
+2026-05-16 13:08:11,863 INFO:   800 / 1000 annotated
+2026-05-16 13:08:12,977 INFO:   850 / 1000 annotated
+2026-05-16 13:08:14,126 INFO:   900 / 1000 annotated
+2026-05-16 13:08:15,231 INFO:   950 / 1000 annotated
+2026-05-16 13:08:25,797 INFO:   1000 / 1000 annotated
+2026-05-16 13:08:25,798 INFO: Annotating 125 new examples (cached 0) -> /local/yzheng/pnair/workspace/adaptive-mas/data/annotations/annot_test_bamboogle.jsonl
+2026-05-16 13:08:27,413 INFO:   50 / 125 annotated
+2026-05-16 13:08:28,520 INFO:   100 / 125 annotated
+2026-05-16 13:08:30,343 INFO: Done. Annotations at /local/yzheng/pnair/workspace/adaptive-mas/data/annotations
