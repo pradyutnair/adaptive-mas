@@ -20,7 +20,6 @@ from .solver import run_solver
 from .synthesizer import run_synthesizer
 from .topology import TopologyThresholds, select_topology
 from .multi_plan import run_multi_plan_grpo
-from .bridge_resolver import run_bridge_resolver, should_resolve_bridge
 from .signals import compute_groundedness
 from .types import (
     Finding,
@@ -59,8 +58,6 @@ class AmasResult:
     n_solvers_invoked: int = 0
     repair_invoked: bool = False
     wallclock_seconds: float = 0.0
-    bridge_resolved: str = ""
-    bridge_resolver_tokens: int = 0
     multi_plan_rewards: list = field(default_factory=list)
     multi_plan_subgoal_counts: list = field(default_factory=list)
     multi_plan_temperatures: list = field(default_factory=list)
@@ -84,11 +81,6 @@ class AmasPipelineConfig:
     use_multi_plan: bool = False
     K_plans: int = 3
     plan_temperatures: tuple = (0.4, 0.7, 0.9)
-    use_bridge_resolver: bool = False
-    bridge_g_threshold: float = 0.45
-    use_sas_collapse: bool = False
-    tau_sas_g: float = 0.55
-    tau_sas_conf: float = 0.75
     synth_recursion_rounds: int = 1
     adaptive_solver_budget: bool = False
     min_retrievals_per_solver: int = 1
@@ -201,59 +193,7 @@ class AmasPipeline:
                     return result
             result.sas_escalated = True
 
-        # Step 0.5: SAS-collapse attempt (single-agent efficiency for easy questions)
-        if self.config.use_sas_collapse:
-            from .sas_attempt import try_sas_attempt
-            sas = await asyncio.to_thread(
-                try_sas_attempt,
-                sas_lm=self.sas_lm,
-                question=question,
-                chunks=original_chunks,
-                probe_groundedness=g_original,
-                tau_g=self.config.tau_sas_g,
-                tau_conf=self.config.tau_sas_conf,
-            )
-            result.sas_attempt_tokens = sas.extraction_tokens
-            result.sas_attempt_confidence = sas.confidence
-            result.sas_attempt_grounded = sas.grounded_in_chunks
-            result.sas_verifier_passed = sas.verifier_passed
-            result.sas_verifier_verdict = sas.verifier_verdict
-            result.sas_verifier_tokens = sas.verifier_tokens
-            if sas.accepted:
-                result.sas_collapse = True
-                result.topology = 'verified_sas'
-                result.topology_rationale = f'verified SAS accepted (g={g_original:.3f}, verdict={sas.verifier_verdict})'
-                result.answer = sas.answer
-                result.answer_type = sas.answer_type
-                result.justification = sas.rationale
-                result.support_ids = [c.chunk_id for c in original_chunks[:5]]
-                result.probe_groundedness = [round(g_original, 4)]
-                result.total_tokens = result.sas_attempt_tokens
-                result.wallclock_seconds = round(time.time() - t0, 3)
-                result.n_solvers_invoked = 1
-                return result
-            result.sas_escalated = True
-
-        # Step 1: bridge resolution if probe-original groundedness is low
-        bridge_hint = ""
-        if self.config.use_bridge_resolver and should_resolve_bridge(
-            probe_original_g=g_original, g_low_threshold=self.config.bridge_g_threshold
-        ):
-            br = await run_bridge_resolver(
-                resolver_lm=self.planner_lm,
-                original_question=question,
-                original_probe_chunks=original_chunks,
-            )
-            if br.bridge_entity:
-                bridge_hint = (
-                    f"Hint: the bridge entity in this question "
-                    f"(the phrase '{br.bridge_phrase}') resolves to "
-                    f"'{br.bridge_entity}'. Use this resolution when constructing sub-questions."
-                )
-                result.bridge_resolved = br.bridge_entity
-            result.bridge_resolver_tokens = br.tokens
-
-        enhanced_experience = self._role_experience("planner", bridge_hint)
+        enhanced_experience = self._role_experience("planner")
 
         # Step 2: planning (single or multi-plan GRPO)
         from .types import ProbeResult
@@ -427,7 +367,6 @@ class AmasPipeline:
             + result.synth_tokens
             + result.rewrite_tokens
             + result.sas_attempt_tokens
-            + result.bridge_resolver_tokens
         )
         result.wallclock_seconds = round(time.time() - t0, 3)
         return result

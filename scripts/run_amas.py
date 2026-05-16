@@ -34,9 +34,6 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--no-repair', dest='repair', action='store_false')
     ap.add_argument('--worker', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
     ap.add_argument('--synth-mode', choices=['mini', 'qwen_nothink', 'qwen14b_think_small', 'qwen14b_nothink'], default='mini')
-    ap.add_argument('--use-sas-collapse', action='store_true', default=False, help='enable probe-grounded SAS-collapse before MAS')
-    ap.add_argument('--tau-sas-g', type=float, default=0.55)
-    ap.add_argument('--tau-sas-conf', type=float, default=0.75)
     ap.add_argument('--solver-budget', type=int, default=1024, help='max_tokens for qwen14b_think_small worker')
     ap.add_argument('--synth-recursion-rounds', type=int, default=1, help='1=plain synth, 2+=synth-self-refine rounds')
     ap.add_argument('--synth-budget', type=int, default=2048, help='max_tokens for synth (default 2048 to avoid thinking-budget exhaust)')
@@ -46,15 +43,13 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument('--max-repairs', type=int, default=2)
     ap.add_argument('--planner-replica', type=int, default=0)
     ap.add_argument('--planner-model', choices=['qwen3-8b', 'qwen3-14b'], default='qwen3-8b')
-    ap.add_argument('--planner-mode', choices=['think', 'nothink'], default='think', help='thinking mode for planner and bridge resolver')
+    ap.add_argument('--planner-mode', choices=['think', 'nothink'], default='think', help='thinking mode for the planner LM')
     ap.add_argument('--planner-budget', type=int, default=1024, help='max_tokens for no-think planner')
     ap.add_argument('--limit', type=int, default=0, help='if > 0, only run first N questions')
     ap.add_argument('--qwen-think-budget', type=int, default=4096)
     ap.add_argument('--experience-file', default=None, help='path to GRPO-compiled experience library txt')
     ap.add_argument('--use-multi-plan', action='store_true', default=False, help='enable plan-level GRPO (K plans, pick by probe groundedness)')
     ap.add_argument('--K-plans', type=int, default=3)
-    ap.add_argument('--use-bridge-resolver', action='store_true', default=False, help='enable bridge-resolution preprocessor')
-    ap.add_argument('--bridge-g-threshold', type=float, default=0.45)
     ap.add_argument('--concurrency', type=int, default=4)
     ap.add_argument('--use-orchestrator', action='store_true', default=False, help='enable probe-first orchestrator agent (answers or escalates to MAS)')
     ap.add_argument('--orch-max-followups', type=int, default=2, help='max additional retrievals beyond the probe')
@@ -126,8 +121,6 @@ async def main() -> None:
             sas_lms = [make_qwen14b_think_small_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
         else:
             sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=args.orch_budget) for i in range(n_replicas)]
-    elif args.use_sas_collapse:
-        sas_lms = [make_qwen14b_nothink_lm(cfg, replica_idx=(i + 0) % n_replicas, max_tokens=384) for i in range(n_replicas)]
     else:
         sas_lms = [None] * n_replicas
 
@@ -152,11 +145,6 @@ async def main() -> None:
                 experience_library=experience_text,
                 use_multi_plan=args.use_multi_plan,
                 K_plans=args.K_plans,
-                use_bridge_resolver=args.use_bridge_resolver,
-                bridge_g_threshold=args.bridge_g_threshold,
-                use_sas_collapse=args.use_sas_collapse,
-                tau_sas_g=args.tau_sas_g,
-                tau_sas_conf=args.tau_sas_conf,
                 synth_recursion_rounds=args.synth_recursion_rounds,
                 adaptive_solver_budget=args.adaptive_solver_budget,
                 min_retrievals_per_solver=args.min_retrievals_per_solver,
@@ -192,9 +180,6 @@ async def main() -> None:
         'planner_budget': args.planner_budget,
         'worker': args.worker,
         'synth': args.synth_mode,
-        'use_sas_collapse': args.use_sas_collapse,
-        'tau_sas_g': args.tau_sas_g,
-        'tau_sas_conf': args.tau_sas_conf,
         'solver_budget': args.solver_budget,
         'synth_recursion_rounds': args.synth_recursion_rounds,
         'adaptive_solver_budget': args.adaptive_solver_budget,
@@ -209,8 +194,6 @@ async def main() -> None:
         'experience_file': args.experience_file,
         'use_multi_plan': args.use_multi_plan,
         'K_plans': args.K_plans,
-        'use_bridge_resolver': args.use_bridge_resolver,
-        'bridge_g_threshold': args.bridge_g_threshold,
         'use_orchestrator': args.use_orchestrator,
         'orch_max_followups': args.orch_max_followups,
         'orch_probe_min_g': args.orch_probe_min_g,
@@ -262,8 +245,6 @@ async def main() -> None:
                         'support_ids': r.support_ids,
                         'justification': r.justification,
                         'findings': r.findings,
-                        'bridge_resolved': r.bridge_resolved,
-                        'bridge_resolver_tokens': r.bridge_resolver_tokens,
                         'multi_plan_rewards': r.multi_plan_rewards,
                         'multi_plan_subgoal_counts': r.multi_plan_subgoal_counts,
                         'multi_plan_temperatures': r.multi_plan_temperatures,

@@ -28,21 +28,26 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 
 import dspy
 
-from amas3.experience_library import ExperienceEntry, ExperienceLibrary
-from amas3.gepa import FailureBuffer, run_gepa_epoch, save_evolved_prompts, MAX_PROMPT_CHARS
 from amas3.lm import make_qwen14b_nothink_lm
-from amas3.orch_grpo import optimize_orchestration
 from amas3.pipeline import AmasPipeline, AmasPipelineConfig, AmasResult
 from amas3.retriever import Retriever
-from amas3.tf_grpo import (
+from amas3.grpo import (
+    ExperienceEntry,
+    ExperienceLibrary,
+    FailureBuffer,
+    MAX_PROMPT_CHARS,
     apply_experience_updates,
     characterize_query_profile,
-    extract_semantic_advantages,
-    run_group_rollouts,
-    update_experience_credit_from_group,
+    compute_contain,
     compute_dual_reward,
     compute_token_efficiency_reward,
-    compute_contain,
+    extract_semantic_advantages,
+    optimize_orchestration,
+    run_gepa_epoch,
+    run_group_rollouts,
+    save_evolved_prompts,
+    update_experience_credit_from_group,
+    TOKEN_BUDGET_BASELINES as TOKEN_BUDGET_BASELINES_FOR_LOG,
 )
 
 
@@ -78,10 +83,17 @@ DEFAULT_OUTPUT_DIR = REPO_ROOT / "compiled" / "hera"
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="HERA: token-aware TF-GRPO + constrained GEPA")
-    parser.add_argument("--epochs", type=int, default=2)
-    parser.add_argument("--limit-per-dataset", type=int, default=0)
-    parser.add_argument("--datasets", default="hotpotqa,2wikimultihop,musique", help="Comma-separated train datasets to use")
-    parser.add_argument("--K", type=int, default=3)
+    parser.add_argument("--epochs", type=int, default=2,
+                        help="HERA paper uses 1-3 epochs over the mixed pool.")
+    parser.add_argument("--limit-per-dataset", type=int, default=50,
+                        help="Per-dataset cap before mixing; 50x3=150 questions total roughly matches "
+                             "TF-GRPO's 100-sample DAPO and HERA's stratified pool. 0 = no cap.")
+    parser.add_argument("--datasets", default="hotpotqa,2wikimultihop,musique",
+                        help="Comma-separated train datasets to use; pooled and shuffled per epoch.")
+    parser.add_argument("--K", type=int, default=5,
+                        help="Group size for TF-GRPO rollouts (paper default = 5).")
+    parser.add_argument("--shuffle-seed", type=int, default=42,
+                        help="Seed for per-epoch shuffling of the mixed pool. -1 disables shuffling.")
     parser.add_argument("--output-dir", default=str(DEFAULT_OUTPUT_DIR))
     parser.add_argument("--retriever-url", default="http://node408:8003")
     parser.add_argument("--skip-gepa", action="store_true")
@@ -95,6 +107,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-run-name", default=os.environ.get("WANDB_RUN_NAME", ""))
     parser.add_argument("--max-library-size", type=int, default=40)
     parser.add_argument("--reward-alpha", type=float, default=0.7, help="Weight for task reward vs efficiency")
+    parser.add_argument("--stratified-pool",
+                        default=str(Path(__file__).resolve().parent.parent / "data" / "train_stratified.jsonl"),
+                        help="JSONL produced by scripts/build_train_set.py; when present, used in place of raw per-dataset caps.")
+    parser.add_argument("--no-stratified-pool", action="store_true",
+                        help="Disable stratified pool even if data/train_stratified.jsonl exists.")
+    parser.add_argument("--budget-mix", default="3000,5000,8000",
+                        help="Comma-separated deployment-budget tokens to sample uniformly per group. "
+                             "Enables budget-conditioned policy pi_O(Gamma | q, E, N, B). "
+                             "Set to '' to disable budget-conditioning (revert to dataset-baseline penalties).")
     return parser.parse_args()
 
 
@@ -186,15 +207,44 @@ def load_json(path: Path) -> list[dict]:
     return data
 
 
-def load_train_data(limit_per_dataset: int, datasets: str = "hotpotqa,2wikimultihop,musique") -> list[dict]:
+def load_stratified_pool(path: Path, datasets_filter: set[str]) -> list[dict]:
+    """Load the mixed pool emitted by scripts/build_train_set.py."""
     rows: list[dict] = []
-    missing = [str(path) for path in TRAIN_FILES.values() if not path.exists()]
-    if missing:
-        raise FileNotFoundError(f"Missing train files: {', '.join(missing)}")
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            row = json.loads(line)
+            ds = str(row.get("dataset", ""))
+            if datasets_filter and ds not in datasets_filter:
+                continue
+            rows.append(row)
+    return rows
+
+
+def load_train_data(
+    limit_per_dataset: int,
+    datasets: str = "hotpotqa,2wikimultihop,musique",
+    stratified_pool: Path | None = None,
+) -> list[dict]:
     selected = {d.strip() for d in datasets.split(",") if d.strip()}
     unknown = selected - set(TRAIN_FILES)
     if unknown:
         raise ValueError(f"Unknown datasets: {sorted(unknown)}")
+    if stratified_pool is not None and stratified_pool.exists():
+        rows = load_stratified_pool(stratified_pool, selected)
+        if rows:
+            log.info(
+                "using stratified pool: %d examples from %s",
+                len(rows), stratified_pool,
+            )
+            return rows
+        log.warning("stratified pool %s exists but is empty; falling back to per-dataset caps", stratified_pool)
+    missing = [str(path) for path in TRAIN_FILES.values() if not path.exists()]
+    if missing:
+        raise FileNotFoundError(f"Missing train files: {', '.join(missing)}")
+    rows: list[dict] = []
     for dataset, path in TRAIN_FILES.items():
         if dataset not in selected:
             continue
@@ -234,10 +284,16 @@ def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = N
 
 
 def rollout_temperatures(k: int) -> tuple[float, ...]:
-    base = (0.35, 0.55, 0.75, 0.95, 1.10)
-    if k <= len(base):
-        return base[:max(1, k)]
-    return tuple(base + tuple(1.10 for _ in range(k - len(base))))
+    """Single-temperature rollouts (HERA paper: t=0.9 for generative sampling).
+
+    Diversity within a group comes from (a) stochastic decoding at t=0.9, (b)
+    rotating exploration axes injected into the topology-sampling prompt, and
+    (c) re-conditioning on the updated experience library between groups. We
+    deliberately do NOT spread temperatures across the K samples: that biases
+    the GRPO winner/loser ranking by mixing under- and over-explored samples.
+    """
+    base_temperature = float(os.environ.get("AMAS_TRAIN_ROLLOUT_TEMP", "0.9"))
+    return tuple(base_temperature for _ in range(max(1, k)))
 
 
 def build_pipeline(retriever: Retriever, config: AmasPipelineConfig) -> AmasPipeline:
@@ -312,8 +368,11 @@ async def run_training(
     wandb_run: Any = None,
     max_library_size: int = 40,
     reward_alpha: float = 0.7,
+    shuffle_seed: int = 42,
+    budget_mix: tuple[int, ...] = (3000, 5000, 8000),
 ) -> tuple[ExperienceLibrary, list[dict], list[dict], FailureBuffer]:
     """Run HERA TF-GRPO online: update library after each same-query group."""
+    import random
     results_path = output_dir / "training_results.jsonl"
     if results_path.exists():
         results_path.unlink()
@@ -321,6 +380,9 @@ async def run_training(
     failed_trajectories: list[dict] = []
     failure_buffer = FailureBuffer()
     learning_step = 0
+    # Separate RNG for per-group budget sampling so it stays deterministic
+    # under different shuffle seeds and does not consume the shuffle stream.
+    group_budget_rng = random.Random((shuffle_seed if shuffle_seed >= 0 else 0) * 31 + 7)
 
     log.info(
         "online HERA mode: one question group per update; K=%d concurrent rollouts; requested outer concurrency=%d",
@@ -332,11 +394,29 @@ async def run_training(
         epoch_insight_count = 0
         epoch_start_size = library.size()
 
-        for idx, item in enumerate(train_data, start=1):
+        # Shuffle the mixed pool per epoch so we don't process HotpotQA then
+        # 2WikiQA then MuSiQue sequentially; this also makes the LOWESS plots
+        # interpretable since dataset order is randomized.
+        if shuffle_seed >= 0:
+            rng = random.Random(shuffle_seed + epoch)
+            epoch_items = list(train_data)
+            rng.shuffle(epoch_items)
+        else:
+            epoch_items = train_data
+
+        for idx, item in enumerate(epoch_items, start=1):
             learning_step += 1
             log.info("epoch %d step %d question %d/%d %s", epoch, learning_step, idx, len(train_data), item["id"])
 
             config = build_pipeline_config(library)
+            # Budget-conditioned training: sample one B per group from the
+            # configured budget mix so the policy pi_O(Gamma | q, E, N, B)
+            # learns to adapt across deployment regimes. budget_mix=() turns
+            # this off and recovers HERA's pi_O(Gamma | q, E, N).
+            if budget_mix:
+                group_budget = int(group_budget_rng.choice(list(budget_mix)))
+            else:
+                group_budget = None
             group = await run_group_rollouts(
                 question=item["question"],
                 qid=str(item["id"]),
@@ -347,6 +427,7 @@ async def run_training(
                 library=library,
                 dataset=item.get("dataset", "default"),
                 reward_alpha=reward_alpha,
+                deployment_budget=group_budget,
             )
             rows = [rollout_to_row(item["dataset"], epoch, rollout) for rollout in group.rollouts]
             topology_signatures = [tuple((row.get("sampled_topology") or {}).get("_topology_signature", [])) for row in rows]
@@ -371,7 +452,9 @@ async def run_training(
 
             pre_library_size = library.size()
             insights: list[dict] = []
-            query_type = characterize_query_profile(item["question"], item.get("dataset", "default"))
+            query_type = characterize_query_profile(
+                item["question"], item.get("dataset", "default"), qid=str(item.get("id", "")),
+            )
             insights = extract_semantic_advantages(group, reflection_lm, query_type=query_type, library=library)
             if insights:
                 epoch_insight_count += len(insights)
@@ -402,6 +485,9 @@ async def run_training(
             best_contain = max((float(row.get("contain", 0) or 0) for row in rows), default=0.0)
             best_reward = max((float(row.get("dual_reward", 0) or 0) for row in rows), default=0.0)
             mutations = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("topology_mutation"))
+            sas_coercions = sum(1 for row in rows if (row.get("sampled_topology") or {}).get("_coerced_to_sas"))
+            ds_baseline = TOKEN_BUDGET_BASELINES_FOR_LOG.get(item.get("dataset", "default"), TOKEN_BUDGET_BASELINES_FOR_LOG["default"])
+            over_budget = sum(1 for row in rows if float(row.get("total_tokens", 0) or 0) > 1.5 * ds_baseline)
 
             wandb_log(wandb_run, {
                 "tf_grpo/group_avg_tokens": group_tokens,
@@ -416,6 +502,8 @@ async def run_training(
                 "tf_grpo/group_mixed": int(group.has_mixed_outcomes),
                 "tf_grpo/group_rollouts": len(rows),
                 "tf_grpo/topology_mutations": mutations,
+                "tf_grpo/sas_coercions": sas_coercions,
+                "tf_grpo/over_budget_rollouts": over_budget,
                 "tf_grpo/unique_topology_signatures": unique_topology_signatures,
                 "tf_grpo/duplicate_topology_retries": duplicate_retries,
                 "tf_grpo/duplicate_retry_changed": duplicate_retry_changed,
@@ -548,7 +636,8 @@ def main() -> None:
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    train_data = load_train_data(args.limit_per_dataset, args.datasets)
+    pool_path = None if args.no_stratified_pool else Path(args.stratified_pool)
+    train_data = load_train_data(args.limit_per_dataset, args.datasets, stratified_pool=pool_path)
     log.info("loaded %d training questions", len(train_data))
 
     wandb_run = init_wandb(args, output_dir, len(train_data))
@@ -570,6 +659,8 @@ def main() -> None:
             wandb_run=wandb_run,
             max_library_size=args.max_library_size,
             reward_alpha=args.reward_alpha,
+            shuffle_seed=args.shuffle_seed,
+            budget_mix=tuple(int(x) for x in args.budget_mix.split(",") if x.strip()),
         )
     )
 

@@ -1,0 +1,4 @@
+{
+  "artifacts_dir": "/local/yzheng/pnair/workspace/adaptive-mas/compiled/hera_tfgrpo_gepa",
+  "policy": "pi_O(Gamma | q, E, N) with config_from_topology(base, Gamma)"
+}

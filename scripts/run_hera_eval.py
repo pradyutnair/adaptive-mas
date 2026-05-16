@@ -20,11 +20,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 PROJECT_ROOT = REPO_ROOT.parent.parent
 sys.path.insert(0, str(REPO_ROOT / "src"))
 
-from amas3.experience_library import ExperienceEntry, ExperienceLibrary, format_for_prompt
 from amas3.lm import make_qwen14b_nothink_lm
 from amas3.pipeline import AmasPipeline, AmasPipelineConfig, AmasResult
 from amas3.retriever import Retriever
-from amas3.tf_grpo import config_from_topology, sample_topology
+from amas3.grpo import (
+    ExperienceEntry,
+    ExperienceLibrary,
+    config_from_topology,
+    format_for_prompt,
+    sample_topology,
+)
 
 
 def check_retriever_health(base_url: str, timeout_seconds: float = 10.0) -> None:
@@ -104,6 +109,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--artifacts-dir", default=str(DEFAULT_ARTIFACTS_DIR))
     parser.add_argument("--retriever-url", default="http://node408:8003")
     parser.add_argument("--dry-run", action="store_true", help="Validate wiring without LLM calls.")
+    parser.add_argument("--deployment-budget", type=int, default=0,
+                        help="Optional token budget B passed to the orchestrator policy pi_O(Gamma|q,E,N,B). "
+                             "0 disables budget-conditioning (paper-style HERA behavior). "
+                             "Typical values: 3000 (tight), 5000 (moderate), 8000 (generous).")
     return parser.parse_args()
 
 
@@ -331,6 +340,7 @@ async def run_one_question(
     sem: asyncio.Semaphore,
     done_counter: list[int],
     dataset: str = "default",
+    deployment_budget: int = 0,
 ) -> dict:
     """Single eval step: Gamma ~ pi_O(.|q, E, N) then execute the pipeline.
 
@@ -351,11 +361,21 @@ async def run_one_question(
         )
         base_config = build_pipeline_config(experience_text, role_prompts)
 
+        # HERA paper §5: in-distribution eval uses greedy (t=0.0), OOD bamboogle
+        # uses t=0.3 to encourage exploration on unseen reasoning patterns.
+        env_temp = os.environ.get("AMAS_EVAL_TOPOLOGY_TEMPERATURE")
+        if env_temp is not None:
+            topology_temperature = float(env_temp)
+        elif dataset == "bamboogle":
+            topology_temperature = 0.3
+        else:
+            topology_temperature = 0.0
         sampler_lm = make_qwen14b_nothink_lm(
             replica_idx=idx % 3,
             max_tokens=int(os.environ.get("AMAS_EVAL_TOPOLOGY_MAX_TOKENS", "512")),
-            temperature=float(os.environ.get("AMAS_EVAL_TOPOLOGY_TEMPERATURE", "0.15")),
+            temperature=topology_temperature,
         )
+        budget_for_call = int(deployment_budget) if deployment_budget and deployment_budget > 0 else None
         sampled_topology = await asyncio.to_thread(
             sample_topology,
             question=q_text,
@@ -364,6 +384,7 @@ async def run_one_question(
             sampler_lm=sampler_lm,
             sample_index=1,
             dataset=dataset,
+            deployment_budget=budget_for_call,
         )
         sampler_tokens = int(sampled_topology.get("_sampler_tokens", 0) or 0)
         config = config_from_topology(base_config, sampled_topology)
@@ -379,6 +400,8 @@ async def run_one_question(
         row["metadata"]["pipeline_tokens"] = pipeline_tokens
         row["metadata"]["topology_sampler_tokens"] = sampler_tokens
         row["metadata"]["sampled_topology"] = sampled_topology
+        row["metadata"]["coerced_to_sas"] = bool(sampled_topology.get("_coerced_to_sas", False))
+        row["metadata"]["pre_coercion_strategy"] = sampled_topology.get("_pre_coercion_strategy", "")
         done_counter[0] += 1
         log.info("done %d/%d qid=%s topo=%s tok=%d",
                  done_counter[0], total, qid,
@@ -393,6 +416,7 @@ async def run_dataset_predictions(
     retriever_url: str,
     output_path: Path,
     dataset: str = "default",
+    deployment_budget: int = 0,
 ) -> list[dict]:
     retriever = Retriever(base_url=retriever_url)
     lms = make_shared_lms()
@@ -405,7 +429,7 @@ async def run_dataset_predictions(
     tasks = [
         run_one_question(idx, len(questions), q, library, prompts,
                          retriever, lms, sem, done_counter,
-                         dataset=dataset)
+                         dataset=dataset, deployment_budget=deployment_budget)
         for idx, q in enumerate(questions, start=1)
     ]
     rows = await asyncio.gather(*tasks)
@@ -566,6 +590,7 @@ def main() -> None:
                     retriever_url=args.retriever_url,
                     output_path=predictions_path,
                     dataset=dataset,
+                    deployment_budget=int(args.deployment_budget),
                 )
             )
 
