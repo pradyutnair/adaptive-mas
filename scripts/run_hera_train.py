@@ -369,6 +369,8 @@ async def run_training(
     max_library_size: int = 40,
     reward_alpha: float = 0.7,
     shuffle_seed: int = 42,
+    skip_gepa: bool = False,
+    gepa_max_trajectories: int = 10,
 ) -> tuple[ExperienceLibrary, list[dict], list[dict], FailureBuffer]:
     """Run HERA TF-GRPO online: update library after each same-query group."""
     import random
@@ -378,6 +380,7 @@ async def run_training(
     all_rows: list[dict] = []
     failed_trajectories: list[dict] = []
     failure_buffer = FailureBuffer()
+    evolved_prompts: dict[str, str] = {}
     learning_step = 0
     log.info(
         "online HERA mode: forced two-strategy groups; K=%d concurrent rollouts; requested outer concurrency=%d",
@@ -403,7 +406,7 @@ async def run_training(
             learning_step += 1
             log.info("epoch %d step %d question %d/%d %s", epoch, learning_step, idx, len(train_data), item["id"])
 
-            config = build_pipeline_config(library)
+            config = build_pipeline_config(library, role_prompts=evolved_prompts)
             group = await run_group_rollouts(
                 question=item["question"],
                 qid=str(item["id"]),
@@ -566,6 +569,32 @@ async def run_training(
         log.info("epoch %d complete, library=%d, rows=%d, avg_tokens=%.0f, avg_reward=%.3f",
                  epoch, library.size(), len(epoch_rows), epoch_avg_tokens, epoch_avg_reward)
 
+        # Inter-epoch GEPA: evolve agent prompts from failures so the next
+        # epoch benefits from improved planner/solver/synth behavior.
+        if not skip_gepa and failed_trajectories and epoch < epochs:
+            log.info("inter-epoch GEPA: evolving prompts from %d failures", len(failed_trajectories))
+            gepa_trajs = failed_trajectories[:max(1, gepa_max_trajectories)]
+            pipeline = build_pipeline(retriever, build_pipeline_config(library, role_prompts=evolved_prompts))
+            gepa_result = run_gepa_epoch(
+                reflection_lm=reflection_lm,
+                pipeline=pipeline,
+                retriever=retriever,
+                failed_trajectories=gepa_trajs,
+                experience_library=library,
+                failure_buffer=failure_buffer,
+            )
+            new_evolved = gepa_result.get("evolved_prompts", {})
+            if new_evolved:
+                evolved_prompts.update(new_evolved)
+                add_prompt_rules_to_library(library, new_evolved, max_size=max_library_size)
+                cap_experience_library(library, max_library_size)
+                log.info("GEPA evolved prompts: %s", {k: len(v) for k, v in new_evolved.items()})
+            wandb_log(wandb_run, {
+                "gepa/inter_epoch": epoch,
+                "gepa/failed_trajectories": len(gepa_trajs),
+            })
+            save_evolved_prompts(evolved_prompts, str(output_dir / f"evolved_prompts_epoch{epoch}.json"))
+
     return library, all_rows, failed_trajectories, failure_buffer
 
 
@@ -652,20 +681,22 @@ def main() -> None:
             max_library_size=args.max_library_size,
             reward_alpha=args.reward_alpha,
             shuffle_seed=args.shuffle_seed,
+            skip_gepa=args.skip_gepa,
+            gepa_max_trajectories=args.gepa_max_trajectories,
         )
     )
 
-    # GEPA phase
+    # Final GEPA pass (post-training, captures all failures)
     if args.skip_gepa or not failed_trajectories:
         evolved = {}
     else:
-        failed_trajectories = failed_trajectories[:max(1, args.gepa_max_trajectories)]
+        final_trajs = failed_trajectories[:max(1, args.gepa_max_trajectories)]
         pipeline = build_pipeline(retriever, build_pipeline_config(library))
         gepa_result = run_gepa_epoch(
             reflection_lm=reflection_lm,
             pipeline=pipeline,
             retriever=retriever,
-            failed_trajectories=failed_trajectories,
+            failed_trajectories=final_trajs,
             experience_library=library,
             failure_buffer=failure_buffer,
         )
@@ -673,13 +704,11 @@ def main() -> None:
         add_prompt_rules_to_library(library, evolved, max_size=args.max_library_size)
         cap_experience_library(library, args.max_library_size)
         
-        # Log GEPA metrics
         wandb_log(wandb_run, {
-            "gepa/failed_trajectories": len(failed_trajectories),
+            "gepa/final_failed_trajectories": len(final_trajs),
             "gepa/operational_rules": len(gepa_result.get("operational_rules", [])),
             "gepa/behavioral_principles": len(gepa_result.get("behavioral_principles", [])),
         })
-        # Log prompt lengths
         for role, prompt in evolved.items():
             wandb_log(wandb_run, {f"gepa/prompt_chars_{role}": len(prompt or "")})
     

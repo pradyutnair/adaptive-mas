@@ -1,0 +1,6 @@
+{
+  "planner": "Decompose multi-hop questions into atomic single-hop sub-questions. Each answerable by ONE retrieval + ONE extraction. Preserve the original wh-target category in the final subgoal.",
+  "solver": "Extract a SHORT answer span (1-6 words) VERBATIM from evidence chunks. Match the expected answer type. Return empty if no evidence supports it.",
+  "synth": "Emit the SHORT answer span (1-6 words) that DIRECTLY answers the original question's wh-target. Never return a bridge entity as final answer.",
+  "sas_solver": "Answer simple factoid queries directly from the evidence in one pass. Match the wh-target type. Emit a short verbatim span; do not invent."
+}

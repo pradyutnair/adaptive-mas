@@ -1,0 +1,6 @@
+{"epoch": 1, "learning_step": 4, "scope": "all", "rows": 8, "library_size": 11, "avg_tokens": 6551.0, "avg_f1": 0.5714, "avg_contain": 0.5, "avg_em": 0.25, "avg_token_efficiency": 0.5189}
+{"epoch": 1, "learning_step": 4, "scope": "dataset", "dataset": "musique", "rows": 4, "library_size": 11, "avg_tokens": 3827.0, "avg_f1": 0.8095, "avg_contain": 1.0, "avg_em": 0.5, "avg_token_efficiency": 0.697}
+{"epoch": 1, "learning_step": 4, "scope": "dataset", "dataset": "hotpotqa", "rows": 4, "library_size": 11, "avg_tokens": 9275.0, "avg_f1": 0.3333, "avg_contain": 0.0, "avg_em": 0.0, "avg_token_efficiency": 0.3408}
+{"epoch": 2, "learning_step": 8, "scope": "all", "rows": 8, "library_size": 16, "avg_tokens": 6796.1, "avg_f1": 0.5714, "avg_contain": 0.5, "avg_em": 0.25, "avg_token_efficiency": 0.5062}
+{"epoch": 2, "learning_step": 8, "scope": "dataset", "dataset": "hotpotqa", "rows": 4, "library_size": 16, "avg_tokens": 9622.0, "avg_f1": 0.3333, "avg_contain": 0.0, "avg_em": 0.0, "avg_token_efficiency": 0.3241}
+{"epoch": 2, "learning_step": 8, "scope": "dataset", "dataset": "musique", "rows": 4, "library_size": 16, "avg_tokens": 3970.2, "avg_f1": 0.8095, "avg_contain": 1.0, "avg_em": 0.5, "avg_token_efficiency": 0.6882}
