@@ -149,12 +149,20 @@ Deployment token budget B:
 Already sampled topologies for this rollout group:
 {avoid_topologies_text}
 
+Sampling directive:
+{sampling_directive}
+
 Query: {question}
 
 Choose ONE routing_strategy from {{sas_first, direct_mas}} based on the query,
 the retrieved experiences, and B. Pick retrieval_budget in [1,3]: it caps how
 many followup retrievals sas_first may issue beyond its initial probe.
 For direct_mas, still emit a retrieval_budget for downstream solver caps.
+If this group already has a sampled topology, do not copy it unless the query
+semantics and experiences make every alternative indefensible. Otherwise sample
+the nearest meaningful counterfactual: cheaper SAS-first probing when the first
+sample may over-allocate effort, or direct MAS when the first sample may miss
+bridge/intersection evidence. Duplicate signatures weaken GRPO credit.
 The reward penalizes wrong answers first; token efficiency matters only after
 answer quality is preserved.
 

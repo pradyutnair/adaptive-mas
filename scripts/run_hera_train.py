@@ -3,7 +3,7 @@
 
 Key improvements:
 1. Correctness-gated reward in group rollouts
-2. Forced sas_first vs direct_mas topology diversity
+2. Semantic pi_O topology sampling with group-local diversity context
 3. Experience library capped at 40 entries with aggressive pruning
 4. GEPA with 800-char prompt cap and quality gates
 5. Comprehensive W&B logging with token cost metrics
@@ -16,7 +16,9 @@ import asyncio
 import json
 import logging
 import os
+import shutil
 import sys
+import time
 import urllib.error
 import urllib.request
 from dataclasses import fields
@@ -107,13 +109,20 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--wandb-run-name", default=os.environ.get("WANDB_RUN_NAME", ""))
     parser.add_argument("--max-library-size", type=int, default=40)
     parser.add_argument("--reward-alpha", type=float, default=0.7, help="Weight for task reward vs efficiency")
+    parser.add_argument("--deployment-budget", type=int, default=8000,
+                        help="Hard runtime token budget B passed to AMAS execution and reward shaping. "
+                             "Use 8000 to enforce the thesis token cap; <=7000 receives under-cap reward.")
     parser.add_argument("--reflection-model", default="openai/gpt-5",
                         help="OpenAI model for reflection / experience-library updates (e.g. openai/gpt-5, openai/gpt-4o-mini)")
+    parser.add_argument("--reflection-max-tokens", type=int, default=16000,
+                        help="Max output tokens for reflection calls. DSPy requires >=16000 for OpenAI reasoning models such as gpt-5.")
     parser.add_argument("--stratified-pool",
                         default=str(Path(__file__).resolve().parent.parent / "data" / "train_stratified.jsonl"),
                         help="JSONL produced by scripts/build_train_set.py; when present, used in place of raw per-dataset caps.")
     parser.add_argument("--no-stratified-pool", action="store_true",
                         help="Disable stratified pool even if data/train_stratified.jsonl exists.")
+    parser.add_argument("--resume-training", action="store_true",
+                        help="Resume an interrupted run from training_progress.json and experience_library_live.json.")
     return parser.parse_args()
 
 
@@ -151,10 +160,12 @@ def init_wandb(args: argparse.Namespace, output_dir: Path, train_size: int):
             "train_size": train_size,
             "max_library_size": args.max_library_size,
             "reward_alpha": args.reward_alpha,
+            "deployment_budget": args.deployment_budget,
+            "reflection_max_tokens": args.reflection_max_tokens,
             "max_prompt_chars": MAX_PROMPT_CHARS,
-            "version": "hera_two_strategy_forced_diversity",
+            "version": "hera_semantic_pio_group_sampling",
             "update_mode": "online_per_question_group",
-            "forced_diversity": True,
+            "forced_diversity": False,
         },
     }
     if args.wandb_entity:
@@ -260,7 +271,7 @@ def load_train_data(
 def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = None, role_prompts: dict[str, str] | None = None) -> AmasPipelineConfig:
     config = overrides or {}
     return AmasPipelineConfig(
-        max_retrievals_per_solver=int(config.get("max_retrievals_per_solver", 2)),  # Default 2 (was 3)
+        max_retrievals_per_solver=int(config.get("max_retrievals_per_solver", 3)),
         repair_enabled=bool(config.get("repair_enabled", True)),
         experience_library="",
         role_prompts=role_prompts or {},
@@ -274,7 +285,7 @@ def build_pipeline_config(library: ExperienceLibrary, overrides: dict | None = N
         sas_probe_min_g=float(config.get("sas_probe_min_g", 0.0)),
         sas_excerpt_chars=int(config.get("sas_excerpt_chars", 180)),
         sas_max_chunks=int(config.get("sas_max_chunks", 4)),
-        sas_use_verifier=False,
+        sas_use_verifier=True,
         sas_verifier_min_confidence=float(config.get("sas_verifier_min_confidence", 0.6)),
         synth_slim=True,
         synth_excerpt_chars=200,
@@ -344,6 +355,32 @@ def append_jsonl(path: Path, rows: list[dict]) -> None:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
+def load_jsonl(path: Path) -> list[dict]:
+    rows: list[dict] = []
+    if not path.exists():
+        return rows
+    with path.open(encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+    return rows
+
+
+def rewrite_jsonl(path: Path, rows: list[dict]) -> None:
+    with path.open("w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False) + "\n")
+
+
+def load_training_progress(output_dir: Path) -> dict:
+    path = output_dir / "training_progress.json"
+    if not path.exists():
+        return {}
+    with path.open(encoding="utf-8") as f:
+        return json.load(f)
+
+
 def failed_trajectory_from_row(row: dict) -> dict:
     result_data = row.get("result", {})
     allowed = {field.name for field in fields(AmasResult)}
@@ -371,24 +408,62 @@ async def run_training(
     shuffle_seed: int = 42,
     skip_gepa: bool = False,
     gepa_max_trajectories: int = 10,
+    deployment_budget: int = 8000,
+    resume_training: bool = False,
 ) -> tuple[ExperienceLibrary, list[dict], list[dict], FailureBuffer]:
     """Run HERA TF-GRPO online: update library after each same-query group."""
     import random
     results_path = output_dir / "training_results.jsonl"
-    if results_path.exists():
+    progress = load_training_progress(output_dir) if resume_training else {}
+    resume_epoch = int(progress.get("epoch") or 1)
+    resume_learning_step = int(progress.get("learning_step") or 0)
+    resume_questions_seen = int(progress.get("questions_seen") or 0)
+    if results_path.exists() and not resume_training:
         results_path.unlink()
     all_rows: list[dict] = []
+    if resume_training and results_path.exists():
+        existing_rows = load_jsonl(results_path)
+        if resume_learning_step > 0:
+            all_rows = [
+                row for row in existing_rows
+                if int(row.get("learning_step") or 0) <= resume_learning_step
+            ]
+            if len(all_rows) != len(existing_rows):
+                backup_path = results_path.with_suffix(
+                    results_path.suffix + f".pre_resume_{int(time.time())}.bak"
+                )
+                shutil.copy2(results_path, backup_path)
+                rewrite_jsonl(results_path, all_rows)
+                log.info(
+                    "resume: backed up %s and truncated results from %d to %d rows using progress step %d",
+                    backup_path, len(existing_rows), len(all_rows), resume_learning_step,
+                )
+        else:
+            all_rows = existing_rows
     failed_trajectories: list[dict] = []
     failure_buffer = FailureBuffer()
     evolved_prompts: dict[str, str] = {}
-    learning_step = 0
+    learning_step = resume_learning_step if resume_training else 0
+    for row in all_rows:
+        if row.get("em", 0) < 0.5 and row.get("f1", 0) < 0.5 and row.get("contain", 0.0) < 0.5 and row.get("result"):
+            failed = failed_trajectory_from_row(row)
+            failed_trajectories.append(failed)
+            failure_buffer.add(failed)
+    start_epoch = max(1, resume_epoch) if resume_training and resume_learning_step > 0 else 1
+    if resume_training:
+        log.info(
+            "resume: start_epoch=%d learning_step=%d questions_seen=%d loaded_rows=%d loaded_failures=%d library=%d",
+            start_epoch, learning_step, resume_questions_seen, len(all_rows), len(failed_trajectories), library.size(),
+        )
     log.info(
-        "online HERA mode: forced two-strategy groups; K=%d concurrent rollouts; requested outer concurrency=%d",
+        "online HERA mode: semantic pi_O group sampling; K=%d concurrent rollouts; requested outer concurrency=%d",
         K, concurrency,
     )
 
-    for epoch in range(1, epochs + 1):
-        epoch_rows: list[dict] = []
+    for epoch in range(start_epoch, epochs + 1):
+        epoch_rows: list[dict] = [
+            row for row in all_rows if int(row.get("epoch") or 0) == epoch
+        ] if resume_training else []
         epoch_insight_count = 0
         epoch_start_size = library.size()
 
@@ -403,6 +478,8 @@ async def run_training(
             epoch_items = train_data
 
         for idx, item in enumerate(epoch_items, start=1):
+            if resume_training and epoch == start_epoch and idx <= resume_questions_seen:
+                continue
             learning_step += 1
             log.info("epoch %d step %d question %d/%d %s", epoch, learning_step, idx, len(train_data), item["id"])
 
@@ -417,8 +494,8 @@ async def run_training(
                 library=library,
                 dataset=item.get("dataset", "default"),
                 reward_alpha=reward_alpha,
-                deployment_budget=None,
-                forced_diversity=True,
+                deployment_budget=deployment_budget,
+                forced_diversity=False,
             )
             rows = [rollout_to_row(item["dataset"], epoch, rollout) for rollout in group.rollouts]
             topology_signatures = [tuple((row.get("sampled_topology") or {}).get("_topology_signature", [])) for row in rows]
@@ -461,6 +538,7 @@ async def run_training(
                 "questions_seen": idx,
                 "total_questions": len(train_data),
                 "library_size": library.size(),
+                "deployment_budget": deployment_budget,
                 "unique_topology_signatures": unique_topology_signatures,
                 "duplicate_topology_retries": duplicate_retries,
                 "duplicate_retry_changed": duplicate_retry_changed,
@@ -663,9 +741,17 @@ def main() -> None:
 
     retriever = Retriever(base_url=args.retriever_url)
     reflection_lm_temp = 0.7 if "mini" in (args.reflection_model or "").lower() else 1.0
-    reflection_lm = dspy.LM(model=args.reflection_model, max_tokens=16000, temperature=reflection_lm_temp)
-    log.info("reflection model: %s (temp=%.1f)", args.reflection_model, reflection_lm_temp)
-    library = ExperienceLibrary()
+    reflection_max_tokens = int(args.reflection_max_tokens)
+    if "gpt-5" in (args.reflection_model or "").lower():
+        reflection_max_tokens = max(16000, reflection_max_tokens)
+    reflection_lm = dspy.LM(model=args.reflection_model, max_tokens=reflection_max_tokens, temperature=reflection_lm_temp)
+    log.info("reflection model: %s (temp=%.1f, max_tokens=%d)", args.reflection_model, reflection_lm_temp, reflection_max_tokens)
+    live_library_path = output_dir / "experience_library_live.json"
+    if args.resume_training and live_library_path.exists():
+        library = ExperienceLibrary.load(live_library_path)
+        log.info("loaded live experience library for resume: %s entries=%d", live_library_path, library.size())
+    else:
+        library = ExperienceLibrary()
 
     library, training_rows, failed_trajectories, failure_buffer = asyncio.run(
         run_training(
@@ -683,6 +769,8 @@ def main() -> None:
             shuffle_seed=args.shuffle_seed,
             skip_gepa=args.skip_gepa,
             gepa_max_trajectories=args.gepa_max_trajectories,
+            deployment_budget=args.deployment_budget,
+            resume_training=args.resume_training,
         )
     )
 

@@ -1,0 +1,33 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-17 01:16:24,911 INFO __main__: using stratified pool: 150 examples from /local/yzheng/pnair/workspace/adaptive-mas/data/train_stratified.jsonl
+2026-05-17 01:16:24,911 INFO __main__: loaded 150 training questions
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: pradyut-nair (msc-thesis-pradyut) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in compiled/full_train_v3/wandb/wandb/run-20260517_011625-srhv1hdy
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hera-v3-semantic-pio-fastreflect-gepa-cap6k
+wandb: ⭐️ View project at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: 🚀 View run at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/srhv1hdy
+wandb: Detected [dspy, litellm, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+2026-05-17 01:16:27,354 INFO __main__: wandb run initialized: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/srhv1hdy
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 765, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 675, in main
+    reflection_lm = dspy.LM(model=args.reflection_model, max_tokens=args.reflection_max_tokens, temperature=reflection_lm_temp)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 101, in __init__
+    raise ValueError(
+ValueError: OpenAI's reasoning models require passing temperature=1.0 or None and max_tokens >= 16000 or None to `dspy.LM(...)`, e.g., dspy.LM('openai/gpt-5', temperature=1.0, max_tokens=16000)
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 765, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 675, in main
+    reflection_lm = dspy.LM(model=args.reflection_model, max_tokens=args.reflection_max_tokens, temperature=reflection_lm_temp)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 101, in __init__
+    raise ValueError(
+ValueError: OpenAI's reasoning models require passing temperature=1.0 or None and max_tokens >= 16000 or None to `dspy.LM(...)`, e.g., dspy.LM('openai/gpt-5', temperature=1.0, max_tokens=16000)
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mhera-v3-semantic-pio-fastreflect-gepa-cap6k[0m at: [34mhttps://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/srhv1hdy[0m

@@ -23,20 +23,29 @@ logger = logging.getLogger(__name__)
 
 
 def summarize_rollout(r: Rollout, reflection_lm: dspy.LM) -> str:
-    """TF-GRPO per-rollout summarization before group advantage extraction."""
-    prompt = TRAJECTORY_SUMMARY_PROMPT.format(
-        question=r.question,
-        gold_answer=r.gold_answer,
-        em=r.em,
-        f1=r.f1,
-        contain=r.contain,
-        tokens=r.total_tokens,
-        trajectory=format_rollout_for_reflection(r),
-    )
-    with dspy.context(lm=reflection_lm):
-        response = reflection_lm(prompt)
-    text = response[0] if isinstance(response, list) else str(response)
-    return text.strip()
+    """Compact deterministic rollout summary for group-level GPT-5 reflection.
+
+    Earlier versions used GPT-5 once per rollout and then again for the group.
+    That is semantically redundant and can hang training. HERA needs the
+    reflection model for comparative semantic advantage extraction; a faithful
+    structured trajectory summary is enough input for that single group call.
+    """
+    del reflection_lm
+    topo = r.sampled_topology or {}
+    res = r.result if isinstance(r.result, dict) else {}
+    answer = (r.predicted_answer or "").strip()
+    findings = r.findings or []
+    finding_text = "; ".join(str(x)[:140] for x in findings[:4]) if findings else "(none)"
+    return "\n".join([
+        f"Policy/topology: strategy={topo.get('routing_strategy')}, retrieval_budget={topo.get('retrieval_budget')}, repair={topo.get('repair')}",
+        f"Sampler rationale: {str(topo.get('rationale', ''))[:220]}",
+        f"Experience IDs used: {topo.get('_experience_entry_ids', [])}",
+        f"Executor topology: {r.topology}; plan_subgoals={r.plan_subgoals}",
+        f"Per-agent tokens: sas={res.get('sas_attempt_tokens', 0)}, planner={res.get('planner_tokens', 0)}, solver={res.get('solver_tokens', 0)}, synth={res.get('synth_tokens', 0)}",
+        f"Budget exit: {res.get('budget_exit', False)} at {res.get('budget_exit_stage', '')}",
+        f"Answer: {answer[:120] or '(blank)'}",
+        f"Findings: {finding_text}",
+    ])
 
 
 def format_library_for_reflection(

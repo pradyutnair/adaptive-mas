@@ -18,6 +18,7 @@ from .rollout import GroupResult, Rollout
 from .topology import (
     config_from_topology,
     sample_topology,
+    semantic_counterfactual_topology,
     topology_mutations,
     topology_signature,
 )
@@ -113,7 +114,7 @@ async def run_group_rollouts(
     dataset: str = "default",
     reward_alpha: float = 0.7,
     deployment_budget: int | None = None,
-    forced_diversity: bool = True,
+    forced_diversity: bool = False,
 ) -> GroupResult:
     """Run K same-query rollouts, score with dual reward, rank by task then efficiency.
 
@@ -149,65 +150,89 @@ async def run_group_rollouts(
             deployment_budget=deployment_budget,
         )
 
-    async def sample_one_topology(idx: int, temp: float, prior_samples: list[dict[str, Any]]) -> dict[str, Any]:
-        sampler_lm = make_qwen14b_nothink_lm(replica_idx=idx, max_tokens=900, temperature=max(0.2, temp))
+    def sampling_directive(
+        idx: int,
+        prior_samples: list[dict[str, Any]],
+        retry: bool = False,
+        attempt: int = 0,
+    ) -> str:
+        prior_text = "; ".join(
+            f"{topology_signature(t)}: {str(t.get('rationale', ''))[:90]}"
+            for t in prior_samples[-3:]
+        ) or "none"
+        if retry and prior_samples:
+            return (
+                f"Duplicate repair attempt {attempt}. Existing signatures and rationales: {prior_text}. "
+                "Sample the nearest credible semantic counterfactual for this same query: "
+                "a cheaper route if the first sample over-allocates effort, or a more decomposed route if the first sample risks missing a bridge. "
+                "Do not copy any existing (routing_strategy, retrieval_budget, repair) signature."
+            )
+        if not prior_samples:
+            return (
+                "Exploit: sample the topology you judge best for this query using the retrieved experiences and token budget."
+            )
+        return (
+            f"Explore a semantic counterfactual to the existing samples: {prior_text}. "
+            "Keep it grounded in the query and experiences. Vary route or retrieval budget only to test a real uncertainty about effort, "
+            "evidence sufficiency, or decomposition depth."
+        )
+
+    async def sample_one_topology(
+        idx: int,
+        temp: float,
+        prior_samples: list[dict[str, Any]],
+        retry: bool = False,
+        attempt: int = 0,
+    ) -> dict[str, Any]:
+        sampler_lm = make_qwen14b_nothink_lm(
+            replica_idx=idx,
+            max_tokens=900,
+            temperature=min(1.2, max(0.2, temp + 0.12 * attempt)),
+        )
         return await asyncio.to_thread(
             sample_topology,
             question=question, qid=qid, library=library,
             sampler_lm=sampler_lm, dataset=dataset,
             avoid_topologies=prior_samples,
             deployment_budget=deployment_budget,
+            sampling_directive=sampling_directive(idx, prior_samples, retry=retry, attempt=attempt),
         )
 
     sampled_topologies: list[dict[str, Any]] = []
     seen_signatures: set[tuple] = set()
-    forced_templates: list[tuple[str, int]] = [
-        ("sas_first", 2),
-        ("direct_mas", 2),
-    ]
-    query_profile = characterize_query_profile(question, dataset, qid=qid)
     for idx, temp in enumerate(temperatures):
-        if forced_diversity and idx < len(forced_templates):
-            strategy, budget = forced_templates[idx]
-            sampled = {
-                "query_profile": f"forced_diversity_{strategy}:{query_profile}",
-                "routing_strategy": strategy,
-                "retrieval_budget": budget,
-                "repair": False,
-                "rationale": "Forced structural exploration for TF-GRPO routing contrast.",
-                "_sampler_tokens": 0,
-                "_query_profile": query_profile,
-                "_experience_entry_ids": [],
-                "_deployment_budget": deployment_budget if deployment_budget is not None else 0,
-                "_forced_diversity": True,
-            }
-        else:
-            sampled = await sample_one_topology(idx, temp, sampled_topologies)
+        sampled = await sample_one_topology(idx, temp, sampled_topologies)
+        sampled["_forced_diversity"] = False
         sig = topology_signature(sampled)
         sampled["_topology_signature"] = list(sig)
         sampled["_duplicate_retry"] = False
         sampled["_duplicate_retry_changed"] = False
-        if sig in seen_signatures and not sampled.get("_forced_diversity"):
+        sampled["_duplicate_retry_count"] = 0
+        if sig in seen_signatures:
             sampled["_duplicate_retry"] = True
-            sampler_lm = make_qwen14b_nothink_lm(
-                replica_idx=idx, max_tokens=900, temperature=min(1.15, max(0.45, temp + 0.25))
-            )
-            sampled_retry = await asyncio.to_thread(
-                sample_topology,
-                question=question, qid=qid, library=library,
-                sampler_lm=sampler_lm, dataset=dataset,
-                avoid_topologies=sampled_topologies,
-                deployment_budget=deployment_budget,
-            )
-            retry_sig = topology_signature(sampled_retry)
-            if retry_sig != sig:
-                sampled = sampled_retry
-                sig = retry_sig
-                sampled["_duplicate_retry"] = True
-                sampled["_duplicate_retry_changed"] = True
-            else:
-                sampled["_duplicate_retry"] = True
-                sampled["_duplicate_retry_changed"] = False
+            original_sig = sig
+            retry_count = 0
+            for attempt in range(1, 4):
+                retry_count = attempt
+                sampled_retry = await sample_one_topology(
+                    idx, temp, sampled_topologies, retry=True, attempt=attempt,
+                )
+                retry_sig = topology_signature(sampled_retry)
+                if retry_sig not in seen_signatures:
+                    sampled = sampled_retry
+                    sig = retry_sig
+                    break
+            if sig in seen_signatures:
+                directive = sampling_directive(idx, sampled_topologies, retry=True, attempt=4)
+                sampled = semantic_counterfactual_topology(
+                    sampled, sampled_topologies, question,
+                    dataset=dataset, deployment_budget=deployment_budget,
+                    sampling_directive=directive,
+                )
+                sig = topology_signature(sampled)
+            sampled["_duplicate_retry"] = True
+            sampled["_duplicate_retry_count"] = retry_count
+            sampled["_duplicate_retry_changed"] = sig != original_sig
             sampled["_topology_signature"] = list(sig)
         sampled_topologies.append(sampled)
         seen_signatures.add(sig)

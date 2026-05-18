@@ -651,6 +651,7 @@ def run_gepa_epoch(
 ) -> dict:
     """Run one GEPA epoch with quality gates and token constraints."""
     import asyncio
+    import threading
 
     if failure_buffer is None:
         failure_buffer = FailureBuffer()
@@ -677,6 +678,24 @@ def run_gepa_epoch(
         variant_results = []
         replay_cap = max(1, int(os.environ.get("AMAS_GEPA_REPLAY_PER_VARIANT", "5")))
 
+        def run_replay_sync(variant_pipeline, question: str, qid: str):
+            """Run async replay from GEPA even when training already owns an event loop."""
+            result_box = []
+            error_box = []
+
+            def target() -> None:
+                try:
+                    result_box.append(asyncio.run(variant_pipeline.run(question, qid)))
+                except Exception as exc:
+                    error_box.append(exc)
+
+            thread = threading.Thread(target=target, daemon=True)
+            thread.start()
+            thread.join()
+            if error_box:
+                raise error_box[0]
+            return result_box[0]
+
         def evaluate_prompt(prompt: str, axis: str) -> dict:
             em_scores = []
             f1_scores = []
@@ -688,9 +707,8 @@ def run_gepa_epoch(
                 question = traj["question"]
                 qid = traj.get("qid", "")
                 gold = traj["gold_answer"]
-                loop = asyncio.new_event_loop()
                 try:
-                    re_result = loop.run_until_complete(variant_pipeline.run(question, qid))
+                    re_result = run_replay_sync(variant_pipeline, question, qid)
                 except Exception as exc:
                     logger.warning("GEPA replay failed for %s/%s: %s", role, axis, exc)
                     em_scores.append(0)
@@ -698,8 +716,6 @@ def run_gepa_epoch(
                     contain_scores.append(0.0)
                     token_counts.append(20000)
                     continue
-                finally:
-                    loop.close()
                 em_scores.append(int(normalize_answer(re_result.answer) == normalize_answer(gold)))
                 f1_scores.append(compute_f1(re_result.answer, gold))
                 contain_scores.append(compute_contain(re_result.answer, gold))

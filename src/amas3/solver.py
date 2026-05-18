@@ -135,7 +135,7 @@ def _parse_extraction(raw: str) -> dict[str, Any]:
         return {}
 
 
-def _format_chunks(chunks: list[RetrievedChunk], excerpt_chars: int = 700) -> str:
+def _format_chunks(chunks: list[RetrievedChunk], excerpt_chars: int = 420) -> str:
     return json.dumps([
         {'chunk_id': c.chunk_id, 'text': c.text[:excerpt_chars]}
         for c in chunks
@@ -191,6 +191,7 @@ async def run_solver(
     experience: str = "",
     refine_threshold: float = 0.7,
     enable_refine: bool = True,
+    token_budget: int | None = None,
 ) -> SolverResult:
     rewrite_lm = rewrite_lm or solver_lm
     extract_sig = ExtractAnswerSpan
@@ -272,9 +273,15 @@ async def run_solver(
             # path. Do not spend a second retrieval just to chase confidence.
             f.rewrites_used = 0
             return SolverResult(f, chunks_used, queries_issued, extraction_tokens, rewrite_tokens)
+        if token_budget is not None and extraction_tokens + rewrite_tokens >= token_budget:
+            f.rewrites_used = 0
+            return SolverResult(f, chunks_used, queries_issued, extraction_tokens, rewrite_tokens)
 
     fresh_query = sub_question
-    for attempt in range(max_retrievals):
+    remaining_retrievals = max_retrievals - 1 if starting_chunks else max_retrievals
+    for attempt in range(max(0, remaining_retrievals)):
+        if token_budget is not None and extraction_tokens + rewrite_tokens >= token_budget:
+            break
         if attempt > 0:
             with dspy.context(lm=rewrite_lm):
                 rmod = dspy.Predict(rewrite_sig)
@@ -319,6 +326,7 @@ async def run_solver(
     # Solver-recursion: RecursiveMAS-style same-agent refinement on low-conf answers
     if (
         enable_refine
+        and (token_budget is None or extraction_tokens + rewrite_tokens < token_budget)
         and best_finding.answer
         and best_finding.confidence < refine_threshold
         and chunks_used

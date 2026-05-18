@@ -33,6 +33,7 @@ fi
 
 nohup env CUDA_VISIBLE_DEVICES="$GPU_ID" "$VENV_PY" -m vllm.entrypoints.openai.api_server \
   --model Qwen/Qwen3-8B \
+  --served-model-name Qwen/Qwen3-14B \
   --port "$PORT" \
   --max-model-len 32768 \
   --gpu-memory-utilization 0.90 \

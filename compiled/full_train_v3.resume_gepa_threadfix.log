@@ -1,0 +1,1981 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-17 11:07:38,654 INFO __main__: using stratified pool: 150 examples from /local/yzheng/pnair/workspace/adaptive-mas/data/train_stratified.jsonl
+2026-05-17 11:07:38,654 INFO __main__: loaded 150 training questions
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: pradyut-nair (msc-thesis-pradyut) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in compiled/full_train_v3/wandb/wandb/run-20260517_110740-yryanu9x
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hera-v3-samplerfix-gepa-threadfix
+wandb: ⭐️ View project at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: 🚀 View run at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/yryanu9x
+wandb: Detected [dspy, litellm, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+2026-05-17 11:07:41,522 INFO __main__: wandb run initialized: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/yryanu9x
+2026-05-17 11:07:41,523 INFO __main__: reflection model: openai/gpt-5 (temp=1.0, max_tokens=16000)
+2026-05-17 11:07:41,533 INFO __main__: loaded live experience library for resume: compiled/full_train_v3/experience_library_live.json entries=40
+2026-05-17 11:07:41,572 INFO __main__: resume: start_epoch=1 learning_step=150 questions_seen=150 loaded_rows=307 loaded_failures=210 library=40
+2026-05-17 11:07:41,572 INFO __main__: online HERA mode: semantic pi_O group sampling; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-17 11:07:43,419 INFO __main__: epoch 1 complete, library=40, rows=307, avg_tokens=6087, avg_reward=0.022
+2026-05-17 11:07:43,420 INFO __main__: inter-epoch GEPA: evolving prompts from 210 failures
+2026-05-17 11:07:43,420 INFO amas3.grpo.gepa: GEPA: evolving planner (failures: ['bad_decomposition'], trajs: 10)
+2026/05/17 11:13:15 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 11:13:15 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 11:14:33 INFO dspy.evaluate.evaluate: Average Metric: 2.55 / 3 (85.0%)
+2026/05/17 11:14:33 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.85 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [01:18<01:18, 26.27s/rollouts]2026/05/17 11:14:33 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.85
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/1 [00:27<?, ?it/s]Average Metric: 1.00 / 1 (100.0%): 100%|██████████| 1/1 [00:27<00:00, 27.53s/it]Average Metric: 1.00 / 1 (100.0%): 100%|██████████| 1/1 [00:27<00:00, 27.53s/it]2026/05/17 11:15:01 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 1: All subsample scores perfect. Skipping.
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Reflective mutation did not propose a new candidate
+GEPA Optimization:  67%|██████▋   | 4/6 [01:46<00:53, 26.67s/rollouts]2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Selected program 0 score: 0.85
+
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%): 100%|██████████| 1/1 [00:00<00:00, 166.71it/s]2026/05/17 11:15:01 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 2: All subsample scores perfect. Skipping.
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Reflective mutation did not propose a new candidate
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Selected program 0 score: 0.85
+
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%):   0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 1.00 / 1 (100.0%): 100%|██████████| 1/1 [00:00<00:00, 161.01it/s]2026/05/17 11:15:01 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 3: All subsample scores perfect. Skipping.
+2026/05/17 11:15:01 INFO dspy.teleprompt.gepa.gepa: Iteration 3: Reflective mutation did not propose a new candidate
+GEPA Optimization:  83%|████████▎ | 5/6 [01:46<00:21, 21.27s/rollouts]
+2026-05-17 11:15:01,391 INFO amas3.grpo.gepa: GEPA: rejecting planner update; best variant reward 0.322 did not beat baseline 0.324
+2026-05-17 11:15:01,391 INFO amas3.grpo.gepa: GEPA: evolved planner (181 chars, 0 rules, 0 principles)
+2026-05-17 11:15:01,392 INFO amas3.grpo.gepa: GEPA: evolving solver (failures: ['hallucination', 'wrong_extraction', 'low_confidence'], trajs: 10)
+2026/05/17 11:24:38 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 11:24:38 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 11:25:17 INFO dspy.evaluate.evaluate: Average Metric: 1.35 / 3 (45.0%)
+2026/05/17 11:25:17 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.45 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [00:39<00:39, 13.06s/rollouts]2026/05/17 11:25:17 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.45
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.45 / 1 (45.0%):   0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.45 / 1 (45.0%): 100%|██████████| 1/1 [00:00<00:00, 163.36it/s]2026/05/17 11:25:17 INFO dspy.evaluate.evaluate: Average Metric: 0.45 / 1 (45.0%)
+2026/05/17 11:25:49 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: Task: Integrate role-specific GEPA feedback into a single, concise agent prompt.
+
+Inputs:
+- agent_role: string (e.g., "solver")
+- current_prompt: base instructions to preserve and refine
+- rules_json: list of rule objects {rule, derived_from}
+- principles_json: list of principle objects {principle, derived_from}
+- failure_context: {question, gold, bad_answer, topology} for targeted guardrails
+- max_chars: hard character limit for the final prompt
+
+Output:
+- A single actionable prompt that:
+  - Explicitly preserves and mentions the agent role.
+  - Incorporates all applicable rules and principles.
+  - Targets the observed failure using failure_context.
+  - Fits within max_chars.
+  - Avoids any answer-discouraging language (e.g., “return empty,” “if unsupported,” “abstain,” “N/A,” “cannot answer”).
+
+Method:
+1) Preserve intent from current_prompt. Rewrite for clarity and actionability; keep the task scope unchanged.
+2) Start the prompt by naming the role and task (e.g., “Role: solver — …” or “As the solver, …”).
+3) Merge rules_json and principles_json into concrete, testable directives. Prefer short, imperative phrases over meta-explanations; remove provenance (“derived_from”) references.
+4) Use failure_context to add precise guardrails that prevent the observed error without discouraging answers.
+   - Example from provided failure: The question asks “When is the performer of song ‘Throw It Back’‘s birthday?” and the bad answer was a date for the wrong person. Add entity anchoring and disambiguation:
+     - Select a single evidence sentence that explicitly names the target entity matching the question constraints (performer/artist of “Throw It Back”).
+     - Ignore dates for other entities or homonymous songs.
+   - When-questions: prefer the most specific date pattern in the sentence (e.g., “July 1, 1971”); for birthdays prefer “born <date>”.
+5) Retain high-precision minimality:
+   - Copy an exact 1–6 word span from one evidence sentence.
+   - No cross-sentence synthesis.
+   - Scan sentences in order; stop at the first sentence that matches the expected answer type.
+   - Output only the span; no reasoning or extra tokens.
+6) Do NOT include any instructions that invite non-answers or abstention. Replace “return empty” logic with positive selection rules and early-stop criteria.
+7) Keep the prompt compact. If nearing max_chars, prioritize:
+   - Role mention
+   - Span length and verbatim, single-sentence constraint
+   - Output-only requirement
+   - Date specificity for When/birthday questions
+   - Entity anchoring/disambiguation tied to the question
+   - Early stop and no cross-sentence synthesis
+   Trim examples first if needed.
+8) Style: one tight paragraph or brief bullets; no headings, no meta-commentary, no references to inputs or JSON.
+
+Deliverable:
+- Output only the updated agent prompt, within the character limit, preserving the role and avoiding answer-discouraging language.
+2026/05/17 11:26:15 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 11:26:15 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1.0 is better than old score 0.45. Continue to full eval and add to candidate pool.
+2026/05/17 11:26:44 INFO dspy.evaluate.evaluate: Average Metric: 2.69 / 3 (89.7%)
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Found a better program on the valset with score 0.8966666666666666.
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.8966666666666666 (coverage 3 / 3)
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.8966666666666666
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 1.0, 1: 0.845, 2: 0.845}
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 1.0, 1: 0.845, 2: 0.845}
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.8966666666666666
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {1}}
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.8966666666666666
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 1
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.8966666666666666
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 1
+2026/05/17 11:26:44 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [02:05<02:05, 41.82s/rollouts]
+2026-05-17 11:26:49,472 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-17 11:26:49,699 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.85it/s]
+2026-05-17 11:26:51,908 INFO amas3.grpo.gepa: GEPA: evolved solver (757 chars, 3 rules, 2 principles)
+2026-05-17 11:26:51,909 INFO amas3.grpo.gepa: GEPA: evolving synth (failures: ['wrong_extraction', 'bridge_confusion'], trajs: 10)
+2026/05/17 11:32:43 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 11:32:43 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 11:33:52 INFO dspy.evaluate.evaluate: Average Metric: 2.7 / 3 (90.0%)
+2026/05/17 11:33:52 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.9 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [01:08<01:08, 22.83s/rollouts]2026/05/17 11:33:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.9
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%):   0%|          | 0/1 [00:19<?, ?it/s]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:19<00:00, 19.36s/it]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:19<00:00, 19.36s/it]2026/05/17 11:34:11 INFO dspy.evaluate.evaluate: Average Metric: 0.85 / 1 (85.0%)
+2026/05/17 11:34:43 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: Your task: Merge role-specific GEPA feedback into a single, concise, actionable agent prompt.
+
+Inputs you receive
+- agent_role: the agent’s role label (e.g., "synth"). You must explicitly preserve/mention it in the final prompt.
+- current_prompt: the agent’s present instructions. Keep any correct, actionable parts unless contradicted by rules.
+- rules_json: non-negotiable, operational constraints. Convert to crisp imperatives.
+- principles_json: tie-breaker heuristics and priorities. Integrate as brief preferences.
+- failure_context: a concrete miss (question, gold, bad_answer, topology). Add 1–2 short, role-relevant guardrails that directly address the observed failure pattern.
+- max_chars: strict character cap for the final prompt string.
+
+Output requirements
+- Return only the revised prompt as a single plain-text string, no headings, no commentary.
+- Begin by explicitly anchoring the role (e.g., "Role: synth — ..." or "As synth, ...").
+- Make it operational and executable: imperative verbs, concrete constraints, clear output format.
+- Stay under max_chars. If space is tight, prefer: role mention > hard rules > output format > critical failure guardrail > principles.
+- Do not add answer-discouraging language (e.g., refuse/abstain/ask for clarification). Do not add meta-process notes or examples.
+
+How to integrate GEPA
+1) Preserve role: echo agent_role verbatim in the prompt’s first clause.
+2) Start from current_prompt: keep actionable directives that align with rules_json.
+3) Inject rules_json as compact imperatives. Treat these as hard constraints.
+   - For the synth QA role in the example domain, preserve domain terms: final evidence, bridges, hops, wh-target, span length.
+   - Key constraints to retain when present: 
+     • Answer only from final supporting evidence; never output bridge/intermediate entities.
+     • Stop when the wh-type is satisfied; cap retrieval to 2 hops.
+     • Return the shortest exact span (1–6 words) from the evidence.
+4) Fold principles_json as brief priorities, not hard gates:
+   - Prioritize verbatim containment from support.
+   - Minimize tokens: fewer hops, no explanations, shortest outputs.
+5) Add failure-context guardrails that directly fix the observed miss without discouraging answers:
+   - Enforce wh-type alignment: Who→person, Where→place, When→date, etc.
+   - If the failure shows a pattern (e.g., “first leader” confusion), add a concise clause, e.g.:
+     • For “first leader” queries, return the person identified in evidence as the country’s first leader.
+   - Prefer evidence-grounded entity resolution to avoid bridge leakage (ensure the country/entity is derived from support before answering).
+6) End with a strict output-format reminder (e.g., “Output only the span—no extras.”).
+
+Style and compression
+- Use dense, imperative phrasing; remove redundancy and derivations.
+- Keep domain vocabulary consistent (final evidence, bridges, hops, wh-target, containment).
+- No bulleting or section headers in the final output—just a compact paragraph or two short sentences.
+
+Validation checklist before returning
+- Role mentioned explicitly at the start.
+- All critical hard constraints included.
+- Failure-specific fix included succinctly.
+- Output-only span format retained.
+- No answer-discouraging instructions.
+- Under max_chars.
+2026/05/17 11:35:00 INFO dspy.evaluate.evaluate: Average Metric: 0.9 / 1 (90.0%)
+2026/05/17 11:35:00 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 0.9 is better than old score 0.85. Continue to full eval and add to candidate pool.
+2026/05/17 11:35:47 INFO dspy.evaluate.evaluate: Average Metric: 2.7 / 3 (90.0%)
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.9 (coverage 3 / 3)
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.9
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 0.9, 1: 0.9, 2: 0.9}
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 0.9, 1: 0.9, 2: 1.0}
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.9333333333333332
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {0}}
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.9
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 0
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.9
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 0
+2026/05/17 11:35:47 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [03:04<03:04, 61.44s/rollouts]
+2026-05-17 11:35:47,938 INFO amas3.grpo.gepa: GEPA: rejecting synth update; best variant reward -0.163 did not beat baseline -0.165
+2026-05-17 11:35:47,939 INFO amas3.grpo.gepa: GEPA: evolved synth (141 chars, 0 rules, 0 principles)
+2026-05-17 11:35:47,939 INFO amas3.grpo.gepa: GEPA: evolving sas_solver (failures: ['premature_answer'], trajs: 10)
+2026/05/17 11:44:56 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 11:44:56 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 11:45:54 INFO dspy.evaluate.evaluate: Average Metric: 2.8499999999999996 / 3 (95.0%)
+2026/05/17 11:45:54 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.9499999999999998 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [00:57<00:57, 19.22s/rollouts]2026/05/17 11:45:54 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.9499999999999998
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.95 / 1 (95.0%):   0%|          | 0/1 [00:19<?, ?it/s]Average Metric: 0.95 / 1 (95.0%): 100%|██████████| 1/1 [00:19<00:00, 19.19s/it]Average Metric: 0.95 / 1 (95.0%): 100%|██████████| 1/1 [00:19<00:00, 19.19s/it]2026/05/17 11:46:13 INFO dspy.evaluate.evaluate: Average Metric: 0.95 / 1 (95.0%)
+2026/05/17 11:46:48 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: You are updating an agent’s prompt by integrating role-specific GEPA feedback. Produce a single, actionable prompt for the agent that fits within max_chars.
+
+Inputs you will receive:
+- agent_role: the agent’s role (e.g., sas_solver). Must be preserved and stated in the output prompt.
+- current_prompt: the agent’s current mission. Keep its core objective.
+- rules_json and principles_json: operational heuristics and priorities to be merged into the prompt.
+- failure_context: recent miss (question, gold, bad_answer, topology). Use it to add precise corrective guidance.
+- max_chars: hard character limit for the final prompt.
+
+Output requirements:
+- Start by naming the role explicitly (e.g., “sas_solver — …” or “sas_solver:”); keep the role unchanged.
+- Keep the prompt imperative, concise, and directly actionable. No meta-commentary, no references to JSON, no process notes.
+- Integrate rules/principles as compact instructions, deduplicated and prioritized. Prefer domain terms already used (e.g., explicit-match gating, type-locked, verbatim span, proximity-to-subject).
+- Use failure_context to add targeted fixes inferred from gold vs bad_answer:
+  - If the miss shows normalization vs surface-form (e.g., gold “American” vs bad “United States”), instruct “return the exact surface span; no normalization; prefer demonyms if that is what appears.”
+  - If the miss is length/verbosity, reinforce “return the shortest valid noun/number/date; drop clauses.”
+  - If the miss is wrong referent, emphasize “choose the span nearest the subject mention.”
+  - If the miss is answer-type mismatch, reinforce “match the question’s wh-target type; else use the best type-locked fallback.”
+- Preserve key sas_solver behaviors when applicable: single-pass extraction from evidence; gate on explicit matches before other heuristics; output a minimal verbatim span; do not invent.
+- Do not add answer-discouraging instructions (e.g., don’t say to refuse, hedge, or ask for clarification).
+- Fit strictly under max_chars. Compress wording; remove filler; keep 3–6 short sentences max.
+- Output only the final updated prompt text.
+
+Merging guidance:
+- Start from current_prompt’s core goal.
+- Layer in high-priority rules (explicit-match gating, type-locked fallback, proximity-to-subject, shortest valid span).
+- Add failure-derived corrective phrasing (e.g., “without normalization; prefer demonyms if present”).
+- Ensure the prompt mentions the role and remains executable in one pass.
+
+Validation before returning:
+- Role is present and unchanged.
+- No meta/process content.
+- Actionable, terse, and under the character limit.
+- No answer-discouraging language.
+2026/05/17 11:46:58 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 11:46:58 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1.0 is better than old score 0.95. Continue to full eval and add to candidate pool.
+2026/05/17 11:47:52 INFO dspy.evaluate.evaluate: Average Metric: 2.7 / 3 (90.0%)
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.9 (coverage 3 / 3)
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.9
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 0.9, 1: 0.9, 2: 0.9}
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 0.95, 1: 0.95, 2: 0.95}
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.9499999999999998
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {0}, 1: {0}, 2: {0}}
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.9499999999999998
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 0
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.9499999999999998
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 0
+2026/05/17 11:47:52 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [02:55<02:55, 58.41s/rollouts]
+2026-05-17 11:47:52,081 INFO amas3.grpo.gepa: GEPA: rejecting sas_solver update; best variant reward 0.309 did not beat baseline 0.318
+2026-05-17 11:47:52,081 INFO amas3.grpo.gepa: GEPA: evolved sas_solver (138 chars, 0 rules, 0 principles)
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.00it/s]
+2026-05-17 11:47:52,231 INFO __main__: GEPA evolved prompts: {'planner': 181, 'solver': 757, 'synth': 141, 'sas_solver': 138}
+2026-05-17 11:47:52,233 INFO __main__: epoch 2 step 151 question 1/150 train_6935
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 49.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 46.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.14it/s]
+2026-05-17 11:49:41,759 INFO __main__: epoch 2 step 151 train_6935 rows=2 mixed=True insights=3 lib=40 avg_tok=6696 avg_reward=-0.306
+2026-05-17 11:49:41,759 INFO __main__: epoch 2 step 152 question 2/150 train_12278
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.40it/s]
+wandb: WARNING Tried to log to step 151 that is less than the current step 152. Steps must be monotonically increasing, so this data will be ignored. See https://wandb.me/define-metric to log data out of order.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.56it/s]
+2026-05-17 11:52:38,086 INFO __main__: epoch 2 step 152 train_12278 rows=2 mixed=True insights=3 lib=40 avg_tok=6862 avg_reward=-0.307
+2026-05-17 11:52:38,086 INFO __main__: epoch 2 step 153 question 3/150 train_5915
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.61it/s]
+2026-05-17 11:54:10,139 INFO __main__: epoch 2 step 153 train_5915 rows=2 mixed=True insights=3 lib=40 avg_tok=4626 avg_reward=0.882
+2026-05-17 11:54:10,139 INFO __main__: epoch 2 step 154 question 4/150 4hop1__81865_106790_466282_70752
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.88it/s]
+2026-05-17 11:56:05,875 INFO __main__: epoch 2 step 154 4hop1__81865_106790_466282_70752 rows=2 mixed=True insights=3 lib=40 avg_tok=6826 avg_reward=-0.095
+2026-05-17 11:56:05,875 INFO __main__: epoch 2 step 155 question 5/150 train_67148
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.55it/s]
+2026-05-17 11:58:05,445 INFO __main__: epoch 2 step 155 train_67148 rows=2 mixed=True insights=3 lib=40 avg_tok=4740 avg_reward=-0.028
+2026-05-17 11:58:05,446 INFO __main__: epoch 2 step 156 question 6/150 2hop__106465_159597
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.71it/s]
+2026-05-17 11:59:37,905 INFO __main__: epoch 2 step 156 2hop__106465_159597 rows=2 mixed=True insights=3 lib=40 avg_tok=6389 avg_reward=0.815
+2026-05-17 11:59:37,905 INFO __main__: epoch 2 step 157 question 7/150 train_67133
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.82it/s]
+2026-05-17 12:00:59,259 INFO amas3.grpo.library_update: Pre-pruned stale entry E070 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.94it/s]
+2026-05-17 12:01:37,986 INFO __main__: epoch 2 step 157 train_67133 rows=3 mixed=True insights=3 lib=39 avg_tok=5814 avg_reward=-0.282
+2026-05-17 12:01:37,986 INFO __main__: epoch 2 step 158 question 8/150 train_14166
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.36it/s]
+2026-05-17 12:03:13,972 INFO __main__: epoch 2 step 158 train_14166 rows=2 mixed=True insights=3 lib=39 avg_tok=6386 avg_reward=-0.303
+2026-05-17 12:03:13,973 INFO __main__: epoch 2 step 159 question 9/150 train_77472
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.47it/s]
+2026-05-17 12:04:41,722 INFO __main__: epoch 2 step 159 train_77472 rows=2 mixed=False insights=3 lib=40 avg_tok=3380 avg_reward=0.962
+2026-05-17 12:04:41,722 INFO __main__: epoch 2 step 160 question 10/150 train_3506
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.71it/s]
+2026-05-17 12:06:16,687 INFO __main__: epoch 2 step 160 train_3506 rows=2 mixed=True insights=3 lib=40 avg_tok=6428 avg_reward=-0.304
+2026-05-17 12:06:16,687 INFO __main__: epoch 2 step 161 question 11/150 2hop__784415_10366
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.42it/s]
+2026-05-17 12:07:54,746 INFO __main__: epoch 2 step 161 2hop__784415_10366 rows=2 mixed=True insights=2 lib=40 avg_tok=4632 avg_reward=0.776
+2026-05-17 12:07:54,746 INFO __main__: epoch 2 step 162 question 12/150 train_80502
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.11it/s]
+2026-05-17 12:09:30,525 INFO __main__: epoch 2 step 162 train_80502 rows=2 mixed=True insights=3 lib=40 avg_tok=5457 avg_reward=0.863
+2026-05-17 12:09:30,526 INFO __main__: epoch 2 step 163 question 13/150 train_6931
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.15it/s]
+2026-05-17 12:11:27,348 INFO __main__: epoch 2 step 163 train_6931 rows=3 mixed=True insights=3 lib=40 avg_tok=4212 avg_reward=-0.236
+2026-05-17 12:11:27,349 INFO __main__: epoch 2 step 164 question 14/150 3hop1__159715_157955_73761
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.86it/s]
+2026-05-17 12:13:06,073 INFO amas3.grpo.library_update: Pre-pruned stale entry E067 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.35it/s]
+2026-05-17 12:14:58,570 INFO __main__: epoch 2 step 164 3hop1__159715_157955_73761 rows=2 mixed=True insights=3 lib=39 avg_tok=7338 avg_reward=-0.311
+2026-05-17 12:14:58,571 INFO __main__: epoch 2 step 165 question 15/150 train_5912
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.48it/s]
+2026-05-17 12:17:06,767 INFO __main__: epoch 2 step 165 train_5912 rows=2 mixed=True insights=3 lib=40 avg_tok=6542 avg_reward=0.117
+2026-05-17 12:17:06,767 INFO __main__: epoch 2 step 166 question 16/150 train_77465
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.51it/s]
+2026-05-17 12:18:43,228 INFO __main__: epoch 2 step 166 train_77465 rows=2 mixed=True insights=3 lib=40 avg_tok=6851 avg_reward=-0.307
+2026-05-17 12:18:43,229 INFO __main__: epoch 2 step 167 question 17/150 train_12242
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.41it/s]
+2026-05-17 12:20:02,018 INFO __main__: epoch 2 step 167 train_12242 rows=2 mixed=True insights=3 lib=40 avg_tok=6683 avg_reward=0.783
+2026-05-17 12:20:02,019 INFO __main__: epoch 2 step 168 question 18/150 train_12214
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.49it/s]
+2026-05-17 12:20:57,413 INFO amas3.grpo.library_update: Pre-pruned stale entry E008 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.92it/s]
+2026-05-17 12:22:47,047 INFO __main__: epoch 2 step 168 train_12214 rows=2 mixed=True insights=3 lib=39 avg_tok=6626 avg_reward=-0.305
+2026-05-17 12:22:47,047 INFO __main__: epoch 2 step 169 question 19/150 train_6994
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.58it/s]
+2026-05-17 12:24:15,167 INFO __main__: epoch 2 step 169 train_6994 rows=2 mixed=True insights=3 lib=39 avg_tok=6660 avg_reward=0.562
+2026-05-17 12:24:15,167 INFO __main__: epoch 2 step 170 question 20/150 train_80536
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.40it/s]
+2026-05-17 12:26:11,029 INFO __main__: epoch 2 step 170 train_80536 rows=2 mixed=True insights=3 lib=39 avg_tok=6727 avg_reward=0.782
+2026-05-17 12:26:11,029 INFO __main__: epoch 2 step 171 question 21/150 2hop__18366_44352
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.61it/s]
+2026-05-17 12:26:59,080 INFO amas3.grpo.library_update: Pre-pruned stale entry E028 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.81it/s]
+2026-05-17 12:27:43,495 INFO __main__: epoch 2 step 171 2hop__18366_44352 rows=2 mixed=True insights=3 lib=38 avg_tok=6284 avg_reward=-0.302
+2026-05-17 12:27:43,495 INFO __main__: epoch 2 step 172 question 22/150 train_67132
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.59it/s]
+2026-05-17 12:29:08,758 INFO __main__: epoch 2 step 172 train_67132 rows=3 mixed=True insights=3 lib=40 avg_tok=4370 avg_reward=-0.254
+2026-05-17 12:29:08,759 INFO __main__: epoch 2 step 173 question 23/150 2hop__146567_79459
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.07it/s]
+2026-05-17 12:30:10,684 INFO amas3.grpo.library_update: Pre-pruned stale entry E041 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.86it/s]
+2026-05-17 12:32:14,528 INFO __main__: epoch 2 step 173 2hop__146567_79459 rows=2 mixed=True insights=3 lib=39 avg_tok=6839 avg_reward=-0.307
+2026-05-17 12:32:14,528 INFO __main__: epoch 2 step 174 question 24/150 2hop__144969_19219
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.35it/s]
+2026-05-17 12:33:27,103 INFO amas3.grpo.library_update: Pre-pruned stale entry E033 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.11it/s]
+2026-05-17 12:34:44,778 INFO __main__: epoch 2 step 174 2hop__144969_19219 rows=2 mixed=True insights=3 lib=39 avg_tok=6451 avg_reward=-0.279
+2026-05-17 12:34:44,778 INFO __main__: epoch 2 step 175 question 25/150 train_32449
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.97it/s]
+2026-05-17 12:36:50,947 INFO __main__: epoch 2 step 175 train_32449 rows=3 mixed=True insights=3 lib=39 avg_tok=5720 avg_reward=0.097
+2026-05-17 12:36:50,947 INFO __main__: epoch 2 step 176 question 26/150 train_67162
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.92it/s]
+2026-05-17 12:38:36,742 INFO __main__: epoch 2 step 176 train_67162 rows=2 mixed=True insights=3 lib=39 avg_tok=6382 avg_reward=0.569
+2026-05-17 12:38:36,742 INFO __main__: epoch 2 step 177 question 27/150 2hop__303112_25111
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.12it/s]
+2026-05-17 12:40:07,117 INFO __main__: epoch 2 step 177 2hop__303112_25111 rows=2 mixed=True insights=3 lib=39 avg_tok=6625 avg_reward=-0.305
+2026-05-17 12:40:07,117 INFO __main__: epoch 2 step 178 question 28/150 train_5981
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.48it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.82it/s]
+2026-05-17 12:41:57,236 INFO __main__: epoch 2 step 178 train_5981 rows=2 mixed=True insights=3 lib=39 avg_tok=6752 avg_reward=-0.306
+2026-05-17 12:41:57,237 INFO __main__: epoch 2 step 179 question 29/150 2hop__130868_91717
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.76it/s]
+2026-05-17 12:43:42,146 INFO __main__: epoch 2 step 179 2hop__130868_91717 rows=2 mixed=True insights=3 lib=39 avg_tok=6440 avg_reward=-0.304
+2026-05-17 12:43:42,146 INFO __main__: epoch 2 step 180 question 30/150 train_77604
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.45it/s]
+2026-05-17 12:45:36,330 INFO __main__: epoch 2 step 180 train_77604 rows=2 mixed=True insights=3 lib=40 avg_tok=4826 avg_reward=0.139
+2026-05-17 12:45:36,330 INFO __main__: epoch 2 step 181 question 31/150 train_67130
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.57it/s]
+2026-05-17 12:47:10,695 INFO __main__: epoch 2 step 181 train_67130 rows=2 mixed=True insights=3 lib=40 avg_tok=4817 avg_reward=0.330
+2026-05-17 12:47:10,695 INFO __main__: epoch 2 step 182 question 32/150 train_32404
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.39it/s]
+2026-05-17 12:48:32,653 INFO __main__: epoch 2 step 182 train_32404 rows=2 mixed=True insights=3 lib=40 avg_tok=6383 avg_reward=-0.081
+2026-05-17 12:48:32,654 INFO __main__: epoch 2 step 183 question 33/150 train_5990
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.29it/s]
+2026-05-17 12:50:07,721 INFO __main__: epoch 2 step 183 train_5990 rows=2 mixed=True insights=3 lib=40 avg_tok=6788 avg_reward=-0.306
+2026-05-17 12:50:07,722 INFO __main__: epoch 2 step 184 question 34/150 train_14167
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.54it/s]
+2026-05-17 12:51:34,500 INFO __main__: epoch 2 step 184 train_14167 rows=2 mixed=True insights=3 lib=40 avg_tok=6758 avg_reward=0.242
+2026-05-17 12:51:34,500 INFO __main__: epoch 2 step 185 question 35/150 train_80532
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.56it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.01it/s]
+2026-05-17 12:53:15,332 INFO __main__: epoch 2 step 185 train_80532 rows=2 mixed=True insights=3 lib=40 avg_tok=6662 avg_reward=-0.305
+2026-05-17 12:53:15,332 INFO __main__: epoch 2 step 186 question 36/150 2hop__154221_727337
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.25it/s]
+2026-05-17 12:55:08,828 INFO __main__: epoch 2 step 186 2hop__154221_727337 rows=2 mixed=True insights=3 lib=40 avg_tok=4671 avg_reward=0.770
+2026-05-17 12:55:08,828 INFO __main__: epoch 2 step 187 question 37/150 3hop1__313260_633553_12055
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.87it/s]
+2026-05-17 12:57:07,442 INFO __main__: epoch 2 step 187 3hop1__313260_633553_12055 rows=2 mixed=True insights=3 lib=40 avg_tok=6408 avg_reward=-0.067
+2026-05-17 12:57:07,442 INFO __main__: epoch 2 step 188 question 38/150 train_12244
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.88it/s]
+2026-05-17 12:58:59,823 INFO __main__: epoch 2 step 188 train_12244 rows=2 mixed=True insights=3 lib=40 avg_tok=6818 avg_reward=-0.307
+2026-05-17 12:58:59,823 INFO __main__: epoch 2 step 189 question 39/150 2hop__845976_781580
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.05it/s]
+2026-05-17 13:00:51,708 INFO __main__: epoch 2 step 189 2hop__845976_781580 rows=2 mixed=False insights=3 lib=40 avg_tok=5914 avg_reward=-0.249
+2026-05-17 13:00:51,708 INFO __main__: epoch 2 step 190 question 40/150 train_80503
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.01it/s]
+2026-05-17 13:03:01,260 INFO __main__: epoch 2 step 190 train_80503 rows=2 mixed=True insights=3 lib=40 avg_tok=4838 avg_reward=0.877
+2026-05-17 13:03:01,260 INFO __main__: epoch 2 step 191 question 41/150 train_6942
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.37it/s]
+2026-05-17 13:04:54,668 INFO __main__: epoch 2 step 191 train_6942 rows=2 mixed=True insights=3 lib=40 avg_tok=6778 avg_reward=0.042
+2026-05-17 13:04:54,668 INFO __main__: epoch 2 step 192 question 42/150 train_14182
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.41it/s]
+2026-05-17 13:06:16,686 INFO __main__: epoch 2 step 192 train_14182 rows=2 mixed=True insights=3 lib=40 avg_tok=6702 avg_reward=0.468
+2026-05-17 13:06:16,686 INFO __main__: epoch 2 step 193 question 43/150 2hop__502850_81633
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.63it/s]
+2026-05-17 13:07:58,970 INFO __main__: epoch 2 step 193 2hop__502850_81633 rows=2 mixed=True insights=3 lib=40 avg_tok=6820 avg_reward=-0.307
+2026-05-17 13:07:58,970 INFO __main__: epoch 2 step 194 question 44/150 train_12289
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.85it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.50it/s]
+2026-05-17 13:08:57,642 INFO amas3.grpo.library_update: Pre-pruned stale entry E046 (utility=0.50)
+2026-05-17 13:08:57,643 INFO amas3.grpo.library_update: Pre-pruned stale entry E050 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.49it/s]
+2026-05-17 13:09:34,855 INFO __main__: epoch 2 step 194 train_12289 rows=2 mixed=True insights=3 lib=39 avg_tok=6559 avg_reward=-0.305
+2026-05-17 13:09:34,855 INFO __main__: epoch 2 step 195 question 45/150 train_80524
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.00it/s]
+2026-05-17 13:11:50,191 INFO __main__: epoch 2 step 195 train_80524 rows=2 mixed=True insights=3 lib=40 avg_tok=6939 avg_reward=-0.358
+2026-05-17 13:11:50,191 INFO __main__: epoch 2 step 196 question 46/150 2hop__802331_58115
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.87it/s]
+2026-05-17 13:13:15,092 INFO __main__: epoch 2 step 196 2hop__802331_58115 rows=2 mixed=True insights=3 lib=40 avg_tok=6726 avg_reward=0.651
+2026-05-17 13:13:15,092 INFO __main__: epoch 2 step 197 question 47/150 2hop__731058_20644
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.48it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.78it/s]
+2026-05-17 13:14:59,431 INFO __main__: epoch 2 step 197 2hop__731058_20644 rows=2 mixed=True insights=3 lib=40 avg_tok=6498 avg_reward=0.591
+2026-05-17 13:14:59,431 INFO __main__: epoch 2 step 198 question 48/150 3hop2__131826_11988_24628
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.06it/s]
+2026-05-17 13:16:58,499 INFO __main__: epoch 2 step 198 3hop2__131826_11988_24628 rows=2 mixed=True insights=3 lib=40 avg_tok=6329 avg_reward=-0.303
+2026-05-17 13:16:58,500 INFO __main__: epoch 2 step 199 question 49/150 train_12271
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.41it/s]
+2026-05-17 13:18:52,186 INFO __main__: epoch 2 step 199 train_12271 rows=2 mixed=True insights=3 lib=40 avg_tok=6695 avg_reward=-0.306
+2026-05-17 13:18:52,186 INFO __main__: epoch 2 step 200 question 50/150 4hop1__507663_146811_31258_43153
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.10it/s]
+2026-05-17 13:21:03,637 INFO __main__: epoch 2 step 200 4hop1__507663_146811_31258_43153 rows=2 mixed=True insights=3 lib=40 avg_tok=6822 avg_reward=-0.307
+2026-05-17 13:21:03,638 INFO __main__: epoch 2 step 201 question 51/150 train_67177
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.87it/s]
+2026-05-17 13:22:57,218 INFO __main__: epoch 2 step 201 train_67177 rows=2 mixed=True insights=3 lib=40 avg_tok=3555 avg_reward=0.302
+2026-05-17 13:22:57,218 INFO __main__: epoch 2 step 202 question 52/150 train_14165
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.58it/s]
+2026-05-17 13:24:47,988 INFO __main__: epoch 2 step 202 train_14165 rows=2 mixed=True insights=3 lib=40 avg_tok=6891 avg_reward=-0.307
+2026-05-17 13:24:47,989 INFO __main__: epoch 2 step 203 question 53/150 train_5936
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.10it/s]
+2026-05-17 13:26:45,488 INFO __main__: epoch 2 step 203 train_5936 rows=2 mixed=True insights=3 lib=40 avg_tok=6676 avg_reward=-0.306
+2026-05-17 13:26:45,489 INFO __main__: epoch 2 step 204 question 54/150 train_32453
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.10it/s]
+2026-05-17 13:28:21,143 INFO __main__: epoch 2 step 204 train_32453 rows=2 mixed=True insights=3 lib=40 avg_tok=6362 avg_reward=-0.303
+2026-05-17 13:28:21,144 INFO __main__: epoch 2 step 205 question 55/150 train_6944
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.44it/s]
+2026-05-17 13:30:18,225 INFO __main__: epoch 2 step 205 train_6944 rows=2 mixed=True insights=3 lib=40 avg_tok=6600 avg_reward=0.674
+2026-05-17 13:30:18,225 INFO __main__: epoch 2 step 206 question 56/150 train_12285
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.66it/s]
+2026-05-17 13:31:22,206 INFO amas3.grpo.library_update: Pre-pruned stale entry E064 (utility=0.50)
+2026-05-17 13:31:22,207 INFO amas3.grpo.library_update: Pre-pruned stale entry gepa_prompt_synth (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.57it/s]
+2026-05-17 13:32:27,420 INFO __main__: epoch 2 step 206 train_12285 rows=2 mixed=True insights=3 lib=38 avg_tok=6490 avg_reward=-0.304
+2026-05-17 13:32:27,420 INFO __main__: epoch 2 step 207 question 57/150 train_32489
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.59it/s]
+2026-05-17 13:34:23,140 INFO __main__: epoch 2 step 207 train_32489 rows=2 mixed=True insights=3 lib=38 avg_tok=4842 avg_reward=-0.024
+2026-05-17 13:34:23,141 INFO __main__: epoch 2 step 208 question 58/150 train_77449
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.76it/s]
+2026-05-17 13:35:39,608 INFO __main__: epoch 2 step 208 train_77449 rows=2 mixed=True insights=3 lib=39 avg_tok=6674 avg_reward=0.132
+2026-05-17 13:35:39,608 INFO __main__: epoch 2 step 209 question 59/150 train_77680
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.33it/s]
+2026-05-17 13:37:27,458 INFO __main__: epoch 2 step 209 train_77680 rows=2 mixed=True insights=3 lib=39 avg_tok=4908 avg_reward=0.328
+2026-05-17 13:37:27,458 INFO __main__: epoch 2 step 210 question 60/150 2hop__107141_36839
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.48it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.45it/s]
+2026-05-17 13:39:09,733 INFO __main__: epoch 2 step 210 2hop__107141_36839 rows=2 mixed=True insights=3 lib=39 avg_tok=6220 avg_reward=-0.277
+2026-05-17 13:39:09,733 INFO __main__: epoch 2 step 211 question 61/150 train_6929
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.29it/s]
+2026-05-17 13:40:37,906 INFO __main__: epoch 2 step 211 train_6929 rows=2 mixed=True insights=3 lib=39 avg_tok=6514 avg_reward=-0.304
+2026-05-17 13:40:37,907 INFO __main__: epoch 2 step 212 question 62/150 2hop__386279_74309
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.33it/s]
+2026-05-17 13:42:17,585 INFO __main__: epoch 2 step 212 2hop__386279_74309 rows=2 mixed=True insights=3 lib=39 avg_tok=6532 avg_reward=0.812
+2026-05-17 13:42:17,585 INFO __main__: epoch 2 step 213 question 63/150 2hop__129288_432112
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.32it/s]
+2026-05-17 13:44:04,736 INFO __main__: epoch 2 step 213 2hop__129288_432112 rows=2 mixed=True insights=3 lib=39 avg_tok=6621 avg_reward=-0.068
+2026-05-17 13:44:04,736 INFO __main__: epoch 2 step 214 question 64/150 2hop__528191_32631
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.84it/s]
+2026-05-17 13:44:52,632 INFO amas3.grpo.library_update: Pre-pruned stale entry E057 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.00it/s]
+2026-05-17 13:45:21,655 INFO __main__: epoch 2 step 214 2hop__528191_32631 rows=2 mixed=True insights=3 lib=39 avg_tok=6268 avg_reward=-0.277
+2026-05-17 13:45:21,656 INFO __main__: epoch 2 step 215 question 65/150 train_80504
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.52it/s]
+2026-05-17 13:46:41,218 INFO __main__: epoch 2 step 215 train_80504 rows=2 mixed=True insights=3 lib=39 avg_tok=5467 avg_reward=0.275
+2026-05-17 13:46:41,218 INFO __main__: epoch 2 step 216 question 66/150 train_67193
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.28it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.19it/s]
+2026-05-17 13:47:54,041 INFO __main__: epoch 2 step 216 train_67193 rows=2 mixed=True insights=3 lib=39 avg_tok=6475 avg_reward=0.813
+2026-05-17 13:47:54,041 INFO __main__: epoch 2 step 217 question 67/150 train_14170
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.42it/s]
+2026-05-17 13:49:11,680 INFO __main__: epoch 2 step 217 train_14170 rows=2 mixed=True insights=3 lib=40 avg_tok=6469 avg_reward=-0.304
+2026-05-17 13:49:11,680 INFO __main__: epoch 2 step 218 question 68/150 3hop1__760007_715233_43805
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.23it/s]
+2026-05-17 13:50:55,096 INFO __main__: epoch 2 step 218 3hop1__760007_715233_43805 rows=2 mixed=True insights=3 lib=40 avg_tok=6764 avg_reward=-0.070
+2026-05-17 13:50:55,097 INFO __main__: epoch 2 step 219 question 69/150 train_80558
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.43it/s]
+2026-05-17 13:52:42,273 INFO __main__: epoch 2 step 219 train_80558 rows=2 mixed=True insights=3 lib=40 avg_tok=4920 avg_reward=0.329
+2026-05-17 13:52:42,273 INFO __main__: epoch 2 step 220 question 70/150 train_14151
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.81it/s]
+2026-05-17 13:54:08,909 INFO __main__: epoch 2 step 220 train_14151 rows=2 mixed=True insights=3 lib=40 avg_tok=6732 avg_reward=0.782
+2026-05-17 13:54:08,910 INFO __main__: epoch 2 step 221 question 71/150 2hop__131489_86295
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.47it/s]
+2026-05-17 13:55:48,944 INFO __main__: epoch 2 step 221 2hop__131489_86295 rows=3 mixed=True insights=3 lib=40 avg_tok=5553 avg_reward=-0.280
+2026-05-17 13:55:48,944 INFO __main__: epoch 2 step 222 question 72/150 train_67102
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.99it/s]
+2026-05-17 13:57:10,668 INFO __main__: epoch 2 step 222 train_67102 rows=2 mixed=True insights=3 lib=40 avg_tok=5440 avg_reward=0.862
+2026-05-17 13:57:10,668 INFO __main__: epoch 2 step 223 question 73/150 2hop__107115_24846
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.91it/s]
+2026-05-17 13:58:44,260 INFO __main__: epoch 2 step 223 2hop__107115_24846 rows=2 mixed=True insights=3 lib=40 avg_tok=6752 avg_reward=0.254
+2026-05-17 13:58:44,260 INFO __main__: epoch 2 step 224 question 74/150 train_77474
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.39it/s]
+2026-05-17 14:00:44,461 INFO __main__: epoch 2 step 224 train_77474 rows=3 mixed=True insights=3 lib=40 avg_tok=5966 avg_reward=-0.283
+2026-05-17 14:00:44,461 INFO __main__: epoch 2 step 225 question 75/150 train_3566
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.68it/s]
+2026-05-17 14:02:28,336 INFO __main__: epoch 2 step 225 train_3566 rows=2 mixed=True insights=3 lib=40 avg_tok=4620 avg_reward=0.311
+2026-05-17 14:02:28,336 INFO __main__: epoch 2 step 226 question 76/150 2hop__643157_47348
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.91it/s]
+2026-05-17 14:04:13,868 INFO __main__: epoch 2 step 226 2hop__643157_47348 rows=2 mixed=True insights=3 lib=40 avg_tok=7082 avg_reward=0.230
+2026-05-17 14:04:13,868 INFO __main__: epoch 2 step 227 question 77/150 train_5948
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.27it/s]
+2026-05-17 14:06:17,423 INFO __main__: epoch 2 step 227 train_5948 rows=2 mixed=True insights=3 lib=40 avg_tok=6464 avg_reward=-0.304
+2026-05-17 14:06:17,424 INFO __main__: epoch 2 step 228 question 78/150 2hop__2675_5345
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.06it/s]
+2026-05-17 14:07:58,684 INFO __main__: epoch 2 step 228 2hop__2675_5345 rows=2 mixed=True insights=3 lib=40 avg_tok=6338 avg_reward=-0.303
+2026-05-17 14:07:58,684 INFO __main__: epoch 2 step 229 question 79/150 2hop__130718_92585
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.48it/s]
+2026-05-17 14:09:40,258 INFO __main__: epoch 2 step 229 2hop__130718_92585 rows=2 mixed=True insights=3 lib=40 avg_tok=6800 avg_reward=-0.307
+2026-05-17 14:09:40,258 INFO __main__: epoch 2 step 230 question 80/150 train_32467
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.12it/s]
+2026-05-17 14:12:18,114 INFO __main__: epoch 2 step 230 train_32467 rows=2 mixed=True insights=3 lib=40 avg_tok=6753 avg_reward=-0.306
+2026-05-17 14:12:18,114 INFO __main__: epoch 2 step 231 question 81/150 train_12228
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.78it/s]
+2026-05-17 14:14:00,633 INFO __main__: epoch 2 step 231 train_12228 rows=2 mixed=True insights=3 lib=40 avg_tok=6434 avg_reward=-0.304
+2026-05-17 14:14:00,633 INFO __main__: epoch 2 step 232 question 82/150 4hop3__31642_754527_717029_20507
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.52it/s]
+2026-05-17 14:15:45,149 INFO __main__: epoch 2 step 232 4hop3__31642_754527_717029_20507 rows=2 mixed=True insights=3 lib=40 avg_tok=6478 avg_reward=-0.304
+2026-05-17 14:15:45,150 INFO __main__: epoch 2 step 233 question 83/150 3hop1__5313_777020_31291
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.29it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.69it/s]
+2026-05-17 14:17:37,229 INFO __main__: epoch 2 step 233 3hop1__5313_777020_31291 rows=2 mixed=True insights=3 lib=40 avg_tok=6632 avg_reward=0.530
+2026-05-17 14:17:37,229 INFO __main__: epoch 2 step 234 question 84/150 train_77662
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.31it/s]
+2026-05-17 14:19:04,648 INFO __main__: epoch 2 step 234 train_77662 rows=2 mixed=True insights=3 lib=40 avg_tok=6642 avg_reward=0.113
+2026-05-17 14:19:04,648 INFO __main__: epoch 2 step 235 question 85/150 train_14189
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.11it/s]
+2026-05-17 14:20:59,702 INFO __main__: epoch 2 step 235 train_14189 rows=2 mixed=True insights=3 lib=40 avg_tok=6603 avg_reward=0.127
+2026-05-17 14:20:59,702 INFO __main__: epoch 2 step 236 question 86/150 2hop__54562_641809
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.46it/s]
+2026-05-17 14:23:12,237 INFO __main__: epoch 2 step 236 2hop__54562_641809 rows=3 mixed=True insights=3 lib=40 avg_tok=4272 avg_reward=-0.253
+2026-05-17 14:23:12,237 INFO __main__: epoch 2 step 237 question 87/150 train_12245
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.16it/s]
+2026-05-17 14:24:52,880 INFO __main__: epoch 2 step 237 train_12245 rows=2 mixed=True insights=3 lib=40 avg_tok=6622 avg_reward=-0.305
+2026-05-17 14:24:52,880 INFO __main__: epoch 2 step 238 question 88/150 2hop__442180_3983
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.49it/s]
+2026-05-17 14:28:59,937 INFO __main__: epoch 2 step 238 2hop__442180_3983 rows=3 mixed=True insights=3 lib=40 avg_tok=4281 avg_reward=-0.253
+2026-05-17 14:28:59,937 INFO __main__: epoch 2 step 239 question 89/150 train_5938
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.34it/s]
+2026-05-17 14:29:53,875 INFO amas3.grpo.library_update: Pre-pruned stale entry E045 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.77it/s]
+2026-05-17 14:30:49,980 INFO __main__: epoch 2 step 239 train_5938 rows=2 mixed=True insights=3 lib=39 avg_tok=6720 avg_reward=-0.306
+2026-05-17 14:30:49,980 INFO __main__: epoch 2 step 240 question 90/150 4hop1__404363_705261_41881_22389
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.76it/s]
+2026-05-17 14:33:07,521 INFO __main__: epoch 2 step 240 4hop1__404363_705261_41881_22389 rows=2 mixed=True insights=3 lib=39 avg_tok=6620 avg_reward=-0.305
+2026-05-17 14:33:07,521 INFO __main__: epoch 2 step 241 question 91/150 3hop1__834093_406717_25935
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.25it/s]
+2026-05-17 14:35:06,584 INFO __main__: epoch 2 step 241 3hop1__834093_406717_25935 rows=2 mixed=True insights=3 lib=39 avg_tok=7269 avg_reward=-0.360
+2026-05-17 14:35:06,584 INFO __main__: epoch 2 step 242 question 92/150 train_6990
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.95it/s]
+2026-05-17 14:35:52,760 INFO amas3.grpo.library_update: Pre-pruned stale entry E044 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.40it/s]
+2026-05-17 14:36:33,756 INFO __main__: epoch 2 step 242 train_6990 rows=2 mixed=True insights=3 lib=40 avg_tok=6412 avg_reward=-0.303
+2026-05-17 14:36:33,756 INFO __main__: epoch 2 step 243 question 93/150 2hop__244419_40940
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.32it/s]
+2026-05-17 14:37:58,317 INFO __main__: epoch 2 step 243 2hop__244419_40940 rows=2 mixed=True insights=3 lib=40 avg_tok=6836 avg_reward=-0.307
+2026-05-17 14:37:58,317 INFO __main__: epoch 2 step 244 question 94/150 train_6995
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.56it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.17it/s]
+2026-05-17 14:39:14,686 INFO amas3.grpo.library_update: Pre-pruned stale entry E055 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.48it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.33it/s]
+2026-05-17 14:39:53,963 INFO __main__: epoch 2 step 244 train_6995 rows=2 mixed=False insights=3 lib=39 avg_tok=6336 avg_reward=-0.303
+2026-05-17 14:39:53,963 INFO __main__: epoch 2 step 245 question 95/150 train_77681
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.15it/s]
+2026-05-17 14:41:39,037 INFO __main__: epoch 2 step 245 train_77681 rows=2 mixed=True insights=3 lib=39 avg_tok=6610 avg_reward=-0.305
+2026-05-17 14:41:39,037 INFO __main__: epoch 2 step 246 question 96/150 train_67114
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.23it/s]
+2026-05-17 14:43:25,425 INFO __main__: epoch 2 step 246 train_67114 rows=2 mixed=True insights=3 lib=39 avg_tok=5709 avg_reward=0.857
+2026-05-17 14:43:25,426 INFO __main__: epoch 2 step 247 question 97/150 train_3542
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.99it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.48it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 18.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.99it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.48it/s]
+2026-05-17 14:45:07,697 INFO __main__: epoch 2 step 247 train_3542 rows=2 mixed=True insights=3 lib=39 avg_tok=6886 avg_reward=-0.307
+2026-05-17 14:45:07,697 INFO __main__: epoch 2 step 248 question 98/150 train_77453
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.25it/s]
+2026-05-17 14:46:57,428 INFO __main__: epoch 2 step 248 train_77453 rows=2 mixed=True insights=3 lib=40 avg_tok=4870 avg_reward=0.877
+2026-05-17 14:46:57,429 INFO __main__: epoch 2 step 249 question 99/150 train_3508
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.78it/s]
+2026-05-17 14:49:19,198 INFO __main__: epoch 2 step 249 train_3508 rows=2 mixed=True insights=3 lib=40 avg_tok=4740 avg_reward=0.284
+2026-05-17 14:49:19,199 INFO __main__: epoch 2 step 250 question 100/150 2hop__107402_79404
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.77it/s]
+2026-05-17 14:51:32,418 INFO __main__: epoch 2 step 250 2hop__107402_79404 rows=2 mixed=True insights=3 lib=40 avg_tok=6854 avg_reward=0.084
+2026-05-17 14:51:32,419 INFO __main__: epoch 2 step 251 question 101/150 train_80561
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.29it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.27it/s]
+2026-05-17 14:54:00,360 INFO __main__: epoch 2 step 251 train_80561 rows=2 mixed=True insights=3 lib=40 avg_tok=6658 avg_reward=0.215
+2026-05-17 14:54:00,360 INFO __main__: epoch 2 step 252 question 102/150 train_6932
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.80it/s]
+2026-05-17 14:56:31,137 INFO __main__: epoch 2 step 252 train_6932 rows=3 mixed=True insights=3 lib=40 avg_tok=3589 avg_reward=-0.249
+2026-05-17 14:56:31,137 INFO __main__: epoch 2 step 253 question 103/150 4hop3__16401_4520_37620_55609
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.80it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.56it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.12it/s]
+2026-05-17 14:57:30,460 INFO amas3.grpo.library_update: Pre-pruned stale entry E064 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.67it/s]
+2026-05-17 14:58:15,333 INFO __main__: epoch 2 step 253 4hop3__16401_4520_37620_55609 rows=2 mixed=True insights=3 lib=40 avg_tok=5542 avg_reward=-0.030
+2026-05-17 14:58:15,333 INFO __main__: epoch 2 step 254 question 104/150 train_77440
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.85it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.23it/s]
+2026-05-17 15:00:15,921 INFO __main__: epoch 2 step 254 train_77440 rows=2 mixed=True insights=3 lib=40 avg_tok=7253 avg_reward=-0.360
+2026-05-17 15:00:15,922 INFO __main__: epoch 2 step 255 question 105/150 train_67126
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.07it/s]
+2026-05-17 15:01:15,446 INFO amas3.grpo.library_update: Pre-pruned stale entry E054 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.01it/s]
+2026-05-17 15:02:38,836 INFO __main__: epoch 2 step 255 train_67126 rows=2 mixed=True insights=3 lib=39 avg_tok=6541 avg_reward=0.167
+2026-05-17 15:02:38,836 INFO __main__: epoch 2 step 256 question 106/150 train_77678
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.97it/s]
+2026-05-17 15:04:45,458 INFO __main__: epoch 2 step 256 train_77678 rows=3 mixed=True insights=3 lib=39 avg_tok=4268 avg_reward=-0.236
+2026-05-17 15:04:45,458 INFO __main__: epoch 2 step 257 question 107/150 train_14179
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.29it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.75it/s]
+2026-05-17 15:06:48,518 INFO __main__: epoch 2 step 257 train_14179 rows=2 mixed=True insights=3 lib=39 avg_tok=6592 avg_reward=-0.305
+2026-05-17 15:06:48,518 INFO __main__: epoch 2 step 258 question 108/150 2hop__703912_10366
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.21it/s]
+2026-05-17 15:08:54,996 INFO __main__: epoch 2 step 258 2hop__703912_10366 rows=3 mixed=True insights=3 lib=39 avg_tok=4226 avg_reward=-0.253
+2026-05-17 15:08:54,996 INFO __main__: epoch 2 step 259 question 109/150 3hop2__70826_21155_89217
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.09it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.86it/s]
+2026-05-17 15:11:07,894 INFO __main__: epoch 2 step 259 3hop2__70826_21155_89217 rows=2 mixed=True insights=3 lib=40 avg_tok=6606 avg_reward=-0.305
+2026-05-17 15:11:07,895 INFO __main__: epoch 2 step 260 question 110/150 train_77498
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.75it/s]
+2026-05-17 15:13:16,165 INFO __main__: epoch 2 step 260 train_77498 rows=2 mixed=True insights=3 lib=40 avg_tok=6594 avg_reward=-0.305
+2026-05-17 15:13:16,166 INFO __main__: epoch 2 step 261 question 111/150 train_80511
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.72it/s]
+2026-05-17 15:14:29,012 INFO amas3.grpo.library_update: Pre-pruned stale entry E063 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.98it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.41it/s]
+2026-05-17 15:15:21,825 INFO __main__: epoch 2 step 261 train_80511 rows=2 mixed=True insights=3 lib=39 avg_tok=6296 avg_reward=-0.302
+2026-05-17 15:15:21,825 INFO __main__: epoch 2 step 262 question 112/150 train_14148
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.87it/s]
+2026-05-17 15:17:05,418 INFO __main__: epoch 2 step 262 train_14148 rows=2 mixed=True insights=3 lib=40 avg_tok=6716 avg_reward=-0.306
+2026-05-17 15:17:05,419 INFO __main__: epoch 2 step 263 question 113/150 train_77621
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.14it/s]
+2026-05-17 15:18:42,990 INFO __main__: epoch 2 step 263 train_77621 rows=2 mixed=True insights=3 lib=40 avg_tok=6866 avg_reward=-0.307
+2026-05-17 15:18:42,990 INFO __main__: epoch 2 step 264 question 114/150 4hop1__524030_829000_51791_820357
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.23it/s]
+2026-05-17 15:19:49,554 INFO amas3.grpo.library_update: Pre-pruned stale entry E062 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.59it/s]
+2026-05-17 15:21:08,222 INFO __main__: epoch 2 step 264 4hop1__524030_829000_51791_820357 rows=2 mixed=True insights=3 lib=39 avg_tok=7378 avg_reward=-0.102
+2026-05-17 15:21:08,222 INFO __main__: epoch 2 step 265 question 115/150 train_32419
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.56it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.78it/s]
+2026-05-17 15:23:06,316 INFO __main__: epoch 2 step 265 train_32419 rows=2 mixed=True insights=3 lib=39 avg_tok=6282 avg_reward=-0.302
+2026-05-17 15:23:06,316 INFO __main__: epoch 2 step 266 question 116/150 train_6963
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.79it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.61it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.72it/s]
+2026-05-17 15:24:47,348 INFO __main__: epoch 2 step 266 train_6963 rows=2 mixed=False insights=3 lib=39 avg_tok=6468 avg_reward=-0.304
+2026-05-17 15:24:47,349 INFO __main__: epoch 2 step 267 question 117/150 2hop__3874_750102
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.03it/s]
+2026-05-17 15:25:54,280 INFO amas3.grpo.library_update: Pre-pruned stale entry E070 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.59it/s]
+2026-05-17 15:26:50,095 INFO __main__: epoch 2 step 267 2hop__3874_750102 rows=2 mixed=True insights=3 lib=39 avg_tok=6728 avg_reward=-0.306
+2026-05-17 15:26:50,095 INFO __main__: epoch 2 step 268 question 118/150 train_32473
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.56it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.56it/s]
+2026-05-17 15:28:08,038 INFO __main__: epoch 2 step 268 train_32473 rows=2 mixed=True insights=3 lib=39 avg_tok=5056 avg_reward=0.898
+2026-05-17 15:28:08,038 INFO __main__: epoch 2 step 269 question 119/150 4hop1__570335_805015_475503_32631
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.33it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.24it/s]
+2026-05-17 15:29:43,487 INFO __main__: epoch 2 step 269 4hop1__570335_805015_475503_32631 rows=2 mixed=True insights=3 lib=39 avg_tok=6750 avg_reward=-0.306
+2026-05-17 15:29:43,488 INFO __main__: epoch 2 step 270 question 120/150 train_77619
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.29it/s]
+2026-05-17 15:31:46,975 INFO __main__: epoch 2 step 270 train_77619 rows=2 mixed=True insights=3 lib=39 avg_tok=6862 avg_reward=0.557
+2026-05-17 15:31:46,975 INFO __main__: epoch 2 step 271 question 121/150 train_32438
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.97it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.90it/s]
+2026-05-17 15:33:03,562 INFO __main__: epoch 2 step 271 train_32438 rows=2 mixed=True insights=3 lib=39 avg_tok=4875 avg_reward=0.877
+2026-05-17 15:33:03,562 INFO __main__: epoch 2 step 272 question 122/150 train_5999
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.37it/s]
+2026-05-17 15:34:12,664 INFO amas3.grpo.library_update: Pre-pruned stale entry E065 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.41it/s]
+2026-05-17 15:34:45,383 INFO __main__: epoch 2 step 272 train_5999 rows=2 mixed=True insights=3 lib=40 avg_tok=6682 avg_reward=-0.306
+2026-05-17 15:34:45,383 INFO __main__: epoch 2 step 273 question 123/150 4hop3__493923_300471_374971_62462
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.47it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.94it/s]
+2026-05-17 15:36:51,388 INFO __main__: epoch 2 step 273 4hop3__493923_300471_374971_62462 rows=2 mixed=True insights=3 lib=40 avg_tok=6416 avg_reward=-0.083
+2026-05-17 15:36:51,389 INFO __main__: epoch 2 step 274 question 124/150 train_80568
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.24it/s]
+2026-05-17 15:38:43,238 INFO __main__: epoch 2 step 274 train_80568 rows=2 mixed=False insights=3 lib=40 avg_tok=6200 avg_reward=-0.302
+2026-05-17 15:38:43,238 INFO __main__: epoch 2 step 275 question 125/150 3hop1__36186_715233_43805
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.84it/s]
+2026-05-17 15:40:59,139 INFO __main__: epoch 2 step 275 3hop1__36186_715233_43805 rows=3 mixed=True insights=3 lib=40 avg_tok=5232 avg_reward=-0.244
+2026-05-17 15:40:59,140 INFO __main__: epoch 2 step 276 question 126/150 train_32416
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.77it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.18it/s]
+2026-05-17 15:42:35,546 INFO __main__: epoch 2 step 276 train_32416 rows=2 mixed=True insights=3 lib=40 avg_tok=6830 avg_reward=0.497
+2026-05-17 15:42:35,546 INFO __main__: epoch 2 step 277 question 127/150 train_12251
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.51it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.24it/s]
+2026-05-17 15:44:15,305 INFO __main__: epoch 2 step 277 train_12251 rows=2 mixed=True insights=3 lib=40 avg_tok=6768 avg_reward=-0.306
+2026-05-17 15:44:15,305 INFO __main__: epoch 2 step 278 question 128/150 train_5970
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.77it/s]
+2026-05-17 15:46:04,208 INFO __main__: epoch 2 step 278 train_5970 rows=2 mixed=True insights=3 lib=40 avg_tok=6710 avg_reward=-0.306
+2026-05-17 15:46:04,209 INFO __main__: epoch 2 step 279 question 129/150 3hop2__768410_69760_609883
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.74it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.03it/s]
+2026-05-17 15:47:27,998 INFO __main__: epoch 2 step 279 3hop2__768410_69760_609883 rows=2 mixed=True insights=3 lib=40 avg_tok=4716 avg_reward=0.331
+2026-05-17 15:47:27,998 INFO __main__: epoch 2 step 280 question 130/150 2hop__436787_70585
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.88it/s]
+2026-05-17 15:48:12,495 INFO amas3.grpo.library_update: Pre-pruned stale entry E067 (utility=0.50)
+2026-05-17 15:48:12,496 INFO amas3.grpo.library_update: Pre-pruned stale entry E074 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.45it/s]
+2026-05-17 15:48:48,800 INFO __main__: epoch 2 step 280 2hop__436787_70585 rows=2 mixed=True insights=3 lib=39 avg_tok=6403 avg_reward=0.119
+2026-05-17 15:48:48,801 INFO __main__: epoch 2 step 281 question 131/150 train_32426
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 42.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.64it/s]
+2026-05-17 15:51:08,573 INFO __main__: epoch 2 step 281 train_32426 rows=3 mixed=True insights=3 lib=39 avg_tok=5449 avg_reward=-0.262
+2026-05-17 15:51:08,573 INFO __main__: epoch 2 step 282 question 132/150 train_14142
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.73it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.10it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.99it/s]
+2026-05-17 15:52:34,501 INFO __main__: epoch 2 step 282 train_14142 rows=2 mixed=True insights=3 lib=39 avg_tok=7102 avg_reward=0.723
+2026-05-17 15:52:34,501 INFO __main__: epoch 2 step 283 question 133/150 train_80550
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.14it/s]
+2026-05-17 15:54:01,427 INFO __main__: epoch 2 step 283 train_80550 rows=2 mixed=True insights=3 lib=39 avg_tok=6633 avg_reward=0.563
+2026-05-17 15:54:01,427 INFO __main__: epoch 2 step 284 question 134/150 2hop__129098_86587
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.37it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.63it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.74it/s]
+2026-05-17 15:55:45,865 INFO __main__: epoch 2 step 284 2hop__129098_86587 rows=2 mixed=True insights=3 lib=39 avg_tok=6084 avg_reward=-0.276
+2026-05-17 15:55:45,866 INFO __main__: epoch 2 step 285 question 135/150 train_14139
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.18it/s]
+2026-05-17 15:57:05,738 INFO __main__: epoch 2 step 285 train_14139 rows=2 mixed=True insights=3 lib=39 avg_tok=6654 avg_reward=-0.305
+2026-05-17 15:57:05,738 INFO __main__: epoch 2 step 286 question 136/150 train_77428
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.63it/s]
+2026-05-17 15:58:47,432 INFO __main__: epoch 2 step 286 train_77428 rows=2 mixed=True insights=3 lib=39 avg_tok=7258 avg_reward=-0.360
+2026-05-17 15:58:47,433 INFO __main__: epoch 2 step 287 question 137/150 train_67175
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.94it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.04it/s]
+2026-05-17 16:00:28,547 INFO __main__: epoch 2 step 287 train_67175 rows=2 mixed=True insights=3 lib=39 avg_tok=6698 avg_reward=0.783
+2026-05-17 16:00:28,547 INFO __main__: epoch 2 step 288 question 138/150 4hop1__411132_7258_65293_48285
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.97it/s]
+2026-05-17 16:03:29,906 INFO __main__: epoch 2 step 288 4hop1__411132_7258_65293_48285 rows=2 mixed=True insights=3 lib=39 avg_tok=6562 avg_reward=-0.305
+2026-05-17 16:03:29,906 INFO __main__: epoch 2 step 289 question 139/150 2hop__796115_838537
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.30it/s]
+2026-05-17 16:05:10,730 INFO __main__: epoch 2 step 289 2hop__796115_838537 rows=2 mixed=True insights=3 lib=40 avg_tok=6644 avg_reward=0.784
+2026-05-17 16:05:10,730 INFO __main__: epoch 2 step 290 question 140/150 train_6968
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.96it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.06it/s]
+2026-05-17 16:07:12,958 INFO __main__: epoch 2 step 290 train_6968 rows=2 mixed=True insights=3 lib=40 avg_tok=6890 avg_reward=-0.307
+2026-05-17 16:07:12,958 INFO __main__: epoch 2 step 291 question 141/150 train_80529
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.52it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.48it/s]
+2026-05-17 16:09:04,456 INFO __main__: epoch 2 step 291 train_80529 rows=2 mixed=True insights=3 lib=40 avg_tok=3598 avg_reward=0.262
+2026-05-17 16:09:04,456 INFO __main__: epoch 2 step 292 question 142/150 train_12284
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.43it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.29it/s]
+2026-05-17 16:10:52,148 INFO __main__: epoch 2 step 292 train_12284 rows=2 mixed=True insights=3 lib=40 avg_tok=6400 avg_reward=-0.303
+2026-05-17 16:10:52,149 INFO __main__: epoch 2 step 293 question 143/150 train_3567
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.93it/s]
+2026-05-17 16:13:04,358 INFO __main__: epoch 2 step 293 train_3567 rows=2 mixed=True insights=3 lib=40 avg_tok=6830 avg_reward=-0.307
+2026-05-17 16:13:04,358 INFO __main__: epoch 2 step 294 question 144/150 train_5959
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.39it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.58it/s]
+2026-05-17 16:15:05,202 INFO __main__: epoch 2 step 294 train_5959 rows=2 mixed=True insights=3 lib=40 avg_tok=6417 avg_reward=0.241
+2026-05-17 16:15:05,202 INFO __main__: epoch 2 step 295 question 145/150 4hop3__621442_544708_764770_54023
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.50it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.18it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.14it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.88it/s]
+2026-05-17 16:16:29,112 INFO amas3.grpo.library_update: Pre-pruned stale entry E058 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.17it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.73it/s]
+2026-05-17 16:17:26,790 INFO __main__: epoch 2 step 295 4hop3__621442_544708_764770_54023 rows=2 mixed=True insights=3 lib=39 avg_tok=6744 avg_reward=-0.306
+2026-05-17 16:17:26,790 INFO __main__: epoch 2 step 296 question 146/150 train_77633
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.07it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.15it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.28it/s]
+2026-05-17 16:19:06,560 INFO __main__: epoch 2 step 296 train_77633 rows=2 mixed=True insights=3 lib=39 avg_tok=4962 avg_reward=0.119
+2026-05-17 16:19:06,560 INFO __main__: epoch 2 step 297 question 147/150 train_32415
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.75it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.19it/s]
+2026-05-17 16:20:51,649 INFO __main__: epoch 2 step 297 train_32415 rows=2 mixed=True insights=3 lib=39 avg_tok=3994 avg_reward=0.948
+2026-05-17 16:20:51,650 INFO __main__: epoch 2 step 298 question 148/150 train_3531
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 42.19it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.70it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.92it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.34it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.24it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.08it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.14it/s]
+2026-05-17 16:22:54,868 INFO __main__: epoch 2 step 298 train_3531 rows=2 mixed=True insights=3 lib=39 avg_tok=6254 avg_reward=-0.302
+2026-05-17 16:22:54,869 INFO __main__: epoch 2 step 299 question 149/150 train_3513
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.01it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.48it/s]
+2026-05-17 16:23:40,711 INFO amas3.grpo.library_update: Pre-pruned stale entry E076 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.72it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.45it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.17it/s]
+2026-05-17 16:24:26,163 INFO __main__: epoch 2 step 299 train_3513 rows=2 mixed=True insights=3 lib=38 avg_tok=6482 avg_reward=-0.279
+2026-05-17 16:24:26,163 INFO __main__: epoch 2 step 300 question 150/150 3hop1__33286_22372_78265
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.25it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.20it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.93it/s]
+2026-05-17 16:26:30,042 INFO __main__: epoch 2 step 300 3hop1__33286_22372_78265 rows=2 mixed=True insights=3 lib=40 avg_tok=6688 avg_reward=0.041
+2026-05-17 16:26:30,432 INFO __main__: epoch 2 complete, library=40, rows=313, avg_tokens=6102, avg_reward=0.010
+2026-05-17 16:26:30,435 INFO amas3.grpo.gepa: GEPA: evolving planner (failures: ['bad_decomposition'], trajs: 10)
+2026/05/17 16:37:23 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 16:37:23 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 16:38:16 INFO dspy.evaluate.evaluate: Average Metric: 2.75 / 3 (91.7%)
+2026/05/17 16:38:16 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.9166666666666666 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [00:53<00:53, 17.75s/rollouts]2026/05/17 16:38:16 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.9166666666666666
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%):   0%|          | 0/1 [00:20<?, ?it/s]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:20<00:00, 20.54s/it]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:20<00:00, 20.54s/it]2026/05/17 16:38:36 INFO dspy.evaluate.evaluate: Average Metric: 0.85 / 1 (85.0%)
+2026/05/17 16:39:23 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: Task: Integrate role-specific GEPA feedback into a single, concise agent prompt.
+
+Inputs
+- agent_role: string (e.g., "planner").
+- current_prompt: base instruction to preserve and sharpen.
+- rules_json: [{ "rule": ..., "derived_from": ... }, ...].
+- principles_json: [{ "principle": ..., "derived_from": ... }, ...].
+- failure_context: diagnostic string or fields (e.g., question=...; gold=...; bad_answer=...; topology=...).
+- max_chars: hard character budget for the final prompt.
+
+Output
+- updated_prompt only: one compact, actionable prompt under max_chars.
+
+Method (GEPA synthesis)
+1) Goal: Restate the role’s job crisply from current_prompt.
+2) Evidence: Extract non-redundant constraints from rules_json and principles_json (token efficiency; type-locking; constraint carry; minimal disambiguation).
+3) Plan: Turn these into operational steps with strong imperatives and explicit output expectations.
+4) Actions: Add targeted guardrails from failure_context that prevent the observed error mode, phrased as “do X, not Y,” without discouraging answering.
+
+Required content to integrate (keep terse)
+- Preserve and name the role up front (e.g., “Role: planner — ...” or “You are the planner. ...”).
+- Enforce: “ONE retrieval + ONE extraction per hop.”
+- Enforce: “Type-lock each hop; end with the original wh-target type (e.g., YEAR).”
+- Enforce: “Carry forward names and constraints verbatim.”
+- Enforce: “Minimize hops and wording; avoid redundant lookups/output.”
+- Enforce: “Resolve ambiguity only when needed to keep type constraints; use a minimal disambiguation hop if blocking type-locking.”
+- Specify output form concretely for the role (for planners decomposing questions: “Output only the sub-questions.”).
+
+Failure-context-driven safeguards (include when relevant; example provided)
+- For independence-year questions like “In what year did the country where Daharro is located become independent?”:
+  - First resolve the place/entity unambiguously to its present-day country.
+  - Then query that country’s official independence year (exclude referendum or partial-autonomy dates).
+  - Carry forward the exact surface form (e.g., “Daharro”) between hops to avoid country-mismatch errors.
+
+Style and constraints
+- Make it operational/actionable: imperative verbs, concrete steps, explicit output spec.
+- Keep within max_chars; prefer one tight paragraph or ultra-compact bullets.
+- No answer-discouraging language (no “don’t answer,” “ask for clarification,” hedging, or capability disclaimers).
+- No meta-commentary about the prompt itself; deliver the prompt only.
+
+Before returning
+- Verify: role is named; output spec present; failure-context guardrail included (if applicable); length ≤ max_chars.
+2026/05/17 16:39:42 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 16:39:42 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1.0 is better than old score 0.85. Continue to full eval and add to candidate pool.
+2026/05/17 16:40:35 INFO dspy.evaluate.evaluate: Average Metric: 2.7 / 3 (90.0%)
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.9 (coverage 3 / 3)
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.9
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 0.9, 1: 0.9, 2: 0.9}
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 0.95, 1: 0.95, 2: 0.9}
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.9333333333333332
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {0}, 1: {0}, 2: {1}}
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.9166666666666666
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 0
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.9166666666666666
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 0
+2026/05/17 16:40:35 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [03:12<03:12, 64.13s/rollouts]
+2026-05-17 16:40:35,577 INFO amas3.grpo.gepa: GEPA: rejecting planner update; best variant reward -0.261 did not beat baseline -0.201
+2026-05-17 16:40:35,577 INFO amas3.grpo.gepa: GEPA: evolved planner (181 chars, 0 rules, 0 principles)
+2026-05-17 16:40:35,578 INFO amas3.grpo.gepa: GEPA: evolving solver (failures: ['hallucination', 'low_confidence', 'wrong_extraction'], trajs: 10)
+2026/05/17 16:52:30 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 16:52:30 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 16:53:29 INFO dspy.evaluate.evaluate: Average Metric: 1.15 / 3 (38.3%)
+2026/05/17 16:53:29 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.3833333333333333 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [00:58<00:58, 19.64s/rollouts]2026/05/17 16:53:29 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.3833333333333333
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.35 / 1 (35.0%):   0%|          | 0/1 [00:17<?, ?it/s]Average Metric: 0.35 / 1 (35.0%): 100%|██████████| 1/1 [00:17<00:00, 17.99s/it]Average Metric: 0.35 / 1 (35.0%): 100%|██████████| 1/1 [00:17<00:00, 17.99s/it]2026/05/17 16:53:47 INFO dspy.evaluate.evaluate: Average Metric: 0.35 / 1 (35.0%)
+2026/05/17 16:54:36 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: Task: Given agent_role, current_prompt, rules_json, principles_json, failure_context, and max_chars, produce one concise, operational agent prompt that integrates the GEPA feedback. Output only the final prompt string (no headings or commentary), and keep it under max_chars.
+
+How to construct the prompt
+1) Preserve and surface the role:
+   - Start the prompt by naming the role and objective (e.g., “Role: solver — …”).
+2) Keep core I/O contract from current_prompt:
+   - Maintain constraints like “SHORT span (1–6 words)”, “VERBATIM from evidence”, and “Output only the span.”
+   - Do NOT add answer-discouraging instructions (avoid “return empty,” “abstain,” “don’t answer,” etc.).
+3) Convert rules_json into compact, imperative steps:
+   - Example mappings:
+     • “Filter chunks by subject name/title before scanning” → “Filter to chunks naming the resolved subject (name/title).”
+     • “Pick shortest exact span nearest explicit type cue” → “Pick the shortest exact span nearest the explicit type cue.”
+     • “Scan top-2 chunks; stop on first type-matched span” → “Scan top-2 filtered chunks; stop at the first type-matched span.”
+4) Convert principles_json into tie-breakers/commit rules:
+   - “Break ties by earliest date and higher specificity” (e.g., “Dunfermline Abbey” over “Dunfermline”).
+   - “Commit when subject+type align; avoid extra hops/retrievals.”
+5) Integrate failure_context as concrete guardrails:
+   - If the question is relational (e.g., “X’s father/mother/…”) resolve the subject to that entity before scanning.
+   - Infer expected answer type and add a minimal cue lexicon tied to the failure:
+     • For place of burial, include cues like: “buried at/in,” “interred at,” “tomb at,” “burial at,” “place of burial.”
+   - Emphasize subject-first filtering and type-anchored proximity so the gold beats the prior bad_answer.
+6) Make it actionable and compact:
+   - Use imperative verbs, short clauses, and concrete examples in parentheses only where they sharpen behavior.
+   - De-duplicate overlapping rules/principles; keep the sequence minimal and operational.
+   - Keep formatting light (bullets or short lines are OK); avoid meta text and justifications.
+
+Output format
+- Return a single updated agent prompt string under max_chars.
+- Include the role explicitly.
+- No disclaimers, no “if none, output empty,” no extra sections beyond the operational prompt.
+2026/05/17 16:54:59 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 16:54:59 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1.0 is better than old score 0.35. Continue to full eval and add to candidate pool.
+2026/05/17 16:56:20 INFO dspy.evaluate.evaluate: Average Metric: 2.7725 / 3 (92.4%)
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Found a better program on the valset with score 0.9241666666666667.
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.9241666666666667 (coverage 3 / 3)
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.9241666666666667
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 0.8725, 1: 1.0, 2: 0.9}
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 0.8725, 1: 1.0, 2: 0.9}
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.9241666666666667
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {1}}
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.9241666666666667
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 1
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.9241666666666667
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 1
+2026/05/17 16:56:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [03:50<03:50, 76.73s/rollouts]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 42.66it/s]
+2026-05-17 16:56:20,337 INFO amas3.grpo.gepa: GEPA: evolved solver (721 chars, 3 rules, 2 principles)
+2026-05-17 16:56:20,338 INFO amas3.grpo.gepa: GEPA: evolving synth (failures: ['wrong_extraction', 'bridge_confusion'], trajs: 10)
+2026/05/17 17:08:34 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 17:08:34 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 17:10:20 INFO dspy.evaluate.evaluate: Average Metric: 2.55 / 3 (85.0%)
+2026/05/17 17:10:20 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.85 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [01:46<01:46, 35.54s/rollouts]2026/05/17 17:10:20 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.85
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%):   0%|          | 0/1 [00:26<?, ?it/s]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:26<00:00, 26.49s/it]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:26<00:00, 26.49s/it]2026/05/17 17:10:47 INFO dspy.evaluate.evaluate: Average Metric: 0.85 / 1 (85.0%)
+2026/05/17 17:11:24 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: Task: Integrate role-specific GEPA feedback into a concise, operational agent prompt.
+
+Inputs you will receive
+- agent_role: the agent’s role name (e.g., "synth"). Must be preserved and surfaced in the final prompt.
+- current_prompt: the baseline directive you must keep actionable and refine.
+- rules_json: list of rules with derived_from fields (e.g., Relation-anchored extraction; Strict type check + early stop; Bridge-aware slot mapping).
+- principles_json: list of principles with derived_from (often overlapping with rules).
+- failure_context: contains question, gold, bad_answer, and possibly topology; use this to add precise guardrails that prevent the observed failure without discouraging answers.
+- max_chars: hard character budget for the final prompt.
+
+What to produce
+- Output a single, self-contained agent prompt string that:
+  - Explicitly mentions or preserves the agent_role (e.g., prefix with "Role: synth —" or weave into the first sentence).
+  - Is operational and imperative (clear do/don’t actions), not meta-discussion.
+  - Integrates the GEPA items (rules + principles), deduplicated and converted into concrete steps/constraints.
+  - Incorporates a targeted guardrail informed by failure_context (e.g., prevent bridge-entity outputs) with a minimal, in-line example if space allows.
+  - Respects max_chars. If over, compress wording; keep the strongest constraints and drop redundancy.
+  - Does not add answer-discouraging language (e.g., no “if uncertain, abstain,” “don’t guess,” refusals, or hedges).
+  - Contains no extra commentary; output only the final prompt text.
+
+How to integrate GEPA feedback
+- Preserve core intent from current_prompt; rewrite into crisp imperatives.
+- Merge rules/principles into actionable constraints. Prioritize:
+  - Relation-anchored extraction: “Anchor to subject+relation; return only the object span.”
+  - Strict type check + early stop: “Enforce WH-type; stop once a type-matching span is found.”
+  - Bridge-aware slot mapping: “If a bridge appears (e.g., X’s father), map bridge → target and output the asked attribute of the target; never output the bridge entity.”
+  - Prefer minimal evidence; avoid extra retrieval once answer fits.
+- Use failure_context to add a precise, role-fitting guardrail. Example from the provided case:
+  - The question “When did William Nevill, 4th Earl of Abergavenny’s father die?” has gold “27 March 1843” and bad_answer “Henry Nevill, 2nd Earl of Abergavenny.”
+  - Encode: “For ‘When’, output a date/time expression (e.g., 27 March 1843), never a person name. Map possessive bridges (‘X’s father’) to the target entity and output the asked date about that target.”
+- Keep the 1–6 word constraint and “no extra words” if present in current_prompt.
+
+Style/formatting
+- Start with the role (e.g., “Role: synth — …”) or integrate it naturally (“As synth, …”).
+- Use short, direct sentences; prefer verbs like Return, Enforce, Anchor, Map, Stop.
+- Include at most one minimal parenthetical example if space allows; drop examples if near max_chars.
+- Ensure the final text is under max_chars.
+
+Output example shape (adapt to inputs; do not output this label):
+Role: synth — Return only the 1–6 word object of the asked relation. Enforce strict WH-type; for “When” output a date/time (e.g., 27 March 1843), never a person. Anchor to subject+relation; if a bridge appears (“X’s father”), map bridge → target and output the target’s asked attribute. Stop once a type-matching span is found. No extra words.
+2026/05/17 17:11:38 INFO dspy.evaluate.evaluate: Average Metric: 1.0 / 1 (100.0%)
+2026/05/17 17:11:38 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 1.0 is better than old score 0.85. Continue to full eval and add to candidate pool.
+2026/05/17 17:13:10 INFO dspy.evaluate.evaluate: Average Metric: 2.9 / 3 (96.7%)
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Found a better program on the valset with score 0.9666666666666667.
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset score for new program: 0.9666666666666667 (coverage 3 / 3)
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Val aggregate for new program: 0.9666666666666667
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Individual valset scores for new program: {0: 1.0, 1: 1.0, 2: 0.9}
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New valset pareto front scores: {0: 1.0, 1: 1.0, 2: 0.9}
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Valset pareto front aggregate score: 0.9666666666666667
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Updated valset pareto front programs: {0: {1}, 1: {1}, 2: {1}}
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best valset aggregate score so far: 0.9666666666666667
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best program as per aggregate score on valset: 1
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Best score on valset: 0.9666666666666667
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Linear pareto front program index: 1
+2026/05/17 17:13:10 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New program candidate index: 1
+GEPA Optimization:  50%|█████     | 3/6 [04:36<04:36, 92.03s/rollouts]
+2026-05-17 17:13:10,242 INFO amas3.grpo.gepa: GEPA: rejecting synth update; best variant reward -0.044 did not beat baseline -0.040
+2026-05-17 17:13:10,242 INFO amas3.grpo.gepa: GEPA: evolved synth (141 chars, 0 rules, 0 principles)
+2026-05-17 17:13:10,242 INFO amas3.grpo.gepa: GEPA: evolving sas_solver (failures: ['premature_answer'], trajs: 10)
+2026/05/17 17:19:43 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 17:19:43 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]2026/05/17 17:20:31 INFO dspy.evaluate.evaluate: Average Metric: 2.55 / 3 (85.0%)
+2026/05/17 17:20:31 INFO dspy.teleprompt.gepa.gepa: Iteration 0: Base program full valset score: 0.85 over 3 / 3 examples
+GEPA Optimization:  50%|█████     | 3/6 [00:48<00:48, 16.17s/rollouts]2026/05/17 17:20:31 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Selected program 0 score: 0.85
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%):   0%|          | 0/1 [00:26<?, ?it/s]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:26<00:00, 26.65s/it]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:26<00:00, 26.65s/it]2026/05/17 17:20:58 INFO dspy.evaluate.evaluate: Average Metric: 0.85 / 1 (85.0%)
+2026/05/17 17:21:31 INFO dspy.teleprompt.gepa.gepa: Iteration 1: Proposed new text for integrate: You are updating an agent prompt using role-specific GEPA feedback.
+
+Inputs:
+- agent_role (e.g., sas_solver)
+- current_prompt (base mission)
+- rules_json (required rules)
+- principles_json (operational principles)
+- failure_context (question, gold, bad_answer, topology)
+- max_chars (character budget for final prompt)
+
+Your goal:
+- Produce one concise, operational prompt tailored to agent_role.
+- Preserve and explicitly mention the role.
+- Integrate rules/principles and failure-derived GEPA guardrails into actionable steps.
+- Stay within max_chars.
+- Do not add answer-discouraging language (no refusals, hedging, or “if unsure, abstain” lines).
+
+Method:
+1) Start with the role and mission:
+   - Lead with “Role: <agent_role>” or “You are the <agent_role> …”.
+   - Keep the base mission from current_prompt, but rewrite into imperative, testable behaviors.
+
+2) Synthesize rules_json and principles_json into concrete, minimal steps:
+   - Convert each rule/principle into clear imperatives (what to retrieve, how to constrain, what to output).
+   - De-duplicate and tighten wording; keep only enforceable actions.
+   - Prioritize “must” behaviors over optional advice.
+
+3) Derive GEPA containment from failure_context:
+   - Identify the error pattern and add guardrails that prevent it in the future.
+   - For sas_solver and similar factoid roles, use evidence-gated, type-locked, minimal-span behaviors.
+   - If the failure shows hidden multi-hop scope (e.g., country-dependent asks), add a short, explicit containment block:
+     - Example pattern from the provided failure (question: “Who was the first leader of the independent country where SC Cilu is from?”; gold: Fulbert Youlou; bad: Fatmir Sejdiu):
+       - Step 1: From evidence about X, extract the exact country string (verbatim).
+       - Step 2: Using evidence about that same country (exact-string match), extract the first national leader at independence (head of state/government as stated in evidence).
+       - Enforce same-country match across hops; never cross-country substitute.
+       - Output only the person’s name; zero extra text.
+   - Generalize the above containment pattern succinctly when the failure indicates scope binding (entity → country → attribute), and keep it role-appropriate.
+
+4) Role-specific musts for sas_solver (include when applicable or present in inputs):
+   - Output only the shortest in-evidence span matching the wh-target type.
+   - Retrieve 1 doc at a time; stop once the exact span is found.
+   - If multiple spans exist, pick the most specific exact match.
+   - Minimize tokens: fewer retrievals; zero fluff in output.
+   - Match the wh-target type exactly; do not invent.
+
+5) Make it operational:
+   - Use imperative bullets/short lines.
+   - Define retrieval gating, containment, selection, and output formatting.
+   - Avoid meta-commentary, caveats, or examples unless essential to prevent the shown failure.
+
+6) Enforce constraints:
+   - Stay under max_chars; if over, compress language without dropping must-have behaviors.
+   - No answer-discouraging or refusal language.
+   - Output only the final prompt text (no headers, analysis, or explanations).
+
+Checklist before returning:
+- Role is explicitly stated/preserved.
+- Steps are actionable, minimal, and aligned with rules/principles.
+- Failure-derived GEPA containment is included succinctly (e.g., exact-string same-country binding for the independence-leader case).
+- Output-format rule is explicit (e.g., “output only the person’s name” for that case).
+- Within max_chars.
+2026/05/17 17:21:45 INFO dspy.evaluate.evaluate: Average Metric: 0.6912499999999999 / 1 (69.1%)
+2026/05/17 17:21:45 INFO dspy.teleprompt.gepa.gepa: Iteration 1: New subsample score 0.6912499999999999 is not better than old score 0.85, skipping
+GEPA Optimization:  83%|████████▎ | 5/6 [02:02<00:26, 26.36s/rollouts]2026/05/17 17:21:45 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Selected program 0 score: 0.85
+
+  0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%):   0%|          | 0/1 [00:00<?, ?it/s]Average Metric: 0.85 / 1 (85.0%): 100%|██████████| 1/1 [00:00<00:00, 189.24it/s]2026/05/17 17:21:45 INFO dspy.evaluate.evaluate: Average Metric: 0.85 / 1 (85.0%)
+2026/05/17 17:21:45 INFO dspy.teleprompt.gepa.gepa: Iteration 2: Proposed new text for integrate: You are updating an agent prompt using role-specific GEPA feedback.
+
+Inputs:
+- agent_role (e.g., sas_solver)
+- current_prompt (base mission)
+- rules_json (required rules)
+- principles_json (operational principles)
+- failure_context (question, gold, bad_answer, topology)
+- max_chars (character budget for final prompt)
+
+Your goal:
+- Produce one concise, operational prompt tailored to agent_role.
+- Preserve and explicitly mention the role.
+- Integrate rules/principles and failure-derived GEPA guardrails into actionable steps.
+- Stay within max_chars.
+- Do not add answer-discouraging language (no refusals, hedging, or “if unsure, abstain” lines).
+
+Method:
+1) Start with the role and mission:
+   - Lead with “Role: <agent_role>” or “You are the <agent_role> …”.
+   - Keep the base mission from current_prompt, but rewrite into imperative, testable behaviors.
+
+2) Synthesize rules_json and principles_json into concrete, minimal steps:
+   - Convert each rule/principle into clear imperatives (what to retrieve, how to constrain, what to output).
+   - De-duplicate and tighten wording; keep only enforceable actions.
+   - Prioritize “must” behaviors over optional advice.
+
+3) Derive GEPA containment from failure_context:
+   - Identify the error pattern and add guardrails that prevent it in the future.
+   - For sas_solver and similar factoid roles, use evidence-gated, type-locked, minimal-span behaviors.
+   - If the failure shows hidden multi-hop scope (e.g., country-dependent asks), add a short, explicit containment block:
+     - Example pattern from the provided failure (question: “Who was the first leader of the independent country where SC Cilu is from?”; gold: Fulbert Youlou; bad: Fatmir Sejdiu):
+       - Step 1: From evidence about X, extract the exact country string (verbatim).
+       - Step 2: Using evidence about that same country (exact-string match), extract the first national leader at independence (head of state/government as stated in evidence).
+       - Enforce same-country match across hops; never cross-country substitute.
+       - Output only the person’s name; zero extra text.
+   - Generalize the above containment pattern succinctly when the failure indicates scope binding (entity → country → attribute), and keep it role-appropriate.
+
+4) Role-specific musts for sas_solver (include when applicable or present in inputs):
+   - Output only the shortest in-evidence span matching the wh-target type.
+   - Retrieve 1 doc at a time; stop once the exact span is found.
+   - If multiple spans exist, pick the most specific exact match.
+   - Minimize tokens: fewer retrievals; zero fluff in output.
+   - Match the wh-target type exactly; do not invent.
+
+5) Make it operational:
+   - Use imperative bullets/short lines.
+   - Define retrieval gating, containment, selection, and output formatting.
+   - Avoid meta-commentary, caveats, or examples unless essential to prevent the shown failure.
+
+6) Enforce constraints:
+   - Stay under max_chars; if over, compress language without dropping must-have behaviors.
+   - No answer-discouraging or refusal language.
+   - Output only the final prompt text (no headers, analysis, or explanations).
+
+Checklist before returning:
+- Role is explicitly stated/preserved.
+- Steps are actionable, minimal, and aligned with rules/principles.
+- Failure-derived GEPA containment is included succinctly (e.g., exact-string same-country binding for the independence-leader case).
+- Output-format rule is explicit (e.g., “output only the person’s name” for that case).
+- Within max_chars.
+2026/05/17 17:21:45 INFO dspy.evaluate.evaluate: Average Metric: 0.6912499999999999 / 1 (69.1%)
+2026/05/17 17:21:45 INFO dspy.teleprompt.gepa.gepa: Iteration 2: New subsample score 0.6912499999999999 is not better than old score 0.85, skipping
+GEPA Optimization:  83%|████████▎ | 5/6 [02:02<00:24, 24.53s/rollouts]
+
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 45.11it/s]
+2026-05-17 17:21:45,969 INFO amas3.grpo.gepa: GEPA: evolved sas_solver (716 chars, 3 rules, 2 principles)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.71it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.06it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.54it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.44it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.87it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.76it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 42.35it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 41.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.93it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.36it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 44.71it/s]
+2026-05-17 17:21:46,619 INFO amas3.grpo.orch_grpo: Orchestrator analysis -> library: 6 routing, 4 budget, 5 topology insights
+2026-05-17 17:21:46,702 INFO __main__: ============================================================
+2026-05-17 17:21:46,702 INFO __main__: HERA training complete
+2026-05-17 17:21:46,702 INFO __main__: Library: 40 entries
+2026-05-17 17:21:46,703 INFO __main__: Evolved prompts: {'planner': 181, 'solver': 721, 'synth': 141, 'sas_solver': 716}
+2026-05-17 17:21:46,703 INFO __main__: Artifacts: compiled/full_train_v3
+2026-05-17 17:21:46,704 INFO __main__: ============================================================
+wandb: updating run metadata
+wandb: uploading output.log
+wandb: 
+wandb: Run history:
+wandb:   experience_library/delta_size ▆▃█▆▆▆▃▃▆▆▆▆▃▆▆▆▆▆▆▁▆▆▆▆▆▆▆▃▆█▆▆▃▆▆▆▆▆▆▆
+wandb:   experience_library/final_size ▁
+wandb: experience_library/new_insights ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wandb:         experience_library/size ▁█▁▁▁███████▁▁▁███████▁▁█▁██▁▁▁▁██▁▁███▁
+wandb:      gepa/behavioral_principles ▁
+wandb:        gepa/failed_trajectories ▁
+wandb:  gepa/final_failed_trajectories ▁
+wandb:                gepa/inter_epoch ▁
+wandb:          gepa/operational_rules ▁
+wandb:       gepa/prompt_chars_planner ▁
+wandb:                             +30 ...
+wandb: 
+wandb: Run summary:
+wandb:   experience_library/delta_size 0
+wandb:   experience_library/final_size 40
+wandb: experience_library/new_insights 3
+wandb:         experience_library/size 40
+wandb:      gepa/behavioral_principles 8
+wandb:        gepa/failed_trajectories 10
+wandb:  gepa/final_failed_trajectories 10
+wandb:                gepa/inter_epoch 1
+wandb:          gepa/operational_rules 12
+wandb:       gepa/prompt_chars_planner 181
+wandb:                             +31 ...
+wandb: 
+wandb: 🚀 View run hera-v3-samplerfix-gepa-threadfix at: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/yryanu9x
+wandb: ⭐️ View project at: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: Synced 6 W&B file(s), 2 media file(s), 4 artifact file(s) and 0 other file(s)
+wandb: Find logs at: compiled/full_train_v3/wandb/wandb/run-20260517_110740-yryanu9x/logs

@@ -92,6 +92,7 @@ def sample_topology(
     dataset: str = "default",
     avoid_topologies: list[dict[str, Any]] | None = None,
     deployment_budget: int | None = None,
+    sampling_directive: str = "",
 ) -> dict[str, Any]:
     """Sample a topology from the budget-conditioned orchestrator policy
     pi_O(Gamma | q, E, N, B).
@@ -126,6 +127,7 @@ def sample_topology(
         query_profile=query_profile,
         budget_block=budget_text,
         avoid_topologies_text=format_avoid_topologies(avoid_topologies),
+        sampling_directive=sampling_directive or "Sample the topology that best matches the query semantics, retrieved experiences, and token budget.",
         question=question,
     )
 
@@ -144,6 +146,7 @@ def sample_topology(
             obj["_query_profile"] = query_profile
             obj["_experience_entry_ids"] = [e.id for e in entries]
             obj["_deployment_budget"] = deployment_budget if deployment_budget is not None else 0
+            obj["_sampling_directive"] = sampling_directive
             obj["routing_strategy"] = normalize_strategy(str(obj.get("routing_strategy", "")))
             return obj
     except Exception as e:
@@ -158,6 +161,7 @@ def sample_topology(
         "_query_profile": query_profile,
         "_experience_entry_ids": [e.id for e in entries],
         "_deployment_budget": deployment_budget if deployment_budget is not None else 0,
+        "_sampling_directive": sampling_directive,
     }
     return fallback
 
@@ -180,6 +184,72 @@ def topology_signature(topology: dict[str, Any]) -> tuple:
         int(bounded_int(topology.get("retrieval_budget"), 2, 1, 4)),
         bool(topology.get("repair", False)),
     )
+
+
+def semantic_counterfactual_topology(
+    base: dict[str, Any],
+    prior_samples: list[dict[str, Any]],
+    question: str,
+    dataset: str = "default",
+    deployment_budget: int | None = None,
+    sampling_directive: str = "",
+) -> dict[str, Any]:
+    """Return the nearest defensible non-duplicate topology.
+
+    This is a sampler repair, not a topology grid: it fires only after the LM
+    repeatedly copies an existing signature. The alternative is chosen from the
+    query profile and the LM's own first choice, so the group still compares a
+    semantic counterfactual for the same question instead of a fixed route menu.
+    """
+    forbidden = {topology_signature(t) for t in prior_samples}
+    profile = characterize_query_profile(question, dataset)
+    base_strategy = normalize_strategy(str(base.get("routing_strategy", "")))
+    base_budget = bounded_int(base.get("retrieval_budget"), 2, 1, 3)
+
+    if profile == "any":
+        budgets = [1, 2, 3]
+    elif profile in {"bridge", "temporal"}:
+        budgets = [2, 1, 3]
+    else:
+        budgets = [3, 2, 1]
+
+    strategies = (
+        ["direct_mas", "sas_first"]
+        if base_strategy == "sas_first"
+        else ["sas_first", "direct_mas"]
+    )
+
+    candidates: list[dict[str, Any]] = []
+    for strategy in strategies:
+        for budget in [base_budget, *budgets]:
+            budget = bounded_int(budget, 2, 1, 3)
+            candidate = dict(base)
+            candidate.update({
+                "query_profile": base.get("query_profile") or profile,
+                "routing_strategy": strategy,
+                "retrieval_budget": budget,
+                "repair": False,
+                "rationale": (
+                    "Semantic counterfactual after duplicate sampling: compare "
+                    f"{strategy} with budget {budget} for this {profile} query."
+                ),
+                "_semantic_counterfactual_fallback": True,
+                "_sampler_tokens": int(base.get("_sampler_tokens", 0) or 0),
+                "_query_profile": profile,
+                "_experience_entry_ids": list(base.get("_experience_entry_ids", [])),
+                "_deployment_budget": (
+                    deployment_budget
+                    if deployment_budget is not None
+                    else int(base.get("_deployment_budget", 0) or 0)
+                ),
+                "_sampling_directive": sampling_directive,
+            })
+            candidates.append(candidate)
+
+    for candidate in candidates:
+        if topology_signature(candidate) not in forbidden:
+            return candidate
+    return candidates[0] if candidates else dict(base)
 
 
 def config_from_topology(config: AmasPipelineConfig, topology: dict) -> AmasPipelineConfig:

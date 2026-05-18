@@ -1,0 +1,461 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-17 10:35:04,996 INFO __main__: using stratified pool: 150 examples from /local/yzheng/pnair/workspace/adaptive-mas/data/train_stratified.jsonl
+2026-05-17 10:35:04,996 INFO __main__: loaded 150 training questions
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: pradyut-nair (msc-thesis-pradyut) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in compiled/full_train_v3/wandb/wandb/run-20260517_103506-klk3j56t
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hera-v3-samplerfix-gepa-cap6k-resume
+wandb: ⭐️ View project at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: 🚀 View run at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/klk3j56t
+wandb: Detected [dspy, litellm, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+2026-05-17 10:35:07,802 INFO __main__: wandb run initialized: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/klk3j56t
+2026-05-17 10:35:07,803 INFO __main__: reflection model: openai/gpt-5 (temp=1.0, max_tokens=16000)
+2026-05-17 10:35:07,813 INFO __main__: loaded live experience library for resume: compiled/full_train_v3/experience_library_live.json entries=40
+2026-05-17 10:35:07,853 INFO __main__: resume: backed up compiled/full_train_v3/training_results.jsonl.pre_resume_1779006907.bak and truncated results from 281 to 279 rows using progress step 137
+2026-05-17 10:35:07,871 INFO __main__: resume: start_epoch=1 learning_step=137 questions_seen=137 loaded_rows=279 loaded_failures=192 library=40
+2026-05-17 10:35:07,871 INFO __main__: online HERA mode: semantic pi_O group sampling; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-17 10:35:07,871 INFO __main__: epoch 1 step 138 question 138/150 train_80536
+2026-05-17 10:35:13,509 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-17 10:35:13,751 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.79it/s]
+2026-05-17 10:35:19,748 WARNING amas3.grpo.topology: Topology sampling failed: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.54it/s]
+2026-05-17 10:35:22,815 WARNING amas3.grpo.topology: Topology sampling failed: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.83it/s]
+2026-05-17 10:35:25,881 WARNING amas3.grpo.topology: Topology sampling failed: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 40.63it/s]
+2026-05-17 10:35:28,944 WARNING amas3.grpo.topology: Topology sampling failed: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 39.48it/s]
+2026-05-17 10:35:32,007 WARNING amas3.grpo.topology: Topology sampling failed: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 235, in _make_common_sync_call
+    response = sync_httpx_client.post(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1047, in post
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1029, in post
+    response.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:8001/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 2541, in completion
+    response = base_llm_http_handler.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 559, in completion
+    response = self._make_common_sync_call(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 260, in _make_common_sync_call
+    raise self._handle_error(e=e, provider_config=provider_config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 4720, in _handle_error
+    raise provider_config.get_error_class(
+litellm.llms.openai.common_utils.OpenAIError: {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 72, in __call__
+    return super().__call__(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/base.py", line 205, in __call__
+    outputs = lm(messages=inputs, **lm_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/base_lm.py", line 129, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 186, in forward
+    results = completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 392, in litellm_completion
+    return litellm.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4449, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 235, in _make_common_sync_call
+    response = sync_httpx_client.post(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1047, in post
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1029, in post
+    response.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:8001/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 2541, in completion
+    response = base_llm_http_handler.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 559, in completion
+    response = self._make_common_sync_call(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 260, in _make_common_sync_call
+    raise self._handle_error(e=e, provider_config=provider_config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 4720, in _handle_error
+    raise provider_config.get_error_class(
+litellm.llms.openai.common_utils.OpenAIError: {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 843, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 756, in main
+    library, training_rows, failed_trajectories, failure_buffer = asyncio.run(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 487, in run_training
+    group = await run_group_rollouts(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 240, in run_group_rollouts
+    group.rollouts = list(await asyncio.gather(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 146, in execute_topology
+    return await run_single_rollout(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 45, in run_single_rollout
+    result = await pipeline.run(question, qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/pipeline.py", line 338, in run
+    plan = await asyncio.to_thread(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/planner.py", line 151, in run_planner
+    pred = cot(question=question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/primitives/module.py", line 110, in __call__
+    return self.forward(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/chain_of_thought.py", line 38, in forward
+    return self.predict(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/predict.py", line 130, in __call__
+    return super().__call__(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/primitives/module.py", line 110, in __call__
+    return self.forward(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/predict.py", line 253, in forward
+    completions = adapter(lm, lm_kwargs=config, signature=signature, demos=demos, inputs=kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 85, in __call__
+    return JSONAdapter()(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/json_adapter.py", line 66, in __call__
+    result = self._json_adapter_call_common(lm, lm_kwargs, signature, demos, inputs, super().__call__)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/json_adapter.py", line 56, in _json_adapter_call_common
+    return call_fn(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 84, in __call__
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 72, in __call__
+    return super().__call__(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/base.py", line 205, in __call__
+    outputs = lm(messages=inputs, **lm_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/base_lm.py", line 129, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 186, in forward
+    results = completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 392, in litellm_completion
+    return litellm.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4449, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 235, in _make_common_sync_call
+    response = sync_httpx_client.post(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1047, in post
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1029, in post
+    response.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:8001/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 2541, in completion
+    response = base_llm_http_handler.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 559, in completion
+    response = self._make_common_sync_call(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 260, in _make_common_sync_call
+    raise self._handle_error(e=e, provider_config=provider_config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 4720, in _handle_error
+    raise provider_config.get_error_class(
+litellm.llms.openai.common_utils.OpenAIError: {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 72, in __call__
+    return super().__call__(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/base.py", line 205, in __call__
+    outputs = lm(messages=inputs, **lm_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/base_lm.py", line 129, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 186, in forward
+    results = completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 392, in litellm_completion
+    return litellm.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4449, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 235, in _make_common_sync_call
+    response = sync_httpx_client.post(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1047, in post
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/http_handler.py", line 1029, in post
+    response.raise_for_status()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '404 Not Found' for url 'http://localhost:8001/v1/chat/completions'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 2541, in completion
+    response = base_llm_http_handler.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 559, in completion
+    response = self._make_common_sync_call(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 260, in _make_common_sync_call
+    raise self._handle_error(e=e, provider_config=provider_config)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/llms/custom_httpx/llm_http_handler.py", line 4720, in _handle_error
+    raise provider_config.get_error_class(
+litellm.llms.openai.common_utils.OpenAIError: {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 843, in <module>
+    main()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 756, in main
+    library, training_rows, failed_trajectories, failure_buffer = asyncio.run(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/runners.py", line 44, in run
+    return loop.run_until_complete(main)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/base_events.py", line 649, in run_until_complete
+    return future.result()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/scripts/run_hera_train.py", line 487, in run_training
+    group = await run_group_rollouts(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 240, in run_group_rollouts
+    group.rollouts = list(await asyncio.gather(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 146, in execute_topology
+    return await run_single_rollout(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/rollouts.py", line 45, in run_single_rollout
+    result = await pipeline.run(question, qid)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/pipeline.py", line 338, in run
+    plan = await asyncio.to_thread(
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/planner.py", line 151, in run_planner
+    pred = cot(question=question)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/primitives/module.py", line 110, in __call__
+    return self.forward(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/chain_of_thought.py", line 38, in forward
+    return self.predict(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/predict.py", line 130, in __call__
+    return super().__call__(**kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/primitives/module.py", line 110, in __call__
+    return self.forward(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/predict/predict.py", line 253, in forward
+    completions = adapter(lm, lm_kwargs=config, signature=signature, demos=demos, inputs=kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 85, in __call__
+    return JSONAdapter()(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/json_adapter.py", line 66, in __call__
+    result = self._json_adapter_call_common(lm, lm_kwargs, signature, demos, inputs, super().__call__)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/json_adapter.py", line 56, in _json_adapter_call_common
+    return call_fn(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 84, in __call__
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/chat_adapter.py", line 72, in __call__
+    return super().__call__(lm, lm_kwargs, signature, demos, inputs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/adapters/base.py", line 205, in __call__
+    outputs = lm(messages=inputs, **lm_kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/utils/callback.py", line 326, in sync_wrapper
+    return fn(instance, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/base_lm.py", line 129, in __call__
+    response = self.forward(prompt=prompt, messages=messages, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 186, in forward
+    results = completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/dspy/clients/lm.py", line 392, in litellm_completion
+    return litellm.completion(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1720, in wrapper
+    return litellm.completion_with_retries(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4449, in completion_with_retries
+    return retryer(original_function, *args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 470, in __call__
+    do = self.iter(retry_state=retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 371, in iter
+    result = action(retry_state)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 413, in exc_check
+    raise retry_exc.reraise()
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 184, in reraise
+    raise self.last_attempt.result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 451, in result
+    return self.__get_result()
+  File "/var/scratch/yzheng/pnair/uv-python/cpython-3.10.18-linux-x86_64-gnu/lib/python3.10/concurrent/futures/_base.py", line 403, in __get_result
+    raise self._exception
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/tenacity/__init__.py", line 473, in __call__
+    result = fn(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1775, in wrapper
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/utils.py", line 1596, in wrapper
+    result = original_function(*args, **kwargs)
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/main.py", line 4411, in completion
+    raise exception_type(
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 2456, in exception_type
+    raise e
+  File "/local/yzheng/pnair/workspace/adaptive-mas/.venv/lib/python3.10/site-packages/litellm/litellm_core_utils/exception_mapping_utils.py", line 552, in exception_type
+    raise NotFoundError(
+litellm.exceptions.NotFoundError: litellm.NotFoundError: NotFoundError: Hosted_vllmException - {"error":{"message":"The model `Qwen/Qwen3-14B` does not exist.","type":"NotFoundError","param":null,"code":404}}
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33mhera-v3-samplerfix-gepa-cap6k-resume[0m at: [34mhttps://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/klk3j56t[0m

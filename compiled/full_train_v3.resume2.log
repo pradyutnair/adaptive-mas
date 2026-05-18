@@ -1,0 +1,169 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-17 10:38:27,889 INFO __main__: using stratified pool: 150 examples from /local/yzheng/pnair/workspace/adaptive-mas/data/train_stratified.jsonl
+2026-05-17 10:38:27,889 INFO __main__: loaded 150 training questions
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: pradyut-nair (msc-thesis-pradyut) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in compiled/full_train_v3/wandb/wandb/run-20260517_103828-tmhhsbzm
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hera-v3-samplerfix-gepa-cap6k-resume2
+wandb: ⭐️ View project at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: 🚀 View run at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/tmhhsbzm
+wandb: Detected [dspy, litellm, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+2026-05-17 10:38:30,154 INFO __main__: wandb run initialized: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/tmhhsbzm
+2026-05-17 10:38:30,155 INFO __main__: reflection model: openai/gpt-5 (temp=1.0, max_tokens=16000)
+2026-05-17 10:38:30,165 INFO __main__: loaded live experience library for resume: compiled/full_train_v3/experience_library_live.json entries=40
+2026-05-17 10:38:30,201 INFO __main__: resume: start_epoch=1 learning_step=137 questions_seen=137 loaded_rows=279 loaded_failures=192 library=40
+2026-05-17 10:38:30,201 INFO __main__: online HERA mode: semantic pi_O group sampling; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-17 10:38:30,202 INFO __main__: epoch 1 step 138 question 138/150 train_80536
+2026-05-17 10:38:35,705 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-17 10:38:35,943 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 38.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 37.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.99it/s]
+2026-05-17 10:41:03,611 INFO __main__: epoch 1 step 138 train_80536 rows=2 mixed=False insights=3 lib=40 avg_tok=6248 avg_reward=-0.302
+2026-05-17 10:41:03,611 INFO __main__: epoch 1 step 139 question 139/150 train_77440
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.64it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.16it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.30it/s]
+2026-05-17 10:43:14,176 INFO __main__: epoch 1 step 139 train_77440 rows=2 mixed=True insights=3 lib=40 avg_tok=6474 avg_reward=-0.304
+2026-05-17 10:43:14,177 INFO __main__: epoch 1 step 140 question 140/150 train_14167
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.99it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.65it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.05it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.53it/s]
+2026-05-17 10:44:49,385 INFO __main__: epoch 1 step 140 train_14167 rows=2 mixed=True insights=3 lib=40 avg_tok=5318 avg_reward=0.865
+2026-05-17 10:44:49,386 INFO __main__: epoch 1 step 141 question 141/150 train_77428
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.57it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.21it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.27it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.23it/s]
+2026-05-17 10:46:48,574 INFO __main__: epoch 1 step 141 train_77428 rows=2 mixed=True insights=3 lib=40 avg_tok=6970 avg_reward=0.232
+2026-05-17 10:46:48,574 INFO __main__: epoch 1 step 142 question 142/150 4hop1__524030_829000_51791_820357
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.91it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.59it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.53it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 19.20it/s]
+2026-05-17 10:48:32,942 INFO __main__: epoch 1 step 142 4hop1__524030_829000_51791_820357 rows=2 mixed=True insights=3 lib=40 avg_tok=6164 avg_reward=-0.016
+2026-05-17 10:48:32,942 INFO __main__: epoch 1 step 143 question 143/150 train_80502
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.32it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.86it/s]
+2026-05-17 10:50:49,960 INFO __main__: epoch 1 step 143 train_80502 rows=2 mixed=True insights=3 lib=40 avg_tok=5576 avg_reward=0.860
+2026-05-17 10:50:49,960 INFO __main__: epoch 1 step 144 question 144/150 2hop__442180_3983
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.83it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.13it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.90it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 33.41it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.58it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.00it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.35it/s]
+2026-05-17 10:53:35,505 INFO __main__: epoch 1 step 144 2hop__442180_3983 rows=3 mixed=True insights=3 lib=40 avg_tok=4076 avg_reward=-0.235
+2026-05-17 10:53:35,506 INFO __main__: epoch 1 step 145 question 145/150 2hop__703912_10366
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.12it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 31.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.23it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.95it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.31it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.07it/s]
+2026-05-17 10:55:32,757 INFO __main__: epoch 1 step 145 2hop__703912_10366 rows=3 mixed=True insights=3 lib=40 avg_tok=4009 avg_reward=-0.234
+2026-05-17 10:55:32,757 INFO __main__: epoch 1 step 146 question 146/150 train_14182
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.60it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.89it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.78it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.49it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.62it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.20it/s]
+2026-05-17 10:57:13,738 INFO __main__: epoch 1 step 146 train_14182 rows=2 mixed=True insights=3 lib=40 avg_tok=6199 avg_reward=0.505
+2026-05-17 10:57:13,738 INFO __main__: epoch 1 step 147 question 147/150 3hop1__313260_633553_12055
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 36.22it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.40it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.69it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.02it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.67it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 34.70it/s]
+2026-05-17 10:59:07,026 INFO __main__: epoch 1 step 147 3hop1__313260_633553_12055 rows=2 mixed=True insights=3 lib=40 avg_tok=6578 avg_reward=-0.305
+2026-05-17 10:59:07,026 INFO __main__: epoch 1 step 148 question 148/150 train_14151
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 29.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 26.42it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.70it/s]
+2026-05-17 11:00:18,905 INFO __main__: epoch 1 step 148 train_14151 rows=2 mixed=True insights=3 lib=40 avg_tok=6230 avg_reward=0.819
+2026-05-17 11:00:18,905 INFO __main__: epoch 1 step 149 question 149/150 2hop__18366_44352
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 35.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 30.26it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 27.42it/s]
+2026-05-17 11:01:26,075 INFO amas3.grpo.library_update: Pre-pruned stale entry E034 (utility=0.50)
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 17.86it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 25.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 21.37it/s]
+2026-05-17 11:02:15,968 INFO __main__: epoch 1 step 149 2hop__18366_44352 rows=2 mixed=True insights=3 lib=40 avg_tok=6588 avg_reward=-0.330
+2026-05-17 11:02:15,969 INFO __main__: epoch 1 step 150 question 150/150 4hop1__507663_146811_31258_43153
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.55it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 24.81it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 28.82it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 20.66it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 22.88it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 23.19it/s]
+2026-05-17 11:04:41,149 INFO __main__: epoch 1 step 150 4hop1__507663_146811_31258_43153 rows=2 mixed=True insights=3 lib=40 avg_tok=6834 avg_reward=-0.307
+2026-05-17 11:04:42,934 INFO __main__: epoch 1 complete, library=40, rows=307, avg_tokens=6087, avg_reward=0.022
+2026-05-17 11:04:42,935 INFO __main__: inter-epoch GEPA: evolving prompts from 210 failures
+2026-05-17 11:04:42,935 INFO amas3.grpo.gepa: GEPA: evolving planner (failures: ['bad_decomposition'], trajs: 10)
+2026-05-17 11:05:32,110 WARNING amas3.grpo.gepa: GEPA replay failed for planner/baseline: Cannot run the event loop while another loop is running
+/local/yzheng/pnair/workspace/adaptive-mas/src/amas3/grpo/gepa.py:700: RuntimeWarning: coroutine 'AmasPipeline.run' was never awaited
+  continue
+RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+2026-05-17 11:05:32,113 WARNING amas3.grpo.gepa: GEPA replay failed for planner/baseline: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,114 WARNING amas3.grpo.gepa: GEPA replay failed for planner/baseline: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,114 WARNING amas3.grpo.gepa: GEPA replay failed for planner/baseline: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,115 WARNING amas3.grpo.gepa: GEPA replay failed for planner/baseline: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,115 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Type-constrained minimal hops: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,116 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Type-constrained minimal hops: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,116 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Type-constrained minimal hops: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,117 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Type-constrained minimal hops: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,117 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Type-constrained minimal hops: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,118 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Bridge-first chaining: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,118 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Bridge-first chaining: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,118 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Bridge-first chaining: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,119 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Bridge-first chaining: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,119 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Bridge-first chaining: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,120 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Infobox/lead property targeting: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,120 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Infobox/lead property targeting: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,121 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Infobox/lead property targeting: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,121 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Infobox/lead property targeting: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,122 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Infobox/lead property targeting: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,122 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Wh-to-schema mapping: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,123 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Wh-to-schema mapping: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,123 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Wh-to-schema mapping: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,124 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Wh-to-schema mapping: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,124 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Wh-to-schema mapping: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,125 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Constraint-first minimal plan: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,125 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Constraint-first minimal plan: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,126 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Constraint-first minimal plan: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,126 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Constraint-first minimal plan: Cannot run the event loop while another loop is running
+2026-05-17 11:05:32,127 WARNING amas3.grpo.gepa: GEPA replay failed for planner/Constraint-first minimal plan: Cannot run the event loop while another loop is running
+2026/05/17 11:06:16 INFO dspy.teleprompt.gepa.gepa: Running GEPA for approx 6 metric calls of the program. This amounts to 1.20 full evals on the train+val set.
+2026/05/17 11:06:16 INFO dspy.teleprompt.gepa.gepa: Using 3 examples for tracking Pareto scores.
+GEPA Optimization:   0%|          | 0/6 [00:00<?, ?rollouts/s]

@@ -1,0 +1,302 @@
+{
+  "hotpotqa": {
+    "ours": {
+      "norm_em": 0.228,
+      "token_f1": 0.312,
+      "contain": 0.275,
+      "avg_tokens": 5540.9,
+      "total": 1000,
+      "answered": 980,
+      "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/hotpotqa/questions_1000_seed42.json",
+      "dry_run": false
+    },
+    "balanced": {
+      "ours_matched": {
+        "norm_em": 0.228,
+        "token_f1": 0.312,
+        "contain": 0.275,
+        "avg_tokens": 5540.9,
+        "total": 1000,
+        "answered": 980,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.404,
+        "token_f1": 0.5086,
+        "contain": 0.445,
+        "avg_tokens": 6796.4,
+        "total": 1000,
+        "answered": 997,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.176,
+      "delta_token_f1": -0.1966,
+      "delta_contain": -0.17,
+      "delta_avg_tokens": -1255.5,
+      "token_ratio": 0.8153,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": false,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "clean_base": {
+      "ours_matched": {
+        "norm_em": 0.228,
+        "token_f1": 0.312,
+        "contain": 0.275,
+        "avg_tokens": 5540.9,
+        "total": 1000,
+        "answered": 980,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.42,
+        "token_f1": 0.5288,
+        "contain": 0.455,
+        "avg_tokens": 8774.8,
+        "total": 1000,
+        "answered": 998,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.192,
+      "delta_token_f1": -0.2168,
+      "delta_contain": -0.18,
+      "delta_avg_tokens": -3233.9,
+      "token_ratio": 0.6315,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": true,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "qid_match_note": "Deltas are computed only over the exact same IDs present in our run, the baseline, and gold file."
+  },
+  "2wiki": {
+    "ours": {
+      "norm_em": 0.076,
+      "token_f1": 0.1196,
+      "contain": 0.098,
+      "avg_tokens": 6155.1,
+      "total": 1000,
+      "answered": 990,
+      "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/2wikimultihop/questions_1000_seed42.json",
+      "dry_run": false
+    },
+    "balanced": {
+      "ours_matched": {
+        "norm_em": 0.076,
+        "token_f1": 0.1196,
+        "contain": 0.098,
+        "avg_tokens": 6155.1,
+        "total": 1000,
+        "answered": 990,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.413,
+        "token_f1": 0.4694,
+        "contain": 0.451,
+        "avg_tokens": 7991.2,
+        "total": 1000,
+        "answered": 993,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.337,
+      "delta_token_f1": -0.3498,
+      "delta_contain": -0.353,
+      "delta_avg_tokens": -1836.1,
+      "token_ratio": 0.7702,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": true,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "clean_base": {
+      "ours_matched": {
+        "norm_em": 0.076,
+        "token_f1": 0.1196,
+        "contain": 0.098,
+        "avg_tokens": 6155.1,
+        "total": 1000,
+        "answered": 990,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.418,
+        "token_f1": 0.4798,
+        "contain": 0.463,
+        "avg_tokens": 10269.0,
+        "total": 1000,
+        "answered": 993,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.342,
+      "delta_token_f1": -0.3602,
+      "delta_contain": -0.365,
+      "delta_avg_tokens": -4113.9,
+      "token_ratio": 0.5994,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": true,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "qid_match_note": "Deltas are computed only over the exact same IDs present in our run, the baseline, and gold file."
+  },
+  "musique": {
+    "ours": {
+      "norm_em": 0.057,
+      "token_f1": 0.114,
+      "contain": 0.078,
+      "avg_tokens": 6168.3,
+      "total": 1000,
+      "answered": 969,
+      "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/musique/questions_1000_seedfull_combined.json",
+      "dry_run": false
+    },
+    "balanced": {
+      "ours_matched": {
+        "norm_em": 0.057,
+        "token_f1": 0.114,
+        "contain": 0.078,
+        "avg_tokens": 6168.3,
+        "total": 1000,
+        "answered": 969,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.19,
+        "token_f1": 0.2833,
+        "contain": 0.219,
+        "avg_tokens": 7022.1,
+        "total": 1000,
+        "answered": 986,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.133,
+      "delta_token_f1": -0.1693,
+      "delta_contain": -0.141,
+      "delta_avg_tokens": -853.8,
+      "token_ratio": 0.8784,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": false,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "clean_base": {
+      "ours_matched": {
+        "norm_em": 0.057,
+        "token_f1": 0.114,
+        "contain": 0.078,
+        "avg_tokens": 6168.3,
+        "total": 1000,
+        "answered": 969,
+        "matched_total": 1000
+      },
+      "baseline": {
+        "norm_em": 0.205,
+        "token_f1": 0.2951,
+        "contain": 0.231,
+        "avg_tokens": 8550.3,
+        "total": 1000,
+        "answered": 998,
+        "matched_total": 1000,
+        "baseline_rows": 1000
+      },
+      "delta_norm_em": -0.148,
+      "delta_token_f1": -0.1811,
+      "delta_contain": -0.153,
+      "delta_avg_tokens": -2382.0,
+      "token_ratio": 0.7214,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": true,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 1000
+    },
+    "qid_match_note": "Deltas are computed only over the exact same IDs present in our run, the baseline, and gold file."
+  },
+  "bamboogle": {
+    "ours": {
+      "norm_em": 0.152,
+      "token_f1": 0.25,
+      "contain": 0.152,
+      "avg_tokens": 5733.5,
+      "total": 125,
+      "answered": 122,
+      "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/bamboogle/questions_125.json",
+      "dry_run": false
+    },
+    "balanced": {
+      "ours_matched": {
+        "norm_em": 0.152,
+        "token_f1": 0.25,
+        "contain": 0.152,
+        "avg_tokens": 5733.5,
+        "total": 125,
+        "answered": 122,
+        "matched_total": 125
+      },
+      "baseline": {
+        "norm_em": 0.392,
+        "token_f1": 0.5198,
+        "contain": 0.424,
+        "avg_tokens": 5353.0,
+        "total": 125,
+        "answered": 122,
+        "matched_total": 125,
+        "baseline_rows": 125
+      },
+      "delta_norm_em": -0.24,
+      "delta_token_f1": -0.2698,
+      "delta_contain": -0.272,
+      "delta_avg_tokens": 380.5,
+      "token_ratio": 1.0711,
+      "beats_quality": false,
+      "beats_tokens": false,
+      "tokens_20pct_lower": false,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 125
+    },
+    "clean_base": {
+      "ours_matched": {
+        "norm_em": 0.152,
+        "token_f1": 0.25,
+        "contain": 0.152,
+        "avg_tokens": 5733.5,
+        "total": 125,
+        "answered": 122,
+        "matched_total": 125
+      },
+      "baseline": {
+        "norm_em": 0.456,
+        "token_f1": 0.5609,
+        "contain": 0.472,
+        "avg_tokens": 6503.5,
+        "total": 125,
+        "answered": 123,
+        "matched_total": 125,
+        "baseline_rows": 125
+      },
+      "delta_norm_em": -0.304,
+      "delta_token_f1": -0.3109,
+      "delta_contain": -0.32,
+      "delta_avg_tokens": -770.0,
+      "token_ratio": 0.8816,
+      "beats_quality": false,
+      "beats_tokens": true,
+      "tokens_20pct_lower": false,
+      "beats_quality_and_tokens": false,
+      "qid_matched_total": 125
+    },
+    "qid_match_note": "Deltas are computed only over the exact same IDs present in our run, the baseline, and gold file."
+  }
+}

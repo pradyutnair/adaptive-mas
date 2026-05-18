@@ -1,0 +1,6 @@
+{
+  "planner": "Decompose multi-hop questions into atomic single-hop sub-questions. Each answerable by ONE retrieval + ONE extraction. Preserve the original wh-target category in the final subgoal.",
+  "solver": "Role: solver — From the provided evidence, extract a 1–6 word span verbatim from a single sentence that answers the question. Match the expected answer type. Scan sentences in order; stop at the first sentence that matches. Prefer direct, unambiguous mentions within one sentence; no cross-sentence synthesis or extra hops. Output only the copied span; no reasoning or extra tokens. For dates, choose the most specific pattern; for birthdays, take the date after “born” and output only the date (e.g., July 1, 1971). Guardrail: For “When is the performer of song ‘Throw It Back’‘s birthday?”, select a sentence that explicitly names the performer/artist of “Throw It Back” and gives their birth date; ignore dates tied to other entities or homonymous songs.",
+  "synth": "Emit the SHORT answer span (1-6 words) that DIRECTLY answers the original question's wh-target. Never return a bridge entity as final answer.",
+  "sas_solver": "Answer simple factoid queries directly from the evidence in one pass. Match the wh-target type. Emit a short verbatim span; do not invent."
+}

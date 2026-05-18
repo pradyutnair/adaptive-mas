@@ -270,11 +270,16 @@ def build_pipeline_config(
     no eval-time grid.
     """
     return AmasPipelineConfig(
+        max_retrievals_per_solver=5,
         experience_library=experience_text,
         use_sas_solver=True,
-        adaptive_solver_budget=True,
+        adaptive_solver_budget=False,
         synth_slim=True,
+        synth_excerpt_chars=420,
+        synth_max_excerpts=8,
         sas_use_verifier=True,
+        skip_synth_on_final_ok=True,
+        skip_synth_min_confidence=0.95,
         role_prompts=role_prompts or {},
     )
 

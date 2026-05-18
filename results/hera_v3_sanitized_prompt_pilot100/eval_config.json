@@ -1,0 +1,4 @@
+{
+  "artifacts_dir": "compiled/full_train_v3_sanitized_prompts",
+  "policy": "pi_O(Gamma | q, E, N) with config_from_topology(base, Gamma)"
+}

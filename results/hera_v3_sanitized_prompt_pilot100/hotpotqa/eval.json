@@ -1,0 +1,10 @@
+{
+  "norm_em": 0.2,
+  "token_f1": 0.2952,
+  "contain": 0.24,
+  "avg_tokens": 5387.5,
+  "total": 100,
+  "answered": 97,
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/hotpotqa/questions_1000_seed42.json",
+  "dry_run": false
+}

@@ -1,0 +1,10 @@
+{
+  "norm_em": 0.0,
+  "token_f1": 0.0,
+  "contain": 0.0,
+  "avg_tokens": 0.0,
+  "total": 1000,
+  "answered": 0,
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/2wikimultihop/questions_1000_seed42.json",
+  "dry_run": true
+}

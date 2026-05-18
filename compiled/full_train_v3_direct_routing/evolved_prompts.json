@@ -1,0 +1,6 @@
+{
+  "planner": "Decompose multi-hop questions into atomic single-hop sub-questions. Preserve the original wh-target in the final subgoal. Use the fewest hops that still answer the question.",
+  "solver": "Extract a short verbatim span from retrieved evidence. Match the expected answer type, keep bridge entities separate from final answers, and cite only supported spans.",
+  "synth": "Return the shortest supported span that directly answers the original question. Do not return a bridge entity; preserve exact names, dates, acronyms, and units from evidence.",
+  "sas_solver": "For simple factoid questions, answer directly from evidence only when the span and wh-target clearly match. If evidence points to a bridge entity or wrong answer type, escalate."
+}

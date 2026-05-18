@@ -1,0 +1,10 @@
+{
+  "norm_em": 0.057,
+  "token_f1": 0.114,
+  "contain": 0.078,
+  "avg_tokens": 6168.3,
+  "total": 1000,
+  "answered": 969,
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/musique/questions_1000_seedfull_combined.json",
+  "dry_run": false
+}

@@ -69,6 +69,7 @@ class AmasResult:
     sas_verifier_passed: bool = False
     sas_verifier_verdict: str = ''
     sas_verifier_tokens: int = 0
+    synth_skipped: bool = False
 
 
 @dataclass
@@ -97,6 +98,9 @@ class AmasPipelineConfig:
     synth_slim: bool = False
     synth_excerpt_chars: int = 220
     synth_max_excerpts: int = 6
+    skip_synth_on_final_ok: bool = False
+    skip_synth_min_confidence: float = 0.95
+    skip_synth_allowed_answer_types: tuple[str, ...] = ("entity", "person", "place", "number", "other")
     role_prompts: dict[str, str] = field(default_factory=dict)
     max_plan_subgoals: int = 4
     # Legacy escape hatch. The GRPO orchestrator no longer emits a strict SAS
@@ -126,6 +130,73 @@ class AmasPipeline:
         self.sas_lm = sas_lm or worker_lm
         self.retriever = retriever
         self.config = config or AmasPipelineConfig()
+
+    @staticmethod
+    def _running_tokens(result: AmasResult) -> int:
+        return (
+            result.planner_tokens
+            + result.solver_tokens
+            + result.synth_tokens
+            + result.rewrite_tokens
+            + result.sas_attempt_tokens
+            + result.sas_verifier_tokens
+        )
+
+    def _over_budget(self, result: AmasResult) -> bool:
+        B = int(self.config.deployment_budget or 0)
+        return B > 0 and self._running_tokens(result) >= B
+
+    def _finalize_from_findings(
+        self,
+        question: str,
+        bus: FindingsBus,
+        result: AmasResult,
+        t0: float,
+        stage: str,
+    ) -> AmasResult:
+        answered = [f for f in bus.all() if f.answer]
+        # If we run out of budget before synthesis, never choose a high-confidence
+        # bridge over a lower-confidence final-hop answer. The deepest node is
+        # the closest available proxy for the original question target.
+        max_node = max((f.node_id for f in answered), default=None)
+        candidates = [f for f in answered if f.node_id == max_node] if max_node is not None else []
+        best = None
+        for f in candidates:
+            if best is None or f.confidence > best.confidence:
+                best = f
+        if best is not None:
+            result.answer = best.answer
+            result.answer_type = result.answer_type or 'other'
+            result.justification = f'budget_exit@{stage} (conf={best.confidence:.2f})'
+            result.support_ids = list(best.evidence_ids or [])
+        else:
+            result.answer = ''
+            result.justification = f'budget_exit@{stage} (no findings)'
+        result.budget_exit = True
+        result.budget_exit_stage = stage
+        if not result.topology:
+            result.topology = 'budget_truncated'
+        result.total_tokens = self._running_tokens(result)
+        result.wallclock_seconds = round(time.time() - t0, 3)
+        return result
+
+    def _remaining_budget(self, result: AmasResult) -> int:
+        B = int(self.config.deployment_budget or 0)
+        if B <= 0:
+            return 10**9
+        return max(0, B - self._running_tokens(result))
+
+    def _near_synth_budget(self, result: AmasResult) -> bool:
+        B = int(self.config.deployment_budget or 0)
+        return B > 0 and self._running_tokens(result) >= max(0, B - 900)
+
+    def _solver_token_budget(self, result: AmasResult, remaining_nodes: int = 1) -> int | None:
+        B = int(self.config.deployment_budget or 0)
+        if B <= 0:
+            return None
+        reserve = 900
+        usable = max(400, B - self._running_tokens(result) - reserve)
+        return max(400, usable // max(1, remaining_nodes))
 
     def _role_experience(self, role: str, extra: str = "") -> str:
         parts = []
@@ -230,6 +301,8 @@ class AmasPipeline:
                 result.n_solvers_invoked = 1
                 return result
             result.sas_escalated = True
+            if self._over_budget(result):
+                return self._finalize_from_findings(question, bus, result, t0, 'after_sas')
 
         enhanced_experience = self._role_experience("planner")
 
@@ -288,6 +361,9 @@ class AmasPipeline:
 
         result.probe_groundedness = [round(p.groundedness, 4) for p in probes]
 
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_planner')
+
         decision = select_topology(plan=plan, probes=probes, thresholds=self.config.topology_thresholds)
         result.topology = decision.topology.value
         result.topology_rationale = decision.rationale
@@ -297,8 +373,16 @@ class AmasPipeline:
         else:
             await self._execute_dag(question, plan, probes, bus, result, decision, solver_chunks_by_node)
 
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_solvers')
+
         if self.config.repair_enabled:
             await self._maybe_repair(plan, probes, bus, result)
+
+        if self._over_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'after_repair')
+        if self._near_synth_budget(result):
+            return self._finalize_from_findings(question, bus, result, t0, 'before_synth_budget_buffer')
 
         final_node = self._find_final_node(plan)
         final_evidence = self._final_evidence_chunks(final_node, plan, probes, bus)
@@ -321,7 +405,49 @@ class AmasPipeline:
         union_capped = union[:20]
 
         try:
-            if self.config.synth_recursion_rounds > 1:
+            final_finding = bus.findings_by_node.get(final_node.id) if final_node else None
+            synth_obj = None
+            synth_tokens = 0
+            if (
+                self.config.skip_synth_on_final_ok
+                and final_node is not None
+                and final_finding is not None
+                and final_finding.answer
+                and final_finding.status == FindingStatus.OK
+                and float(final_finding.confidence or 0.0) >= self.config.skip_synth_min_confidence
+                and str(final_node.expected_answer_type or "other").lower()
+                    in set(self.config.skip_synth_allowed_answer_types)
+            ):
+                from .amas_orchestrator import run_amas_verifier
+                vr = await run_amas_verifier(
+                    verifier_lm=self.synth_lm,
+                    question=question,
+                    answer=final_finding.answer,
+                    justification=(
+                        f"Final solver answered '{final_finding.answer}' for "
+                        f"sub-question '{final_finding.sub_question}' "
+                        f"with confidence {float(final_finding.confidence or 0.0):.3f}."
+                    ),
+                    chunks=union_capped,
+                    support_ids=final_finding.evidence_ids or [],
+                    excerpt_chars=self.config.synth_excerpt_chars,
+                    max_chunks=self.config.synth_max_excerpts,
+                )
+                result.sas_verifier_tokens += vr.tokens
+                result.sas_verifier_verdict = f"skip_synth_{vr.decision}|{vr.failure_reason[:80]}"
+                result.sas_verifier_passed = vr.decision == "accept"
+                if vr.decision == "accept" and vr.confidence >= self.config.sas_verifier_min_confidence:
+                    synth_obj = {
+                        "answer": final_finding.answer,
+                        "answer_type": final_node.expected_answer_type or "other",
+                        "justification": f"verified_final_solver(conf={final_finding.confidence:.3f})",
+                        "support_ids": final_finding.evidence_ids or [],
+                    }
+                    result.synth_skipped = True
+
+            if synth_obj is not None:
+                pass
+            elif self.config.synth_recursion_rounds > 1:
                 from .synth_refine import run_synth_recursion
                 synth_obj, synth_tokens = await asyncio.to_thread(
                     run_synth_recursion,
@@ -405,6 +531,7 @@ class AmasPipeline:
             + result.synth_tokens
             + result.rewrite_tokens
             + result.sas_attempt_tokens
+            + result.sas_verifier_tokens
         )
         result.wallclock_seconds = round(time.time() - t0, 3)
         return result
@@ -431,6 +558,7 @@ class AmasPipeline:
             hop_idx=0,
             max_retrievals=self._retrieval_budget_for_node(node, plan, probes) if node else self.config.max_retrievals_per_solver,
             experience=self._role_experience("solver"),
+            token_budget=self._solver_token_budget(result),
         )
         result.solver_tokens += sr.extraction_tokens
         result.rewrite_tokens += sr.rewrite_tokens
@@ -452,28 +580,30 @@ class AmasPipeline:
     ) -> None:
         depth_levels = self._topo_levels(plan)
         for level_nodes in depth_levels:
-            tasks = []
-            metas = []
-            for node in level_nodes:
+            # Execute budget-aware sequentially. Parallel solver launches can
+            # overshoot B before the executor can observe token usage.
+            for offset, node in enumerate(level_nodes):
+                if self._over_budget(result) or self._near_synth_budget(result):
+                    return
                 sub_q = bus.interpolate(node.question)
                 hop_idx = self._depth_of(node, plan)
                 start_chunks = self._probe_for_node(node, plan, probes, bus)
-                metas.append((node, sub_q, hop_idx))
-                tasks.append(run_solver(
-                    solver_lm=self.worker_lm,
-                    rewrite_lm=self.worker_lm,
-                    retriever=self.retriever,
-                    sub_question=sub_q,
-                    expected_answer_type=node.expected_answer_type,
-                    starting_chunks=start_chunks,
-                    node_id=node.id,
-                    hop_idx=hop_idx,
-                    max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
-                    experience=self._role_experience("solver"),
-                ))
-            results = await asyncio.gather(*tasks, return_exceptions=True)
-            for (node, sub_q, hop_idx), sr in zip(metas, results):
-                if isinstance(sr, Exception):
+                remaining_nodes = len(level_nodes) - offset
+                try:
+                    sr = await run_solver(
+                        solver_lm=self.worker_lm,
+                        rewrite_lm=self.worker_lm,
+                        retriever=self.retriever,
+                        sub_question=sub_q,
+                        expected_answer_type=node.expected_answer_type,
+                        starting_chunks=start_chunks,
+                        node_id=node.id,
+                        hop_idx=hop_idx,
+                        max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
+                        experience=self._role_experience("solver"),
+                        token_budget=self._solver_token_budget(result, remaining_nodes=remaining_nodes),
+                    )
+                except Exception:
                     f = Finding(sub_question=sub_q, answer='', evidence_ids=[],
                                 confidence=0.0, status=FindingStatus.ERROR,
                                 hop_idx=hop_idx, node_id=node.id)
@@ -517,7 +647,10 @@ class AmasPipeline:
                 hop_idx=self._depth_of(node, plan),
                 max_retrievals=self._retrieval_budget_for_node(node, plan, probes),
                 experience=self._role_experience("solver"),
+                token_budget=self._solver_token_budget(result),
             )
+            if self._over_budget(result) or self._near_synth_budget(result):
+                return
             if sr.finding.status == FindingStatus.OK or sr.finding.confidence > f.confidence:
                 bus.findings_by_node[node.id] = sr.finding
                 repaired += 1

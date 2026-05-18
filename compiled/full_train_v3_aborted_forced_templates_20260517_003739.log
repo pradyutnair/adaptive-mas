@@ -1,0 +1,39 @@
+Failed to initialize disk cache, falling back to memory-only cache: unable to open database file
+2026-05-17 00:29:20,547 INFO __main__: using stratified pool: 150 examples from /local/yzheng/pnair/workspace/adaptive-mas/data/train_stratified.jsonl
+2026-05-17 00:29:20,547 INFO __main__: loaded 150 training questions
+wandb: [wandb.login()] Loaded credentials for https://api.wandb.ai from WANDB_API_KEY.
+wandb: Currently logged in as: pradyut-nair (msc-thesis-pradyut) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.26.1
+wandb: Run data is saved locally in compiled/full_train_v3/wandb/wandb/run-20260517_002921-8b5rztyv
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hera-v3-gepa-interepoch-cap6k-headroom
+wandb: ⭐️ View project at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera
+wandb: 🚀 View run at https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/8b5rztyv
+wandb: Detected [dspy, litellm, openai] in use.
+wandb: Use W&B Weave for improved LLM call tracing. Install Weave with `pip install weave` then add `import weave` to the top of your script.
+wandb: For more information, check out the docs at: https://weave-docs.wandb.ai
+2026-05-17 00:29:22,874 INFO __main__: wandb run initialized: https://wandb.ai/msc-thesis-pradyut/adaptive-mas-hera/runs/8b5rztyv
+2026-05-17 00:29:22,875 INFO __main__: reflection model: openai/gpt-5 (temp=1.0)
+2026-05-17 00:29:22,876 INFO __main__: online HERA mode: forced two-strategy groups; K=2 concurrent rollouts; requested outer concurrency=24
+2026-05-17 00:29:22,877 INFO __main__: epoch 1 step 1 question 1/150 train_32416
+2026-05-17 00:31:34,279 INFO sentence_transformers.base.model: No device provided, using cpu
+2026-05-17 00:31:34,506 INFO sentence_transformers.base.model: Loading SentenceTransformer model from sentence-transformers/all-MiniLM-L6-v2.
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 32.38it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 63.03it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.71it/s]
+2026-05-17 00:31:36,626 INFO __main__: epoch 1 step 1 train_32416 rows=2 mixed=True insights=3 lib=3 avg_tok=2813 avg_reward=0.967
+2026-05-17 00:31:36,626 INFO __main__: epoch 1 step 2 question 2/150 train_67177
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 76.84it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 76.04it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 43.85it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 63.30it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 53.34it/s]
+2026-05-17 00:33:36,407 INFO __main__: epoch 1 step 2 train_67177 rows=2 mixed=True insights=3 lib=4 avg_tok=2062 avg_reward=0.315
+2026-05-17 00:33:36,407 INFO __main__: epoch 1 step 3 question 3/150 train_67130
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 66.68it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 67.46it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 55.99it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 63.11it/s]
+Batches:   0%|          | 0/1 [00:00<?, ?it/s]Batches: 100%|██████████| 1/1 [00:00<00:00, 69.25it/s]
+2026-05-17 00:35:57,304 INFO __main__: epoch 1 step 3 train_67130 rows=2 mixed=True insights=3 lib=5 avg_tok=3502 avg_reward=0.900
+2026-05-17 00:35:57,305 INFO __main__: epoch 1 step 4 question 4/150 2hop__244419_40940

@@ -1,0 +1,10 @@
+{
+  "norm_em": 0.26,
+  "token_f1": 0.3951,
+  "contain": 0.33,
+  "avg_tokens": 6565.4,
+  "total": 100,
+  "answered": 99,
+  "questions_path": "/local/yzheng/pnair/workspace/adaptive-mas/data/bamboogle/questions_125.json",
+  "dry_run": false
+}

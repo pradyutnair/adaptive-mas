@@ -1,0 +1,722 @@
+[
+  {
+    "id": "train_80565",
+    "dataset": "hotpotqa",
+    "question": "Both the mouth of the Atran and which sea flow into Kattegat?",
+    "answer": "The Baltic Sea",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1732
+  },
+  {
+    "id": "train_5973",
+    "dataset": "2wikimultihop",
+    "question": "What is the place of birth of the performer of song Chemistry (Eva Simons Song)?",
+    "answer": "Amsterdam",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1775
+  },
+  {
+    "id": "3hop2__188576_8509_19700",
+    "dataset": "musique",
+    "question": "How many people who started the great migration of the Slavs live in the country where Vicentinopolis is located?",
+    "answer": "5 million",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 1796
+  },
+  {
+    "id": "train_77482",
+    "dataset": "hotpotqa",
+    "question": "Thomas Doherty played Harry Hook in a series based on which Israeli series",
+    "answer": "North Star",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1800
+  },
+  {
+    "id": "train_77421",
+    "dataset": "hotpotqa",
+    "question": "How big is the building one of the largest in the world is in?",
+    "answer": "1500000 sqft",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 1579
+  },
+  {
+    "id": "train_77459",
+    "dataset": "hotpotqa",
+    "question": "What year was the film released that featured  \"Sprout and the Bean\"?",
+    "answer": "2008",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 3327
+  },
+  {
+    "id": "train_14142",
+    "dataset": "2wikimultihop",
+    "question": "What is the date of birth of Anusara Siriprasadh's father?",
+    "answer": "20 September 1853",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1917
+  },
+  {
+    "id": "train_67160",
+    "dataset": "hotpotqa",
+    "question": "\"Heima\" and \"The Living Planet\" are both what kind of film?",
+    "answer": "documentary",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1689
+  },
+  {
+    "id": "train_32401",
+    "dataset": "hotpotqa",
+    "question": "The Olympics Hassan Al-Absi competed in took place in what city?",
+    "answer": "Los Angeles, California, United States",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1715
+  },
+  {
+    "id": "2hop__19108_34844",
+    "dataset": "musique",
+    "question": "When did the people from whose nation the CIPA DC-004 applies to their cameras give up trying to recapture Henderson Field?",
+    "answer": "February 1943",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1649
+  },
+  {
+    "id": "train_3533",
+    "dataset": "2wikimultihop",
+    "question": "Where did Sami Wahlsten's father die?",
+    "answer": "Turku",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 4910
+  },
+  {
+    "id": "train_3517",
+    "dataset": "2wikimultihop",
+    "question": "Are William A. Shine Great Neck South High School and Gateway Stem High School located in the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 3549
+  },
+  {
+    "id": "2hop__136618_79793",
+    "dataset": "musique",
+    "question": "When did the cable cars start in the place Love on a Rooftop is set?",
+    "answer": "1878",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 3121
+  },
+  {
+    "id": "train_80531",
+    "dataset": "hotpotqa",
+    "question": "In which county is this town that was represented by Don Gorman in 1992 located?",
+    "answer": "Rockingham County",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1716
+  },
+  {
+    "id": "train_3561",
+    "dataset": "2wikimultihop",
+    "question": "When is Josephine Of Leuchtenberg's husband's birthday?",
+    "answer": "4 July 1799",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1724
+  },
+  {
+    "id": "train_14150",
+    "dataset": "2wikimultihop",
+    "question": "What is the date of death of the director of film The Giants Of Thessaly?",
+    "answer": "20 December 1999",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1743
+  },
+  {
+    "id": "train_77417",
+    "dataset": "hotpotqa",
+    "question": "What heavyweight world champion boxer appeared on Le Noche del 10?",
+    "answer": "Michael Gerard Tyson",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1675
+  },
+  {
+    "id": "train_14106",
+    "dataset": "2wikimultihop",
+    "question": "Who is older, Michael Atkinson or Heidemarie Steiner?",
+    "answer": "Heidemarie Steiner",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1707
+  },
+  {
+    "id": "train_77679",
+    "dataset": "hotpotqa",
+    "question": "What genre does Katherine Pulaski and Professor Moriarty have in common?",
+    "answer": "fictional",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1650
+  },
+  {
+    "id": "train_80566",
+    "dataset": "hotpotqa",
+    "question": "Are both Haidong and Yichun, Heilongjiang in China?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1727
+  },
+  {
+    "id": "train_3506",
+    "dataset": "2wikimultihop",
+    "question": "Why did Clovis Iii's father die?",
+    "answer": "plague",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1657
+  },
+  {
+    "id": "3hop1__330447_715836_26008",
+    "dataset": "musique",
+    "question": "How many square miles is the urban area of the performer of Bluesin' Around's birthplace?",
+    "answer": "1,337 square miles",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 4769
+  },
+  {
+    "id": "2hop__782683_44852",
+    "dataset": "musique",
+    "question": "Who wrote the national anthem of the country where the town of Mannar is located?",
+    "answer": "Ananda Samarakoon",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1766
+  },
+  {
+    "id": "4hop3__493923_300471_374971_62462",
+    "dataset": "musique",
+    "question": "When did Muslim armies invade the country containing Al-Ghassaniyah, along with the country of citizenship of the ruler who followed Al-Mu'tamid?",
+    "answer": "in 634",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 5516
+  },
+  {
+    "id": "2hop__803610_47336",
+    "dataset": "musique",
+    "question": "Who are the two leaders of the opposition in the province Letellier is located?",
+    "answer": "Wab Kinew",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1616
+  },
+  {
+    "id": "train_6935",
+    "dataset": "2wikimultihop",
+    "question": "Where was the place of death of the director of film My Fighting Gentleman?",
+    "answer": "Woodland Hills, California",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1746
+  },
+  {
+    "id": "3hop1__262651_365698_39874",
+    "dataset": "musique",
+    "question": "How many kilometers of sewer lines exist in the city that contains the university where Charles Oakley was educated?",
+    "answer": "61",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 4647
+  },
+  {
+    "id": "3hop1__313260_633553_12055",
+    "dataset": "musique",
+    "question": "What was the highest temperature recorded in the birth place of Boss Life's performer?",
+    "answer": "109 \u00b0F",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 4975
+  },
+  {
+    "id": "2hop__108768_161698",
+    "dataset": "musique",
+    "question": "What's the occupation of the painter of Manchester Madonna?",
+    "answer": "Italian painter",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 3118
+  },
+  {
+    "id": "3hop1__240428_618888_221665",
+    "dataset": "musique",
+    "question": "The transportation network in the birth city of the spouse of Claudia Mori is a node of what country's transportation system?",
+    "answer": "Italy",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1615
+  },
+  {
+    "id": "train_3587",
+    "dataset": "2wikimultihop",
+    "question": "When is the director of film Butterfield 8 's birthday?",
+    "answer": "August 8, 1912",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4716
+  },
+  {
+    "id": "train_67171",
+    "dataset": "hotpotqa",
+    "question": "When was the person that wrote the lyrics for \"That's How You Know\" born?",
+    "answer": "March 6, 1948",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4863
+  },
+  {
+    "id": "train_5910",
+    "dataset": "2wikimultihop",
+    "question": "Where did the director of film Terror Ship graduate from?",
+    "answer": "Marlborough College",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1624
+  },
+  {
+    "id": "train_32470",
+    "dataset": "hotpotqa",
+    "question": "In which county is this city where Hartman Arena, the home stadium for Wichita, is located?",
+    "answer": "Sedgwick County",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1698
+  },
+  {
+    "id": "train_3505",
+    "dataset": "2wikimultihop",
+    "question": "Where was the place of death of Princess Maria Elizabeth Of Sweden's mother?",
+    "answer": "Gripsholm Castle",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1655
+  },
+  {
+    "id": "3hop1__67373_26424_581618",
+    "dataset": "musique",
+    "question": "Who founded the famous chain of music-themed restaurant that opened its first establishment in the city where A Tale of Two Cities was published?",
+    "answer": "Peter Morton",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1685
+  },
+  {
+    "id": "train_6939",
+    "dataset": "2wikimultihop",
+    "question": "Do both Lucky Partners and Scrambled Wives films have the directors from the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1661
+  },
+  {
+    "id": "train_6945",
+    "dataset": "2wikimultihop",
+    "question": "When is the director of film Thotti Gang 's birthday?",
+    "answer": "10 June 1956",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4990
+  },
+  {
+    "id": "train_32427",
+    "dataset": "hotpotqa",
+    "question": "Francesca \"Frankie\" Rayder appeared in a fashion show by an American designer, manufacturer, and marketer of women's premium lingerie, womenswear, and beauty products that is wholly owned by who?",
+    "answer": "L Brands",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 3376
+  },
+  {
+    "id": "2hop__57963_159536",
+    "dataset": "musique",
+    "question": "Who is the person with the most hat tricks in La Liga history?",
+    "answer": "a Portuguese professional footballer",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1728
+  },
+  {
+    "id": "train_67143",
+    "dataset": "hotpotqa",
+    "question": "In what city is the bi-weekly newspaper published whose current owner and editor is Steven Fowle?",
+    "answer": "Portsmouth, New Hampshire",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 1647
+  },
+  {
+    "id": "2hop__72949_29454",
+    "dataset": "musique",
+    "question": "When did Japan finish invading the nation known as the Land of Morning Calm?",
+    "answer": "1598",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1720
+  },
+  {
+    "id": "train_32496",
+    "dataset": "hotpotqa",
+    "question": "In what year was the singer who, along with Rick Ross, had a guest appearance in the extended play \"Seven Days\" born?",
+    "answer": "1994",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1794
+  },
+  {
+    "id": "2hop__303112_25111",
+    "dataset": "musique",
+    "question": "The legal system of the birthplace of Leong Ka Hang, comes from what tradition?",
+    "answer": "Portuguese-based legal system",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1717
+  },
+  {
+    "id": "2hop__107159_80243",
+    "dataset": "musique",
+    "question": "What is the currency in the city where All About Ah-Long was produced?",
+    "answer": "Hong Kong dollar",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 4908
+  },
+  {
+    "id": "2hop__103659_58400",
+    "dataset": "musique",
+    "question": "Where is the crying stone found in the country Peter Koech was born in?",
+    "answer": "located along the highway towards Kisumu",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1646
+  },
+  {
+    "id": "train_5993",
+    "dataset": "2wikimultihop",
+    "question": "Are Mibaran and Kahtek, Minab located in the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 3411
+  },
+  {
+    "id": "train_32451",
+    "dataset": "hotpotqa",
+    "question": "Who met a singer that has released twelve regular studio albums, mostly through Virgin Records, while attending Pitzer College in Claremont, California?",
+    "answer": "Tom Freund",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 3381
+  },
+  {
+    "id": "train_3598",
+    "dataset": "2wikimultihop",
+    "question": "Do both films Wolves at the Door and Gangsters of the Frontier have the directors from the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 4919
+  },
+  {
+    "id": "train_14100",
+    "dataset": "2wikimultihop",
+    "question": "What is the date of birth of the director of film The Way Of Youth?",
+    "answer": "8 October 1892",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1676
+  },
+  {
+    "id": "train_67131",
+    "dataset": "hotpotqa",
+    "question": "What is the stadium named after the largest restaurant chain in the US in the 1960s and 1970s?",
+    "answer": "TVA Credit Union Ballpark",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1628
+  },
+  {
+    "id": "train_32463",
+    "dataset": "hotpotqa",
+    "question": "what was the birth year of the representative of Nevada Senate District 18 whose district included a community that lies at the edge of the Spring Mountains and Red Rock Canyon?",
+    "answer": "1966",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 4696
+  },
+  {
+    "id": "train_6956",
+    "dataset": "2wikimultihop",
+    "question": "Which film has the director born first, Best Of Enemies (2015 Film) or The Rhineland Girl?",
+    "answer": "The Rhineland Girl",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 3321
+  },
+  {
+    "id": "train_80594",
+    "dataset": "hotpotqa",
+    "question": "A Sideman's Journey is the first solo album by German musician and artist Klaus Voormann, released in July 2009, he played bass on a large number of well-known albums by ex-Beatles, including which triple album, by English musician George Harrison?",
+    "answer": "All Things Must Pass",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 3567
+  },
+  {
+    "id": "train_5949",
+    "dataset": "2wikimultihop",
+    "question": "What nationality is Walter Channing (Businessman)'s wife?",
+    "answer": "American",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1735
+  },
+  {
+    "id": "2hop__818023_699691",
+    "dataset": "musique",
+    "question": "Who is the child of Ram's producer?",
+    "answer": "James McCartney",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1716
+  },
+  {
+    "id": "train_14151",
+    "dataset": "2wikimultihop",
+    "question": "When is the director of film Gang War In Milan 's birthday?",
+    "answer": "6 August 1931",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4884
+  },
+  {
+    "id": "train_3508",
+    "dataset": "2wikimultihop",
+    "question": "Who is the father of the director of film Aanivaer?",
+    "answer": "J. Mahendran",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1804
+  },
+  {
+    "id": "train_80522",
+    "dataset": "hotpotqa",
+    "question": "Who originally came up with the title for the movie that film producer Gr\u00e9gory Levasseur is best known for?",
+    "answer": "Wes Craven",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1799
+  },
+  {
+    "id": "train_12273",
+    "dataset": "2wikimultihop",
+    "question": "Where was the performer of song I Can'T Get You Off Of My Mind born?",
+    "answer": "Mount Olive",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1755
+  },
+  {
+    "id": "train_5978",
+    "dataset": "2wikimultihop",
+    "question": "What nationality is Julian P. Mitchell's wife?",
+    "answer": "America",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1610
+  },
+  {
+    "id": "4hop3__566317_578030_485741_41384",
+    "dataset": "musique",
+    "question": "What is the population ranking of the city where the courthouse named after the place of birth of James Glisson can be found, in the country where Snowden Ashford is a citizen?",
+    "answer": "12th",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 3702
+  },
+  {
+    "id": "3hop1__812063_89345_618532",
+    "dataset": "musique",
+    "question": "What entity succeeded the company that provided the first British settlers in the country of citizenship of Cara Black?",
+    "answer": "Somers Isles Company",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1602
+  },
+  {
+    "id": "train_3544",
+    "dataset": "2wikimultihop",
+    "question": "When was Philip, Count Of Longueville's father born?",
+    "answer": "27 March 1306",
+    "profile": "numeric",
+    "oracle_easy": false,
+    "naive_tokens": 3458
+  },
+  {
+    "id": "train_77423",
+    "dataset": "hotpotqa",
+    "question": "What year was the British TV show that featured an English actor, singer, and model, released?",
+    "answer": "2004",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 3175
+  },
+  {
+    "id": "2hop__60060_25008",
+    "dataset": "musique",
+    "question": "Is the exact reason known for the crucifixion of the individual that the lamb represents in the Bible?",
+    "answer": "the exact reasons for the death of Jesus are hard to determine",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1639
+  },
+  {
+    "id": "3hop1__647685_840421_41097",
+    "dataset": "musique",
+    "question": "When did the name Black Death officially take root in the country where the author of Birthday Letters holds citizenship?",
+    "answer": "1823",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 4948
+  },
+  {
+    "id": "train_77613",
+    "dataset": "hotpotqa",
+    "question": "F\u00e9lix Loustau (] ) (25 December 1922 \u2013 5 January 2003) is a former Argentine footballer who was a key player on which  Argentine sports club based in the Belgrano neighborhood of Buenos Aires, and named after the city's estuary, R\u00edo de la Plata?",
+    "answer": "Club Atl\u00e9tico River Plate",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1877
+  },
+  {
+    "id": "train_67132",
+    "dataset": "hotpotqa",
+    "question": "The Love + Dance Wold Tour was a tour by a Puerto Rican singer in support of his hit single that featured which rapper ?",
+    "answer": "Daddy Yankee",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1786
+  },
+  {
+    "id": "3hop1__834093_406717_25935",
+    "dataset": "musique",
+    "question": "What is the national minimum monthly wage in the country having the company employing Peng Lei?",
+    "answer": "450 yuan per month",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1706
+  },
+  {
+    "id": "3hop1__106197_71250_135051",
+    "dataset": "musique",
+    "question": "Who is the mother of the person under whom the country of Game pie reached its greatest extent?",
+    "answer": "Marcia",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1632
+  },
+  {
+    "id": "train_77653",
+    "dataset": "hotpotqa",
+    "question": "When was Archduke Elisabeth Marie of Austria's mother born?",
+    "answer": "21 May 1864",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1779
+  },
+  {
+    "id": "3hop1__750125_183029_831331",
+    "dataset": "musique",
+    "question": "Which county shares a border with the county sharing a border with Washington Township's county?",
+    "answer": "Butler County",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1620
+  },
+  {
+    "id": "train_80572",
+    "dataset": "hotpotqa",
+    "question": "Reputation and Rarities was created by the English pop singer with what vocal range?",
+    "answer": "mezzo-soprano",
+    "profile": "bridge_2hop",
+    "oracle_easy": false,
+    "naive_tokens": 1669
+  },
+  {
+    "id": "train_14103",
+    "dataset": "2wikimultihop",
+    "question": "When is the director of film Vampire Noir 's birthday?",
+    "answer": "September 23, 1958",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 3387
+  },
+  {
+    "id": "train_12292",
+    "dataset": "2wikimultihop",
+    "question": "Which film whose director is younger, Beauties On Bicycles or Last Night In Soho?",
+    "answer": "Last Night In Soho",
+    "profile": "parallel_compare",
+    "oracle_easy": false,
+    "naive_tokens": 4967
+  },
+  {
+    "id": "train_14171",
+    "dataset": "2wikimultihop",
+    "question": "Are Orcas Island Airport and Delta Junction Airport both located in the same country?",
+    "answer": "yes",
+    "profile": "yes_no",
+    "oracle_easy": false,
+    "naive_tokens": 1707
+  },
+  {
+    "id": "train_77609",
+    "dataset": "hotpotqa",
+    "question": "In 1932, Stanley Woods run a famous race with an average speed of 77.16 mi/h that was watched by what man who was the fourth son of George V?",
+    "answer": "Prince George",
+    "profile": "bridge_3hop_plus",
+    "oracle_easy": false,
+    "naive_tokens": 1760
+  },
+  {
+    "id": "train_77692",
+    "dataset": "hotpotqa",
+    "question": "Who joined their band first, Paul Roberts with The Stranglers or Joey Cape with Lagwagon?",
+    "answer": "Active since 1989, Cape is best known as the frontman of the California punk rock band Lagwagon",
+    "profile": "one_hop",
+    "oracle_easy": false,
+    "naive_tokens": 1748
+  },
+  {
+    "id": "4hop1__35504_77886_77268_49736",
+    "dataset": "musique",
+    "question": "In 2018, when do we vote for the body that elects the speaker of the entity who presides over any impeachment trial of the president of the country on which the Liberian flag and constitution is modeled?",
+    "answer": "Tuesday, November 6, 2018",
+    "profile": "temporal",
+    "oracle_easy": false,
+    "naive_tokens": 1683
+  }
+]
